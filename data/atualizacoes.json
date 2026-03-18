@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-18T13:45:12.083442-03:00",
+  "ultima_atualizacao": "2026-03-18T14:43:02.608611-03:00",
   "data_busca": "2026-03-18",
-  "total": 64,
-  "novos_nesta_execucao": 64,
+  "total": 67,
+  "novos_nesta_execucao": 3,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -13,6 +13,7 @@
     "https://www.jota.info/",
     "https://www.gov.br/fazenda/pt-br/assuntos/noticias",
     "https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/acoes-e-programas/programas-e-atividades/reforma-consumo/noticias",
+    "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
     "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
   ],
   "stats": {
@@ -26,6 +27,7 @@
       "Jota Info",
       "Min. Fazenda",
       "RFB Reforma",
+      "RFB Notícias",
       "NFe/NFCe"
     ],
     "fontes_erro": []
@@ -542,6 +544,30 @@
       "portal": "Min. Fazenda",
       "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MARCO%20DE%20GARANTIAS",
       "resumo": ""
+    },
+    {
+      "id": "6c91f50cd39ed69f",
+      "data": "2026-03-18",
+      "titulo": "18/03/2026 13:13+ rápidoGoverno do Brasil lança Janela Única, plataforma para investimentos estrangeiros",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/governo-do-brasil-lanca-janela-unica-que-simplifica-entrada-de-investimentos-estrangeiros-no-brasil",
+      "resumo": ""
+    },
+    {
+      "id": "aff00acdfe1795f4",
+      "data": "2026-03-18",
+      "titulo": "RFB e PF deflagram operação para repressão a organização criminosa que recrutava agentes de segurança  para a prática de contrabando e outros crimes",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/rfb-e-pf-deflagram-operacao-para-repressao-a-organizacao-criminosa-que-recrutava-agentes-de-seguranca-para-a-pratica-de-contrabando-e-outros-crimes",
+      "resumo": "18/03/2026-As apurações demonstraram que o grupo utilizava veículos adaptados com compartimentos ocultos para viabilizar o transporte e a distribuição das mercadorias ilícitas."
+    },
+    {
+      "id": "07e82c94863ceac5",
+      "data": "2026-03-18",
+      "titulo": "Receita Federal inicia série de lives sobre o Imposto de Renda 2026 com grande alcance e participação",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/receita-federal-inicia-serie-de-lives-sobre-o-imposto-de-renda-2026-com-grande-alcance-e-participacao",
+      "resumo": "18/03/2026-Ao todo, estão previstas 11 lives, com conteúdos definidos a partir das principais dúvidas da sociedade."
     }
   ]
 }
