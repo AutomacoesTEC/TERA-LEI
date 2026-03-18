@@ -1,0 +1,26 @@
+{
+  "descricao": "Lista de leis monitoradas pelo TERA. Adicione leis com nome e URL. O hash será preenchido automaticamente na primeira execução.",
+  "leis": [
+    {
+      "nome": "IN RFB nº 2.121/2022",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2022/lei/L14382.htm",
+      "hash_anterior": "",
+      "ultima_verificacao": "",
+      "status": "novo"
+    },
+    {
+      "nome": "LC 214/2025",
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp214.htm",
+      "hash_anterior": "",
+      "ultima_verificacao": "",
+      "status": "novo"
+    },
+    {
+      "nome": "LC 123/2006 (Simples Nacional)",
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp123.htm",
+      "hash_anterior": "",
+      "ultima_verificacao": "",
+      "status": "novo"
+    }
+  ]
+}
