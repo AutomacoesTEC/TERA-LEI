@@ -699,48 +699,7 @@ function TabIndice({ds,area,onGoToArt}){
 // ALTERAÇÃO ENTREGA 2: TabMapa com sub-camadas sempre recolhidas ao expandir
 function TabMapa({ds}){
   const [selArt,setSelArt]=useState(null);
-  const [collapsed,setCollapsed]=useState(()=>{
-    // ALTERAÇÃO: Iniciar com TUDO recolhido
-    const initial={};
-    const buildKeys=(nodes,prefix)=>{
-      nodes.forEach((n,i)=>{
-        const k=prefix+"-"+n.id;
-        const hasContent=(n.children&&n.children.length>0)||(n.artigos&&n.artigos.length>0);
-        if(hasContent)initial[k]=true;
-        if(n.children)buildKeys(n.children,k+"-"+i);
-      });
-    };
-    // Estrutura será construída no useMemo abaixo; por ora, retornamos vazio
-    // e usamos um useEffect para setar tudo como collapsed após a primeira renderização
-    return {};
-  });
-
-  const toggle=(key)=>{
-    setCollapsed(p=>{
-      const isCurrentlyCollapsed=p[key];
-      if(isCurrentlyCollapsed){
-        // Expandindo esta camada: manter sub-camadas recolhidas (não fazer nada extra)
-        return {...p,[key]:false};
-      }else{
-        // Recolhendo esta camada: recolher também todas as sub-camadas
-        const newState={...p,[key]:true};
-        // Recolher todos os filhos recursivamente
-        Object.keys(p).forEach(k=>{
-          if(k.startsWith(key+"-")){
-            newState[k]=true;
-          }
-        });
-        return newState;
-      }
-    });
-  };
-
-  const artStatusMap=useMemo(()=>{
-    const m={};
-    for(const d of ds){if(d.tipo==="ARTIGO")m[d.id]=d.status||"vigente";}
-    return m;
-  },[ds]);
-
+  // ESTRUTURA: construída ANTES do collapsed para inicialização correta
   const estrutura=useMemo(()=>{
     const mapa=[];
     const stack={PARTE:null,LIVRO:null,"TÍTULO":null,"CAPÍTULO":null,"SEÇÃO":null,"SUBSEÇÃO":null};
@@ -772,20 +731,58 @@ function TabMapa({ds}){
     return mapa;
   },[ds]);
 
-  // ALTERAÇÃO ENTREGA 2: ao montar, iniciar com tudo recolhido
-  useEffect(()=>{
+  // Helper: gerar todas as keys collapsed a partir da estrutura
+  const buildAllCollapsedKeys = useCallback((nodes) => {
     const all={};
-    const markAll=(nodes,prefix)=>{
-      nodes.forEach((n,i)=>{
+    const mark=(ns,prefix)=>{
+      ns.forEach((n,i)=>{
         const k=prefix+"-"+n.id;
         const hasContent=(n.children&&n.children.length>0)||(n.artigos&&n.artigos.length>0);
         if(hasContent)all[k]=true;
-        if(n.children)markAll(n.children,k+"-"+i);
+        if(n.children)mark(n.children,k+"-"+i);
       });
     };
-    markAll(estrutura,"root");
-    setCollapsed(all);
-  },[estrutura]);
+    mark(nodes,"root");
+    return all;
+  }, []);
+
+  // Collapsed: iniciar TUDO recolhido, recalcular quando estrutura mudar
+  const [collapsed,setCollapsed]=useState({});
+  const estruturaRef=useRef(null);
+  if(estrutura!==estruturaRef.current){
+    estruturaRef.current=estrutura;
+    const allKeys=buildAllCollapsedKeys(estrutura);
+    if(Object.keys(allKeys).length>0){
+      // Setar diretamente no render para evitar flash de tudo aberto
+      if(Object.keys(collapsed).length===0||!Object.values(collapsed).some(v=>v===true)){
+        // Primeira renderização ou reset: forçar tudo collapsed
+        setTimeout(()=>setCollapsed(allKeys),0);
+      }
+    }
+  }
+
+  const toggle=(key)=>{
+    setCollapsed(p=>{
+      const isCurrentlyCollapsed=p[key];
+      if(isCurrentlyCollapsed){
+        return {...p,[key]:false};
+      }else{
+        const newState={...p,[key]:true};
+        Object.keys(p).forEach(k=>{
+          if(k.startsWith(key+"-")){
+            newState[k]=true;
+          }
+        });
+        return newState;
+      }
+    });
+  };
+
+  const artStatusMap=useMemo(()=>{
+    const m={};
+    for(const d of ds){if(d.tipo==="ARTIGO")m[d.id]=d.status||"vigente";}
+    return m;
+  },[ds]);
 
   const artDetail=useMemo(()=>{
     if(!selArt)return null;
@@ -1164,7 +1161,7 @@ function EConsultorAnotacoes({lib}){
 
   return <div style={{display:"flex",gap:16,height:"68vh"}}>
     {/* PAINEL ESQUERDO: TEMAS */}
-    <div style={{width:240,flexShrink:0,display:"flex",flexDirection:"column",border:"2px solid var(--gold)",borderRadius:12,padding:12,overflow:"hidden"}}>
+    <div style={{width:240,flexShrink:0,display:"flex",flexDirection:"column",border:"2px solid var(--gold)",borderRadius:12,padding:12,overflow:"visible",minHeight:0}}>
       <div style={{fontSize:14,fontWeight:700,marginBottom:10,color:"var(--gold)"}}>TEMAS</div>
       <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:4,marginBottom:10}}>
         {temas.length===0?<div style={{fontSize:12,color:"var(--text-mute)",textAlign:"center",padding:20}}>Nenhum tema cadastrado</div>
@@ -1380,6 +1377,7 @@ const PORTAIS=[
   {id:"jota",nome:"Jota Info",cor:"#1a1a2e"},
   {id:"fazenda",nome:"Min. Fazenda",cor:"#16a085"},
   {id:"rfb",nome:"RFB Reforma",cor:"#d4a017"},
+  {id:"rfb_not",nome:"RFB Notícias",cor:"#e67e22"},
   {id:"nfe",nome:"NFe/NFCe",cor:"#7f8c8d"},
 ];
 const DATA_URL="data/atualizacoes.json";
@@ -1424,7 +1422,7 @@ function Atl({apiKey,saveKey}){
     a.click();URL.revokeObjectURL(url);
   }catch(e){alert("Erro ao exportar: "+e.message);}};
 
-  const limpar=()=>{if(confirm("Tem certeza que deseja limpar todo o histórico de atualizações?")){setItens([]);setUltimaAtt("");LS("t3-upd-v2",null);LS("t3-upd-dt",null);}};
+  const limpar=()=>{if(confirm("Tem certeza que deseja limpar todo o histórico de atualizações?")){setItens([]);setUltimaAtt("");setSucesso("");setErro("");LS("t3-upd-v2",null);LS("t3-upd-dt",null);}};
 
   const itensFiltrados=useMemo(()=>{
     let f=itens;
