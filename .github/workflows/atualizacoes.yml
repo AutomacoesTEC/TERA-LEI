@@ -2,8 +2,9 @@ name: TERA — Atualizar Fontes
 
 on:
   schedule:
-    # Executa de segunda a sexta às 09:00 BRT (12:00 UTC)
-    - cron: '0 12 * * 1-5'
+    # Executa DIARIAMENTE às 09:00 BRT (12:00 UTC)
+    # Inclui sábados e domingos conforme requisito
+    - cron: '0 12 * * *'
   workflow_dispatch:
     # Permite execução manual pelo botão no GitHub
 
@@ -13,25 +14,25 @@ permissions:
 jobs:
   atualizar:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    
+    timeout-minutes: 15
+
     steps:
       - name: Checkout repositório
         uses: actions/checkout@v4
-      
+
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Instalar dependências
         run: |
           pip install requests beautifulsoup4
-      
+
       - name: Executar script de atualização
         run: |
           python atualizar_fontes.py
-      
+
       - name: Commit e push das atualizações
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
