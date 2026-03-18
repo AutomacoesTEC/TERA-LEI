@@ -86,17 +86,11 @@ function parse(txt){const ds=[];let a=null,ag=false;const reAltera=/\[?\s*(Reda[
   for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}}return detectVetados(ds);}
 
 function detectVetados(ds){
-  // Detecta vetos por IDs duplicados consecutivos (LC 95/1998):
-  // Quando o mesmo dispositivo (mesmo tipo + mesmo identificador normalizado)
-  // aparece mais de uma vez em sequência, as versões anteriores estão vetadas/superadas.
-  // A última ocorrência é a versão vigente (pode ter "Redação dada pela...").
   const normId=id=>(id||"").replace(/[^a-zA-Z0-9ºo°§úÚ]/g,"").toLowerCase();
   for(let i=0;i<ds.length;i++){
     if(DIV.has(ds[i].tipo)||ds[i].status!=="vigente")continue;
     const myNorm=normId(ds[i].id);if(!myNorm)continue;
-    // Procura adiante: pula divisões e dispositivos filhos, busca mesmo tipo+id
     let j=i+1;
-    // Coleta o bloco de filhos do dispositivo atual
     const nivHier={"ARTIGO":0,"PARÁGRAFO":1,"INCISO":2,"ALÍNEA":3,"ITEM":4};
     const meuNiv=nivHier[ds[i].tipo];
     if(meuNiv===undefined)continue;
@@ -104,11 +98,9 @@ function detectVetados(ds){
       if(DIV.has(ds[j].tipo)){j++;continue;}
       const outroNiv=nivHier[ds[j].tipo];
       if(outroNiv===undefined){j++;continue;}
-      // Se encontrou mesmo tipo com mesmo ID = versão anterior é vetada
       if(ds[j].tipo===ds[i].tipo&&normId(ds[j].id)===myNorm){
         ds[i].status="vetado";break;
       }
-      // Se encontrou dispositivo do mesmo nível ou superior com ID diferente, para
       if(outroNiv<=meuNiv&&normId(ds[j].id)!==myNorm)break;
       j++;
     }
@@ -194,9 +186,9 @@ function App(){
   const uSt=(lid,di,f,v)=>{const k=`${lid}-${di}`;const n={...study,[k]:{...study[k],[f]:v}};setStudy(n);LS("t3-st",n);};
   const gSt=(lid,di,f)=>study[`${lid}-${di}`]?.[f]||"";
   const saveKey=k=>{setApiKey(k);LS("t3-key",k);};
-  const exportBackup=()=>{try{const data={lib,study,apiKey,area,exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="TERA_backup_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);}catch(e){alert("Erro ao exportar: "+e.message);}};
-  const importBackup=()=>{const inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const txt=await f.text();const data=JSON.parse(txt);if(data.lib){setLib(data.lib);LS("t3-lib",data.lib);}if(data.study){setStudy(data.study);LS("t3-st",data.study);}if(data.apiKey){setApiKey(data.apiKey);LS("t3-key",data.apiKey);}alert("Backup restaurado com sucesso! "+((data.lib||[]).length)+" leis e "+(Object.keys(data.study||{}).length)+" anotações importadas.");}catch(e){alert("Erro ao importar: "+e.message);}};inp.click();};
-  const nav=[{id:"library",ic:IC.bk,lb:"Biblioteca"},...(sel?[{id:"reader",ic:IC.ls,lb:sel.nome.slice(0,20)}]:[]),{id:"reforma",ic:IC.sc,lb:"Reforma"},{id:"atualizacoes",ic:IC.bl,lb:"Atualizações"}];
+  const exportBackup=()=>{try{const data={lib,study,apiKey,area,notas:LS("t3-notas"),temas:LS("t3-temas"),exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="TERA_backup_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);}catch(e){alert("Erro ao exportar: "+e.message);}};
+  const importBackup=()=>{const inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const txt=await f.text();const data=JSON.parse(txt);if(data.lib){setLib(data.lib);LS("t3-lib",data.lib);}if(data.study){setStudy(data.study);LS("t3-st",data.study);}if(data.apiKey){setApiKey(data.apiKey);LS("t3-key",data.apiKey);}if(data.notas)LS("t3-notas",data.notas);if(data.temas)LS("t3-temas",data.temas);alert("Backup restaurado com sucesso! "+((data.lib||[]).length)+" leis, "+(Object.keys(data.study||{}).length)+" anotações de estudo e "+((data.notas||[]).length)+" anotações do E-Consultor importadas.");}catch(e){alert("Erro ao importar: "+e.message);}};inp.click();};
+  const nav=[{id:"library",ic:IC.bk,lb:"Biblioteca"},...(sel?[{id:"reader",ic:IC.ls,lb:sel.nome.slice(0,20)}]:[]),{id:"econsultor",ic:IC.br,lb:"E-Consultor"},{id:"reforma",ic:IC.sc,lb:"Reforma"},{id:"atualizacoes",ic:IC.bl,lb:"Atualizações"}];
 
   return <div style={{minHeight:"100vh"}}>
     <header style={{background:"var(--bg-card)",borderBottom:"1px solid var(--border)",padding:"8px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100,boxShadow:"var(--shadow)"}}>
@@ -216,6 +208,7 @@ function App(){
     <main style={{maxWidth:1440,margin:"0 auto",padding:"20px"}}>
       {vw==="library"&&<Lib lib={lib} sel={sel} onSel={l=>{setSel(l);setVw("reader");}} onDel={del} onUp={upF} uping={uping} fRef={fRef}/>}
       {vw==="reader"&&sel&&<Reader lei={sel} area={area} gSt={gSt} uSt={uSt} apiKey={apiKey} saveKey={saveKey} addAnexo={addAnexo} delAnexo={delAnexo} study={study}/>}
+      {vw==="econsultor"&&<EConsultor lib={lib}/>}
       {vw==="reforma"&&<Ref apiKey={apiKey} saveKey={saveKey}/>}
       {vw==="atualizacoes"&&<Atl apiKey={apiKey} saveKey={saveKey}/>}
     </main>
@@ -240,23 +233,54 @@ function Lib({lib,sel,onSel,onDel,onUp,uping,fRef}){return <div className="fade"
 </div>;}
 
 // ═══ READER ═══
+// ALTERAÇÕES ENTREGA 2:
+// - Removida aba "remissoes" e "tutor" do array tabs
+// - Renomeada "sabatina" → "Perguntas e Respostas"
+// - Renomeada "indice" → "Busca"
+// - Removidas as renderizações condicionais de tab==="remissoes" e tab==="tutor"
+// - Export Excel: removida aba "Remissões"
 function Reader({lei,area,gSt,uSt,apiKey,saveKey,addAnexo,delAnexo,study}){
   const [tab,setTab]=useState("texto");const [saved,setSaved]=useState(false);const [goSearch,setGoSearch]=useState("");
-  const tabs=[{id:"sumario",lb:"Sumário"},{id:"texto",lb:"Texto Integral"},{id:"artigos",lb:"Artigos"},{id:"estudo",lb:"Estudo Guiado"},{id:"remissoes",lb:"Remissões"},{id:"prazos",lb:"Prazos/Valores"},{id:"indice",lb:"Índice"},{id:"mapa",lb:"Mapa"},{id:"anexos",lb:`Anexos (${(lei.anexos||[]).length})`},{id:"teia",lb:"🕸 Teia"},{id:"tutor",lb:"Tutor IA"},{id:"sabatina",lb:"Sabatina"}];
+  const tabs=[{id:"sumario",lb:"Sumário"},{id:"texto",lb:"Texto Integral"},{id:"artigos",lb:"Artigos"},{id:"estudo",lb:"Estudo Guiado"},{id:"prazos",lb:"Prazos/Valores"},{id:"busca",lb:"Busca"},{id:"mapa",lb:"Mapa"},{id:"anexos",lb:`Anexos (${(lei.anexos||[]).length})`},{id:"teia",lb:"🕸 Teia"},{id:"perguntasrespostas",lb:"Perguntas e Respostas"}];
   const ds=lei.ds;
   const showSaved=()=>{setSaved(true);setTimeout(()=>setSaved(false),1500);};
   const wrappedUSt=(a,b,c,d)=>{uSt(a,b,c,d);showSaved();};
 
-  // Extrai refs internas (mesma lei) de um texto, ignorando refs a leis externas.
-  // Duas camadas de detecção:
-  //   Camada 1: blocos parentéticos contendo citações de leis → toda ref "art." dentro é externa
-  //   Camada 2: contexto inline — se há lei citada antes, verifica se o texto intermediário
-  //             é apenas sintaxe de citação (→ externa) ou contém prosa (→ interna)
-  const extractInternalRefs = (text) => {
-    const refs = [];
-    const reArt = /arts?\.\s*(\d+[ºo°]?(?:\s*(?:,|e|a)\s*\d+[ºo°]?)*)/gi;
+  // ═══ ÍNDICES PRÉ-CONSTRUÍDOS (Performance O(1)) ═══
+  // Construídos uma única vez via useMemo, eliminando busca linear O(n) por lookup
+  const artIndex = useMemo(() => {
+    const idx = new Map(); // Map<numericId, {vigente, revogado, last}>
+    for (const d of ds) {
+      if (d.tipo !== "ARTIGO") continue;
+      const numId = d.id.replace(/[^0-9]/g, "");
+      if (!idx.has(numId)) idx.set(numId, { vigente: null, revogado: null, last: null });
+      const entry = idx.get(numId);
+      if (d.status === "vigente") entry.vigente = d;
+      else if (d.status === "revogado") entry.revogado = d;
+      entry.last = d;
+    }
+    return idx;
+  }, [ds]);
 
-    // --- Camada 1: mapeamento de blocos parentéticos com citação de lei ---
+  const subDevIndex = useMemo(() => {
+    const idx = new Map(); // Map<artId, dispositivo[]>
+    let currentArt = null;
+    for (const d of ds) {
+      if (d.tipo === "ARTIGO") { currentArt = d.id; continue; }
+      if (DIV.has(d.tipo)) { currentArt = null; continue; }
+      if (currentArt && d.status !== "vetado") {
+        if (!idx.has(currentArt)) idx.set(currentArt, []);
+        idx.get(currentArt).push(d);
+      }
+    }
+    return idx;
+  }, [ds]);
+
+  // ENTREGA 3: retorna {internal: [...artIds], external: [...leiNames]}
+  const extractRefsWithMetadata = (text) => {
+    const internal = [];
+    const external = [];
+    const reArt = /arts?\.\s*(\d+[ºo°]?(?:\s*(?:,|e|a)\s*\d+[ºo°]?)*)/gi;
     const reLeiNome = /(?:Lei(?:\s+Complementar)?|Decreto(?:-Lei)?|Medida\s+Provis[óo]ria|Instru[çc][ãa]o\s+Normativa(?:\s+(?:RFB|SRF|[A-Z]{2,}))?|C[óo]digo\s+\w+)\s+n[ºo°]/i;
     const externalRanges = [];
     const reParen = /\([^)]+\)/g;
@@ -266,135 +290,105 @@ function Reader({lei,area,gSt,uSt,apiKey,saveKey,addAnexo,delAnexo,study}){
         externalRanges.push([pm.index, pm.index + pm[0].length]);
       }
     }
-
-    // --- Camada 2: padrão de lei para busca inline ---
     const reLeiInline = /(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.]+|Medida\s+Provis[óo]ria\s+n[ºo°]?\s*[\d.]+|Instru[çc][ãa]o\s+Normativa\s+(?:RFB\s+|SRF\s+|[A-Z]{2,}\s+)?n[ºo°]?\s*[\d.]+)/gi;
 
-    // Função auxiliar: verifica se texto entre lei e "art." é somente sintaxe de citação
+    // Extrair TODAS as leis externas mencionadas no texto
+    const reLeiCapture = /(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.\/]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.\/]+|Medida\s+Provis[óo]ria\s+n[ºo°]?\s*[\d.\/\-]+|Instru[çc][ãa]o\s+Normativa\s+(?:RFB\s+|SRF\s+|[A-Z]{2,}\s+)?n[ºo°]?\s*[\d.\/]+|C[óo]digo\s+(?:Tribut[áa]rio|Civil|Penal|de\s+Processo)\s+Nacional|Constitui[çc][ãa]o\s+Federal)/gi;
+    let lm2;
+    while ((lm2 = reLeiCapture.exec(text)) !== null) {
+      const name = lm2[0].trim();
+      if (!external.includes(name)) external.push(name);
+    }
+
     const isCitationSyntaxOnly = (between) => {
       let cleaned = between;
-      // Remove datas completas: "de 13 de dezembro de 1996"
       cleaned = cleaned.replace(/,?\s*de\s+\d{1,2}\s+de\s+\w+\s+de\s+\d{4}/g, "");
-      // Remove datas curtas: "de 1998", "de 2002"
       cleaned = cleaned.replace(/,?\s*de\s+\d{4}/g, "");
-      // Remove referências a artigos/parágrafos/incisos/alíneas
       cleaned = cleaned.replace(/\s*arts?\.\s*\d+[ºo°]?/g, "");
       cleaned = cleaned.replace(/\s*§+\s*\d*[ºo°]?\.?/g, "");
       cleaned = cleaned.replace(/\s*incisos?\s+[IVXLCDM]+/gi, "");
       cleaned = cleaned.replace(/\s*al[íi]neas?\s+[a-z]\)?/gi, "");
       cleaned = cleaned.replace(/\s*itens?\s+\d+/gi, "");
-      // Remove nomes de lei que podem aparecer encadeados (Lei nº X ... e Lei nº Y)
       cleaned = cleaned.replace(/(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.]+)/gi, "");
-      // Remove pontuação, conectores e espaço
       cleaned = cleaned.replace(/[,;.\s\-–—ºo°:()]+/g, " ");
       cleaned = cleaned.replace(/\b(?:e|a|de|do|da|dos|das|no|na|nos|nas|ao|caput)\b/gi, "");
       cleaned = cleaned.trim();
       return cleaned.length === 0;
     };
-
     let m;
     while ((m = reArt.exec(text)) !== null) {
       const pos = m.index;
-
-      // Camada 1: dentro de bloco parentético com citação de lei?
       const inExtParen = externalRanges.some(([s, e]) => pos >= s && pos <= e);
       if (inExtParen) continue;
-
-      // Camada 2: lei citada no contexto inline (mesmo trecho, sem fronteira de frase)?
       const before = text.slice(Math.max(0, pos - 250), pos);
       let isExternal = false;
-
-      // Procura a última citação de lei no trecho anterior
       reLeiInline.lastIndex = 0;
       let lastLaw = null;
       let lm;
       while ((lm = reLeiInline.exec(before)) !== null) {
         lastLaw = { index: lm.index, end: lm.index + lm[0].length, text: lm[0] };
       }
-
       if (lastLaw) {
         const between = before.slice(lastLaw.end);
         if (isCitationSyntaxOnly(between)) {
           isExternal = true;
         }
-        // Se o texto intermediário contém prosa substantiva, é ref interna
-        // (ex: "..., exceto quanto às disposições específicas referentes aos tributos mencionados no")
       }
-
       if (isExternal) continue;
-
-      // É referência interna
       const nums = m[1].match(/\d+[ºo°]?/g) || [];
       for (const n of nums) {
         const artId = "Art. " + n;
-        if (!refs.includes(artId)) refs.push(artId);
+        if (!internal.includes(artId)) internal.push(artId);
       }
     }
-    return refs;
+    return { internal, external };
   };
 
-  // Encontra o artigo vigente (pula vetados, retorna info de revogado)
+  // Wrapper de compatibilidade para código existente que usa extractInternalRefs
+  const extractInternalRefs = (text) => extractRefsWithMetadata(text).internal;
+
+  // ENTREGA 3: findDevice agora usa artIndex — O(1) em vez de O(n)
   const findDevice = (artId) => {
-    const cleanId = artId.replace(/^Art\.\s*/i, "").trim();
-    const matches = ds.filter(d => d.tipo === "ARTIGO" && d.id.replace(/[^0-9]/g,"") === cleanId.replace(/[^0-9]/g,""));
-    if (matches.length === 0) return null;
-    // Prioriza vigente, depois revogado
-    const vigente = matches.find(d => d.status === "vigente");
-    if (vigente) return vigente;
-    const revogado = matches.find(d => d.status === "revogado");
-    if (revogado) return revogado;
-    return matches[matches.length - 1]; // última versão
+    const cleanId = artId.replace(/^Art\.\s*/i, "").replace(/[^0-9]/g, "").trim();
+    const entry = artIndex.get(cleanId);
+    if (!entry) return null;
+    return entry.vigente || entry.revogado || entry.last;
   };
 
-  // Coleta sub-dispositivos (§, incisos, alíneas) de um artigo
+  // ENTREGA 3: getSubDevices agora usa subDevIndex — O(1) em vez de O(n)
   const getSubDevices = (artId) => {
-    const subs = [];
-    let inside = false;
-    for (const d of ds) {
-      if (d.tipo === "ARTIGO" && d.id === artId) { inside = true; continue; }
-      if (inside) {
-        if (d.tipo === "ARTIGO" || DIV.has(d.tipo)) break;
-        if (d.status !== "vetado") subs.push(d);
-      }
-    }
-    return subs;
+    return subDevIndex.get(artId) || [];
   };
 
-  // Constrói árvore recursiva de remissões
   const buildRecursiveTree = (startId, visited = new Set()) => {
     if (visited.has(startId)) return null;
     visited.add(startId);
     const device = findDevice(startId);
     if (!device) return null;
-
     const isRevogado = device.status === "revogado";
     const subs = getSubDevices(device.id);
     const fullText = [device.txt || "", ...subs.map(s => (s.id || "") + " " + (s.txt || ""))].join(" ");
-
-    // Se revogado, não seguir refs
-    const refs = isRevogado ? [] : extractInternalRefs(fullText);
-    // Remove auto-referência
+    // ENTREGA 3: usa extractRefsWithMetadata para capturar refs externas
+    const allRefs = isRevogado ? { internal: [], external: [] } : extractRefsWithMetadata(fullText);
     const selfNum = device.id.replace(/[^0-9]/g, "");
-    const filteredRefs = refs.filter(r => r.replace(/[^0-9]/g, "") !== selfNum);
-
+    const filteredRefs = allRefs.internal.filter(r => r.replace(/[^0-9]/g, "") !== selfNum);
     const children = [];
     for (const ref of filteredRefs) {
       const child = buildRecursiveTree(ref, new Set(visited));
       if (child) children.push(child);
     }
-
     return {
       id: device.id,
       text: (device.txt || "").trim(),
       status: device.status || "vigente",
       alteracao: device.alteracao || "",
-      subs: subs.slice(0, 10), // limita para performance
+      subs: subs.slice(0, 10),
       refs: filteredRefs,
+      externalRefs: allRefs.external,
       children
     };
   };
 
-  // Mantém compatibilidade com exportação Excel (cadeia linear simplificada)
   const buildRecursiveChain = (startId) => {
     const chain = [];
     const visited = new Set();
@@ -413,20 +407,17 @@ function Reader({lei,area,gSt,uSt,apiKey,saveKey,addAnexo,delAnexo,study}){
     return chain;
   };
 
+  // ALTERAÇÃO ENTREGA 2: removida aba "Remissões" do export Excel
   const exportXlsx=()=>{try{const wb=XLSX.utils.book_new();
-    // Texto Integral
     const txData=[["#","Tipo","Identificador","Rubrica","Texto","Status Legal","Alteração"],...ds.map((d,i)=>[i+1,d.tipo,d.id,d.rub,d.txt,d.status||"vigente",d.alteracao||""])];
     const wsTx=XLSX.utils.aoa_to_sheet(txData);
     wsTx["!cols"]=[{wch:6},{wch:14},{wch:18},{wch:40},{wch:80},{wch:12},{wch:50}];
     XLSX.utils.book_append_sheet(wb,wsTx,"Texto Integral");
-    // Estudo Guiado
     const ctx=hierarquia(ds);let art="";const estData=[["Localização","Artigo","Dispositivo","Texto","Status Estudo","Dificuldade","Anotação","Status Legal"]];
     for(let i=0;i<ds.length;i++){const d=ds[i];if(d.tipo==="ARTIGO")art=d.id;if(!DIV.has(d.tipo))estData.push([ctx[art]||"",art,d.id,d.txt,gSt(lei.id,i,"status"),gSt(lei.id,i,"dif"),gSt(lei.id,i,"note"),d.status||"vigente"]);}
     const wsEst=XLSX.utils.aoa_to_sheet(estData);
     wsEst["!cols"]=[{wch:40},{wch:12},{wch:18},{wch:70},{wch:14},{wch:14},{wch:40},{wch:12}];
     XLSX.utils.book_append_sheet(wb,wsEst,"Estudo Guiado");
-    
-    // Teia
     const teiaData = [["Artigo Origem", "Caminho da Teia (Texto Integral)"]];
     const artigos = ds.filter(d => d.tipo === "ARTIGO");
     artigos.forEach(a => {
@@ -439,18 +430,10 @@ function Reader({lei,area,gSt,uSt,apiKey,saveKey,addAnexo,delAnexo,study}){
     const wsTeia=XLSX.utils.aoa_to_sheet(teiaData);
     wsTeia["!cols"]=[{wch:16},{wch:100}];
     XLSX.utils.book_append_sheet(wb,wsTeia,"Teia de Remissões");
-
-    // Remissões
-    const rem=extrairRemissoes(ds);const remData=[["#","Origem","Dispositivo","Referência","Contexto"],...rem.map((r,i)=>[i+1,r.origem,r.disp,r.destino,r.ctx])];
-    const wsRem=XLSX.utils.aoa_to_sheet(remData);
-    wsRem["!cols"]=[{wch:6},{wch:14},{wch:18},{wch:14},{wch:80}];
-    XLSX.utils.book_append_sheet(wb,wsRem,"Remissões");
-    // Prazos e Valores
     const pv=extrairPrazosValores(ds);const pvData=[["#","Tipo","Conteúdo","Artigo","Capítulo","Contexto"],...pv.map((r,i)=>[i+1,r.tipo,r.val,r.art,r.cap,r.ctx])];
     const wsPv=XLSX.utils.aoa_to_sheet(pvData);
     wsPv["!cols"]=[{wch:6},{wch:18},{wch:22},{wch:12},{wch:35},{wch:80}];
     XLSX.utils.book_append_sheet(wb,wsPv,"Prazos e Valores");
-    // Índice Remissivo
     const idx=buildIdx(ds,area);const idxData=[["Palavra-chave","Artigos","Qtd"],...Object.entries(idx).map(([p,a])=>[p,a.join(", "),a.length])];
     const wsIdx=XLSX.utils.aoa_to_sheet(idxData);
     wsIdx["!cols"]=[{wch:25},{wch:80},{wch:8}];
@@ -467,27 +450,26 @@ function Reader({lei,area,gSt,uSt,apiKey,saveKey,addAnexo,delAnexo,study}){
     </div>
     <div style={{display:"flex",gap:0,borderBottom:"1px solid var(--border)",marginBottom:14,overflowX:"auto"}}>{tabs.map(t=><button key={t.id} className={`stab ${tab===t.id?"on":""}`} onClick={()=>setTab(t.id)}>{t.lb}</button>)}</div>
     {tab==="sumario"&&<TabSumario ds={ds}/>}
-    {tab==="texto"&&<TabTexto ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt} initialSearch={goSearch}/>}
+    {tab==="texto"&&<TabTexto ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt}/>}
     {tab==="artigos"&&<TabArtigos ds={ds}/>}
     {tab==="estudo"&&<TabEstudo ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt}/>}
-    {tab==="remissoes"&&<TabRemissoes ds={ds}/>}
-    {tab==="teia"&&<TabTeia ds={ds} buildRecursiveTree={buildRecursiveTree} buildRecursiveChain={buildRecursiveChain}/>}
     {tab==="prazos"&&<TabPrazos ds={ds}/>}
-    {tab==="indice"&&<TabIndice ds={ds} area={area} onGoToArt={a=>{setGoSearch(a);setTab("texto");}}/>}
+    {tab==="busca"&&<TabIndice ds={ds} area={area} onGoToArt={a=>{setGoSearch(a);setTab("texto");}}/>}
     {tab==="mapa"&&<TabMapa ds={ds}/>}
     {tab==="anexos"&&<TabAnexos lei={lei} addAnexo={addAnexo} delAnexo={delAnexo}/>}
-    {tab==="tutor"&&<TabTutor lei={lei} area={area} apiKey={apiKey} saveKey={saveKey}/>}
-    {tab==="sabatina"&&<TabSabatina lei={lei} area={area} apiKey={apiKey} saveKey={saveKey}/>}
+    {tab==="teia"&&<TabTeia ds={ds} buildRecursiveTree={buildRecursiveTree} buildRecursiveChain={buildRecursiveChain}/>}
+    {tab==="perguntasrespostas"&&<TabSabatina lei={lei} area={area} apiKey={apiKey} saveKey={saveKey}/>}
   </div>;
 }
 
 function TabSumario({ds}){const items=ds.filter(d=>DIV.has(d.tipo));return <div style={{maxHeight:"70vh",overflow:"auto"}}><table className="dt"><thead><tr><th>#</th><th>Tipo</th><th>Identificador</th><th>Rubrica</th></tr></thead><tbody>{items.map((d,i)=><tr key={i} style={{background:CT[d.tipo]||"#fff",color:d.tipo==="PARTE"||d.tipo==="LIVRO"||d.tipo==="TÍTULO"||d.tipo==="CAPÍTULO"?"#fff":"#2D2A26"}}><td>{i+1}</td><td><span className="badge" style={{background:"rgba(0,0,0,.15)",color:"inherit"}}>{d.tipo}</span></td><td style={{fontWeight:700}}>{d.id}</td><td>{d.rub}</td></tr>)}</tbody></table></div>;}
 
-function TabTexto({ds,lei,gSt,uSt,initialSearch}){const [srch,setSrch]=useState(initialSearch||"");useEffect(()=>{if(initialSearch)setSrch(initialSearch);},[initialSearch]);const fd=useMemo(()=>srch?ds.filter(d=>(d.txt+d.id+d.rub).toLowerCase().includes(srch.toLowerCase())):ds,[ds,srch]);
+// ALTERAÇÃO ENTREGA 2: removida barra de busca do Texto Integral
+function TabTexto({ds,lei,gSt,uSt}){
   const ind={PARTE:0,LIVRO:0,TÍTULO:0,CAPÍTULO:12,SEÇÃO:24,SUBSEÇÃO:36,ARTIGO:0,PARÁGRAFO:20,INCISO:36,ALÍNEA:52,ITEM:68};
   const sts=["","Não lido","Lido","Revisando","Dominado","Dúvida"];const sC={Dominado:"#27AE60",Dúvida:"#C0392B",Revisando:"#D4A017",Lido:"#2E86AB"};
-  return <div><div style={{marginBottom:10}}><input value={srch} onChange={e=>setSrch(e.target.value)} placeholder="Buscar na lei..." style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:6,padding:"10px 14px",fontSize:14,boxSizing:"border-box"}}/></div>
-    <div style={{maxHeight:"68vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>{fd.map((d,i)=>{const ri=ds.indexOf(d);const isD=DIV.has(d.tipo);const st=gSt(lei.id,ri,"status");const nt=gSt(lei.id,ri,"note");const isVetado=d.status==="vetado";const isRevogado=d.status==="revogado";
+  return <div>
+    <div style={{maxHeight:"68vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>{ds.map((d,i)=>{const ri=i;const isD=DIV.has(d.tipo);const st=gSt(lei.id,ri,"status");const nt=gSt(lei.id,ri,"note");const isVetado=d.status==="vetado";const isRevogado=d.status==="revogado";
       return <div key={ri} style={{display:"flex",borderBottom:"1px solid var(--border)",background:isVetado?"rgba(231,76,60,0.06)":isRevogado?"rgba(231,76,60,0.04)":isD?CT[d.tipo]||"#F5EDDF":ri%2===0?"#fff":"#FAF7F2",paddingLeft:ind[d.tipo]||0}}>
         <div style={{minWidth:70,padding:"6px 4px",textAlign:"center"}}>
           <span className="badge" style={{background:isD?"rgba(0,0,0,.1)":"#F3EDE4",color:isD?(d.tipo==="PARTE"||d.tipo==="LIVRO"||d.tipo==="TÍTULO"||d.tipo==="CAPÍTULO"?"#fff":"#5C554A"):"#8A8279"}}>{d.tipo}</span>
@@ -515,136 +497,132 @@ function TabEstudo({ds,lei,gSt,uSt}){
   const [filtroStatus,setFiltroStatus]=useState("");
   const sts=["Não lido","Lido","Revisando","Dominado","Dúvida"];
   const sC={Dominado:"#27AE60",Dúvida:"#C0392B",Revisando:"#D4A017",Lido:"#2E86AB"};
-  
   const items = useMemo(() => ds.filter(d => !DIV.has(d.tipo)), [ds]);
   const fd = useMemo(() => {
     if (!filtroStatus) return items;
     return items.filter((_, i) => gSt(lei.id, ds.indexOf(items[i]), "status") === filtroStatus);
   }, [items, lei.id, filtroStatus, gSt, ds]);
-
   return <div>
     <div style={{marginBottom:12,display:"flex",gap:8,flexWrap:"wrap"}}>
       <button onClick={()=>setFiltroStatus("")} style={{padding:"6px 12px",background:!filtroStatus?"var(--grad)":"var(--bg-hover)",color:!filtroStatus?"#fff":"var(--text-sec)",border:"none",borderRadius:6,cursor:"pointer",fontSize:12,fontWeight:600}}>Todos</button>
       {sts.map(s=><button key={s} onClick={()=>setFiltroStatus(s)} style={{padding:"6px 12px",background:filtroStatus===s?"var(--grad)":"var(--bg-hover)",color:filtroStatus===s?"#fff":"var(--text-sec)",border:"none",borderRadius:6,cursor:"pointer",fontSize:12,fontWeight:600}}>{s}</button>)}
     </div>
     <div style={{maxHeight:"70vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>
-      <table className="dt" style={{width:"100%",tableLayout:"fixed"}}>
-        <thead>
-          <tr>
-            <th style={{width:"100px"}}>Dispositivo</th>
-            <th style={{width:"40%"}}>Texto</th>
-            <th style={{width:"120px"}}>Status</th>
-            <th style={{width:"120px"}}>Dificuldade</th>
-            <th>Anotação</th>
-          </tr>
-        </thead>
-        <tbody>
-          {fd.map((d, i) => {
-            const ri = ds.indexOf(d);
-            const st = gSt(lei.id, ri, "status");
-            const dif = gSt(lei.id, ri, "dif");
-            const nt = gSt(lei.id, ri, "note");
-            const isVetado = d.status === "vetado";
-            const isRevogado = d.status === "revogado";
-            const isInativo = isVetado || isRevogado;
+      <table className="dt" style={{width:"100%",tableLayout:"fixed"}}><thead><tr><th style={{width:"100px"}}>Dispositivo</th><th style={{width:"40%"}}>Texto</th><th style={{width:"120px"}}>Status</th><th style={{width:"120px"}}>Dificuldade</th><th>Anotação</th></tr></thead>
+        <tbody>{fd.map((d, i) => {
+            const ri = ds.indexOf(d);const st = gSt(lei.id, ri, "status");const dif = gSt(lei.id, ri, "dif");const nt = gSt(lei.id, ri, "note");const isVetado = d.status === "vetado";const isRevogado = d.status === "revogado";const isInativo = isVetado || isRevogado;
             return <tr key={ri} style={{opacity:isInativo?0.6:1,background:isVetado?"rgba(231,76,60,0.06)":isRevogado?"rgba(231,76,60,0.04)":"inherit"}}>
-              <td style={{fontWeight:700,fontSize:12,verticalAlign:"top"}}>
-                {d.id}
-                {isVetado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>VETADO</span></div>}
-                {isRevogado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>REVOGADO</span></div>}
-              </td>
-              <td style={{fontSize:12,lineHeight:1.5,whiteSpace:"pre-wrap",wordBreak:"break-word",verticalAlign:"top",padding:"10px",textDecoration:isInativo?"line-through":"none"}}>
-                {d.txt}
-                {d.alteracao&&<div style={{marginTop:4,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db",textDecoration:"none",fontWeight:400}}>↳ {d.alteracao}</div>}
-              </td>
-              <td style={{verticalAlign:"top"}}>
-                <select value={st} onChange={e=>uSt(lei.id,ri,"status",e.target.value)} style={{width:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:4,color:sC[st]||"var(--text)",padding:"4px",fontSize:11}}>
-                  <option value="">Selecionar...</option>
-                  {sts.map(s=><option key={s} value={s}>{s}</option>)}
-                </select>
-              </td>
-              <td style={{verticalAlign:"top"}}>
-                <select value={dif} onChange={e=>uSt(lei.id,ri,"dif",e.target.value)} style={{width:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:4,padding:"4px",fontSize:11}}>
-                  <option value="">—</option>
-                  <option value="Fácil">Fácil</option>
-                  <option value="Médio">Médio</option>
-                  <option value="Difícil">Difícil</option>
-                </select>
-              </td>
-              <td style={{verticalAlign:"top"}}>
-                <textarea defaultValue={nt} onBlur={e=>uSt(lei.id,ri,"note",e.target.value)} placeholder="Expandir anotação..." style={{width:"100%",minHeight:"80px",background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:4,padding:"6px",fontSize:12,resize:"both",fontFamily:"inherit"}}/>
-              </td>
-            </tr>
-          })}
-        </tbody>
-      </table>
-    </div>
-  </div>;
+              <td style={{fontWeight:700,fontSize:12,verticalAlign:"top"}}>{d.id}{isVetado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>VETADO</span></div>}{isRevogado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>REVOGADO</span></div>}</td>
+              <td style={{fontSize:12,lineHeight:1.5,whiteSpace:"pre-wrap",wordBreak:"break-word",verticalAlign:"top",padding:"10px",textDecoration:isInativo?"line-through":"none"}}>{d.txt}{d.alteracao&&<div style={{marginTop:4,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db",textDecoration:"none",fontWeight:400}}>↳ {d.alteracao}</div>}</td>
+              <td style={{verticalAlign:"top"}}><select value={st} onChange={e=>uSt(lei.id,ri,"status",e.target.value)} style={{width:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:4,color:sC[st]||"var(--text)",padding:"4px",fontSize:11}}><option value="">Selecionar...</option>{sts.map(s=><option key={s} value={s}>{s}</option>)}</select></td>
+              <td style={{verticalAlign:"top"}}><select value={dif} onChange={e=>uSt(lei.id,ri,"dif",e.target.value)} style={{width:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:4,padding:"4px",fontSize:11}}><option value="">—</option><option value="Fácil">Fácil</option><option value="Médio">Médio</option><option value="Difícil">Difícil</option></select></td>
+              <td style={{verticalAlign:"top"}}><textarea defaultValue={nt} onBlur={e=>uSt(lei.id,ri,"note",e.target.value)} placeholder="Expandir anotação..." style={{width:"100%",minHeight:"80px",background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:4,padding:"6px",fontSize:12,resize:"both",fontFamily:"inherit"}}/></td>
+            </tr>})}</tbody></table></div></div>;
 }
-
-function TabRemissoes({ds}){const rem=useMemo(()=>extrairRemissoes(ds),[ds]);return <div style={{maxHeight:"70vh",overflow:"auto"}}>{rem.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhuma remissão encontrada</div>:<table className="dt"><thead><tr><th>Origem</th><th>Dispositivo</th><th>Referência</th><th>Contexto</th></tr></thead><tbody>{rem.map((r,i)=><tr key={i}><td style={{fontWeight:700,color:"var(--gold)"}}>{r.origem}</td><td style={{fontSize:12}}>{r.disp}</td><td style={{fontWeight:600,color:"var(--gold)"}}>{r.destino}</td><td style={{fontSize:12}}>{r.ctx}</td></tr>)}</tbody></table>}</div>;}
 
 function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
   const [startArt,setStartArt]=useState("");
   const [tree,setTree]=useState(null);
   const [traced,setTraced]=useState(false);
+  const [loading,setLoading]=useState(false);
   const arts = useMemo(() => ds.filter(d => d.tipo === "ARTIGO" && d.status !== "vetado").map(d => d.id), [ds]);
-
   const tracar = () => {
     if (!startArt) return;
-    const t = buildRecursiveTree(startArt);
-    setTree(t);
-    setTraced(true);
+    setLoading(true);
+    // Usar setTimeout para permitir que o loading indicator renderize antes do processamento pesado
+    setTimeout(() => {
+      try {
+        const t = buildRecursiveTree(startArt);
+        setTree(t);
+        setTraced(true);
+      } catch (e) {
+        console.error("Erro ao traçar teia:", e);
+        setTree(null);
+        setTraced(true);
+      }
+      setLoading(false);
+    }, 50);
   };
 
-  const TreeNode = ({node, depth = 0, isLast = true}) => {
+  // Contagem de nós para estatísticas
+  const countNodes = (node) => {
+    if (!node) return 0;
+    let count = 1;
+    if (node.children) {
+      for (const child of node.children) count += countNodes(child);
+    }
+    return count;
+  };
+  const totalNodes = tree ? countNodes(tree) : 0;
+  const maxDepth = (() => {
+    const calc = (node, d = 0) => {
+      if (!node || !node.children || node.children.length === 0) return d;
+      return Math.max(...node.children.map(c => calc(c, d + 1)));
+    };
+    return tree ? calc(tree) : 0;
+  })();
+
+  const TreeNode = ({node, depth = 0}) => {
     if (!node) return null;
     const isRevogado = node.status === "revogado";
     const hasChildren = node.children && node.children.length > 0;
-    return <div style={{marginLeft: depth > 0 ? 24 : 0, position: "relative"}}>
-      {depth > 0 && <div style={{position:"absolute",left:-16,top:0,width:12,height:20,borderLeft:"2px solid var(--gold)",borderBottom:"2px solid var(--gold)",borderRadius:"0 0 0 6px"}}/>}
-      <div className="cd" style={{padding:"12px 16px",marginBottom:8,borderColor:isRevogado?"#e74c3c":"var(--gold)",opacity:isRevogado?0.7:1,position:"relative"}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+    const hasExternal = node.externalRefs && node.externalRefs.length > 0;
+    return <div style={{marginLeft: depth > 0 ? 20 : 0, position: "relative", minWidth: "fit-content"}}>
+      {depth > 0 && <div style={{position:"absolute",left:-14,top:0,width:10,height:18,borderLeft:"2px solid var(--gold)",borderBottom:"2px solid var(--gold)",borderRadius:"0 0 0 5px"}}/>}
+      <div className="cd" style={{padding:"10px 14px",marginBottom:6,borderColor:isRevogado?"#e74c3c":"var(--gold)",opacity:isRevogado?0.7:1,position:"relative",minWidth:280,maxWidth:700}}>
+        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4,flexWrap:"wrap"}}>
           <span style={{background:isRevogado?"#e74c3c":"var(--grad)",color:"#fff",padding:"2px 10px",borderRadius:12,fontSize:12,fontWeight:700}}>{node.id}</span>
           {isRevogado&&<span className="badge badge-revogado">REVOGADO</span>}
           {node.status==="vigente"&&<span className="badge badge-vigente">VIGENTE</span>}
+          {hasChildren&&<span style={{fontSize:10,color:"var(--text-mute)",marginLeft:"auto"}}>→ {node.children.length} ramificação(ões)</span>}
         </div>
-        <div style={{fontSize:13,lineHeight:1.6,whiteSpace:"pre-wrap",textDecoration:isRevogado?"line-through":"none"}}>{node.text}</div>
-        {node.subs&&node.subs.length>0&&<div style={{marginTop:6,paddingTop:6,borderTop:"1px dashed var(--border)"}}>
-          {node.subs.map((s,j)=><div key={j} style={{fontSize:12,lineHeight:1.5,color:"var(--text-sec)",paddingLeft:12,marginTop:2}}>
+        <div style={{fontSize:12.5,lineHeight:1.6,whiteSpace:"pre-wrap",textDecoration:isRevogado?"line-through":"none"}}>{node.text}</div>
+        {node.subs&&node.subs.length>0&&<div style={{marginTop:5,paddingTop:5,borderTop:"1px dashed var(--border)"}}>
+          {node.subs.map((s,j)=><div key={j} style={{fontSize:11.5,lineHeight:1.5,color:"var(--text-sec)",paddingLeft:10,marginTop:1}}>
             <span style={{color:"var(--gold)",fontWeight:600,marginRight:4}}>{s.id}</span>{s.txt}
             {s.status==="revogado"&&<span className="badge badge-revogado" style={{marginLeft:4}}>REVOGADO</span>}
           </div>)}
         </div>}
-        {node.alteracao&&<div style={{marginTop:4,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db"}}>↳ {node.alteracao}</div>}
-        {isRevogado&&<div style={{marginTop:6,fontSize:11,color:"#e74c3c",fontStyle:"italic"}}>Dispositivo revogado — ramificações não seguidas.</div>}
-        {node.refs.length > 0 && !isRevogado && <div style={{marginTop:6,fontSize:11,color:"var(--text-sec)"}}>Remissões internas: {node.refs.join(", ")}</div>}
+        {node.alteracao&&<div style={{marginTop:3,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db"}}>↳ {node.alteracao}</div>}
+        {isRevogado&&<div style={{marginTop:4,fontSize:11,color:"#e74c3c",fontStyle:"italic"}}>Dispositivo revogado — ramificações não seguidas.</div>}
+        {node.refs.length > 0 && !isRevogado && <div style={{marginTop:4,fontSize:11,color:"var(--text-sec)"}}>Remissões internas: {node.refs.join(", ")}</div>}
+        {hasExternal && !isRevogado && <div style={{marginTop:4,display:"flex",flexWrap:"wrap",gap:4}}>
+          {node.externalRefs.map((ext, j) => <span key={j} style={{display:"inline-flex",alignItems:"center",gap:3,padding:"1px 8px",borderRadius:10,fontSize:10,fontWeight:600,background:"rgba(52,152,219,0.1)",color:"#3498db",border:"1px solid rgba(52,152,219,0.25)"}}>↗ {ext}</span>)}
+        </div>}
       </div>
-      {hasChildren && <div style={{paddingLeft:8}}>
-        {node.children.map((child, i) => <TreeNode key={child?.id||i} node={child} depth={depth + 1} isLast={i === node.children.length - 1}/>)}
+      {hasChildren && <div style={{paddingLeft:6}}>
+        {node.children.map((child, i) => <TreeNode key={child?.id||i} node={child} depth={depth + 1}/>)}
       </div>}
     </div>;
   };
-
   return <div style={{display:"flex",gap:16,height:"70vh"}}>
-    <div style={{width:250,display:"flex",flexDirection:"column",gap:10}}>
+    <div style={{width:250,display:"flex",flexDirection:"column",gap:10,flexShrink:0}}>
       <div style={{fontSize:13,fontWeight:700,color:"var(--gold)"}}>TRAÇAR TEIA</div>
       <select value={startArt} onChange={e=>setStartArt(e.target.value)} style={{padding:"8px",borderRadius:6,fontSize:13}}>
         <option value="">Selecione o Artigo...</option>
         {arts.map(a=><option key={a} value={a}>{a}</option>)}
       </select>
-      <button onClick={tracar} style={{padding:"10px",background:"var(--grad)",color:"#fff",border:"none",borderRadius:7,fontWeight:600,cursor:"pointer"}}>Traçar Teia</button>
+      <button onClick={tracar} disabled={loading||!startArt} style={{padding:"10px",background:loading?"var(--bg-hover)":"var(--grad)",color:loading?"var(--text-sec)":"#fff",border:"none",borderRadius:7,fontWeight:600,cursor:loading?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+        {loading?<><Sp/> Processando...</>:"Traçar Teia"}
+      </button>
+      {traced && tree && <div style={{fontSize:11,color:"var(--text-sec)",lineHeight:1.6,padding:"8px 10px",background:"var(--bg-hover)",borderRadius:6}}>
+        <div style={{fontWeight:600,marginBottom:4}}>Estatísticas:</div>
+        <div>{totalNodes} nó(s) na árvore</div>
+        <div>{maxDepth} nível(is) de profundidade</div>
+        <div>{tree.externalRefs?.length||0} ref(s) externa(s) no nó raiz</div>
+      </div>}
       <div style={{fontSize:11,color:"var(--text-sec)",lineHeight:1.5}}>
         A teia segue <b>todas</b> as remissões internas (mesma lei) recursivamente, formando uma árvore.<br/><br/>
-        Referências a outras leis são ignoradas.<br/>
+        <span style={{color:"#3498db"}}>↗ Azul</span> = referências a outras leis (metadata).<br/>
         Dispositivos <span style={{color:"#e74c3c"}}>revogados</span> são sinalizados e não ramificam.<br/>
         Dispositivos vetados mostram apenas a versão vigente.
       </div>
     </div>
     <div style={{flex:1,overflow:"auto",padding:"10px",background:"var(--bg-hover)",borderRadius:12,border:"1px solid var(--border)"}}>
-      {!traced ? <div style={{textAlign:"center",paddingTop:100,color:"var(--text-sec)"}}>Selecione um artigo para ver a teia de remissões internas.</div>
+      {loading ? <div style={{textAlign:"center",paddingTop:100,color:"var(--text-sec)"}}><Sp/><div style={{marginTop:10}}>Processando teia de remissões...</div></div>
+      : !traced ? <div style={{textAlign:"center",paddingTop:100,color:"var(--text-sec)"}}>Selecione um artigo para ver a teia de remissões internas.</div>
       : !tree ? <div style={{textAlign:"center",paddingTop:100}}>Artigo não encontrado ou sem dispositivo vigente.</div>
-      : <TreeNode node={tree} depth={0}/>}
+      : <div style={{minWidth:"fit-content"}}><TreeNode node={tree} depth={0}/></div>}
     </div>
   </div>;
 }
@@ -659,27 +637,20 @@ function TabIndice({ds,area,onGoToArt}){
   const totalOcorrencias=useMemo(()=>resultadosBusca.reduce((s,r)=>s+r.ocorrencias,0),[resultadosBusca]);
   const buscaAtiva=filtro.trim().length>=3;
   const ctx=useMemo(()=>hierarquia(ds),[ds]);
-
   const highlightText=(text,term)=>{
     if(!term||term.length<3||!text)return text;
     const re=new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");
     const parts=text.split(re);
     return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2}},p):p);
   };
-
-  // Coleta todos os dispositivos de um artigo para o painel expandido
   const getArtigoDisps=(artId)=>{
     const result=[];let inside=false;
     for(const d of ds){
       if(d.tipo==="ARTIGO"&&d.id===artId){inside=true;result.push(d);continue;}
-      if(inside){
-        if(d.tipo==="ARTIGO"||DIV.has(d.tipo))break;
-        result.push(d);
-      }
+      if(inside){if(d.tipo==="ARTIGO"||DIV.has(d.tipo))break;result.push(d);}
     }
     return result;
   };
-
   return <div>
     <div style={{marginBottom:12}}>
       <input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}} placeholder="Buscar qualquer palavra (mínimo 3 caracteres)..." style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:6,padding:"10px 14px",fontSize:14,boxSizing:"border-box"}}/>
@@ -691,12 +662,7 @@ function TabIndice({ds,area,onGoToArt}){
         <table className="dt"><thead><tr><th style={{width:60}}>#</th><th style={{width:80}}>Tipo</th><th style={{width:100}}>Id</th><th style={{width:80}}>Artigo</th><th>Texto</th><th style={{width:40}}>Qtd</th></tr></thead>
         <tbody>{resultadosBusca.map((r,i)=><React.Fragment key={i}>
           <tr style={{opacity:r.status==="vetado"||r.status==="revogado"?0.5:1,cursor:"pointer",background:expandedIdx===i?"var(--gold-subtle)":"inherit"}} onClick={()=>setExpandedIdx(expandedIdx===i?null:i)}>
-            <td>{i+1}</td>
-            <td><span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)"}}>{r.tipo}</span></td>
-            <td style={{fontSize:12,fontWeight:600}}>{r.id}</td>
-            <td style={{color:"var(--gold)",fontWeight:600}}>{r.art}</td>
-            <td style={{fontSize:12,lineHeight:1.5}}>{highlightText((r.txt||"").slice(0,300)+(r.txt?.length>300?"...":""),filtro)}</td>
-            <td style={{fontWeight:700,textAlign:"center",color:"var(--gold)"}}>{r.ocorrencias}</td>
+            <td>{i+1}</td><td><span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)"}}>{r.tipo}</span></td><td style={{fontSize:12,fontWeight:600}}>{r.id}</td><td style={{color:"var(--gold)",fontWeight:600}}>{r.art}</td><td style={{fontSize:12,lineHeight:1.5}}>{highlightText((r.txt||"").slice(0,300)+(r.txt?.length>300?"...":""),filtro)}</td><td style={{fontWeight:700,textAlign:"center",color:"var(--gold)"}}>{r.ocorrencias}</td>
           </tr>
           {expandedIdx===i&&<tr><td colSpan={6} style={{padding:0}}>
             <div style={{padding:"12px 16px",background:"var(--bg-hover)",borderLeft:"3px solid var(--gold)"}}>
@@ -730,36 +696,64 @@ function TabIndice({ds,area,onGoToArt}){
   </div>;
 }
 
+// ALTERAÇÃO ENTREGA 2: TabMapa com sub-camadas sempre recolhidas ao expandir
 function TabMapa({ds}){
   const [selArt,setSelArt]=useState(null);
-  const [collapsed,setCollapsed]=useState({});
+  const [collapsed,setCollapsed]=useState(()=>{
+    // ALTERAÇÃO: Iniciar com TUDO recolhido
+    const initial={};
+    const buildKeys=(nodes,prefix)=>{
+      nodes.forEach((n,i)=>{
+        const k=prefix+"-"+n.id;
+        const hasContent=(n.children&&n.children.length>0)||(n.artigos&&n.artigos.length>0);
+        if(hasContent)initial[k]=true;
+        if(n.children)buildKeys(n.children,k+"-"+i);
+      });
+    };
+    // Estrutura será construída no useMemo abaixo; por ora, retornamos vazio
+    // e usamos um useEffect para setar tudo como collapsed após a primeira renderização
+    return {};
+  });
 
-  const toggle=(key)=>setCollapsed(p=>({...p,[key]:!p[key]}));
+  const toggle=(key)=>{
+    setCollapsed(p=>{
+      const isCurrentlyCollapsed=p[key];
+      if(isCurrentlyCollapsed){
+        // Expandindo esta camada: manter sub-camadas recolhidas (não fazer nada extra)
+        return {...p,[key]:false};
+      }else{
+        // Recolhendo esta camada: recolher também todas as sub-camadas
+        const newState={...p,[key]:true};
+        // Recolher todos os filhos recursivamente
+        Object.keys(p).forEach(k=>{
+          if(k.startsWith(key+"-")){
+            newState[k]=true;
+          }
+        });
+        return newState;
+      }
+    });
+  };
 
-  // Build map of article status (vigente/vetado/revogado) and full hierarchy
   const artStatusMap=useMemo(()=>{
     const m={};
     for(const d of ds){if(d.tipo==="ARTIGO")m[d.id]=d.status||"vigente";}
     return m;
   },[ds]);
 
-  // Build hierarchical structure capturing ALL levels and ALL articles
   const estrutura=useMemo(()=>{
     const mapa=[];
     const stack={PARTE:null,LIVRO:null,"TÍTULO":null,"CAPÍTULO":null,"SEÇÃO":null,"SUBSEÇÃO":null};
     const levels=["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"];
-
     const clearBelow=(tipo)=>{
       const idx=levels.indexOf(tipo);
       for(let i=idx+1;i<levels.length;i++)stack[levels[i]]=null;
     };
-
     const getParent=(tipo)=>{
       const idx=levels.indexOf(tipo);
       for(let i=idx-1;i>=0;i--){if(stack[levels[i]])return stack[levels[i]];}
       return null;
     };
-
     for(const d of ds){
       if(DIV.has(d.tipo)){
         const node={tipo:d.tipo,id:d.id,rub:d.rub,children:[],artigos:[]};
@@ -769,73 +763,63 @@ function TabMapa({ds}){
         if(parent){parent.children.push(node);}
         else{mapa.push(node);}
       }else if(d.tipo==="ARTIGO"){
-        // Find deepest active division to attach article to
         let target=null;
         for(let i=levels.length-1;i>=0;i--){if(stack[levels[i]]){target=stack[levels[i]];break;}}
         const artEntry={id:d.id,status:d.status||"vigente"};
         if(target){target.artigos.push(artEntry);}
-        // Articles outside any division are rare, but handle gracefully
       }
     }
     return mapa;
   },[ds]);
 
-  // Get full article content + sub-devices for the detail panel
+  // ALTERAÇÃO ENTREGA 2: ao montar, iniciar com tudo recolhido
+  useEffect(()=>{
+    const all={};
+    const markAll=(nodes,prefix)=>{
+      nodes.forEach((n,i)=>{
+        const k=prefix+"-"+n.id;
+        const hasContent=(n.children&&n.children.length>0)||(n.artigos&&n.artigos.length>0);
+        if(hasContent)all[k]=true;
+        if(n.children)markAll(n.children,k+"-"+i);
+      });
+    };
+    markAll(estrutura,"root");
+    setCollapsed(all);
+  },[estrutura]);
+
   const artDetail=useMemo(()=>{
     if(!selArt)return null;
     const result=[];let inside=false;
     for(const d of ds){
-      if(d.tipo==="ARTIGO"&&d.id===selArt){
-        inside=true;result.push(d);continue;
-      }
-      if(inside){
-        if(d.tipo==="ARTIGO"||DIV.has(d.tipo))break;
-        result.push(d);
-      }
+      if(d.tipo==="ARTIGO"&&d.id===selArt){inside=true;result.push(d);continue;}
+      if(inside){if(d.tipo==="ARTIGO"||DIV.has(d.tipo))break;result.push(d);}
     }
     return result.length>0?result:null;
   },[ds,selArt]);
-
-  // Compute the hierarchy path for the selected article
   const artPath=useMemo(()=>{
     if(!selArt)return"";
     const ctx=hierarquia(ds);
     return ctx[selArt]||"";
   },[ds,selArt]);
 
-  // Render article badges
   const renderArtigos=(artigos,pathKey)=>{
     if(!artigos||artigos.length===0)return null;
     return <div style={{display:"flex",flexWrap:"wrap",gap:3,marginTop:4,marginLeft:4}}>
       {artigos.map((a,i)=>{
-        const isRev=a.status==="revogado";
-        const isVet=a.status==="vetado";
-        const isInativo=isRev||isVet;
-        const isSel=selArt===a.id;
+        const isRev=a.status==="revogado";const isVet=a.status==="vetado";const isInativo=isRev||isVet;const isSel=selArt===a.id;
         return <span key={pathKey+"-"+i}
           onClick={(e)=>{e.stopPropagation();setSelArt(a.id);}}
-          style={{
-            background:isSel?"var(--gold)":isInativo?"rgba(231,76,60,0.15)":"var(--gold-subtle)",
-            color:isSel?"#fff":isInativo?"#e74c3c":"var(--gold)",
-            padding:"2px 7px",borderRadius:4,fontSize:11,cursor:"pointer",
-            textDecoration:isInativo?"line-through":"none",
-            fontWeight:isSel?700:400,
-            transition:"all .12s",
-            border:isSel?"1px solid var(--gold)":"1px solid transparent"
-          }}
+          style={{background:isSel?"var(--gold)":isInativo?"rgba(231,76,60,0.15)":"var(--gold-subtle)",color:isSel?"#fff":isInativo?"#e74c3c":"var(--gold)",padding:"2px 7px",borderRadius:4,fontSize:11,cursor:"pointer",textDecoration:isInativo?"line-through":"none",fontWeight:isSel?700:400,transition:"all .12s",border:isSel?"1px solid var(--gold)":"1px solid transparent"}}
           title={isRev?"Revogado":isVet?"Vetado":"Vigente"}
         >{a.id}</span>;
       })}
     </div>;
   };
 
-  // Recursive render for any hierarchy level
   const renderNode=(node,depth,pathKey)=>{
     const key=pathKey+"-"+node.id;
     const isOpen=!collapsed[key];
     const hasContent=(node.children&&node.children.length>0)||(node.artigos&&node.artigos.length>0);
-
-    // Color/style by level type
     const levelStyle={
       "PARTE":{bg:"var(--grad)",color:"#fff",fontWeight:700,fontSize:14,borderRadius:8,padding:"10px 14px"},
       "LIVRO":{bg:"var(--gold)",color:"#fff",fontWeight:700,fontSize:13,borderRadius:7,padding:"8px 12px"},
@@ -846,12 +830,9 @@ function TabMapa({ds}){
     };
     const st=levelStyle[node.tipo]||levelStyle["SEÇÃO"];
     const indent=depth*12;
-
     return <div key={key} style={{marginLeft:indent,marginTop:depth===0?8:4}}>
-      <div
-        onClick={()=>{if(hasContent)toggle(key);}}
-        style={{background:st.bg,color:st.color,fontWeight:st.fontWeight,fontSize:st.fontSize,borderRadius:st.borderRadius,padding:st.padding,cursor:hasContent?"pointer":"default",display:"flex",alignItems:"center",gap:6,border:node.tipo==="CAPÍTULO"||node.tipo==="SEÇÃO"?"1px solid var(--border)":"none",transition:"opacity .12s",userSelect:"none"}}
-      >
+      <div onClick={()=>{if(hasContent)toggle(key);}}
+        style={{background:st.bg,color:st.color,fontWeight:st.fontWeight,fontSize:st.fontSize,borderRadius:st.borderRadius,padding:st.padding,cursor:hasContent?"pointer":"default",display:"flex",alignItems:"center",gap:6,border:node.tipo==="CAPÍTULO"||node.tipo==="SEÇÃO"?"1px solid var(--border)":"none",transition:"opacity .12s",userSelect:"none"}}>
         {hasContent&&<span style={{fontSize:10,opacity:.7,flexShrink:0,transition:"transform .15s",transform:isOpen?"rotate(90deg)":"rotate(0deg)"}}>▶</span>}
         <span style={{fontFamily:"'Segoe UI',sans-serif"}}>{node.tipo} — </span>
         <b>{node.id}</b>
@@ -866,7 +847,6 @@ function TabMapa({ds}){
   };
 
   return <div style={{display:"flex",gap:16,height:"70vh"}}>
-    {/* Painel esquerdo: árvore hierárquica */}
     <div style={{flex:"1 1 55%",overflow:"auto",paddingRight:8}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
         <div style={{fontSize:13,fontWeight:700,color:"var(--gold)"}}>ESTRUTURA HIERÁRQUICA</div>
@@ -895,30 +875,20 @@ function TabMapa({ds}){
       {estrutura.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhuma estrutura hierárquica encontrada</div>
       :estrutura.map((node,i)=>renderNode(node,0,"root"))}
     </div>
-    {/* Painel direito: conteúdo do artigo selecionado */}
     <div style={{flex:"0 0 40%",minWidth:300,overflow:"auto",background:"var(--bg-hover)",borderRadius:12,border:"1px solid var(--border)",padding:16}}>
-      {!selArt?<div style={{textAlign:"center",paddingTop:80,color:"var(--text-sec)"}}>
-        <div style={{fontSize:28,marginBottom:12}}>📑</div>
-        <div style={{fontSize:14}}>Selecione um artigo no mapa para visualizar seu conteúdo.</div>
-      </div>
+      {!selArt?<div style={{textAlign:"center",paddingTop:80,color:"var(--text-sec)"}}><div style={{fontSize:28,marginBottom:12}}>📑</div><div style={{fontSize:14}}>Selecione um artigo no mapa para visualizar seu conteúdo.</div></div>
       :!artDetail?<div style={{textAlign:"center",paddingTop:80,color:"var(--text-sec)"}}>Artigo não encontrado nos dispositivos.</div>
       :<div className="fade">
         {artPath&&<div style={{fontSize:11,color:"var(--text-sec)",marginBottom:8,fontStyle:"italic",lineHeight:1.5}}>{artPath}</div>}
         {artDetail.map((d,i)=>{
-          const isArt=d.tipo==="ARTIGO";
-          const isRev=d.status==="revogado";
-          const isVet=d.status==="vetado";
-          const isInativo=isRev||isVet;
+          const isArt=d.tipo==="ARTIGO";const isRev=d.status==="revogado";const isVet=d.status==="vetado";const isInativo=isRev||isVet;
           return <div key={i} style={{marginBottom:isArt?8:2,paddingLeft:isArt?0:16,opacity:isInativo?0.6:1}}>
             <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
               <span style={{color:isInativo?"#e74c3c":"var(--gold)",fontWeight:700,fontSize:isArt?14:12}}>{d.id}</span>
               {isArt&&<span className={isInativo?"badge badge-revogado":"badge badge-vigente"}>{isVet?"VETADO":isRev?"REVOGADO":"VIGENTE"}</span>}
               {!isArt&&isInativo&&<span className="badge badge-revogado" style={{fontSize:9}}>{isVet?"VETADO":"REVOGADO"}</span>}
             </div>
-            <div style={{fontSize:isArt?13:12,lineHeight:1.6,textDecoration:isInativo?"line-through":"none",color:"var(--text)"}}>
-              {d.rub&&<i style={{color:"var(--text-sec)"}}>{d.rub} </i>}
-              {d.txt}
-            </div>
+            <div style={{fontSize:isArt?13:12,lineHeight:1.6,textDecoration:isInativo?"line-through":"none",color:"var(--text)"}}>{d.rub&&<i style={{color:"var(--text-sec)"}}>{d.rub} </i>}{d.txt}</div>
             {d.alteracao&&<div style={{marginTop:2,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db",textDecoration:"none"}}>↳ {d.alteracao}</div>}
           </div>;
         })}
@@ -955,19 +925,7 @@ function TabAnexos({lei,addAnexo,delAnexo}){const [uping,setUp]=useState(false);
   </div>;
 }
 
-function TabTutor({lei,area,apiKey,saveKey}){const [msgs,setMsgs]=useState([]);const [inp,setInp]=useState("");const [ld,setLd]=useState(false);const [localKey,setLocalKey]=useState(apiKey);const cr=useRef(null);
-  useEffect(()=>{cr.current&&(cr.current.scrollTop=cr.current.scrollHeight);},[msgs]);
-  const send=async()=>{if(!inp.trim()||ld||!apiKey)return;const m=inp.trim();setInp("");setMsgs(p=>[...p,{role:"user",text:m}]);setLd(true);
-    try{const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1024,system:`Você é o TERA Tutor especialista em ${AREAS[area]?.nome}. Lei: ${lei.nome}.`,messages:[{role:"user",content:m}]})});
-      const d=await r.json();setMsgs(p=>[...p,{role:"assistant",text:d.content?.[0]?.text||"Erro."}]);}catch(e){setMsgs(p=>[...p,{role:"assistant",text:"Erro: "+e.message}]);}setLd(false);};
-  if(!apiKey)return <div className="cd" style={{padding:20}}><div style={{fontWeight:700,marginBottom:10}}>Configurar API Key</div><input value={localKey} onChange={e=>setLocalKey(e.target.value)} placeholder="sk-ant-..." style={{width:"100%",padding:10,marginBottom:10}}/><button onClick={()=>saveKey(localKey)} className="btn-primary">Salvar</button></div>;
-  return <div style={{display:"flex",flexDirection:"column",height:"60vh"}}>
-    <div ref={cr} style={{flex:1,overflowY:"auto",padding:10}}>{msgs.map((m,i)=><div key={i} style={{marginBottom:10,textAlign:m.role==="user"?"right":"left"}}><div style={{display:"inline-block",padding:10,borderRadius:10,background:m.role==="user"?"var(--grad)":"var(--bg-hover)",color:m.role==="user"?"#fff":"var(--text)"}}>{m.text}</div></div>)}</div>
-    <div style={{display:"flex",gap:10}}><input value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} style={{flex:1,padding:10}}/><button onClick={send} className="btn-primary">Enviar</button></div>
-  </div>;
-}
-
-// ═══ SABATINA ═══
+// ALTERAÇÃO ENTREGA 2: "Sabatina" → "Perguntas e Respostas", "Corrigir com IA" → "Verificar Respostas"
 function TabSabatina({lei,area,apiKey,saveKey}){
   const [perguntas,setPerguntas]=useState(()=>LS("t3-sab-"+lei.id)||[]);
   const [respostas,setRespostas]=useState(()=>LS("t3-sab-r-"+lei.id)||{});
@@ -976,10 +934,8 @@ function TabSabatina({lei,area,apiKey,saveKey}){
   const [uploading,setUploading]=useState(false);
   const [localKey,setLocalKey]=useState(apiKey);
   const fRef=useRef(null);
-
   const salvarRespostas=(novas)=>{setRespostas(novas);LS("t3-sab-r-"+lei.id,novas);};
   const salvarCorrecoes=(novas)=>{setCorrecoes(novas);LS("t3-sab-c-"+lei.id,novas);};
-
   const uploadDocx=async(e)=>{
     const f=e.target.files?.[0];if(!f)return;
     setUploading(true);
@@ -987,17 +943,11 @@ function TabSabatina({lei,area,apiKey,saveKey}){
       const ab=await f.arrayBuffer();
       const result=await mammoth.extractRawText({arrayBuffer:ab});
       const text=result.value||"";
-      // Extrai perguntas numeradas (1. Pergunta... 2. Pergunta... etc)
       const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);
       const qs=[];let current="";
       for(const line of lines){
         const match=line.match(/^(\d+)\s*[\.\)\-]\s*(.+)/);
-        if(match){
-          if(current)qs.push(current);
-          current=match[2].trim();
-        }else if(current){
-          current+=" "+line;
-        }
+        if(match){if(current)qs.push(current);current=match[2].trim();}else if(current){current+=" "+line;}
       }
       if(current)qs.push(current);
       if(qs.length>0){
@@ -1009,22 +959,19 @@ function TabSabatina({lei,area,apiKey,saveKey}){
     setUploading(false);
     if(fRef.current)fRef.current.value="";
   };
-
   const corrigir=async(idx)=>{
     if(!apiKey){alert("Configure a API Key primeiro.");return;}
     const pergunta=perguntas[idx];
     const resposta=respostas[idx]||"";
-    if(!resposta.trim()){alert("Escreva sua resposta antes de solicitar a correção.");return;}
+    if(!resposta.trim()){alert("Escreva sua resposta antes de solicitar a verificação.");return;}
     setLoading(p=>({...p,[idx]:true}));
     try{
-      // Coleta contexto relevante da lei (artigos com termos-chave da pergunta)
       const termos=pergunta.toLowerCase().split(/\s+/).filter(t=>t.length>3);
       const artigosRelevantes=lei.ds.filter(d=>{
         if(d.status==="vetado")return false;
         const txt=((d.txt||"")+" "+(d.id||"")+" "+(d.rub||"")).toLowerCase();
         return termos.some(t=>txt.includes(t));
       }).slice(0,30).map(d=>`[${d.tipo} ${d.id}] ${d.txt}`).join("\n");
-
       const systemPrompt=`Você é um professor jurídico tributário especialista em ${AREAS[area]?.nome}, atuando como examinador oral rigoroso mas justo.
 Sua função é corrigir a resposta do aluno com base EXCLUSIVAMENTE na lei "${lei.nome}".
 
@@ -1038,10 +985,9 @@ REGRAS DE CORREÇÃO:
 4. Se a resposta estiver incompleta, indique o que faltou com a referência legal
 5. Seja técnico mas didático — como um professor em banca de exame oral
 6. Responda em português brasileiro`;
-
       const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2048,system:systemPrompt,messages:[{role:"user",content:`PERGUNTA DA SABATINA:\n${pergunta}\n\nRESPOSTA DO ALUNO:\n${resposta}\n\nCorrija a resposta acima com base legal específica na lei "${lei.nome}".`}]})});
       const d=await r.json();
-      const texto=d.content?.[0]?.text||"Erro na correção.";
+      const texto=d.content?.[0]?.text||"Erro na verificação.";
       const novas={...correcoes,[idx]:texto};
       salvarCorrecoes(novas);
     }catch(e){
@@ -1050,18 +996,63 @@ REGRAS DE CORREÇÃO:
     }
     setLoading(p=>({...p,[idx]:false}));
   };
-
-  const limparTudo=()=>{if(confirm("Limpar todas as perguntas, respostas e correções desta sabatina?")){
+  const limparTudo=()=>{if(confirm("Limpar todas as perguntas, respostas e verificações?")){
     setPerguntas([]);setRespostas({});setCorrecoes({});
     LS("t3-sab-"+lei.id,null);LS("t3-sab-r-"+lei.id,null);LS("t3-sab-c-"+lei.id,null);
   }};
 
-  if(!apiKey)return <div className="cd" style={{padding:20}}><div style={{fontWeight:700,marginBottom:10}}>Configurar API Key para Correção IA</div><input value={localKey} onChange={e=>setLocalKey(e.target.value)} placeholder="sk-ant-..." style={{width:"100%",padding:10,marginBottom:10,borderRadius:6}}/><button onClick={()=>saveKey(localKey)} className="btn-primary">Salvar</button></div>;
+  const exportDocx=()=>{
+    try{
+      // Construir HTML formatado compatível com Word
+      let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8">
+<style>
+  body { font-family: Calibri, sans-serif; font-size: 11pt; color: #1a1a1a; margin: 2cm; }
+  .titulo { font-size: 14pt; font-weight: bold; color: #1a365d; text-align: center; margin-bottom: 20pt; }
+  .subtitulo { font-size: 10pt; color: #666; text-align: center; margin-bottom: 30pt; }
+  .pergunta { font-size: 11pt; font-weight: bold; color: #1a1a1a; margin-top: 18pt; margin-bottom: 6pt; }
+  .numero { color: #B8965A; font-weight: bold; }
+  .resposta-label { font-size: 10pt; font-weight: bold; color: #2e86ab; margin-top: 8pt; margin-bottom: 4pt; }
+  .resposta { font-size: 11pt; color: #333; margin-bottom: 4pt; padding-left: 12pt; border-left: 3px solid #B8965A; line-height: 1.6; }
+  .sem-resposta { font-size: 10pt; color: #999; font-style: italic; margin-bottom: 4pt; padding-left: 12pt; }
+  .separador { border: none; border-top: 1px solid #e0dcd4; margin: 14pt 0; }
+</style></head><body>`;
 
+      html += `<div class="titulo">Perguntas e Respostas</div>`;
+      html += `<div class="subtitulo">${lei.nome} — Exportado em ${new Date().toLocaleDateString("pt-BR")}</div>`;
+
+      for(let i=0;i<perguntas.length;i++){
+        const resp = (respostas[i]||"").trim();
+        html += `<div class="pergunta"><span class="numero">${i+1}.</span> ${perguntas[i].replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>`;
+        if(resp){
+          html += `<div class="resposta-label">Resposta:</div>`;
+          html += `<div class="resposta">${resp.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br/>")}</div>`;
+        }else{
+          html += `<div class="sem-resposta">(Sem resposta)</div>`;
+        }
+        if(i<perguntas.length-1) html += `<hr class="separador"/>`;
+      }
+
+      html += `</body></html>`;
+
+      const blob = new Blob(['\ufeff'+html], {type:'application/msword'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = lei.nome.replace(/[^a-zA-Z0-9À-ü\s\-_]/g,"").trim().slice(0,50) + "_Perguntas_Respostas.doc";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }catch(e){
+      alert("Erro ao exportar: "+e.message);
+    }
+  };
+  if(!apiKey)return <div className="cd" style={{padding:20}}><div style={{fontWeight:700,marginBottom:10}}>Configurar API Key para Verificação IA</div><input value={localKey} onChange={e=>setLocalKey(e.target.value)} placeholder="sk-ant-..." style={{width:"100%",padding:10,marginBottom:10,borderRadius:6}}/><button onClick={()=>saveKey(localKey)} className="btn-primary">Salvar</button></div>;
   return <div className="fade">
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14,flexWrap:"wrap",gap:8}}>
       <div>
-        <h3 style={{margin:0,fontSize:16}}>Sabatina — {lei.nome}</h3>
+        <h3 style={{margin:0,fontSize:16}}>Perguntas e Respostas — {lei.nome}</h3>
         <div style={{fontSize:12,color:"var(--text-sec)",marginTop:2}}>{perguntas.length} pergunta(s) carregada(s)</div>
       </div>
       <div style={{display:"flex",gap:6}}>
@@ -1069,39 +1060,272 @@ REGRAS DE CORREÇÃO:
           {uploading?<><Sp/> Processando...</>:<><Ic d={IC.up} s={13} c="#fff"/> Carregar .docx</>}
           <input ref={fRef} type="file" accept=".docx" onChange={uploadDocx} style={{display:"none"}}/>
         </label>
+        {perguntas.length>0&&<button onClick={exportDocx} style={{display:"inline-flex",alignItems:"center",gap:5,padding:"7px 14px",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:6,cursor:"pointer",fontSize:13,fontWeight:600,color:"var(--text)"}}><Ic d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" s={13} c="var(--gold)"/> Exportar .docx</button>}
         {perguntas.length>0&&<button onClick={limparTudo} className="btn-secondary" style={{fontSize:12,padding:"7px 12px",color:"var(--err)"}}>Limpar</button>}
       </div>
     </div>
-
     {perguntas.length===0?
-      <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>
-        <div style={{fontSize:48,marginBottom:12}}>📝</div>
-        <div style={{fontSize:16,marginBottom:8}}>Nenhuma sabatina carregada</div>
-        <div style={{fontSize:13,lineHeight:1.6}}>Faça upload de um arquivo .docx com perguntas numeradas.<br/>Formato esperado:<br/><code style={{background:"var(--bg-hover)",padding:"2px 6px",borderRadius:3}}>1. Pergunta um?<br/>2. Pergunta dois?</code></div>
-      </div>
+      <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}><div style={{fontSize:48,marginBottom:12}}>📝</div><div style={{fontSize:16,marginBottom:8}}>Nenhuma pergunta carregada</div><div style={{fontSize:13,lineHeight:1.6}}>Faça upload de um arquivo .docx com perguntas numeradas.<br/>Formato esperado:<br/><code style={{background:"var(--bg-hover)",padding:"2px 6px",borderRadius:3}}>1. Pergunta um?<br/>2. Pergunta dois?</code></div></div>
     :<div style={{display:"flex",flexDirection:"column",gap:16,maxHeight:"68vh",overflow:"auto",paddingRight:8}}>
       {perguntas.map((p,idx)=><div key={idx} className="cd" style={{padding:16}}>
         <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:10}}>
           <span style={{background:"var(--grad)",color:"#fff",minWidth:28,height:28,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,flexShrink:0}}>{idx+1}</span>
           <div style={{fontSize:14,fontWeight:600,lineHeight:1.5,flex:1}}>{p}</div>
         </div>
-        <textarea
-          value={respostas[idx]||""}
-          onChange={e=>{const novas={...respostas,[idx]:e.target.value};salvarRespostas(novas);}}
-          placeholder="Escreva sua resposta aqui..."
-          style={{width:"100%",minHeight:100,background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:8,padding:"10px 12px",fontSize:13,lineHeight:1.6,resize:"vertical",fontFamily:"inherit",boxSizing:"border-box"}}
-        />
+        <textarea value={respostas[idx]||""} onChange={e=>{const novas={...respostas,[idx]:e.target.value};salvarRespostas(novas);}} placeholder="Escreva sua resposta aqui..." style={{width:"100%",minHeight:100,background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:8,padding:"10px 12px",fontSize:13,lineHeight:1.6,resize:"vertical",fontFamily:"inherit",boxSizing:"border-box"}}/>
         <div style={{display:"flex",justifyContent:"flex-end",marginTop:8}}>
           <button onClick={()=>corrigir(idx)} disabled={loading[idx]} style={{padding:"8px 16px",background:loading[idx]?"var(--bg-hover)":"var(--grad)",color:loading[idx]?"var(--text-sec)":"#fff",border:"none",borderRadius:6,fontSize:13,fontWeight:600,cursor:loading[idx]?"not-allowed":"pointer",display:"flex",alignItems:"center",gap:6}}>
-            {loading[idx]?<><Sp/> Corrigindo...</>:"✏️ Corrigir com IA"}
+            {loading[idx]?<><Sp/> Verificando...</>:"✏️ Verificar Respostas"}
           </button>
         </div>
         {correcoes[idx]&&<div style={{marginTop:10,padding:"12px 16px",background:"var(--bg-hover)",borderRadius:8,borderLeft:"3px solid var(--gold)",fontSize:13,lineHeight:1.7,whiteSpace:"pre-wrap"}}>
-          <div style={{fontWeight:700,color:"var(--gold)",marginBottom:6,fontSize:12}}>CORREÇÃO DO PROFESSOR IA</div>
+          <div style={{fontWeight:700,color:"var(--gold)",marginBottom:6,fontSize:12}}>VERIFICAÇÃO DO PROFESSOR IA</div>
           {correcoes[idx]}
         </div>}
       </div>)}
     </div>}
+  </div>;
+}
+
+// ═══ E-CONSULTOR ═══
+function EConsultor({lib}){
+  const [sub,setSub]=useState("anotacoes");
+  const subs=[{id:"anotacoes",lb:"Anotações"},{id:"econsulta",lb:"E-Consulta"}];
+  return <div className="fade">
+    <h2 style={{fontSize:20,fontWeight:700,marginBottom:12}}>E-Consultor</h2>
+    <div style={{display:"flex",gap:0,borderBottom:"1px solid var(--border)",marginBottom:14}}>{subs.map(s=><button key={s.id} className={`stab ${sub===s.id?"on":""}`} onClick={()=>setSub(s.id)}>{s.lb}</button>)}</div>
+    {sub==="anotacoes"&&<EConsultorAnotacoes lib={lib}/>}
+    {sub==="econsulta"&&<EConsultorBusca lib={lib}/>}
+  </div>;
+}
+
+function EConsultorAnotacoes({lib}){
+  const [temas,setTemas]=useState(()=>LS("t3-temas")||[]);
+  const [notas,setNotas]=useState(()=>LS("t3-notas")||[]);
+  const [temaSel,setTemaSel]=useState("");
+  const [leiSel,setLeiSel]=useState("");
+  const [texto,setTexto]=useState("");
+  const [viewMode,setViewMode]=useState("form"); // "form" | "list"
+  const [temaView,setTemaView]=useState(null); // tema selecionado para visualizar notas
+  const [editNota,setEditNota]=useState(null); // nota em edição
+  const [novoTema,setNovoTema]=useState("");
+
+  const salvarTemas=(t)=>{setTemas(t);LS("t3-temas",t);};
+  const salvarNotas=(n)=>{setNotas(n);LS("t3-notas",n);};
+
+  const addTema=()=>{
+    const nome=novoTema.trim();
+    if(!nome){alert("Digite o nome do tema.");return;}
+    if(temas.includes(nome)){alert("Esse tema já existe.");return;}
+    salvarTemas([...temas,nome]);
+    setNovoTema("");
+  };
+
+  const delTema=(tema)=>{
+    const notasTema=notas.filter(n=>n.tema===tema);
+    if(notasTema.length>0){
+      if(!confirm(`O tema "${tema}" possui ${notasTema.length} anotação(ões). Deseja excluir o tema e todas as anotações vinculadas?`))return;
+      salvarNotas(notas.filter(n=>n.tema!==tema));
+    }
+    salvarTemas(temas.filter(t=>t!==tema));
+    if(temaView===tema){setTemaView(null);setViewMode("form");}
+  };
+
+  const addNota=()=>{
+    if(!temaSel){alert("Selecione um tema.");return;}
+    if(!texto.trim()){alert("Escreva a anotação.");return;}
+    const nova={
+      id:Date.now()+"-"+Math.random().toString(36).slice(2,8),
+      tema:temaSel,
+      lei:leiSel||"",
+      leiNome:leiSel?lib.find(l=>l.id===leiSel)?.nome||"":"",
+      texto:texto.trim(),
+      data:new Date().toLocaleDateString("pt-BR"),
+      dataISO:new Date().toISOString()
+    };
+    salvarNotas([nova,...notas]);
+    setTexto("");
+  };
+
+  const updateNota=(id,novoTexto)=>{
+    salvarNotas(notas.map(n=>n.id===id?{...n,texto:novoTexto,dataEdit:new Date().toLocaleDateString("pt-BR")}:n));
+    setEditNota(null);
+  };
+
+  const deleteNota=(id)=>{
+    if(!confirm("Excluir esta anotação?"))return;
+    salvarNotas(notas.filter(n=>n.id!==id));
+    setEditNota(null);
+  };
+
+  const limparForm=()=>{setTemaSel("");setLeiSel("");setTexto("");};
+
+  const notasDoTema=temaView?notas.filter(n=>n.tema===temaView):[];
+
+  return <div style={{display:"flex",gap:16,height:"68vh"}}>
+    {/* PAINEL ESQUERDO: TEMAS */}
+    <div style={{width:240,flexShrink:0,display:"flex",flexDirection:"column",border:"2px solid var(--gold)",borderRadius:12,padding:12,overflow:"hidden"}}>
+      <div style={{fontSize:14,fontWeight:700,marginBottom:10,color:"var(--gold)"}}>TEMAS</div>
+      <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:4,marginBottom:10}}>
+        {temas.length===0?<div style={{fontSize:12,color:"var(--text-mute)",textAlign:"center",padding:20}}>Nenhum tema cadastrado</div>
+        :temas.map((t,i)=><div key={i}
+          onClick={()=>{setTemaView(t);setViewMode("list");}}
+          style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 10px",borderRadius:6,cursor:"pointer",background:temaView===t?"var(--gold-subtle)":"var(--bg-hover)",border:temaView===t?"1px solid var(--gold)":"1px solid transparent",transition:"all .12s"}}>
+          <span style={{fontSize:13,fontWeight:temaView===t?600:400,color:temaView===t?"var(--gold)":"var(--text)"}}>{t}</span>
+          <div style={{display:"flex",gap:4,alignItems:"center"}}>
+            <span style={{fontSize:10,color:"var(--text-mute)"}}>{notas.filter(n=>n.tema===t).length}</span>
+            <button onClick={e=>{e.stopPropagation();delTema(t);}} style={{background:"none",border:"none",cursor:"pointer",padding:2,lineHeight:1}} title="Excluir tema"><Ic d={IC.tr} s={11} c="var(--text-mute)"/></button>
+          </div>
+        </div>)}
+      </div>
+      <div style={{display:"flex",gap:4}}>
+        <input value={novoTema} onChange={e=>setNovoTema(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")addTema();}} placeholder="Novo tema..." style={{flex:1,padding:"7px 10px",borderRadius:6,fontSize:12}}/>
+        <button onClick={addTema} style={{padding:"7px 12px",background:"var(--grad)",color:"#fff",border:"none",borderRadius:6,fontSize:12,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap"}}>Incluir</button>
+      </div>
+    </div>
+
+    {/* PAINEL DIREITO: FORMULÁRIO OU LISTA */}
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      {viewMode==="list"&&temaView?<div style={{display:"flex",flexDirection:"column",flex:1,overflow:"hidden"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+          <div><span style={{fontSize:16,fontWeight:700}}>Anotações — </span><span style={{fontSize:16,fontWeight:700,color:"var(--gold)"}}>{temaView}</span><span style={{fontSize:12,color:"var(--text-sec)",marginLeft:8}}>({notasDoTema.length} anotação(ões))</span></div>
+          <button onClick={()=>{setViewMode("form");setTemaView(null);}} style={{padding:"6px 14px",border:"1px solid var(--border)",borderRadius:6,background:"none",cursor:"pointer",fontSize:12,color:"var(--text-sec)"}}>← Voltar</button>
+        </div>
+        <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:8}}>
+          {notasDoTema.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhuma anotação neste tema</div>
+          :notasDoTema.map(n=><div key={n.id} className="cd" style={{padding:14}}>
+            {editNota===n.id?<div>
+              <textarea defaultValue={n.texto} id={"edit-"+n.id} style={{width:"100%",minHeight:80,background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:6,padding:10,fontSize:13,resize:"vertical",fontFamily:"inherit",boxSizing:"border-box"}}/>
+              <div style={{display:"flex",gap:6,marginTop:8}}>
+                <button onClick={()=>{const el=document.getElementById("edit-"+n.id);if(el)updateNota(n.id,el.value);}} style={{padding:"6px 14px",background:"var(--grad)",color:"#fff",border:"none",borderRadius:6,fontSize:12,fontWeight:600,cursor:"pointer"}}>Salvar</button>
+                <button onClick={()=>setEditNota(null)} style={{padding:"6px 14px",border:"1px solid var(--border)",borderRadius:6,background:"none",cursor:"pointer",fontSize:12,color:"var(--text-sec)"}}>Cancelar</button>
+                <button onClick={()=>deleteNota(n.id)} style={{padding:"6px 14px",border:"1px solid #e74c3c",borderRadius:6,background:"none",cursor:"pointer",fontSize:12,color:"#e74c3c",marginLeft:"auto"}}>Excluir</button>
+              </div>
+            </div>
+            :<div onClick={()=>setEditNota(n.id)} style={{cursor:"pointer"}}>
+              <div style={{display:"flex",gap:8,marginBottom:6,flexWrap:"wrap"}}>
+                <span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)"}}>{n.tema}</span>
+                {n.leiNome&&<span className="badge" style={{background:"rgba(52,152,219,0.1)",color:"#3498db"}}>{n.leiNome}</span>}
+                <span style={{fontSize:10,color:"var(--text-mute)",marginLeft:"auto"}}>{n.data}{n.dataEdit?" (editado "+n.dataEdit+")":""}</span>
+              </div>
+              <div style={{fontSize:13,lineHeight:1.6,whiteSpace:"pre-wrap"}}>{n.texto}</div>
+            </div>}
+          </div>)}
+        </div>
+      </div>
+      :<div style={{display:"flex",flexDirection:"column",flex:1}}>
+        <div style={{fontSize:16,fontWeight:700,marginBottom:14}}>INCLUIR ANOTAÇÕES</div>
+        <div style={{display:"flex",gap:10,marginBottom:12}}>
+          <select value={temaSel} onChange={e=>setTemaSel(e.target.value)} style={{flex:1,padding:"10px",borderRadius:6,fontSize:13}}>
+            <option value="">Selecionar Tema...</option>
+            {temas.map(t=><option key={t} value={t}>{t}</option>)}
+          </select>
+          <select value={leiSel} onChange={e=>setLeiSel(e.target.value)} style={{flex:1,padding:"10px",borderRadius:6,fontSize:13}}>
+            <option value="">Selecionar Lei (opcional)...</option>
+            {lib.map(l=><option key={l.id} value={l.id}>{l.nome}</option>)}
+          </select>
+        </div>
+        <textarea value={texto} onChange={e=>setTexto(e.target.value)} placeholder="Escreva sua anotação aqui..." style={{flex:1,minHeight:200,background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:8,padding:"12px 14px",fontSize:13,lineHeight:1.6,resize:"vertical",fontFamily:"inherit",boxSizing:"border-box"}}/>
+        <div style={{display:"flex",gap:10,marginTop:12,justifyContent:"flex-end"}}>
+          <button onClick={limparForm} style={{padding:"10px 24px",border:"1px solid var(--border)",borderRadius:6,background:"none",cursor:"pointer",fontSize:13,color:"var(--text-sec)"}}>Limpar</button>
+          <button onClick={addNota} style={{padding:"10px 24px",background:"var(--grad)",color:"#fff",border:"none",borderRadius:6,fontSize:13,fontWeight:600,cursor:"pointer"}}>Incluir</button>
+        </div>
+      </div>}
+    </div>
+  </div>;
+}
+
+function EConsultorBusca({lib}){
+  const [notas]=useState(()=>LS("t3-notas")||[]);
+  const [temas]=useState(()=>LS("t3-temas")||[]);
+  const [filtroTema,setFiltroTema]=useState("");
+  const [filtroLei,setFiltroLei]=useState("");
+  const [filtroTexto,setFiltroTexto]=useState("");
+
+  // Índice invertido pré-construído para busca otimizada
+  const indiceInvertido = useMemo(()=>{
+    const idx = new Map(); // Map<trigrama, Set<notaId>>
+    for(const n of notas){
+      const texto = ((n.tema||"")+" "+(n.leiNome||"")+" "+(n.texto||"")).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+      // Extrair tokens de 3+ caracteres
+      const tokens = texto.match(/\w{3,}/g)||[];
+      for(const token of tokens){
+        // Gerar substrings de 3 chars para busca parcial
+        for(let i=0;i<=token.length-3;i++){
+          const tri = token.slice(i,i+3);
+          if(!idx.has(tri)) idx.set(tri, new Set());
+          idx.get(tri).add(n.id);
+        }
+      }
+    }
+    return idx;
+  },[notas]);
+
+  const resultados = useMemo(()=>{
+    let filtered = [...notas];
+
+    // Filtro por tema
+    if(filtroTema) filtered = filtered.filter(n=>n.tema===filtroTema);
+
+    // Filtro por lei
+    if(filtroLei) filtered = filtered.filter(n=>n.lei===filtroLei);
+
+    // Filtro por texto (full-text search com índice invertido)
+    if(filtroTexto.trim().length>=3){
+      const termo = filtroTexto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+      // Usar índice invertido para pré-filtrar candidatos
+      const tri = termo.slice(0,3);
+      const candidatos = indiceInvertido.get(tri);
+      if(candidatos){
+        const candidatoIds = new Set(candidatos);
+        filtered = filtered.filter(n=>{
+          if(!candidatoIds.has(n.id)) return false;
+          // Verificação completa
+          const texto = ((n.tema||"")+" "+(n.leiNome||"")+" "+(n.texto||"")).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+          return texto.includes(termo);
+        });
+      }else{
+        filtered=[];
+      }
+    }
+
+    return filtered;
+  },[notas,filtroTema,filtroLei,filtroTexto,indiceInvertido]);
+
+  const highlightText=(text,term)=>{
+    if(!term||term.length<3||!text)return text;
+    try{
+      const re=new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");
+      const parts=text.split(re);
+      return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.4)",padding:"0 2px",borderRadius:2}},p):p);
+    }catch(e){return text;}
+  };
+
+  return <div>
+    <div style={{fontSize:16,fontWeight:700,marginBottom:14}}>E-CONSULTA</div>
+    <div style={{display:"flex",gap:10,marginBottom:10,flexWrap:"wrap"}}>
+      <select value={filtroTema} onChange={e=>setFiltroTema(e.target.value)} style={{flex:"1 1 180px",padding:"10px",borderRadius:6,fontSize:13}}>
+        <option value="">Busca por Tema</option>
+        {temas.map(t=><option key={t} value={t}>{t}</option>)}
+      </select>
+      <select value={filtroLei} onChange={e=>setFiltroLei(e.target.value)} style={{flex:"1 1 180px",padding:"10px",borderRadius:6,fontSize:13}}>
+        <option value="">Busca por Legislação</option>
+        {lib.map(l=><option key={l.id} value={l.id}>{l.nome}</option>)}
+      </select>
+      <input value={filtroTexto} onChange={e=>setFiltroTexto(e.target.value)} placeholder="Palavra Chave (mín. 3 letras)..." style={{flex:"1 1 200px",padding:"10px",borderRadius:6,fontSize:13,background:"var(--input-bg)",border:"1px solid var(--border)"}}/>
+    </div>
+    <div style={{fontSize:12,color:"var(--text-sec)",marginBottom:12}}>{resultados.length} anotação(ões) encontrada(s){filtroTexto.length>=3?" para \""+filtroTexto+"\"":""}</div>
+    <div style={{maxHeight:"58vh",overflow:"auto",display:"flex",flexDirection:"column",gap:10}}>
+      {resultados.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>{notas.length===0?"Nenhuma anotação cadastrada. Use a aba Anotações para incluir.":"Nenhuma anotação encontrada com os filtros aplicados."}</div>
+      :resultados.map(n=><div key={n.id} className="cd" style={{padding:14}}>
+        <div style={{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap",alignItems:"center"}}>
+          <span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)",fontSize:11,padding:"3px 10px"}}>{n.tema}</span>
+          {n.leiNome&&<span className="badge" style={{background:"rgba(52,152,219,0.1)",color:"#3498db",fontSize:11,padding:"3px 10px"}}>{n.leiNome}</span>}
+          <span style={{fontSize:10,color:"var(--text-mute)",marginLeft:"auto"}}>{n.data}</span>
+        </div>
+        <div style={{fontSize:13,lineHeight:1.7,whiteSpace:"pre-wrap"}}>{filtroTexto.length>=3?highlightText(n.texto,filtroTexto):n.texto}</div>
+      </div>)}
+    </div>
   </div>;
 }
 
@@ -1147,9 +1371,16 @@ function Ref({apiKey,saveKey}){const [sub,setSub]=useState("leg");const [tMsgs,s
 
 // ═══ ATUALIZAÇÕES ═══
 const PORTAIS=[
-  {id:"rfb",nome:"RFB Reforma",cor:"#2e86ab"},
-  {id:"nfe",nome:"NFe/NFCe",cor:"#27ae60"},
-  {id:"dou",nome:"Diário Oficial",cor:"#d4a017"}
+  {id:"agencia_rf",nome:"AgênciaGov — Receita Federal",cor:"#2e86ab"},
+  {id:"agencia_pl",nome:"AgênciaGov — Planalto",cor:"#8e44ad"},
+  {id:"agencia_ju",nome:"AgênciaGov — Justiça",cor:"#c0392b"},
+  {id:"agencia_ec",nome:"AgênciaGov — Economia",cor:"#27ae60"},
+  {id:"agencia_co",nome:"AgênciaGov — Comunicações",cor:"#e67e22"},
+  {id:"cfc",nome:"CFC",cor:"#2980b9"},
+  {id:"jota",nome:"Jota Info",cor:"#1a1a2e"},
+  {id:"fazenda",nome:"Min. Fazenda",cor:"#16a085"},
+  {id:"rfb",nome:"RFB Reforma",cor:"#d4a017"},
+  {id:"nfe",nome:"NFe/NFCe",cor:"#7f8c8d"},
 ];
 const DATA_URL="data/atualizacoes.json";
 
@@ -1169,8 +1400,8 @@ function Atl({apiKey,saveKey}){
       if(!r.ok)throw new Error("Arquivo de atualizações não encontrado ("+r.status+"). Verifique se o workflow do GitHub Actions foi executado e se o arquivo data/atualizacoes.json existe no repositório.");
       const data=await r.json();
       if(data.itens&&Array.isArray(data.itens)){
-        if(data.itens.length===0){
-          setSucesso("Busca concluída — o servidor retornou 0 itens. O script Python pode não estar encontrando publicações nas fontes (sites governamentais podem ter alterado a estrutura). Verifique os logs do GitHub Actions.");
+        if(data.itens.length===0&&itens.length===0){
+          setSucesso("Busca concluída — o servidor retornou 0 itens. O script Python pode não estar encontrando publicações nas fontes. Verifique os logs do GitHub Actions.");
           setUltimaAtt(data.ultima_atualizacao||new Date().toISOString());
           LS("t3-upd-dt",data.ultima_atualizacao||new Date().toISOString());
         }else{
@@ -1210,7 +1441,7 @@ function Atl({apiKey,saveKey}){
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10,flexWrap:"wrap",gap:8}}>
       <div><h2 style={{margin:0}}>Atualizações</h2>
         {ultimaAtt&&<div style={{fontSize:11,color:"var(--text-sec)",marginTop:2}}>Última atualização do servidor: {new Date(ultimaAtt).toLocaleString("pt-BR")}</div>}
-        <div style={{fontSize:11,color:"var(--text-mute)",marginTop:1}}>Atualização automática: seg-sex às 09:00 (GitHub Actions)</div>
+        <div style={{fontSize:11,color:"var(--text-mute)",marginTop:1}}>Atualização automática: diariamente às 09:00 (GitHub Actions)</div>
       </div>
       <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
         <button onClick={buscar} className="btn-primary" disabled={ld}>{ld?<><Sp/> Buscando...</>:"Buscar Agora"}</button>
@@ -1232,17 +1463,13 @@ function Atl({apiKey,saveKey}){
       </select>
       <span style={{fontSize:12,color:"var(--text-sec)"}}>{itensFiltrados.length} de {itens.length}</span>
     </div>}
-    {itens.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>
-      <div style={{fontSize:16,marginBottom:8}}>Nenhuma atualização carregada</div>
-      <div style={{fontSize:13,lineHeight:1.6}}>Clique em "Buscar Agora" para carregar as atualizações do servidor.<br/>As atualizações são geradas automaticamente de seg-sex às 09:00 por um script Python no GitHub Actions que consulta:<br/>
-        <a href="https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/acoes-e-programas/programas-e-atividades/reforma-consumo/noticias" target="_blank">RFB Reforma</a> · <a href="https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=" target="_blank">NFe</a> · <a href="https://in.gov.br/leiturajornal" target="_blank">DOU</a>
-      </div>
-    </div>
+    {itens.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}><div style={{fontSize:16,marginBottom:8}}>Nenhuma atualização carregada</div><div style={{fontSize:13,lineHeight:1.6}}>Clique em "Buscar Agora" para carregar as atualizações do servidor.<br/>As atualizações são coletadas diariamente às 09:00 por um script Python no GitHub Actions.</div></div>
     :<div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:"65vh",overflow:"auto"}}>{itensFiltrados.map((item,i)=>
       <div key={i} className="cd" style={{padding:14}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
           <div>
             <span className="badge" style={{background:portalCor(item.portal)+"22",color:portalCor(item.portal),marginRight:8}}>{item.portal}</span>
+            {item.premium&&<span className="badge" style={{background:"rgba(230,126,34,0.15)",color:"#e67e22",marginRight:8}}>PREMIUM</span>}
             <span style={{fontSize:11,color:"var(--text-sec)"}}>{item.data}</span>
           </div>
           {item.link&&<a href={item.link} target="_blank" onClick={e=>e.stopPropagation()} style={{fontSize:11,color:"var(--gold)",display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}><Ic d={IC.lk} s={10} c="var(--gold)"/>Abrir</a>}
