@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TERA — Monitorar Leis (v1.0)
+TERA — Monitorar Leis (v1.1)
 Script para verificar diariamente se as leis monitoradas sofreram alterações
 no portal do Planalto ou em outras fontes oficiais.
 
@@ -11,17 +11,27 @@ Fluxo:
   2. Para cada lei, faz GET na URL e calcula hash do conteúdo
   3. Se hash diferente → detectou alteração → registra diff
   4. Salva resultado em data/monitoramento.json
-  5. Se houver alterações, envia email de notificação (opcional)
+  5. Se houver alterações, envia email de notificação
 
 Saída: data/monitoramento.json
+
+Changelog v1.1:
+  - Adicionado envio de email de alerta via SMTP (Gmail) quando alterações
+    são detectadas em leis monitoradas.
+  - Credenciais via variáveis de ambiente: GMAIL_USER, GMAIL_APP_PASSWORD.
+  - Destinatário: tectributos.federal11@gmail.com
 """
 
 import json
 import hashlib
+import os
 import re
+import smtplib
 import sys
 import traceback
 from datetime import datetime, timedelta, timezone
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from pathlib import Path
 
 try:
@@ -49,6 +59,11 @@ HEADERS = {
 DATA_DIR = Path("data")
 LEIS_FILE = DATA_DIR / "leis_monitoradas.json"
 SAIDA = DATA_DIR / "monitoramento.json"
+
+# ── Configurações de Email ───────────────────────────────────
+SMTP_HOST = "smtp.gmail.com"
+SMTP_PORT = 587
+EMAIL_DESTINATARIO = "tectributos.federal11@gmail.com"
 
 
 def log(msg):
@@ -164,6 +179,163 @@ def detectar_alteracoes(texto_antigo, texto_novo):
         })
 
     return alteracoes
+
+
+# ── Envio de Email de Alerta ─────────────────────────────────
+def enviar_email_alerta(alteracoes_detectadas):
+    """
+    Envia email de alerta quando alterações são detectadas em leis monitoradas.
+    Usa SMTP Gmail com credenciais via variáveis de ambiente.
+    Retorna True em sucesso, False em falha (nunca interrompe a execução).
+    """
+    gmail_user = os.environ.get("GMAIL_USER", "").strip()
+    gmail_password = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
+
+    if not gmail_user or not gmail_password:
+        log("  ⚠ Email não enviado: GMAIL_USER e/ou GMAIL_APP_PASSWORD não configurados.")
+        log("    Configure os secrets no repositório GitHub para ativar notificações por email.")
+        return False
+
+    if not alteracoes_detectadas:
+        return False
+
+    try:
+        # Construir corpo HTML do email
+        hora_brt = AGORA.strftime("%d/%m/%Y às %H:%M")
+        qtd = len(alteracoes_detectadas)
+
+        linhas_leis = ""
+        for alt in alteracoes_detectadas:
+            lei_nome = alt.get("lei", "Lei desconhecida")
+            lei_url = alt.get("url", "")
+            mensagem = alt.get("mensagem", "")
+            hash_ant = alt.get("hash_anterior", "")
+            hash_novo = alt.get("hash_novo", "")
+
+            link_html = ""
+            if lei_url:
+                link_html = (
+                    f'<a href="{lei_url}" '
+                    f'style="color:#B8965A;text-decoration:underline;font-size:13px;">'
+                    f'Verificar no portal →</a>'
+                )
+
+            linhas_leis += f"""
+            <tr>
+              <td style="padding:12px 16px;border-bottom:1px solid #e0dcd4;">
+                <div style="font-weight:700;font-size:15px;color:#1a1a1a;margin-bottom:4px;">
+                  ⚠️ {lei_nome}
+                </div>
+                <div style="font-size:13px;color:#555;margin-bottom:6px;">
+                  {mensagem}
+                </div>
+                <div style="font-size:11px;color:#888;margin-bottom:6px;">
+                  Hash anterior: <code>{hash_ant}</code> → Novo: <code>{hash_novo}</code>
+                </div>
+                {link_html}
+              </td>
+            </tr>
+            """
+
+        html_body = f"""
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background-color:#f0ede6;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+  <div style="max-width:600px;margin:20px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#a17c2f,#c9a23d);padding:24px 30px;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:#ffffff;letter-spacing:2px;">TERA</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.85);letter-spacing:1px;margin-top:2px;">MONITORAMENTO DE LEIS</div>
+    </div>
+
+    <!-- Corpo -->
+    <div style="padding:24px 30px;">
+      <p style="font-size:15px;color:#1a1a1a;line-height:1.6;margin:0 0 16px;">
+        Bom dia,
+      </p>
+      <p style="font-size:15px;color:#1a1a1a;line-height:1.6;margin:0 0 16px;">
+        O monitoramento automático do TERA detectou <strong style="color:#c0392b;">{qtd} alteração(ões)</strong>
+        em lei(s) monitorada(s) na verificação de <strong>{hora_brt} (BRT)</strong>.
+      </p>
+
+      <!-- Tabela de alterações -->
+      <table style="width:100%;border-collapse:collapse;margin:16px 0;background:#faf7f2;border-radius:8px;overflow:hidden;border:1px solid #e0dcd4;">
+        <thead>
+          <tr>
+            <th style="padding:10px 16px;background:#a17c2f;color:#ffffff;text-align:left;font-size:13px;font-weight:600;">
+              Leis com alteração detectada
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {linhas_leis}
+        </tbody>
+      </table>
+
+      <p style="font-size:13px;color:#666;line-height:1.6;margin:16px 0 0;">
+        <strong>Ação recomendada:</strong> verifique as alterações nos portais oficiais e atualize
+        os estudos e consultas relacionados.
+      </p>
+
+      <p style="font-size:11px;color:#999;line-height:1.5;margin:20px 0 0;border-top:1px solid #e0dcd4;padding-top:16px;">
+        Este é um email automático do sistema TERA — Raciocínio Jurídico.<br>
+        Monitoramento executado em {hora_brt} (BRT).<br>
+        Repositório: naytributario.github.io/TERA-LEI
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+"""
+
+        # Construir mensagem MIME
+        msg = MIMEMultipart("alternative")
+        msg["From"] = gmail_user
+        msg["To"] = EMAIL_DESTINATARIO
+        msg["Subject"] = f"⚠️ TERA — {qtd} alteração(ões) detectada(s) em lei(s) monitorada(s) — {hora_brt}"
+
+        # Versão texto plano (fallback)
+        texto_plano = f"TERA — Monitoramento de Leis\n\n"
+        texto_plano += f"Verificação: {hora_brt} (BRT)\n"
+        texto_plano += f"Alterações detectadas: {qtd}\n\n"
+        for alt in alteracoes_detectadas:
+            texto_plano += f"⚠ {alt.get('lei', 'Lei desconhecida')}\n"
+            texto_plano += f"  {alt.get('mensagem', '')}\n"
+            texto_plano += f"  Hash: {alt.get('hash_anterior', '')} → {alt.get('hash_novo', '')}\n"
+            if alt.get("url"):
+                texto_plano += f"  Link: {alt['url']}\n"
+            texto_plano += "\n"
+        texto_plano += "---\nEmail automático do TERA — naytributario.github.io/TERA-LEI\n"
+
+        msg.attach(MIMEText(texto_plano, "plain", "utf-8"))
+        msg.attach(MIMEText(html_body, "html", "utf-8"))
+
+        # Enviar via SMTP
+        log(f"  Enviando email de alerta para {EMAIL_DESTINATARIO}...")
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=30) as server:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(gmail_user, gmail_password)
+            server.sendmail(gmail_user, EMAIL_DESTINATARIO, msg.as_string())
+
+        log(f"  ✓ Email de alerta enviado com sucesso para {EMAIL_DESTINATARIO}")
+        return True
+
+    except smtplib.SMTPAuthenticationError as e:
+        log(f"  ✗ Falha na autenticação SMTP: {e}")
+        log("    Verifique se GMAIL_APP_PASSWORD é uma senha de app válida.")
+        return False
+    except smtplib.SMTPException as e:
+        log(f"  ✗ Erro SMTP ao enviar email: {e}")
+        return False
+    except Exception as e:
+        log(f"  ✗ Erro inesperado ao enviar email: {e}")
+        traceback.print_exc()
+        return False
 
 
 # ── Execução principal ───────────────────────────────────────
@@ -298,6 +470,10 @@ def main():
 
     with open(SAIDA, "w", encoding="utf-8") as f:
         json.dump(saida, f, ensure_ascii=False, indent=2)
+
+    # ── Enviar email de alerta se houver alterações ──────────
+    if alteracoes_detectadas:
+        enviar_email_alerta(alteracoes_detectadas)
 
     # Relatório
     log("")
