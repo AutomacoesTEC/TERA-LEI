@@ -1,0 +1,41 @@
+name: TERA — Monitorar Leis
+
+on:
+  schedule:
+    # Executa diariamente às 08:00 BRT (11:00 UTC) — antes das atualizações
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+    # Permite execução manual
+
+permissions:
+  contents: write
+
+jobs:
+  monitorar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependências
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Executar monitoramento
+        run: |
+          python monitorar_leis.py
+
+      - name: Commit e push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "TERA Bot"
+          git add data/leis_monitoradas.json data/monitoramento.json
+          git diff --cached --quiet || git commit -m "🔍 Monitoramento de leis $(date +'%d/%m/%Y')"
+          git push
