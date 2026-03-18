@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-18T09:00:00-03:00",
+  "ultima_atualizacao": "2026-03-18T11:58:13.126688-03:00",
   "data_busca": "2026-03-18",
-  "total": 0,
-  "novos_nesta_execucao": 0,
+  "total": 64,
+  "novos_nesta_execucao": 64,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -16,8 +16,532 @@
     "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
   ],
   "stats": {
-    "fontes_ok": [],
+    "fontes_ok": [
+      "AgênciaGov AgênciaGov — Receita Federal",
+      "AgênciaGov AgênciaGov — Planalto",
+      "AgênciaGov AgênciaGov — Justiça",
+      "AgênciaGov AgênciaGov — Economia",
+      "AgênciaGov AgênciaGov — Comunicações",
+      "CFC",
+      "Jota Info",
+      "Min. Fazenda",
+      "RFB Reforma",
+      "NFe/NFCe"
+    ],
     "fontes_erro": []
   },
-  "itens": []
+  "itens": [
+    {
+      "id": "5862c177b982c0fa",
+      "data": "2026-03-18",
+      "titulo": "18/03/2026 09:04▶️ Tira DúvidasReceita Federal inicia série de lives com orientações sobre o IRPF 2026",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/receita-federal-inicia-serie-de-lives-sobre-o-imposto-de-renda-2026-com-grande-alcance-e-participacao",
+      "resumo": ""
+    },
+    {
+      "id": "8a509ef5163fa896",
+      "data": "2026-03-18",
+      "titulo": "18/03/2026 09:40MP assinadaGoverno abre crédito extraordinário de R$ 1,3 bi para ações emergenciais em MG e outros estados",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/governo-do-brasil-abre-credito-extraordinario-de-r-1-3-bilhao-para-acoes-emergenciais-em-minas-gerais-e-outros-estados",
+      "resumo": ""
+    },
+    {
+      "id": "62311b783f3eb75f",
+      "data": "2026-03-18",
+      "titulo": "18/03/2026 08:26Sistema FinanceiroPF e Receita Federal deflagram Operação Iscariotes contra organização criminosa",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/pf-e-receita-federal-deflagram-operacao-iscariotes-contra-organizacao-criminosa",
+      "resumo": ""
+    },
+    {
+      "id": "25b4946286be27b4",
+      "data": "2026-03-18",
+      "titulo": "17/03/2026 18:40▶️Olho na bombaGoverno do Brasil organiza PF, ANP e Procon's para fiscalizar preços de combustíveis",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/governo-brasil-organiza-anp-e-procon-de-todo-pais-para-fiscalizar-precos-combustiveis",
+      "resumo": ""
+    },
+    {
+      "id": "bda156c0eb6e8db4",
+      "data": "2026-03-18",
+      "titulo": "16/03/2026 16:56Inclusão Digital80% da população brasileira terá acesso ao 5G até o fim de 2026",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/80-da-populacao-brasileira-tera-acesso-ao-5g-ate-o-fim-de-2026",
+      "resumo": ""
+    },
+    {
+      "id": "917711d6f5b4b9fa",
+      "data": "2026-03-18",
+      "titulo": "MEMORANDO DE ENTENDIMENTO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MEMORANDO%20DE%20ENTENDIMENTO",
+      "resumo": ""
+    },
+    {
+      "id": "f298b6b88da697cf",
+      "data": "2026-03-18",
+      "titulo": "RELAÇÕES BILATERAIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=RELA%C3%87%C3%95ES%20BILATERAIS",
+      "resumo": ""
+    },
+    {
+      "id": "53a921771c4969a4",
+      "data": "2026-03-18",
+      "titulo": "REGULAÇÃO DAS APOSTAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=REGULA%C3%87%C3%83O%20DAS%20APOSTAS",
+      "resumo": ""
+    },
+    {
+      "id": "372afffbb2ad34dd",
+      "data": "2026-03-18",
+      "titulo": "PRÊMIOS E APOSTAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PR%C3%8AMIOS%20E%20APOSTAS",
+      "resumo": ""
+    },
+    {
+      "id": "10c5365841fd63fb",
+      "data": "2026-03-18",
+      "titulo": "MEU IMPOSTO DE RENDA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MEU%20IMPOSTO%20DE%20RENDA",
+      "resumo": ""
+    },
+    {
+      "id": "85ae38283c66ec91",
+      "data": "2026-03-18",
+      "titulo": "ECONOMIA CIRCULAR",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ECONOMIA%20CIRCULAR",
+      "resumo": ""
+    },
+    {
+      "id": "5245891b4d256da9",
+      "data": "2026-03-18",
+      "titulo": "DECLARAÇÃO PRÉ-PREENCHIDA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=DECLARA%C3%87%C3%83O%20PR%C3%89-PREENCHIDA",
+      "resumo": ""
+    },
+    {
+      "id": "b2cb17eb2756460d",
+      "data": "2026-03-18",
+      "titulo": "GOV.BR OURO OU PRATA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=GOV.BR%20OURO%20OU%20PRATA",
+      "resumo": ""
+    },
+    {
+      "id": "d8df255a9f6213e0",
+      "data": "2026-03-18",
+      "titulo": "DIA D DECLARE CERTO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=DIA%20D%20DECLARE%20CERTO",
+      "resumo": ""
+    },
+    {
+      "id": "eb6d5761d6d89062",
+      "data": "2026-03-18",
+      "titulo": "DÍVIDAS GARANTIDAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=D%C3%8DVIDAS%20GARANTIDAS",
+      "resumo": ""
+    },
+    {
+      "id": "6e2e4e46d8db536f",
+      "data": "2026-03-18",
+      "titulo": "OPERAÇÕES DE CRÉDITO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=OPERA%C3%87%C3%95ES%20DE%20CR%C3%89DITO",
+      "resumo": ""
+    },
+    {
+      "id": "6e322828eacfa034",
+      "data": "2026-03-18",
+      "titulo": "GRADE DE PARÂMETROS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=GRADE%20DE%20PAR%C3%82METROS",
+      "resumo": ""
+    },
+    {
+      "id": "a75568829813b683",
+      "data": "2026-03-18",
+      "titulo": "EXPANSÃO DO PIB",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=EXPANS%C3%83O%20DO%20PIB",
+      "resumo": ""
+    },
+    {
+      "id": "ff5332c96e0de214",
+      "data": "2026-03-18",
+      "titulo": "PREÇOS DO PETRÓLEO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PRE%C3%87OS%20DO%20PETR%C3%93LEO",
+      "resumo": ""
+    },
+    {
+      "id": "0c4e419a6a453af8",
+      "data": "2026-03-18",
+      "titulo": "PANORAMA MACROECONÔMICO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PANORAMA%20MACROECON%C3%94MICO",
+      "resumo": ""
+    },
+    {
+      "id": "2abc7eeb6aaae7b8",
+      "data": "2026-03-18",
+      "titulo": "MERCADO DE CAPITAIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MERCADO%20DE%20CAPITAIS",
+      "resumo": ""
+    },
+    {
+      "id": "a970987af2f07613",
+      "data": "2026-03-18",
+      "titulo": "3º LEILÃO DO ECO INVEST",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=3%C2%BA%20LEIL%C3%83O%20DO%20ECO%20INVEST",
+      "resumo": ""
+    },
+    {
+      "id": "24d36b8a1bb80b30",
+      "data": "2026-03-18",
+      "titulo": "ACORDOS DE COOPERAÇÃO TÉCNICA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ACORDOS%20DE%20COOPERA%C3%87%C3%83O%20T%C3%89CNICA",
+      "resumo": ""
+    },
+    {
+      "id": "545678d39eea8bcf",
+      "data": "2026-03-18",
+      "titulo": "COMBATE A CRIMES FINANCEIROS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=COMBATE%20A%20CRIMES%20FINANCEIROS",
+      "resumo": ""
+    },
+    {
+      "id": "b2864cdd1a71967e",
+      "data": "2026-03-18",
+      "titulo": "FÓRUM DE CORREGEDORIAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=F%C3%93RUM%20DE%20CORREGEDORIAS",
+      "resumo": ""
+    },
+    {
+      "id": "00e8410a10d11d4f",
+      "data": "2026-03-18",
+      "titulo": "ADMINISTRAÇÃO PÚBLICA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ADMINISTRA%C3%87%C3%83O%20P%C3%9ABLICA",
+      "resumo": ""
+    },
+    {
+      "id": "8381e218595ade8b",
+      "data": "2026-03-18",
+      "titulo": "INDÚSTRIA DA RECICLAGEM",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=IND%C3%9ASTRIA%20DA%20RECICLAGEM",
+      "resumo": ""
+    },
+    {
+      "id": "a150949d3801219d",
+      "data": "2026-03-18",
+      "titulo": "REFORMA TRIBUTÁRIA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=REFORMA%20TRIBUT%C3%81RIA",
+      "resumo": ""
+    },
+    {
+      "id": "4a3782cd9c9f371b",
+      "data": "2026-03-18",
+      "titulo": "GRUPO DE TRABALHO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=GRUPO%20DE%20TRABALHO",
+      "resumo": ""
+    },
+    {
+      "id": "1ed765c1ee005ca1",
+      "data": "2026-03-18",
+      "titulo": "FÓRUM NACIONAL DE ECONOMIA CIRCULAR",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=F%C3%93RUM%20NACIONAL%20DE%20ECONOMIA%20CIRCULAR",
+      "resumo": ""
+    },
+    {
+      "id": "e058bbc0f45f61b5",
+      "data": "2026-03-18",
+      "titulo": "ELEVAÇÃO DE PREÇOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ELEVA%C3%87%C3%83O%20DE%20PRE%C3%87OS",
+      "resumo": ""
+    },
+    {
+      "id": "f378077a301e5c10",
+      "data": "2026-03-18",
+      "titulo": "RENÚNCIA FISCAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=REN%C3%9ANCIA%20FISCAL",
+      "resumo": ""
+    },
+    {
+      "id": "617bc0000c750369",
+      "data": "2026-03-18",
+      "titulo": "SETOR DE PETRÓLEO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SETOR%20DE%20PETR%C3%93LEO",
+      "resumo": ""
+    },
+    {
+      "id": "cc9a9ffb7ac4ebd4",
+      "data": "2026-03-18",
+      "titulo": "INSTABILIDADE INTERNACIONAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INSTABILIDADE%20INTERNACIONAL",
+      "resumo": ""
+    },
+    {
+      "id": "0026a8ed79fd5127",
+      "data": "2026-03-18",
+      "titulo": "IMPOSTO DE EXPORTAÇÃO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=IMPOSTO%20DE%20EXPORTA%C3%87%C3%83O",
+      "resumo": ""
+    },
+    {
+      "id": "b655c1c11c4b05a6",
+      "data": "2026-03-18",
+      "titulo": "EMENDAS PARLAMENTARES",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=EMENDAS%20PARLAMENTARES",
+      "resumo": ""
+    },
+    {
+      "id": "f87bb9e190981d13",
+      "data": "2026-03-18",
+      "titulo": "MICROEMPREENDEDORAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MICROEMPREENDEDORAS",
+      "resumo": ""
+    },
+    {
+      "id": "fc0169d05118d269",
+      "data": "2026-03-18",
+      "titulo": "PORTAL REGULARIZE",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PORTAL%20REGULARIZE",
+      "resumo": ""
+    },
+    {
+      "id": "dc0738983025bea3",
+      "data": "2026-03-18",
+      "titulo": "DESCONTOS EM DÉBITOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=DESCONTOS%20EM%20D%C3%89BITOS",
+      "resumo": ""
+    },
+    {
+      "id": "638089991cd3f819",
+      "data": "2026-03-18",
+      "titulo": "TRANSAÇÃO DE PEQUENO VALOR",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=TRANSA%C3%87%C3%83O%20DE%20PEQUENO%20VALOR",
+      "resumo": ""
+    },
+    {
+      "id": "c8ce7a345437e501",
+      "data": "2026-03-18",
+      "titulo": "PGFN EM NÚMEROS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PGFN%20EM%20N%C3%9AMEROS",
+      "resumo": ""
+    },
+    {
+      "id": "9ad94ead854cb2a1",
+      "data": "2026-03-18",
+      "titulo": "RECUPERAÇÃO FISCAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=RECUPERA%C3%87%C3%83O%20FISCAL",
+      "resumo": ""
+    },
+    {
+      "id": "d56c59d49d8e82a3",
+      "data": "2026-03-18",
+      "titulo": "APOSTAS DE QUOTA FIXA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=APOSTAS%20DE%20QUOTA%20FIXA",
+      "resumo": ""
+    },
+    {
+      "id": "9ef5fe4d7a956f10",
+      "data": "2026-03-18",
+      "titulo": "COMPETIÇÕES VIRTUAIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=COMPETI%C3%87%C3%95ES%20VIRTUAIS",
+      "resumo": ""
+    },
+    {
+      "id": "8308daccad1c03a4",
+      "data": "2026-03-18",
+      "titulo": "PÁGINA DE SERVIÇOS DA RFB",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=P%C3%81GINA%20DE%20SERVI%C3%87OS%20DA%20RFB",
+      "resumo": ""
+    },
+    {
+      "id": "dfe87f6c04cb7307",
+      "data": "2026-03-18",
+      "titulo": "CONFORMIDADE FISCAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=CONFORMIDADE%20FISCAL",
+      "resumo": ""
+    },
+    {
+      "id": "46803908fe184d32",
+      "data": "2026-03-18",
+      "titulo": "TRANSFORMAÇÃO ECOLÓGICA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=TRANSFORMA%C3%87%C3%83O%20ECOL%C3%93GICA",
+      "resumo": ""
+    },
+    {
+      "id": "1c32b8ba510e816f",
+      "data": "2026-03-18",
+      "titulo": "LIDERANÇAS FEMININAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=LIDERAN%C3%87AS%20FEMININAS",
+      "resumo": ""
+    },
+    {
+      "id": "4cae7cee8bf9f346",
+      "data": "2026-03-18",
+      "titulo": "DESENVOLVIMENTO SUSTENTÁVEL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=DESENVOLVIMENTO%20SUSTENT%C3%81VEL",
+      "resumo": ""
+    },
+    {
+      "id": "1472ebe992a86b96",
+      "data": "2026-03-18",
+      "titulo": "MERCADO DE CARBONO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MERCADO%20DE%20CARBONO",
+      "resumo": ""
+    },
+    {
+      "id": "0601070fbbd719e9",
+      "data": "2026-03-18",
+      "titulo": "TRANSFORMAÇÃO ENERGÉTICA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=TRANSFORMA%C3%87%C3%83O%20ENERG%C3%89TICA",
+      "resumo": ""
+    },
+    {
+      "id": "6d2c6560db52272f",
+      "data": "2026-03-18",
+      "titulo": "DESCARBONIZAÇÃO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=DESCARBONIZA%C3%87%C3%83O",
+      "resumo": ""
+    },
+    {
+      "id": "b33f07ed028f70b7",
+      "data": "2026-03-18",
+      "titulo": "SECRETARIA EXTRAORDINÁRIA DO MERCADO DE CARBONO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SECRETARIA%20EXTRAORDIN%C3%81RIA%20DO%20MERCADO%20DE%20CARBONO",
+      "resumo": ""
+    },
+    {
+      "id": "3f2ad65702a0bfd6",
+      "data": "2026-03-18",
+      "titulo": "CAFÉ COM JORNALISTAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=CAF%C3%89%20COM%20JORNALISTAS",
+      "resumo": ""
+    },
+    {
+      "id": "323c0d7e6d2d8ea7",
+      "data": "2026-03-18",
+      "titulo": "PLANO DE TRANSFORMAÇÃO ECOLÓGICA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PLANO%20DE%20TRANSFORMA%C3%87%C3%83O%20ECOL%C3%93GICA",
+      "resumo": ""
+    },
+    {
+      "id": "5d80f8a8a138b773",
+      "data": "2026-03-18",
+      "titulo": "FUNDOS DE INVESTIMENTO CLIMÁTICO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=FUNDOS%20DE%20INVESTIMENTO%20CLIM%C3%81TICO",
+      "resumo": ""
+    },
+    {
+      "id": "b4230d768d569bd3",
+      "data": "2026-03-18",
+      "titulo": "PORTAL DE SERVIÇOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PORTAL%20DE%20SERVI%C3%87OS",
+      "resumo": ""
+    },
+    {
+      "id": "c44afc84a81358e1",
+      "data": "2026-03-18",
+      "titulo": "REGULARIZAÇÃO DE DÉBITOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=REGULARIZA%C3%87%C3%83O%20DE%20D%C3%89BITOS",
+      "resumo": ""
+    },
+    {
+      "id": "5a00b9cbc138592e",
+      "data": "2026-03-18",
+      "titulo": "ENTREGA DE MERCADORIAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ENTREGA%20DE%20MERCADORIAS",
+      "resumo": ""
+    },
+    {
+      "id": "44f3e2b0509269ae",
+      "data": "2026-03-18",
+      "titulo": "ZONA DA MATA MINEIRA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ZONA%20DA%20MATA%20MINEIRA",
+      "resumo": ""
+    },
+    {
+      "id": "20c85bc8c1bd91f6",
+      "data": "2026-03-18",
+      "titulo": "MONITOR MACROECONÔMICO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MONITOR%20MACROECON%C3%94MICO",
+      "resumo": ""
+    },
+    {
+      "id": "6cc81c3afb5ce0fd",
+      "data": "2026-03-18",
+      "titulo": "ACORDOS COMERCIAIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ACORDOS%20COMERCIAIS",
+      "resumo": ""
+    },
+    {
+      "id": "0a9571bfbe9fb9f1",
+      "data": "2026-03-18",
+      "titulo": "DADOS EM INGLÊS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=DADOS%20EM%20INGL%C3%8AS",
+      "resumo": ""
+    },
+    {
+      "id": "9bfc7dd528cbbaee",
+      "data": "2026-03-18",
+      "titulo": "MARCO DE GARANTIAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MARCO%20DE%20GARANTIAS",
+      "resumo": ""
+    }
+  ]
 }
