@@ -538,16 +538,19 @@ def _scrape_gov_br(soup, base_url, portal_nome):
     """
     Parser reutilizável para portais gov.br (Fazenda, RFB, etc).
     Estrutura padrão: tiles/listagem com links, datas e resumos.
+    Extrai data de múltiplos padrões incluindo texto inline "DD/MM/YYYY -".
     """
     itens = []
 
-    # Seletores gov.br
+    # Seletores gov.br (ampliados para cobrir mais layouts)
     articles = soup.select(
         "article, .noticias a, .tileItem, .tile-content, "
-        ".listagem-item, ul.noticias li, .item"
+        ".listagem-item, ul.noticias li, .item, "
+        ".noticias-lista li, .lista-noticias li, "
+        ".row .item, .news-item, .resultado"
     )
 
-    # Fallback
+    # Fallback: buscar no conteúdo principal
     if not articles:
         content = soup.select_one("#content, #main-content, .content-area, main")
         if content:
@@ -578,26 +581,34 @@ def _scrape_gov_br(soup, base_url, portal_nome):
 
         seen.add(href)
 
-        # Data
+        # Data — buscar em múltiplas fontes
         data = None
+
+        # 1. Elementos de data semânticos
         parent = a_tag.find_parent(["li", "article", "div"])
         if parent:
             for sel in [".date", ".data", "time", "span.publicado",
-                        ".meta-date", ".tileDate"]:
+                        ".meta-date", ".tileDate", ".data-publicacao",
+                        "span.text-muted"]:
                 el = parent.select_one(sel)
                 if el:
                     data = extrair_data_texto(el.get_text())
                     if data:
                         break
 
-        # Fallback: data na URL
+        # 2. Texto inline do parent (formato "DD/MM/YYYY -" comum no gov.br)
+        if not data and parent:
+            parent_text = parent.get_text()
+            data = extrair_data_texto(parent_text)
+
+        # 3. Data na URL (formato /YYYY/MM/DD/)
         if not data:
             data = extrair_data_texto(href)
 
         # Resumo
         resumo = ""
         if parent:
-            for sel in [".descricao", ".description", ".resumo", "p"]:
+            for sel in [".descricao", ".description", ".resumo", "p", ".excerpt"]:
                 el = parent.select_one(sel)
                 if el and el != a_tag:
                     resumo = el.get_text(strip=True)
@@ -608,6 +619,36 @@ def _scrape_gov_br(soup, base_url, portal_nome):
         item = criar_item(titulo, href, portal_nome, data, resumo)
         if item:
             itens.append(item)
+
+    return itens
+
+
+# ── Fonte 10b: RFB Notícias Gerais ──────────────────────────
+def scrape_rfb_noticias():
+    """
+    Coleta notícias gerais da Receita Federal.
+    URL: https://www.gov.br/receitafederal/pt-br/assuntos/noticias
+    Diferente da página de Reforma do Consumo.
+    """
+    url = "https://www.gov.br/receitafederal/pt-br/assuntos/noticias"
+    itens = []
+
+    log("Buscando RFB Notícias Gerais...")
+    soup, erro = fetch_page(url)
+    if erro:
+        log(f"  ✗ Falha: {erro}")
+        STATS["fontes_erro"].append(f"RFB Notícias: {erro}")
+        return itens
+
+    try:
+        itens = _scrape_gov_br(soup, url, "RFB Notícias")
+        log(f"  → {len(itens)} publicações de hoje encontradas")
+        STATS["fontes_ok"].append("RFB Notícias")
+    except Exception as e:
+        log(f"  ✗ Erro no parsing: {e}")
+        STATS["fontes_erro"].append(f"RFB Notícias: parsing - {e}")
+
+    return itens
 
     return itens
 
@@ -773,6 +814,13 @@ def main():
         log(f"  ✗ Erro fatal em RFB Reforma: {e}")
         STATS["fontes_erro"].append(f"RFB Reforma: fatal - {e}")
 
+    # RFB Notícias Gerais
+    try:
+        novos.extend(scrape_rfb_noticias())
+    except Exception as e:
+        log(f"  ✗ Erro fatal em RFB Notícias: {e}")
+        STATS["fontes_erro"].append(f"RFB Notícias: fatal - {e}")
+
     # NFe Notas Técnicas
     try:
         novos.extend(scrape_nfe_notas_tecnicas())
@@ -814,6 +862,7 @@ def main():
             "https://www.jota.info/",
             "https://www.gov.br/fazenda/pt-br/assuntos/noticias",
             "https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/acoes-e-programas/programas-e-atividades/reforma-consumo/noticias",
+            "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
             "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
         ],
         "stats": {
