@@ -809,8 +809,7 @@ function TabEstudo({ds,lei,gSt,uSt}){
     const allK={};
     const mark=(ns,prefix)=>ns.forEach((n,i)=>{const k=prefix+"-"+n.id;if(n.children?.length>0)allK[k]=true;mark(n.children,k+"-"+i);});
     mark(estrutura,"enav");
-    if(Object.keys(allK).length>0&&Object.keys(collNav).length===0)
-      setTimeout(()=>setCollNav(allK),0);
+    // Sem setTimeout — undefined=fechado por padrão
   }
 
   const allNavKeysRef=useRef({});
@@ -825,8 +824,8 @@ function TabEstudo({ds,lei,gSt,uSt}){
 
   const toggleNav=(key)=>{
     setCollNav(p=>{
-      const open=p[key];
-      const ns={...p,[key]:open?false:true};
+      const isCurrentlyOpen=p[key]===false;
+      const ns={...p,[key]:isCurrentlyOpen?true:false};
       Object.keys(allNavKeysRef.current).forEach(k=>{if(k.startsWith(key+"-"))ns[k]=true;});
       return ns;
     });
@@ -855,7 +854,7 @@ function TabEstudo({ds,lei,gSt,uSt}){
   };
   const renderNavNode=(node,depth,pathKey)=>{
     const key=pathKey+"-"+node.id;
-    const isOpen=!collNav[key];
+    const isOpen=collNav[key]===false; // undefined → closed by default
     const hasChildren=node.children&&node.children.length>0;
     const isSel=selSection===node;
     const st=levelStyle[node.tipo]||levelStyle["SEÇÃO"];
@@ -870,9 +869,9 @@ function TabEstudo({ds,lei,gSt,uSt}){
                 userSelect:"none",lineHeight:1.3}}>
         {hasChildren&&<span style={{fontSize:9,opacity:.7,flexShrink:0,transition:"transform .12s",
                                     transform:isOpen?"rotate(90deg)":"rotate(0deg)"}}>▶</span>}
-        <span style={{fontFamily:"'Segoe UI',sans-serif",whiteSpace:"nowrap",overflow:"hidden",
-                      textOverflow:"ellipsis"}}>{node.tipo} — <b>{node.id}</b>
-          {node.rub&&<span style={{opacity:.75,fontWeight:400}}> — {node.rub.slice(0,30)}{node.rub.length>30?"…":""}</span>}
+        <span style={{fontFamily:"'Segoe UI',sans-serif",whiteSpace:"normal",wordBreak:"break-word",
+                      lineHeight:1.35}}>{node.tipo} — <b>{node.id}</b>
+          {node.rub&&<span style={{opacity:.75,fontWeight:400}}> — {node.rub}</span>}
         </span>
       </div>
       {isOpen&&hasChildren&&<div>{node.children.map((ch,i)=>renderNavNode(ch,depth+1,key+"-"+i))}</div>}
@@ -882,7 +881,7 @@ function TabEstudo({ds,lei,gSt,uSt}){
   return <div style={{display:"flex",gap:10,height:"72vh"}}>
 
     {/* ── Sidebar hierárquica ── */}
-    <div style={{width:230,flexShrink:0,display:"flex",flexDirection:"column",
+    <div style={{width:"clamp(200px, 22%, 340px)",flexShrink:0,display:"flex",flexDirection:"column",
                  border:"1px solid var(--border)",borderRadius:8,overflow:"hidden"}}>
       <div style={{padding:"8px 10px",background:"var(--grad)",color:"#fff",
                    fontSize:11,fontWeight:700,letterSpacing:.5,flexShrink:0}}>
@@ -1447,28 +1446,25 @@ function TabMapa({ds}){
   }, []);
 
   // Collapsed: iniciar TUDO recolhido, recalcular quando estrutura mudar
-  // allKeysRef mantém TODAS as chaves possíveis da estrutura para uso no toggle,
-  // independente do estado atual do collapsed (evita bug de descendants não-inicializados).
+  // allKeysRef: todas as chaves possíveis da estrutura.
+  // collapsed usa semântica: false=aberto, true/undefined=fechado.
+  // Não precisa de inicialização — undefined já significa fechado.
   const allKeysRef = useRef({});
   const [collapsed,setCollapsed]=useState({});
   const estruturaRef=useRef(null);
   if(estrutura!==estruturaRef.current){
     estruturaRef.current=estrutura;
-    const allKeys=buildAllCollapsedKeys(estrutura);
-    allKeysRef.current=allKeys;
-    if(Object.keys(allKeys).length>0){
-      if(Object.keys(collapsed).length===0||!Object.values(collapsed).some(v=>v===true)){
-        setTimeout(()=>setCollapsed(allKeys),0);
-      }
-    }
+    allKeysRef.current=buildAllCollapsedKeys(estrutura);
+    // Sem setTimeout — undefined=fechado por padrão, sem flash
   }
 
   const toggle=(key)=>{
     setCollapsed(p=>{
-      const isCurrentlyCollapsed=p[key];
-      const newState={...p,[key]:isCurrentlyCollapsed?false:true};
-      // Usa allKeysRef (não Object.keys(p)) para garantir que todos os descendants
-      // sejam recolhidos, mesmo antes do primeiro setTimeout ter disparado.
+      // false=open, true/undefined=closed
+      const isCurrentlyOpen=p[key]===false;
+      const newState={...p,[key]:isCurrentlyOpen?true:false};
+      // Ao abrir OU fechar: sempre recolhe todos os descendants
+      // (allKeysRef cobre chaves ainda não presentes no state)
       Object.keys(allKeysRef.current).forEach(k=>{
         if(k.startsWith(key+"-")) newState[k]=true;
       });
@@ -1513,7 +1509,7 @@ function TabMapa({ds}){
 
   const renderNode=(node,depth,pathKey)=>{
     const key=pathKey+"-"+node.id;
-    const isOpen=!collapsed[key];
+    const isOpen=collapsed[key]===false; // undefined → closed by default
     const hasContent=(node.children&&node.children.length>0)||(node.artigos&&node.artigos.length>0);
     const levelStyle={
       "PARTE":{bg:"var(--grad)",color:"#fff",fontWeight:700,fontSize:14,borderRadius:8,padding:"10px 14px"},
@@ -1546,7 +1542,7 @@ function TabMapa({ds}){
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
         <div style={{fontSize:13,fontWeight:700,color:"var(--gold)"}}>ESTRUTURA HIERÁRQUICA</div>
         <div style={{display:"flex",gap:6}}>
-          <button onClick={()=>setCollapsed({})} style={{fontSize:11,padding:"3px 8px",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:4,cursor:"pointer",color:"var(--text-sec)"}}>Expandir tudo</button>
+          <button onClick={()=>{const all={};Object.keys(allKeysRef.current).forEach(k=>{all[k]=false;});setCollapsed(all);}} style={{fontSize:11,padding:"3px 8px",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:4,cursor:"pointer",color:"var(--text-sec)"}}>Expandir tudo</button>
           <button onClick={()=>{
             const all={};
             const markAll=(nodes,prefix)=>{
