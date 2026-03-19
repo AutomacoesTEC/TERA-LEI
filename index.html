@@ -261,7 +261,8 @@ function fullTextSearch(ds,termo){
   const t=termo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
   const resultados=[];let artAtual="";
   for(let i=0;i<ds.length;i++){const d=ds[i];
-    if(d.tipo==="ARTIGO")artAtual=d.id;
+    if(DIV.has(d.tipo))artAtual="";
+    else if(d.tipo==="ARTIGO")artAtual=d.id;
     const texto=((d.id||"")+" "+(d.rub||"")+" "+(d.txt||"")).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
     if(texto.includes(t)){
       const ocorrencias=(texto.split(t).length-1);
