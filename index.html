@@ -1222,20 +1222,45 @@ function TabSabatina({lei,area}){
     setUploading(true);
     try{
       const ab=await f.arrayBuffer();
-      const result=await mammoth.extractRawText({arrayBuffer:ab});
-      const text=result.value||"";
-      const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);
-      const qs=[];let current="";
-      for(const line of lines){
-        const match=line.match(/^(\d+)\s*[\.\)\-]\s*(.+)/);
-        if(match){if(current)qs.push(current);current=match[2].trim();}else if(current){current+=" "+line;}
+      const qs=[];
+
+      // Tentativa 1: HTML via mammoth — captura listas automáticas do Word (<li>)
+      // Cobre o caso mais comum: numeração automática Word sem prefixo explícito no texto
+      try{
+        const htmlResult=await mammoth.convertToHtml({arrayBuffer:ab});
+        const html=htmlResult.value||"";
+        const liMatches=html.match(/<li[^>]*>([\s\S]*?)<\/li>/gi)||[];
+        for(const li of liMatches){
+          const txt=li
+            .replace(/<[^>]+>/g,"")
+            .replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">")
+            .replace(/&nbsp;/g," ").replace(/&#\d+;/g,"").trim();
+          if(txt.length>10) qs.push(txt);
+        }
+      }catch(_){}
+
+      // Tentativa 2: texto puro com numeração explícita ("1. Pergunta" ou "1) Pergunta")
+      // Mantém compatibilidade com o formato original esperado pelo sistema
+      if(qs.length===0){
+        const result=await mammoth.extractRawText({arrayBuffer:ab});
+        const text=result.value||"";
+        const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);
+        let current="";
+        for(const line of lines){
+          const match=line.match(/^(\d+)\s*[\.\)\-]\s*(.+)/);
+          if(match){if(current)qs.push(current);current=match[2].trim();}
+          else if(current){current+=" "+line;}
+        }
+        if(current)qs.push(current);
       }
-      if(current)qs.push(current);
+
       if(qs.length>0){
         setPerguntas(qs);LS("t3-sab-"+lei.id,qs);
         setRespostas({});LS("t3-sab-r-"+lei.id,{});
         setCorrecoes({});LS("t3-sab-c-"+lei.id,{});
-      }else{alert("Não foram encontradas perguntas numeradas no documento. Use o formato: 1. Pergunta\\n2. Pergunta...");}
+      }else{
+        alert("Não foram encontradas perguntas no documento.\n\nFormatos aceitos:\n• Lista automática do Word (numeração via Word)\n• Numeração explícita: 1. Pergunta\n2. Pergunta...");
+      }
     }catch(e){alert("Erro ao processar .docx: "+e.message);}
     setUploading(false);
     if(fRef.current)fRef.current.value="";
