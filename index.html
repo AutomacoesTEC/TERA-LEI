@@ -79,6 +79,138 @@ const PATS=[{t:"PARTE",r:/^\s*PARTE\s+(?:GERAL|ESPECIAL|[IVXLCDM]+|PRELIMINAR)\s
 const DIV=new Set(["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"]);
 const CT={get PARTE(){return getCS("--gold")},get LIVRO(){return getCS("--gold")},get TÍTULO(){return getCS("--gold")},get CAPÍTULO(){return getCS("--gold-bright")},get SEÇÃO(){return getCS("--border")},get SUBSEÇÃO(){return getCS("--bg-hover")}};
 
+// ═══ TEIA WEB WORKER — script autocontido executado fora da main thread ═══
+// String.raw preserva barras invertidas dos regex sem double-escape.
+// Criado via Blob URL em runtime (SPA monolítica, sem arquivos externos).
+const TEIA_WORKER_SCRIPT = String.raw`
+"use strict";
+const _DIV = new Set(["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"]);
+
+// Constrói artIndex (Map<numId,{v,r,l}>) e subDevIndex (Map<artId,dispositivos[]>)
+function _buildIndices(ds) {
+  const ai = new Map();
+  const si = new Map();
+  for (const d of ds) {
+    if (d.tipo !== "ARTIGO") continue;
+    const k = d.id.replace(/[^0-9]/g, "");
+    if (!ai.has(k)) ai.set(k, { v: null, r: null, l: null });
+    const e = ai.get(k);
+    if (d.status === "vigente") e.v = d;
+    else if (d.status === "revogado") e.r = d;
+    e.l = d;
+  }
+  let curArt = null;
+  for (const d of ds) {
+    if (d.tipo === "ARTIGO") { curArt = d.id; continue; }
+    if (_DIV.has(d.tipo)) { curArt = null; continue; }
+    if (curArt && d.status !== "vetado") {
+      if (!si.has(curArt)) si.set(curArt, []);
+      si.get(curArt).push(d);
+    }
+  }
+  return { ai, si };
+}
+
+// Localiza dispositivo pelo ID do artigo — O(1) via Map
+function _findDevice(artId, ai) {
+  const k = artId.replace(/^Art\.\s*/i, "").replace(/[^0-9]/g, "").trim();
+  const e = ai.get(k);
+  return e ? (e.v || e.r || e.l) : null;
+}
+
+// Extrai remissões internas e externas do texto de um dispositivo
+function _extractRefs(text) {
+  const internal = [];
+  const external = [];
+  const reArt = /arts?\.\s*(\d+[ºo°]?(?:\s*(?:,|e|a)\s*\d+[ºo°]?)*)/gi;
+  const reLeiNome = /(?:Lei(?:\s+Complementar)?|Decreto(?:-Lei)?|Medida\s+Provis[óo]ria|Instru[çc][ãa]o\s+Normativa(?:\s+(?:RFB|SRF|[A-Z]{2,}))?|C[óo]digo\s+\w+)\s+n[ºo°]/i;
+  const externalRanges = [];
+  const reParen = /\([^)]+\)/g;
+  let pm;
+  while ((pm = reParen.exec(text)) !== null) {
+    if (reLeiNome.test(pm[0])) externalRanges.push([pm.index, pm.index + pm[0].length]);
+  }
+  const reLeiInline = /(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.]+|Medida\s+Provis[óo]ria\s+n[ºo°]?\s*[\d.]+|Instru[çc][ãa]o\s+Normativa\s+(?:RFB\s+|SRF\s+|[A-Z]{2,}\s+)?n[ºo°]?\s*[\d.]+)/gi;
+  const reLeiCapture = /(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.\/]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.\/]+|Medida\s+Provis[óo]ria\s+n[ºo°]?\s*[\d.\/\-]+|Instru[çc][ãa]o\s+Normativa\s+(?:RFB\s+|SRF\s+|[A-Z]{2,}\s+)?n[ºo°]?\s*[\d.\/]+|C[óo]digo\s+(?:Tribut[áa]rio|Civil|Penal|de\s+Processo)\s+Nacional|Constitui[çc][ãa]o\s+Federal)/gi;
+  let lm2;
+  while ((lm2 = reLeiCapture.exec(text)) !== null) {
+    const name = lm2[0].trim();
+    if (!external.includes(name)) external.push(name);
+  }
+  const isCitationSyntaxOnly = (between) => {
+    let c = between;
+    c = c.replace(/,?\s*de\s+\d{1,2}\s+de\s+\w+\s+de\s+\d{4}/g, "");
+    c = c.replace(/,?\s*de\s+\d{4}/g, "");
+    c = c.replace(/\s*arts?\.\s*\d+[ºo°]?/g, "");
+    c = c.replace(/\s*§+\s*\d*[ºo°]?\.?/g, "");
+    c = c.replace(/\s*incisos?\s+[IVXLCDM]+/gi, "");
+    c = c.replace(/\s*al[íi]neas?\s+[a-z]\)?/gi, "");
+    c = c.replace(/\s*itens?\s+\d+/gi, "");
+    c = c.replace(/(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.]+)/gi, "");
+    c = c.replace(/[,;.\s\-–—ºo°:()]+/g, " ");
+    c = c.replace(/\b(?:e|a|de|do|da|dos|das|no|na|nos|nas|ao|caput)\b/gi, "");
+    return c.trim().length === 0;
+  };
+  let m;
+  while ((m = reArt.exec(text)) !== null) {
+    const pos = m.index;
+    if (externalRanges.some(([s, e]) => pos >= s && pos <= e)) continue;
+    const before = text.slice(Math.max(0, pos - 250), pos);
+    reLeiInline.lastIndex = 0;
+    let lastLaw = null, lm;
+    while ((lm = reLeiInline.exec(before)) !== null) lastLaw = { end: lm.index + lm[0].length };
+    if (lastLaw && isCitationSyntaxOnly(before.slice(lastLaw.end))) continue;
+    const nums = m[1].match(/\d+[ºo°]?/g) || [];
+    for (const n of nums) {
+      const artId = "Art. " + n;
+      if (!internal.includes(artId)) internal.push(artId);
+    }
+  }
+  return { internal, external };
+}
+
+// Constrói a árvore recursiva de remissões; visited evita ciclos infinitos
+function _buildTree(startId, ai, si, visited) {
+  if (visited.has(startId)) return null;
+  visited.add(startId);
+  const dev = _findDevice(startId, ai);
+  if (!dev) return null;
+  const isRevogado = dev.status === "revogado";
+  const subs = si.get(dev.id) || [];
+  const fullText = [dev.txt || "", ...subs.map(s => (s.id || "") + " " + (s.txt || ""))].join(" ");
+  const allRefs = isRevogado ? { internal: [], external: [] } : _extractRefs(fullText);
+  const selfNum = dev.id.replace(/[^0-9]/g, "");
+  const filteredRefs = allRefs.internal.filter(r => r.replace(/[^0-9]/g, "") !== selfNum);
+  const children = [];
+  for (const ref of filteredRefs) {
+    const child = _buildTree(ref, ai, si, new Set(visited));
+    if (child) children.push(child);
+  }
+  return {
+    id: dev.id,
+    text: (dev.txt || "").trim(),
+    status: dev.status || "vigente",
+    alteracao: dev.alteracao || "",
+    subs: subs.slice(0, 10),
+    refs: filteredRefs,
+    externalRefs: allRefs.external,
+    children
+  };
+}
+
+self.onmessage = function(e) {
+  const { ds, startId } = e.data;
+  try {
+    const { ai, si } = _buildIndices(ds);
+    const tree = _buildTree(startId, ai, si, new Set());
+    self.postMessage({ ok: true, tree });
+  } catch (err) {
+    self.postMessage({ ok: false, error: err.message });
+  }
+};
+`;
+// ═════════════════════════════════════════════════════════════════════════════
+
 function idT(s){for(const p of PATS)if(p.r.test(s.trim()))return p.t;return null;}
 function exId(t,s){s=s.trim();if(DIV.has(t))return s;const R={ARTIGO:/^(Art\.\s*\d+[ºo°]?[\-\.]?)/,PARÁGRAFO:/^(§\s*\d+[ºo°]?\.?|Par[áa]grafo\s+[úu]nico\.?)/i,INCISO:/^([IVXLCDM]+)\s*[\-–—]/,ALÍNEA:/^([a-z]\))/,ITEM:/^(\d+\.)/};const m=R[t]?.exec(s);return m?m[1].trim():s.slice(0,30);}
 function exTx(t,s){s=s.trim();if(DIV.has(t))return"";const R={ARTIGO:/^Art\.\s*\d+[ºo°]?[\s\-\.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?\.?\s+|Par[áa]grafo\s+[úu]nico\.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[\-–—]\s+(.+)/,ALÍNEA:/^[a-z]\)\s+(.+)/,ITEM:/^\d+\.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
@@ -653,32 +785,57 @@ function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
   const [tree,setTree]=useState(null);
   const [traced,setTraced]=useState(false);
   const [loading,setLoading]=useState(false);
+  const workerRef = useRef(null);
   const arts = useMemo(() => ds.filter(d => d.tipo === "ARTIGO" && d.status !== "vetado").map(d => d.id), [ds]);
+
+  // Termina worker pendente ao desmontar o componente
+  useEffect(() => {
+    return () => {
+      if (workerRef.current) { workerRef.current.terminate(); workerRef.current = null; }
+    };
+  }, []);
+
   const tracar = () => {
     if (!startArt) return;
-    setLoading(true);
-    // Usar setTimeout para permitir que o loading indicator renderize antes do processamento pesado
-    setTimeout(() => {
-      try {
-        const t = buildRecursiveTree(startArt);
-        setTree(t);
-        setTraced(true);
-      } catch (e) {
-        console.error("Erro ao traçar teia:", e);
-        setTree(null);
-        setTraced(true);
-      }
-      setLoading(false);
-    }, 50);
+    // Cancela worker anterior se ainda estiver rodando
+    if (workerRef.current) { workerRef.current.terminate(); workerRef.current = null; }
+    setLoading(true); setTree(null); setTraced(false);
+    try {
+      // Cria worker inline via Blob URL — mantém SPA monolítica sem arquivos externos
+      const blob = new Blob([TEIA_WORKER_SCRIPT], { type: "application/javascript" });
+      const blobUrl = URL.createObjectURL(blob);
+      const worker = new Worker(blobUrl);
+      workerRef.current = worker;
+      worker.onmessage = (e) => {
+        URL.revokeObjectURL(blobUrl);
+        workerRef.current = null;
+        setTree(e.data.ok ? e.data.tree : null);
+        if (!e.data.ok) console.error("Teia worker erro:", e.data.error);
+        setTraced(true); setLoading(false);
+      };
+      worker.onerror = (err) => {
+        URL.revokeObjectURL(blobUrl);
+        workerRef.current = null;
+        console.error("Teia worker falhou:", err);
+        setTree(null); setTraced(true); setLoading(false);
+      };
+      // Envia ds completo — worker constrói seus próprios índices
+      worker.postMessage({ ds, startId: startArt });
+    } catch (e) {
+      // Fallback: main thread com setTimeout para não bloquear o render do spinner
+      console.warn("Web Worker indisponível, usando main thread:", e);
+      setTimeout(() => {
+        try { setTree(buildRecursiveTree(startArt)); } catch (ex) { console.error(ex); setTree(null); }
+        setTraced(true); setLoading(false);
+      }, 50);
+    }
   };
 
   // Contagem de nós para estatísticas
   const countNodes = (node) => {
     if (!node) return 0;
     let count = 1;
-    if (node.children) {
-      for (const child of node.children) count += countNodes(child);
-    }
+    if (node.children) { for (const child of node.children) count += countNodes(child); }
     return count;
   };
   const totalNodes = tree ? countNodes(tree) : 0;
@@ -747,7 +904,7 @@ function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
       </div>
     </div>
     <div style={{flex:1,overflow:"auto",padding:"10px",background:"var(--bg-hover)",borderRadius:12,border:"1px solid var(--border)"}}>
-      {loading ? <div style={{textAlign:"center",paddingTop:100,color:"var(--text-sec)"}}><Sp/><div style={{marginTop:10}}>Processando teia de remissões...</div></div>
+      {loading ? <div style={{textAlign:"center",paddingTop:100,color:"var(--text-sec)"}}><Sp/><div style={{marginTop:10}}>Processando teia de remissões…</div></div>
       : !traced ? <div style={{textAlign:"center",paddingTop:100,color:"var(--text-sec)"}}>Selecione um artigo para ver a teia de remissões internas.</div>
       : !tree ? <div style={{textAlign:"center",paddingTop:100}}>Artigo não encontrado ou sem dispositivo vigente.</div>
       : <div style={{minWidth:"fit-content"}}><TreeNode node={tree} depth={0}/></div>}
