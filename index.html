@@ -776,22 +776,24 @@ function TabEstudo({ds,lei,gSt,uSt}){
     const levels=["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"];
     const clearBelow=(tipo)=>{const idx=levels.indexOf(tipo);for(let i=idx+1;i<levels.length;i++)stack[levels[i]]=null;};
     const getParent=(tipo)=>{const idx=levels.indexOf(tipo);for(let i=idx-1;i>=0;i--){if(stack[levels[i]])return stack[levels[i]];}return null;};
-    for(const d of ds){
+    for(let dsIdx=0;dsIdx<ds.length;dsIdx++){
+      const d=ds[dsIdx];
       if(DIV.has(d.tipo)){
-        const node={tipo:d.tipo,id:d.id,rub:d.rub,dsStart:null,dsEnd:null,children:[]};
+        // dsStart gravado diretamente com o índice real de ds,
+        // evitando o findIndex posterior que devolvia sempre a PRIMEIRA
+        // ocorrência de "CAPÍTULO I", "SEÇÃO I" etc. em toda a lei.
+        const node={tipo:d.tipo,id:d.id,rub:d.rub,dsStart:dsIdx,dsEnd:null,children:[]};
         clearBelow(d.tipo);stack[d.tipo]=node;
         const parent=getParent(d.tipo);
         if(parent)parent.children.push(node);else mapa.push(node);
       }
     }
-    // Computa dsStart/dsEnd de cada nó para filtrar a tabela
+    // Computa apenas dsEnd — dsStart já foi gravado corretamente acima
     const computeRange=(nodes)=>{
       for(const n of nodes){
-        const startIdx=ds.findIndex(d=>d.tipo===n.tipo&&d.id===n.id);
-        n.dsStart=startIdx;
         let endIdx=ds.length;
         const myLevel=levels.indexOf(n.tipo);
-        for(let i=startIdx+1;i<ds.length;i++){
+        for(let i=n.dsStart+1;i<ds.length;i++){
           if(DIV.has(ds[i].tipo)&&levels.indexOf(ds[i].tipo)<=myLevel){endIdx=i;break;}
         }
         n.dsEnd=endIdx;
@@ -1137,11 +1139,16 @@ function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
     return () => { if (workerRef.current) { workerRef.current.terminate(); workerRef.current = null; } };
   }, []);
 
-  // Renderiza/re-renderiza D3 sempre que tree mudar
+  // Renderiza/re-renderiza D3 quando tree ou loading mudam.
+  // Em ReactDOM.render (Legacy Mode), os setState do worker.onmessage não são
+  // batched: setTree dispara um render com loading=true (SVG ainda não montado,
+  // svgRef.current=null); só o render de setLoading(false) monta o SVG.
+  // Adicionar `loading` garante que o effect re-execute nesse render final,
+  // quando svgRef.current já aponta para o elemento montado.
   useEffect(() => {
     if (!tree || !svgRef.current) return;
     renderD3Tree(tree, svgRef.current, setSelNode);
-  }, [tree]);
+  }, [tree, loading]);
 
   const tracar = () => {
     if (!startArt) return;
