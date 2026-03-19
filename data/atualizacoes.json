@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-18T14:43:02.608611-03:00",
-  "data_busca": "2026-03-18",
-  "total": 67,
-  "novos_nesta_execucao": 3,
+  "ultima_atualizacao": "2026-03-19T11:39:29.031705-03:00",
+  "data_busca": "2026-03-19",
+  "total": 80,
+  "novos_nesta_execucao": 13,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,110 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "f47a4fa2be1555da",
+      "data": "2026-03-19",
+      "titulo": "19/03/2026 08:58Nesta quintaEm São Paulo, Lula participa da 17ª Caravana Federativa com anúncios de investimentos e entregas",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/em-sao-paulo-lula-participa-caravana-federativa-com-anuncios-de-investimentos-e-entregas",
+      "resumo": ""
+    },
+    {
+      "id": "e764ac438e2481ab",
+      "data": "2026-03-19",
+      "titulo": "18/03/2026 21:44BalançoOperação Força Integrada prende 116 pessoas e bloqueia R$ 97 milhões em 15 estados",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/operacao-forca-integrada-prende-116-pessoas-e-bloqueia-r-97-milhoes-em-15-estados",
+      "resumo": ""
+    },
+    {
+      "id": "f0f51ce3f43ba57c",
+      "data": "2026-03-19",
+      "titulo": "19/03/2026 09:21▶️ReforçoAcordo com 21 estados compartilha em tempo real notas fiscais dos combustíveis",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/acordo-21-estados-compartilha-tempo-real-notas-fiscais-combustiveis",
+      "resumo": ""
+    },
+    {
+      "id": "e73b7252802b170d",
+      "data": "2026-03-19",
+      "titulo": "18/03/2026 15:170800Anatel registra aumento nas reclamações de serviços de telecomunicações em 2025",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/anatel-registra-aumento-nas-reclamacoes-de-servicos-de-telecomunicacoes-em-2025",
+      "resumo": ""
+    },
+    {
+      "id": "437fb5263195b339",
+      "data": "2026-03-19",
+      "titulo": "Fazenda e Confaz fortalecem fiscalização sobre notas fiscais dos combustíveis, em nova ofensiva contra altas abusivas do diesel",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/marco/fazenda-e-confaz-decidem-fortalecer-fiscalizacao-sobre-notas-fiscais-dos-combustiveis-em-nova-ofensiva-contra-altas-abusivas-do-diesel",
+      "resumo": "19/03/2026-Dario Durigan destaca esforço conjunto entre União e estados para manter regularidade na oferta de diesel no país, evitando altas de preços à população"
+    },
+    {
+      "id": "d5d0f1936b33d18e",
+      "data": "2026-03-19",
+      "titulo": "ARRECADAÇÃO DAS RECEITAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ARRECADA%C3%87%C3%83O%20DAS%20RECEITAS",
+      "resumo": ""
+    },
+    {
+      "id": "54ee4e852c91e5cf",
+      "data": "2026-03-19",
+      "titulo": "RESULTADO PRIMÁRIO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=RESULTADO%20PRIM%C3%81RIO",
+      "resumo": ""
+    },
+    {
+      "id": "5d540d36d48843ef",
+      "data": "2026-03-19",
+      "titulo": "LIVES DA RECEITA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=LIVES%20DA%20RECEITA",
+      "resumo": ""
+    },
+    {
+      "id": "4e0502121b5a4a1e",
+      "data": "2026-03-19",
+      "titulo": "ORIENTAÇÃO AO CONTRIBUINTE",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ORIENTA%C3%87%C3%83O%20AO%20CONTRIBUINTE",
+      "resumo": ""
+    },
+    {
+      "id": "6c77d0826ff53495",
+      "data": "2026-03-19",
+      "titulo": "INTELIGÊNCIA FINANCEIRA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INTELIG%C3%8ANCIA%20FINANCEIRA",
+      "resumo": ""
+    },
+    {
+      "id": "8f5e989a2b4211df",
+      "data": "2026-03-19",
+      "titulo": "LAVAGEM DE DINHEIRO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=LAVAGEM%20DE%20DINHEIRO",
+      "resumo": ""
+    },
+    {
+      "id": "e9a72fe445cb683c",
+      "data": "2026-03-19",
+      "titulo": "PROJETO ANALYTICS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PROJETO%20ANALYTICS",
+      "resumo": ""
+    },
+    {
+      "id": "5a642976eed79bd7",
+      "data": "2026-03-19",
+      "titulo": "AUTORIDADES TRIBUTÁRIAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=AUTORIDADES%20TRIBUT%C3%81RIAS",
+      "resumo": ""
+    },
     {
       "id": "5862c177b982c0fa",
       "data": "2026-03-18",
