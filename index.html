@@ -157,7 +157,66 @@ async function pdfToText(f){const ab=await f.arrayBuffer();const pdf=await pdfjs
   fullText=fullText.replace(/ANEXO\s+[IVXLCDM]+\.pdf/gi,"");
   fullText=fullText.replace(/\* Este texto não substitui o publicado oficialmente\./gi,"");
   return fullText;}
-function LS(k,v){if(v===undefined){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null}catch(e){console.warn("Erro ao ler localStorage:",e);return null}}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){console.warn("Erro ao escrever localStorage:",e);}}
+// ─── Storage Module — KV cache + async sync ───────────────────────────────────
+const PROXY="https://tera-proxy.naytributos.workers.dev";
+let _authToken=null;
+const _cache={};
+
+function LS(k,v){
+  if(v===undefined){return _cache[k]!==undefined?_cache[k]:null;}
+  if(v===null){
+    delete _cache[k];
+    if(_authToken)fetch(`${PROXY}/kv/${encodeURIComponent(k)}`,{method:"DELETE",headers:{Authorization:`Bearer ${_authToken}`}}).catch(()=>{});
+    return;
+  }
+  _cache[k]=v;
+  if(_authToken)fetch(`${PROXY}/kv/${encodeURIComponent(k)}`,{method:"PUT",headers:{Authorization:`Bearer ${_authToken}`,"Content-Type":"application/json"},body:JSON.stringify({value:JSON.stringify(v)})}).catch(()=>{});
+}
+
+async function storageInit(token){
+  _authToken=token;
+  sessionStorage.setItem("t3-token",token);
+  try{
+    const r=await fetch(`${PROXY}/kv-list`,{headers:{Authorization:`Bearer ${token}`}});
+    if(!r.ok)return;
+    const {keys}=await r.json();
+    await Promise.all((keys||[]).map(async key=>{
+      try{
+        const r2=await fetch(`${PROXY}/kv/${encodeURIComponent(key)}`,{headers:{Authorization:`Bearer ${token}`}});
+        const d=await r2.json();
+        if(d.value!==null&&d.value!==undefined){try{_cache[key]=JSON.parse(d.value);}catch{_cache[key]=d.value;}}
+      }catch{}
+    }));
+  }catch(e){console.warn("storageInit:",e);}
+}
+
+async function saveUserApiKey(key){
+  if(!_authToken)return{ok:false,error:"Não autenticado"};
+  const r=await fetch(`${PROXY}/user/apikey`,{method:"PUT",headers:{Authorization:`Bearer ${_authToken}`,"Content-Type":"application/json"},body:JSON.stringify({apiKey:key})});
+  return r.json();
+}
+
+async function deleteUserApiKey(){
+  if(!_authToken)return{ok:false};
+  const r=await fetch(`${PROXY}/user/apikey`,{method:"DELETE",headers:{Authorization:`Bearer ${_authToken}`}});
+  return r.json();
+}
+
+async function getUserApiKeyStatus(){
+  if(!_authToken)return{configured:false};
+  try{const r=await fetch(`${PROXY}/user/apikey`,{headers:{Authorization:`Bearer ${_authToken}`}});return r.json();}catch{return{configured:false};}
+}
+
+function storageLogout(){
+  _authToken=null;
+  sessionStorage.removeItem("t3-token");
+  Object.keys(_cache).forEach(k=>delete _cache[k]);
+}
+
+async function callAI(body){
+  return fetch(`${PROXY}/api/anthropic`,{method:"POST",headers:{Authorization:`Bearer ${_authToken}`,"Content-Type":"application/json"},body:JSON.stringify(body)});
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 const Ic=({d,s=16,c="currentColor"})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
 const IC={up:"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12",bk:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z",tg:"M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z",sd:"M22 2L11 13M22 2l-7 20-4-9-9-4z",tr:"M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2",br:"M9.5 2a3.5 3.5 0 0 0-3.19 4.94A3.5 3.5 0 0 0 4 10.5a3.5 3.5 0 0 0 1.98 3.15A3.5 3.5 0 0 0 8.5 18h1a.5.5 0 0 0 .5-.5V2.5a.5.5 0 0 0-.5-.5z",bl:"M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",lk:"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71",sc:"M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",ls:"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",rf:"M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"};
@@ -174,7 +233,53 @@ function App(){
   const [theme,setTheme]=useState(()=>{try{return localStorage.getItem("t3-theme")||"dark"}catch{return"dark"}});
   useEffect(()=>{document.body.setAttribute("data-theme",theme);try{localStorage.setItem("t3-theme",theme)}catch{}},[theme]);
   const toggleTheme=()=>setTheme(t=>t==="dark"?"light":"dark");
-  const [lib,setLib]=useState(()=>LS("t3-lib")||[]);const [sel,setSel]=useState(null);const [vw,setVw]=useState("library");const [uping,setUp]=useState(false);const [area,setArea]=useState("tributario");const [study,setStudy]=useState(()=>LS("t3-st")||{});const [apiKey,setApiKey]=useState(()=>LS("t3-key")||"");const fRef=useRef(null);
+
+  // ── Auth state ──────────────────────────────────────────────────────────────
+  const [auth,setAuth]=useState(null); // {token,username,userId} | null
+  const [authLoading,setAuthLoading]=useState(true);
+
+  useEffect(()=>{
+    const token=sessionStorage.getItem("t3-token");
+    if(!token){setAuthLoading(false);return;}
+    fetch(`${PROXY}/auth/me`,{headers:{Authorization:`Bearer ${token}`}})
+      .then(r=>r.ok?r.json():null)
+      .then(async d=>{
+        if(d&&d.userId){
+          await storageInit(token);
+          setLib(LS("t3-lib")||[]);
+          setStudy(LS("t3-st")||{});
+          setAuth({token,username:d.username,userId:d.userId});
+        }
+        setAuthLoading(false);
+      })
+      .catch(()=>setAuthLoading(false));
+  },[]);
+
+  const handleLogin=async(token,username,userId)=>{
+    await storageInit(token);
+    setLib(LS("t3-lib")||[]);
+    setStudy(LS("t3-st")||{});
+    setAuth({token,username,userId});
+  };
+
+  const handleLogout=async()=>{
+    try{await fetch(`${PROXY}/auth/logout`,{method:"POST",headers:{Authorization:`Bearer ${auth.token}`}});}catch{}
+    storageLogout();
+    setLib([]);setStudy({});setSel(null);setVw("library");
+    setAuth(null);
+  };
+
+  if(authLoading)return <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"var(--bg)"}}><Sp/><span style={{marginLeft:10,color:"var(--text-sec)"}}>Carregando…</span></div>;
+  if(!auth)return <LoginScreen onLogin={handleLogin} theme={theme} toggleTheme={toggleTheme}/>;
+  // ───────────────────────────────────────────────────────────────────────────
+
+  const [lib,setLib]=useState([]);const [sel,setSel]=useState(null);const [vw,setVw]=useState("library");const [uping,setUp]=useState(false);const [area,setArea]=useState("tributario");const [study,setStudy]=useState({});const fRef=useRef(null);
+  const [showApiKeyModal,setShowApiKeyModal]=useState(false);
+  const [apiKeyStatus,setApiKeyStatus]=useState(null); // null | {configured,masked}
+
+  useEffect(()=>{
+    getUserApiKeyStatus().then(s=>setApiKeyStatus(s));
+  },[auth]);
 
   const upF=async e=>{const f=e.target.files?.[0];if(!f)return;setUp(true);try{const t=await pdfToText(f);const ds=parse(t);const l={id:Date.now()+"",nome:f.name.replace(/\.pdf$/i,""),data:new Date().toLocaleDateString("pt-BR"),ds,nA:ds.filter(d=>d.tipo==="ARTIGO").length,nD:ds.length,area,anexos:[]};const nl=[l,...lib];setLib(nl);LS("t3-lib",nl);setSel(l);setVw("reader");}catch(e){alert("Erro: "+e.message);}setUp(false);if(fRef.current)fRef.current.value="";};
   const del=id=>{const nl=lib.filter(l=>l.id!==id);setLib(nl);LS("t3-lib",nl);if(sel?.id===id){setSel(null);setVw("library");}};
@@ -185,9 +290,8 @@ function App(){
   const delAnexo=(leiId,idx)=>{const nl=lib.map(l=>l.id===leiId?{...l,anexos:(l.anexos||[]).filter((_,i)=>i!==idx)}:l);setLib(nl);LS("t3-lib",nl);if(sel?.id===leiId)setSel(nl.find(l=>l.id===leiId));};
   const uSt=(lid,di,f,v)=>{const k=`${lid}-${di}`;const n={...study,[k]:{...study[k],[f]:v}};setStudy(n);LS("t3-st",n);};
   const gSt=(lid,di,f)=>study[`${lid}-${di}`]?.[f]||"";
-  const saveKey=k=>{setApiKey(k);LS("t3-key",k);};
-  const exportBackup=()=>{try{const data={lib,study,apiKey,area,notas:LS("t3-notas"),temas:LS("t3-temas"),exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="TERA_backup_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);}catch(e){alert("Erro ao exportar: "+e.message);}};
-  const importBackup=()=>{const inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const txt=await f.text();const data=JSON.parse(txt);if(data.lib){setLib(data.lib);LS("t3-lib",data.lib);}if(data.study){setStudy(data.study);LS("t3-st",data.study);}if(data.apiKey){setApiKey(data.apiKey);LS("t3-key",data.apiKey);}if(data.notas)LS("t3-notas",data.notas);if(data.temas)LS("t3-temas",data.temas);alert("Backup restaurado com sucesso! "+((data.lib||[]).length)+" leis, "+(Object.keys(data.study||{}).length)+" anotações de estudo e "+((data.notas||[]).length)+" anotações do E-Consultor importadas.");}catch(e){alert("Erro ao importar: "+e.message);}};inp.click();};
+  const exportBackup=()=>{try{const data={lib,study,area,notas:LS("t3-notas"),temas:LS("t3-temas"),exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="TERA_backup_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);}catch(e){alert("Erro ao exportar: "+e.message);}};
+  const importBackup=()=>{const inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const txt=await f.text();const data=JSON.parse(txt);if(data.lib){setLib(data.lib);LS("t3-lib",data.lib);}if(data.study){setStudy(data.study);LS("t3-st",data.study);}if(data.notas)LS("t3-notas",data.notas);if(data.temas)LS("t3-temas",data.temas);alert("Backup restaurado com sucesso! "+((data.lib||[]).length)+" leis, "+(Object.keys(data.study||{}).length)+" anotações de estudo e "+((data.notas||[]).length)+" anotações do E-Consultor importadas.");}catch(e){alert("Erro ao importar: "+e.message);}};inp.click();};
   const nav=[{id:"library",ic:IC.bk,lb:"Biblioteca"},...(sel?[{id:"reader",ic:IC.ls,lb:sel.nome.slice(0,20)}]:[]),{id:"econsultor",ic:IC.br,lb:"E-Consultor"},{id:"reforma",ic:IC.sc,lb:"Reforma"},{id:"atualizacoes",ic:IC.bl,lb:"Atualizações"}];
 
   return <div style={{minHeight:"100vh"}}>
@@ -201,17 +305,32 @@ function App(){
         <ThemeBtn theme={theme} toggle={toggleTheme}/>
         <button onClick={exportBackup} title="Exportar Backup (Leis + Anotações)" style={{fontSize:11,color:"var(--text-sec)",padding:"5px 8px",border:"1px solid var(--border)",borderRadius:5,background:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:3}}><Ic d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" s={11} c="var(--text-sec)"/>Backup</button>
         <button onClick={importBackup} title="Importar Backup" style={{fontSize:11,color:"var(--text-sec)",padding:"5px 8px",border:"1px solid var(--border)",borderRadius:5,background:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:3}}><Ic d={IC.up} s={11} c="var(--text-sec)"/>Restaurar</button>
-        <a href="https://www.planalto.gov.br" target="_blank" style={{fontSize:12,color:"var(--text-sec)",textDecoration:"none",padding:"5px 8px",border:"1px solid var(--border)",borderRadius:5,display:"flex",alignItems:"center",gap:3}}><Ic d={IC.lk} s={11} c="var(--text-sec)"/>Fontes</a>
+        <button onClick={()=>setShowApiKeyModal(true)} title="Configurar API Key Anthropic" style={{fontSize:11,color:apiKeyStatus?.configured?"var(--ok)":"var(--err)",padding:"5px 8px",border:"1px solid var(--border)",borderRadius:5,background:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:3}}><Ic d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm0 14.2a7.2 7.2 0 0 1-6-3.22c.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08a7.2 7.2 0 0 1-6 3.22z" s={11} c={apiKeyStatus?.configured?"var(--ok)":"var(--err)"}/>API Key</button>
+        <button onClick={handleLogout} title="Sair" style={{fontSize:11,color:"var(--text-sec)",padding:"5px 8px",border:"1px solid var(--border)",borderRadius:5,background:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:3}}><Ic d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" s={11} c="var(--text-sec)"/>{auth.username}</button>
         <select value={area} onChange={e=>setArea(e.target.value)} style={{background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:5,color:"var(--text)",padding:"5px 8px",fontSize:11}}>{Object.entries(AREAS).map(([k,v])=><option key={k} value={k}>{v.nome}</option>)}</select>
       </div>
     </header>
     <main style={{maxWidth:1440,margin:"0 auto",padding:"20px"}}>
       {vw==="library"&&<Lib lib={lib} sel={sel} onSel={l=>{setSel(l);setVw("reader");}} onDel={del} onUp={upF} uping={uping} fRef={fRef}/>}
-      {vw==="reader"&&sel&&<Reader lei={sel} area={area} gSt={gSt} uSt={uSt} apiKey={apiKey} saveKey={saveKey} addAnexo={addAnexo} delAnexo={delAnexo} study={study}/>}
+      {vw==="reader"&&sel&&<Reader lei={sel} area={area} gSt={gSt} uSt={uSt} addAnexo={addAnexo} delAnexo={delAnexo} study={study}/>}
       {vw==="econsultor"&&<EConsultor lib={lib}/>}
-      {vw==="reforma"&&<Ref apiKey={apiKey} saveKey={saveKey}/>}
-      {vw==="atualizacoes"&&<Atl apiKey={apiKey} saveKey={saveKey}/>}
+      {vw==="reforma"&&<Ref/>}
+      {vw==="atualizacoes"&&<Atl/>}
     </main>
+    {showApiKeyModal&&<ApiKeyModal
+      status={apiKeyStatus}
+      onSave={async(k)=>{
+        const r=await saveUserApiKey(k);
+        if(r.ok){setApiKeyStatus({configured:true,masked:r.masked});setShowApiKeyModal(false);}
+        else alert(r.error||"Erro ao salvar chave");
+      }}
+      onDelete={async()=>{
+        await deleteUserApiKey();
+        setApiKeyStatus({configured:false});
+        setShowApiKeyModal(false);
+      }}
+      onClose={()=>setShowApiKeyModal(false)}
+    />}
   </div>;
 }
 
@@ -239,7 +358,7 @@ function Lib({lib,sel,onSel,onDel,onUp,uping,fRef}){return <div className="fade"
 // - Renomeada "indice" → "Busca"
 // - Removidas as renderizações condicionais de tab==="remissoes" e tab==="tutor"
 // - Export Excel: removida aba "Remissões"
-function Reader({lei,area,gSt,uSt,apiKey,saveKey,addAnexo,delAnexo,study}){
+function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
   const [tab,setTab]=useState("texto");const [saved,setSaved]=useState(false);const [goSearch,setGoSearch]=useState("");
   const tabs=[{id:"sumario",lb:"Sumário"},{id:"texto",lb:"Texto Integral"},{id:"artigos",lb:"Artigos"},{id:"estudo",lb:"Estudo Guiado"},{id:"prazos",lb:"Prazos/Valores"},{id:"busca",lb:"Busca"},{id:"mapa",lb:"Mapa"},{id:"anexos",lb:`Anexos (${(lei.anexos||[]).length})`},{id:"teia",lb:"🕸 Teia"},{id:"perguntasrespostas",lb:"Perguntas e Respostas"}];
   const ds=lei.ds;
@@ -458,7 +577,7 @@ function Reader({lei,area,gSt,uSt,apiKey,saveKey,addAnexo,delAnexo,study}){
     {tab==="mapa"&&<TabMapa ds={ds}/>}
     {tab==="anexos"&&<TabAnexos lei={lei} addAnexo={addAnexo} delAnexo={delAnexo}/>}
     {tab==="teia"&&<TabTeia ds={ds} buildRecursiveTree={buildRecursiveTree} buildRecursiveChain={buildRecursiveChain}/>}
-    {tab==="perguntasrespostas"&&<TabSabatina lei={lei} area={area} apiKey={apiKey} saveKey={saveKey}/>}
+    {tab==="perguntasrespostas"&&<TabSabatina lei={lei} area={area}/>}
   </div>;
 }
 
@@ -923,13 +1042,12 @@ function TabAnexos({lei,addAnexo,delAnexo}){const [uping,setUp]=useState(false);
 }
 
 // ALTERAÇÃO ENTREGA 2: "Sabatina" → "Perguntas e Respostas", "Corrigir com IA" → "Verificar Respostas"
-function TabSabatina({lei,area,apiKey,saveKey}){
+function TabSabatina({lei,area}){
   const [perguntas,setPerguntas]=useState(()=>LS("t3-sab-"+lei.id)||[]);
   const [respostas,setRespostas]=useState(()=>LS("t3-sab-r-"+lei.id)||{});
   const [correcoes,setCorrecoes]=useState(()=>LS("t3-sab-c-"+lei.id)||{});
   const [loading,setLoading]=useState({});
   const [uploading,setUploading]=useState(false);
-  const [localKey,setLocalKey]=useState(apiKey);
   const fRef=useRef(null);
   const salvarRespostas=(novas)=>{setRespostas(novas);LS("t3-sab-r-"+lei.id,novas);};
   const salvarCorrecoes=(novas)=>{setCorrecoes(novas);LS("t3-sab-c-"+lei.id,novas);};
@@ -957,7 +1075,7 @@ function TabSabatina({lei,area,apiKey,saveKey}){
     if(fRef.current)fRef.current.value="";
   };
   const corrigir=async(idx)=>{
-    if(!apiKey){alert("Configure a API Key primeiro.");return;}
+    if(!_authToken){alert("Sessão expirada. Faça login novamente.");return;}
     const pergunta=perguntas[idx];
     const resposta=respostas[idx]||"";
     if(!resposta.trim()){alert("Escreva sua resposta antes de solicitar a verificação.");return;}
@@ -982,7 +1100,7 @@ REGRAS DE CORREÇÃO:
 4. Se a resposta estiver incompleta, indique o que faltou com a referência legal
 5. Seja técnico mas didático — como um professor em banca de exame oral
 6. Responda em português brasileiro`;
-      const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2048,system:systemPrompt,messages:[{role:"user",content:`PERGUNTA DA SABATINA:\n${pergunta}\n\nRESPOSTA DO ALUNO:\n${resposta}\n\nCorrija a resposta acima com base legal específica na lei "${lei.nome}".`}]})});
+      const r=await callAI({model:"claude-sonnet-4-20250514",max_tokens:2048,system:systemPrompt,messages:[{role:"user",content:`PERGUNTA DA SABATINA:\n${pergunta}\n\nRESPOSTA DO ALUNO:\n${resposta}\n\nCorrija a resposta acima com base legal específica na lei "${lei.nome}".`}]});
       const d=await r.json();
       const texto=d.content?.[0]?.text||"Erro na verificação.";
       const novas={...correcoes,[idx]:texto};
@@ -1045,7 +1163,7 @@ REGRAS DE CORREÇÃO:
       alert("Erro ao exportar: "+e.message);
     }
   };
-  if(!apiKey)return <div className="cd" style={{padding:20}}><div style={{fontWeight:700,marginBottom:10}}>Configurar API Key para Verificação IA</div><input value={localKey} onChange={e=>setLocalKey(e.target.value)} placeholder="sk-ant-..." style={{width:"100%",padding:10,marginBottom:10,borderRadius:6}}/><button onClick={()=>saveKey(localKey)} className="btn-primary">Salvar</button></div>;
+  if(!_authToken)return <div className="cd" style={{padding:20}}><div style={{color:"var(--err)"}}>Sessão expirada. Recarregue a página e faça login novamente.</div></div>;
   return <div className="fade">
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14,flexWrap:"wrap",gap:8}}>
       <div>
@@ -1336,9 +1454,9 @@ const REFORMA=[
   {n:"Lei nº 10.833/2003",d:"COFINS não cumulativa. Regime vigente durante a transição, com redução gradual de alíquotas a partir de 2027.",url:"https://www.planalto.gov.br/ccivil_03/leis/2003/l10.833.htm"},
   {n:"Lei nº 9.718/1998",d:"PIS/COFINS cumulativo. Regime vigente durante a transição para os contribuintes não sujeitos à não cumulatividade.",url:"https://www.planalto.gov.br/ccivil_03/leis/l9718.htm"},
 ];
-function Ref({apiKey,saveKey}){const [sub,setSub]=useState("leg");const [tMsgs,setTMsgs]=useState([]);const [tInp,setTInp]=useState("");const [tLd,setTLd]=useState(false);const [localKey,setLocalKey]=useState(apiKey);const cr=useRef(null);const subs=[{id:"leg",lb:"Legislação"},{id:"timeline",lb:"Timeline Transição"},{id:"tutor",lb:"Tutor Reforma"}];
+function Ref(){const [sub,setSub]=useState("leg");const [tMsgs,setTMsgs]=useState([]);const [tInp,setTInp]=useState("");const [tLd,setTLd]=useState(false);const cr=useRef(null);const subs=[{id:"leg",lb:"Legislação"},{id:"timeline",lb:"Timeline Transição"},{id:"tutor",lb:"Tutor Reforma"}];
   const TIMELINE=[{ano:"2023",ev:"EC 132/2023 promulgada",det:"Aprovação da Emenda Constitucional da Reforma Tributária.",fonte:"Planalto",url:"https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc/emc132.htm"},{ano:"2025",ev:"LC 214/2025 publicada",det:"Regulamentação do IBS, CBS e Imposto Seletivo.",fonte:"Planalto",url:"https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp214.htm"},{ano:"2026",ev:"Início do período de teste",det:"CBS a 0,9% e IBS a 0,1% (alíquota-teste). PIS/COFINS mantidos integralmente.",fonte:"EC 132/2023, art. 125"},{ano:"2027",ev:"CBS substituindo PIS/COFINS",det:"CBS em vigor com alíquota de referência. PIS e COFINS extintos.",fonte:"EC 132/2023, art. 125, §1º"},{ano:"2029-2032",ev:"Transição gradual ICMS/ISS → IBS",det:"Redução progressiva de ICMS e ISS: 90% em 2029, 80% em 2030, 70% em 2031, 60% em 2032.",fonte:"EC 132/2023, art. 125, §§3º-5º"},{ano:"2033",ev:"Plena vigência",det:"IBS em alíquota plena. ICMS e ISS extintos. Sistema dual CBS+IBS consolidado.",fonte:"EC 132/2023, art. 125, §6º"}];
-  const sendT=async()=>{if(!tInp.trim()||tLd||!apiKey)return;const m=tInp.trim();setTInp("");setTMsgs(p=>[...p,{role:"user",text:m}]);setTLd(true);try{const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1024,system:"Você é o TERA Tutor especialista em Reforma Tributária brasileira (EC 132/2023, LC 214/2025). Responda sobre IBS, CBS, Imposto Seletivo, split payment, não cumulatividade, transição, cashback.",messages:[{role:"user",content:m}]})});const d=await r.json();setTMsgs(p=>[...p,{role:"assistant",text:d.content?.[0]?.text||"Erro."}]);}catch(e){setTMsgs(p=>[...p,{role:"assistant",text:"Erro: "+e.message}]);}setTLd(false);};
+  const sendT=async()=>{if(!tInp.trim()||tLd)return;const m=tInp.trim();setTInp("");setTMsgs(p=>[...p,{role:"user",text:m}]);setTLd(true);try{const r=await callAI({model:"claude-sonnet-4-20250514",max_tokens:1024,system:"Você é o TERA Tutor especialista em Reforma Tributária brasileira (EC 132/2023, LC 214/2025). Responda sobre IBS, CBS, Imposto Seletivo, split payment, não cumulatividade, transição, cashback.",messages:[{role:"user",content:m}]});const d=await r.json();if(d.error)setTMsgs(p=>[...p,{role:"assistant",text:"⚠ "+d.error}]);else setTMsgs(p=>[...p,{role:"assistant",text:d.content?.[0]?.text||"Erro."}]);}catch(e){setTMsgs(p=>[...p,{role:"assistant",text:"Erro: "+e.message}]);}setTLd(false);};
   useEffect(()=>{cr.current&&(cr.current.scrollTop=cr.current.scrollHeight);},[tMsgs]);
   return <div className="fade"><h2 style={{fontSize:20,fontWeight:700,marginBottom:12}}>Reforma Tributária</h2>
     <div style={{display:"flex",gap:0,borderBottom:"1px solid var(--border)",marginBottom:14}}>{subs.map(s=><button key={s.id} className={`stab ${sub===s.id?"on":""}`} onClick={()=>setSub(s.id)}>{s.lb}</button>)}</div>
@@ -1358,7 +1476,7 @@ function Ref({apiKey,saveKey}){const [sub,setSub]=useState("leg");const [tMsgs,s
         <div style={{fontSize:11,color:"var(--text-mute)",marginTop:6,fontStyle:"italic"}}>Fonte: {t.fonte}{t.url&&<> · <a href={t.url} target="_blank" onClick={e=>e.stopPropagation()} style={{color:"var(--gold)"}}>ver legislação</a></>}</div>
       </div>
     </div>)}</div></div>}
-    {sub==="tutor"&&(!apiKey?<div className="cd" style={{padding:20}}><div style={{fontWeight:700,marginBottom:10}}>Configurar API Key</div><input value={localKey} onChange={e=>setLocalKey(e.target.value)} placeholder="sk-ant-..." style={{width:"100%",padding:10,marginBottom:10,borderRadius:6}}/><button onClick={()=>saveKey(localKey)} className="btn-primary">Salvar</button></div>
+    {sub==="tutor"&&(<div
     :<div style={{display:"flex",flexDirection:"column",height:"60vh"}}>
       <div ref={cr} style={{flex:1,overflowY:"auto",padding:10}}>{tMsgs.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Pergunte sobre a Reforma Tributária, IBS, CBS, Imposto Seletivo...</div>}{tMsgs.map((m,i)=><div key={i} style={{marginBottom:10,textAlign:m.role==="user"?"right":"left"}}><div style={{display:"inline-block",padding:10,borderRadius:10,maxWidth:"80%",background:m.role==="user"?"var(--grad)":"var(--bg-hover)",color:m.role==="user"?"#fff":"var(--text)",whiteSpace:"pre-wrap"}}>{m.text}</div></div>)}</div>
       <div style={{display:"flex",gap:10}}><input value={tInp} onChange={e=>setTInp(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sendT()} placeholder="Pergunte sobre a Reforma..." style={{flex:1,padding:10,borderRadius:6}}/><button onClick={sendT} className="btn-primary" disabled={tLd}>{tLd?<Sp/>:"Enviar"}</button></div>
@@ -1382,7 +1500,7 @@ const PORTAIS=[
 ];
 const DATA_URL="data/atualizacoes.json";
 
-function Atl({apiKey,saveKey}){
+function Atl(){
   const [itens,setItens]=useState(()=>LS("t3-upd-v2")||[]);
   const [ultimaAtt,setUltimaAtt]=useState(()=>LS("t3-upd-dt")||"");
   const [ld,setLd]=useState(false);
@@ -1476,6 +1594,99 @@ function Atl({apiKey,saveKey}){
         {item.resumo&&<div style={{fontSize:12,color:"var(--text-sec)",lineHeight:1.5}}>{item.resumo}</div>}
       </div>
     )}</div>}
+  </div>;
+}
+
+// ─── LoginScreen ─────────────────────────────────────────────────────────────
+function LoginScreen({onLogin,theme,toggleTheme}){
+  const [mode,setMode]=useState("login"); // "login" | "register"
+  const [username,setUsername]=useState("");
+  const [password,setPassword]=useState("");
+  const [inviteCode,setInviteCode]=useState("");
+  const [loading,setLoading]=useState(false);
+  const [err,setErr]=useState("");
+
+  const submit=async()=>{
+    setErr("");
+    if(!username.trim()||!password.trim()){setErr("Preencha usuário e senha.");return;}
+    if(mode==="register"&&!inviteCode.trim()){setErr("Informe o código de convite.");return;}
+    setLoading(true);
+    try{
+      const body=mode==="login"
+        ?{username:username.trim(),password}
+        :{username:username.trim(),password,inviteCode:inviteCode.trim()};
+      const r=await fetch(`${PROXY}/auth/${mode}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      const d=await r.json();
+      if(!r.ok){setErr(d.error||"Erro desconhecido");setLoading(false);return;}
+      onLogin(d.token,d.username,d.userId);
+    }catch(e){setErr("Erro de conexão: "+e.message);}
+    setLoading(false);
+  };
+
+  return <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"var(--bg)",padding:20}}>
+    <div style={{position:"absolute",top:16,right:16}}><ThemeBtn theme={theme} toggle={toggleTheme}/></div>
+    <div style={{marginBottom:32,textAlign:"center"}}>
+      <Logo/>
+      <div style={{marginTop:12,fontSize:22,fontWeight:800,letterSpacing:2}}>TERA</div>
+      <div style={{fontSize:13,color:"var(--text-sec)",marginTop:4}}>RACIOCÍNIO JURÍDICO</div>
+    </div>
+    <div className="cd" style={{width:"100%",maxWidth:380,padding:28}}>
+      <div style={{display:"flex",gap:8,marginBottom:24}}>
+        <button onClick={()=>{setMode("login");setErr("");}} style={{flex:1,padding:"8px 0",borderRadius:6,border:"none",cursor:"pointer",fontWeight:mode==="login"?700:400,background:mode==="login"?"var(--gold-subtle)":"transparent",color:mode==="login"?"var(--gold)":"var(--text-sec)",fontSize:13,fontFamily:"inherit"}}>Entrar</button>
+        <button onClick={()=>{setMode("register");setErr("");}} style={{flex:1,padding:"8px 0",borderRadius:6,border:"none",cursor:"pointer",fontWeight:mode==="register"?700:400,background:mode==="register"?"var(--gold-subtle)":"transparent",color:mode==="register"?"var(--gold)":"var(--text-sec)",fontSize:13,fontFamily:"inherit"}}>Criar Conta</button>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <input value={username} onChange={e=>setUsername(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} placeholder="Usuário" style={{padding:"10px 12px",borderRadius:7,fontSize:14,outline:"none"}}/>
+        <input value={password} onChange={e=>setPassword(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} type="password" placeholder="Senha" style={{padding:"10px 12px",borderRadius:7,fontSize:14,outline:"none"}}/>
+        {mode==="register"&&<input value={inviteCode} onChange={e=>setInviteCode(e.target.value.toUpperCase())} onKeyDown={e=>e.key==="Enter"&&submit()} placeholder="Código de convite (ex: A3F2B1C4)" style={{padding:"10px 12px",borderRadius:7,fontSize:14,outline:"none",letterSpacing:2}}/>}
+        {err&&<div style={{color:"var(--err)",fontSize:12,padding:"6px 10px",background:"rgba(231,76,60,.1)",borderRadius:5}}>{err}</div>}
+        <button onClick={submit} disabled={loading} className="btn-primary" style={{marginTop:4,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+          {loading&&<Sp/>}{mode==="login"?"Entrar":"Criar Conta"}
+        </button>
+      </div>
+    </div>
+    <div style={{marginTop:16,fontSize:11,color:"var(--text-mute)"}}>Acesso restrito — máx. 5 usuários</div>
+  </div>;
+}
+
+// ─── ApiKeyModal ──────────────────────────────────────────────────────────────
+function ApiKeyModal({status,onSave,onDelete,onClose}){
+  const [key,setKey]=useState("");
+  const [loading,setLoading]=useState(false);
+  const [err,setErr]=useState("");
+
+  const save=async()=>{
+    if(!key.trim()){setErr("Digite a chave.");return;}
+    if(!key.trim().startsWith("sk-ant-")){setErr("Chave inválida — deve começar com sk-ant-");return;}
+    setLoading(true);setErr("");
+    try{await onSave(key.trim());}catch(e){setErr(e.message);}
+    setLoading(false);
+  };
+
+  const remove=async()=>{
+    if(!confirm("Remover sua API Key? Sem ela as funções de IA ficarão indisponíveis."))return;
+    setLoading(true);
+    try{await onDelete();}catch{}
+    setLoading(false);
+  };
+
+  return <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.6)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20}} onClick={e=>e.target===e.currentTarget&&onClose()}>
+    <div className="cd" style={{width:"100%",maxWidth:420,padding:24}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+        <div style={{fontWeight:700,fontSize:15}}>⚙ Minha API Key Anthropic</div>
+        <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",color:"var(--text-sec)",fontSize:18}}>✕</button>
+      </div>
+      {status?.configured&&<div style={{marginBottom:12,padding:"8px 12px",background:"rgba(46,204,113,.1)",borderRadius:6,fontSize:12,color:"var(--ok)"}}>✓ Chave configurada: <code>{status.masked}</code></div>}
+      <div style={{fontSize:12,color:"var(--text-sec)",marginBottom:10}}>Sua chave fica armazenada no servidor de forma segura e nunca é exposta ao navegador.</div>
+      <input value={key} onChange={e=>setKey(e.target.value)} placeholder="sk-ant-api03-…" style={{width:"100%",padding:"10px 12px",borderRadius:7,fontSize:13,outline:"none",marginBottom:10,fontFamily:"monospace"}}/>
+      {err&&<div style={{color:"var(--err)",fontSize:12,marginBottom:8}}>{err}</div>}
+      <div style={{display:"flex",gap:8}}>
+        <button onClick={save} disabled={loading} className="btn-primary" style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+          {loading&&<Sp/>}Salvar
+        </button>
+        {status?.configured&&<button onClick={remove} disabled={loading} className="btn-secondary" style={{color:"var(--err)",borderColor:"var(--err)"}}>Remover</button>}
+      </div>
+    </div>
   </div>;
 }
 
