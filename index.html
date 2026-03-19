@@ -152,10 +152,19 @@ function _extractRefs(text) {
     c = c.replace(/\b(?:e|a|de|do|da|dos|das|no|na|nos|nas|ao|caput)\b/gi, "");
     return c.trim().length === 0;
   };
+  // Regex para detectar nome de lei logo APÓS a referência ao artigo
+  // Cobre: "art. 15 da Lei nº 6.404", "art. 3º do Decreto nº 1.598", etc.
+  const reLeiDirectlyAfter = /^\s*(?:[,;]\s*)?(?:d[aoe]s?\s+)?(?:Lei(?:\s+Complementar)?|Decreto(?:-Lei)?|Medida\s+Provis[óo]ria|Instru[çc][ãa]o\s+Normativa(?:\s+(?:RFB|SRF|[A-Z]{2,}))?|C[óo]digo\s+\w+|Constitui[çc][ãa]o)\s+[Nn][ºo°]?\s*[\d.]/i;
+
   let m;
   while ((m = reArt.exec(text)) !== null) {
     const pos = m.index;
+    // Guarda-1: artigo cai dentro de parêntese que contém nome de lei
     if (externalRanges.some(([s, e]) => pos >= s && pos <= e)) continue;
+    // Guarda-2: nome de lei aparece logo APÓS o artigo — ex: "art. 15 da Lei nº 6.404"
+    const textAfterMatch = text.slice(m.index + m[0].length, m.index + m[0].length + 130);
+    if (reLeiDirectlyAfter.test(textAfterMatch)) continue;
+    // Guarda-3: nome de lei aparece logo ANTES do artigo (lógica original)
     const before = text.slice(Math.max(0, pos - 250), pos);
     reLeiInline.lastIndex = 0;
     let lastLaw = null, lm;
@@ -197,7 +206,14 @@ function _buildTree(startId, ai, si, visited, depth) {
     text: (dev.txt || "").trim(),
     status: dev.status || "vigente",
     alteracao: dev.alteracao || "",
-    subs: subs.slice(0, 10),
+    subs: subs.slice(0, 10).map(function(s) {
+      try {
+        var sr = _extractRefs((s.id || "") + " " + (s.txt || ""));
+        return Object.assign({}, s, { externalRefs: sr.external });
+      } catch (_) {
+        return Object.assign({}, s, { externalRefs: [] });
+      }
+    }),
     refs: filteredRefs,
     externalRefs: allRefs.external,
     children
@@ -1406,6 +1422,19 @@ function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
                                   opacity:s.status==="revogado"?.6:1}}>{s.txt}</span>
                     {s.status==="revogado" && (
                       <span className="badge badge-revogado" style={{marginLeft:6}}>REVOGADO</span>
+                    )}
+                    {s.externalRefs && s.externalRefs.length > 0 && (
+                      <div style={{marginTop:4,display:"flex",flexWrap:"wrap",gap:4}}>
+                        {s.externalRefs.map((ext,j) => (
+                          <span key={j} style={{padding:"1px 8px",borderRadius:8,fontSize:10,
+                                               fontWeight:600,
+                                               background:"rgba(52,152,219,0.08)",
+                                               color:"#3498db",
+                                               border:"1px solid rgba(52,152,219,0.2)"}}>
+                            ↗ {ext}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
                 ))}
