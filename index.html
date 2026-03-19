@@ -756,6 +756,7 @@ function TabArtigos({ds}){let art="";const rows=[];const tipos=new Set(["ARTIGO"
 
 function TabEstudo({ds,lei,gSt,uSt}){
   const [filtroStatus,setFiltroStatus]=useState("");
+  const [selIdx,setSelIdx]=useState(null);  // índice em ds do dispositivo expandido
   const sts=["Não lido","Lido","Revisando","Dominado","Dúvida"];
   const sC={Dominado:"#27AE60",Dúvida:"#C0392B",Revisando:"#D4A017",Lido:"#2E86AB"};
   const items = useMemo(() => ds.filter(d => !DIV.has(d.tipo)), [ds]);
@@ -763,22 +764,165 @@ function TabEstudo({ds,lei,gSt,uSt}){
     if (!filtroStatus) return items;
     return items.filter((_, i) => gSt(lei.id, ds.indexOf(items[i]), "status") === filtroStatus);
   }, [items, lei.id, filtroStatus, gSt, ds]);
-  return <div>
-    <div style={{marginBottom:12,display:"flex",gap:8,flexWrap:"wrap"}}>
-      <button onClick={()=>setFiltroStatus("")} style={{padding:"6px 12px",background:!filtroStatus?"var(--grad)":"var(--bg-hover)",color:!filtroStatus?"#fff":"var(--text-sec)",border:"none",borderRadius:6,cursor:"pointer",fontSize:12,fontWeight:600}}>Todos</button>
-      {sts.map(s=><button key={s} onClick={()=>setFiltroStatus(s)} style={{padding:"6px 12px",background:filtroStatus===s?"var(--grad)":"var(--bg-hover)",color:filtroStatus===s?"#fff":"var(--text-sec)",border:"none",borderRadius:6,cursor:"pointer",fontSize:12,fontWeight:600}}>{s}</button>)}
+
+  // Constrói o painel de detalhes do dispositivo selecionado:
+  // Para ARTIGOs mostra o artigo + todos os sub-dispositivos vinculados.
+  // Para §, inciso, alínea etc. mostra o artigo pai + todos os sub-dispositivos.
+  const detalhe = useMemo(() => {
+    if (selIdx === null) return null;
+    const d = ds[selIdx];
+    if (!d) return null;
+    // Determina o artigo pai (ou o próprio, se for ARTIGO)
+    let artIdx = selIdx;
+    if (d.tipo !== "ARTIGO") {
+      for (let i = selIdx - 1; i >= 0; i--) {
+        if (ds[i].tipo === "ARTIGO") { artIdx = i; break; }
+      }
+    }
+    const art = ds[artIdx];
+    const subs = [];
+    for (let i = artIdx + 1; i < ds.length; i++) {
+      if (ds[i].tipo === "ARTIGO" || DIV.has(ds[i].tipo)) break;
+      subs.push({ d: ds[i], ri: i });
+    }
+    const ctx = hierarquia(ds);
+    return { art, artIdx, subs, loc: ctx[art?.id] || "" };
+  }, [selIdx, ds]);
+
+  return <div style={{display:"flex",gap:12,height:"72vh"}}>
+
+    {/* ── Tabela principal ── */}
+    <div style={{flex:"1 1 60%",display:"flex",flexDirection:"column",minWidth:0}}>
+      <div style={{marginBottom:10,display:"flex",gap:6,flexWrap:"wrap"}}>
+        <button onClick={()=>setFiltroStatus("")} style={{padding:"5px 11px",background:!filtroStatus?"var(--grad)":"var(--bg-hover)",color:!filtroStatus?"#fff":"var(--text-sec)",border:"none",borderRadius:6,cursor:"pointer",fontSize:12,fontWeight:600}}>Todos</button>
+        {sts.map(s=><button key={s} onClick={()=>setFiltroStatus(s)} style={{padding:"5px 11px",background:filtroStatus===s?"var(--grad)":"var(--bg-hover)",color:filtroStatus===s?"#fff":"var(--text-sec)",border:"none",borderRadius:6,cursor:"pointer",fontSize:12,fontWeight:600}}>{s}</button>)}
+      </div>
+      <div style={{flex:1,overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>
+        <table className="dt" style={{width:"100%",tableLayout:"fixed"}}>
+          <thead><tr>
+            <th style={{width:"90px"}}>Dispositivo</th>
+            <th style={{width:"35%"}}>Texto</th>
+            <th style={{width:"110px"}}>Status</th>
+            <th style={{width:"110px"}}>Dificuldade</th>
+            <th>Anotação</th>
+          </tr></thead>
+          <tbody>{fd.map((d, i) => {
+            const ri = ds.indexOf(d);
+            const st = gSt(lei.id,ri,"status"); const dif = gSt(lei.id,ri,"dif"); const nt = gSt(lei.id,ri,"note");
+            const isVetado = d.status==="vetado"; const isRevogado = d.status==="revogado"; const isInativo = isVetado||isRevogado;
+            const isSel = selIdx === ri;
+            return <tr key={ri}
+              onClick={() => setSelIdx(isSel ? null : ri)}
+              style={{cursor:"pointer",opacity:isInativo?0.6:1,
+                background: isSel ? "var(--gold-subtle)"
+                  : isVetado ? "rgba(231,76,60,0.06)"
+                  : isRevogado ? "rgba(231,76,60,0.04)" : "inherit",
+                outline: isSel ? "2px solid var(--gold)" : "none",
+                outlineOffset: "-2px"}}>
+              <td style={{fontWeight:700,fontSize:12,verticalAlign:"top"}}>
+                {d.id}
+                {isVetado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>VETADO</span></div>}
+                {isRevogado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>REVOGADO</span></div>}
+              </td>
+              <td style={{fontSize:12,lineHeight:1.5,whiteSpace:"pre-wrap",wordBreak:"break-word",
+                          verticalAlign:"top",padding:"10px",textDecoration:isInativo?"line-through":"none"}}>
+                {d.txt}
+                {d.alteracao&&<div style={{marginTop:4,padding:"2px 8px",background:"rgba(52,152,219,0.08)",
+                  borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db",
+                  textDecoration:"none",fontWeight:400}}>↳ {d.alteracao}</div>}
+              </td>
+              <td style={{verticalAlign:"top"}} onClick={e=>e.stopPropagation()}>
+                <select value={st} onChange={e=>uSt(lei.id,ri,"status",e.target.value)}
+                  style={{width:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",
+                          borderRadius:4,color:sC[st]||"var(--text)",padding:"4px",fontSize:11}}>
+                  <option value="">Selecionar...</option>
+                  {sts.map(s=><option key={s} value={s}>{s}</option>)}
+                </select>
+              </td>
+              <td style={{verticalAlign:"top"}} onClick={e=>e.stopPropagation()}>
+                <select value={dif} onChange={e=>uSt(lei.id,ri,"dif",e.target.value)}
+                  style={{width:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",
+                          borderRadius:4,padding:"4px",fontSize:11}}>
+                  <option value="">—</option>
+                  <option value="Fácil">Fácil</option>
+                  <option value="Médio">Médio</option>
+                  <option value="Difícil">Difícil</option>
+                </select>
+              </td>
+              <td style={{verticalAlign:"top"}} onClick={e=>e.stopPropagation()}>
+                <textarea defaultValue={nt} onBlur={e=>uSt(lei.id,ri,"note",e.target.value)}
+                  placeholder="Expandir anotação..."
+                  style={{width:"100%",minHeight:"72px",background:"var(--input-bg)",
+                          border:"1px solid var(--border)",borderRadius:4,padding:"6px",
+                          fontSize:12,resize:"both",fontFamily:"inherit"}}/>
+              </td>
+            </tr>;
+          })}</tbody>
+        </table>
+      </div>
+      <div style={{fontSize:11,color:"var(--text-mute)",marginTop:5}}>
+        Clique em qualquer linha para expandir o artigo completo →
+      </div>
     </div>
-    <div style={{maxHeight:"70vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>
-      <table className="dt" style={{width:"100%",tableLayout:"fixed"}}><thead><tr><th style={{width:"100px"}}>Dispositivo</th><th style={{width:"40%"}}>Texto</th><th style={{width:"120px"}}>Status</th><th style={{width:"120px"}}>Dificuldade</th><th>Anotação</th></tr></thead>
-        <tbody>{fd.map((d, i) => {
-            const ri = ds.indexOf(d);const st = gSt(lei.id, ri, "status");const dif = gSt(lei.id, ri, "dif");const nt = gSt(lei.id, ri, "note");const isVetado = d.status === "vetado";const isRevogado = d.status === "revogado";const isInativo = isVetado || isRevogado;
-            return <tr key={ri} style={{opacity:isInativo?0.6:1,background:isVetado?"rgba(231,76,60,0.06)":isRevogado?"rgba(231,76,60,0.04)":"inherit"}}>
-              <td style={{fontWeight:700,fontSize:12,verticalAlign:"top"}}>{d.id}{isVetado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>VETADO</span></div>}{isRevogado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>REVOGADO</span></div>}</td>
-              <td style={{fontSize:12,lineHeight:1.5,whiteSpace:"pre-wrap",wordBreak:"break-word",verticalAlign:"top",padding:"10px",textDecoration:isInativo?"line-through":"none"}}>{d.txt}{d.alteracao&&<div style={{marginTop:4,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db",textDecoration:"none",fontWeight:400}}>↳ {d.alteracao}</div>}</td>
-              <td style={{verticalAlign:"top"}}><select value={st} onChange={e=>uSt(lei.id,ri,"status",e.target.value)} style={{width:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:4,color:sC[st]||"var(--text)",padding:"4px",fontSize:11}}><option value="">Selecionar...</option>{sts.map(s=><option key={s} value={s}>{s}</option>)}</select></td>
-              <td style={{verticalAlign:"top"}}><select value={dif} onChange={e=>uSt(lei.id,ri,"dif",e.target.value)} style={{width:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:4,padding:"4px",fontSize:11}}><option value="">—</option><option value="Fácil">Fácil</option><option value="Médio">Médio</option><option value="Difícil">Difícil</option></select></td>
-              <td style={{verticalAlign:"top"}}><textarea defaultValue={nt} onBlur={e=>uSt(lei.id,ri,"note",e.target.value)} placeholder="Expandir anotação..." style={{width:"100%",minHeight:"80px",background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:4,padding:"6px",fontSize:12,resize:"both",fontFamily:"inherit"}}/></td>
-            </tr>})}</tbody></table></div></div>;
+
+    {/* ── Painel de detalhes (igual ao Mapa) ── */}
+    <div style={{flex:"0 0 38%",minWidth:280,overflow:"auto",
+                 background:"var(--bg-hover)",borderRadius:12,
+                 border:"1px solid var(--border)",padding:16}}>
+      {!detalhe
+        ? <div style={{textAlign:"center",paddingTop:80,color:"var(--text-sec)"}}>
+            <div style={{fontSize:28,marginBottom:12}}>📑</div>
+            <div style={{fontSize:14}}>Selecione um dispositivo na tabela para ver o artigo completo.</div>
+          </div>
+        : <div className="fade">
+            {detalhe.loc && <div style={{fontSize:11,color:"var(--text-sec)",marginBottom:8,
+                                         fontStyle:"italic",lineHeight:1.5}}>{detalhe.loc}</div>}
+            {/* Artigo + sub-dispositivos */}
+            {[{d:detalhe.art, ri:detalhe.artIdx}, ...detalhe.subs].map(({d,ri},i)=>{
+              if(!d) return null;
+              const isArt = d.tipo==="ARTIGO";
+              const isRev = d.status==="revogado"; const isVet = d.status==="vetado"; const isIn = isRev||isVet;
+              const st  = gSt(lei.id, ri, "status");
+              const nt  = gSt(lei.id, ri, "note");
+              return <div key={ri} style={{marginBottom:isArt?10:2,paddingLeft:isArt?0:14,opacity:isIn?0.65:1}}>
+                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2,flexWrap:"wrap"}}>
+                  <span style={{color:isIn?"#e74c3c":"var(--gold)",fontWeight:700,
+                                fontSize:isArt?14:12}}>{d.id}</span>
+                  {isArt&&<span className={isIn?"badge badge-revogado":"badge badge-vigente"}>
+                    {isVet?"VETADO":isRev?"REVOGADO":"VIGENTE"}
+                  </span>}
+                  {!isArt&&isIn&&<span className="badge badge-revogado" style={{fontSize:9}}>
+                    {isVet?"VETADO":"REVOGADO"}
+                  </span>}
+                  {st&&<span style={{marginLeft:"auto",fontSize:10,fontWeight:600,
+                                     color:sC[st]||"var(--text-sec)",
+                                     padding:"1px 7px",borderRadius:10,
+                                     background:sC[st]?sC[st]+"22":"var(--bg-hover)"}}>
+                    {st}
+                  </span>}
+                </div>
+                <div style={{fontSize:isArt?13:12,lineHeight:1.6,
+                             textDecoration:isIn?"line-through":"none",color:"var(--text)"}}>
+                  {d.rub&&<i style={{color:"var(--text-sec)"}}>{d.rub} </i>}
+                  {d.txt}
+                </div>
+                {d.alteracao&&<div style={{marginTop:2,padding:"2px 8px",
+                  background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",
+                  borderRadius:3,fontSize:11,color:"#3498db",textDecoration:"none"}}>
+                  ↳ {d.alteracao}
+                </div>}
+                {nt&&<div style={{marginTop:3,padding:"3px 8px",
+                  background:"var(--gold-subtle)",borderLeft:"2px solid var(--gold)",
+                  borderRadius:3,fontSize:11,color:"var(--gold)",lineHeight:1.5}}>
+                  📝 {nt}
+                </div>}
+              </div>;
+            })}
+          </div>
+      }
+    </div>
+
+  </div>;
 }
 
 // ─── D3 Tree Renderer — função pura fora do React (sem JSX, sem hooks) ────────
