@@ -1288,9 +1288,9 @@ function EConsultorAnotacoes({lib}){
 
   return <div style={{display:"flex",gap:16,height:"68vh"}}>
     {/* PAINEL ESQUERDO: TEMAS */}
-    <div style={{width:240,flexShrink:0,display:"flex",flexDirection:"column",border:"2px solid var(--gold)",borderRadius:12,padding:12,overflow:"visible",minHeight:0}}>
+    <div style={{width:240,flexShrink:0,display:"flex",flexDirection:"column",border:"2px solid var(--gold)",borderRadius:12,padding:12,overflow:"hidden",minHeight:0}}>
       <div style={{fontSize:14,fontWeight:700,marginBottom:10,color:"var(--gold)"}}>TEMAS</div>
-      <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:4,marginBottom:10}}>
+      <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:4,marginBottom:10,minHeight:0}}>
         {temas.length===0?<div style={{fontSize:12,color:"var(--text-mute)",textAlign:"center",padding:20}}>Nenhum tema cadastrado</div>
         :temas.map((t,i)=><div key={i}
           onClick={()=>{setTemaView(t);setViewMode("list");}}
@@ -1302,7 +1302,7 @@ function EConsultorAnotacoes({lib}){
           </div>
         </div>)}
       </div>
-      <div style={{display:"flex",gap:4}}>
+      <div style={{display:"flex",gap:4,flexShrink:0}}>
         <input value={novoTema} onChange={e=>setNovoTema(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")addTema();}} placeholder="Novo tema..." style={{flex:1,padding:"7px 10px",borderRadius:6,fontSize:12}}/>
         <button onClick={addTema} style={{padding:"7px 12px",background:"var(--grad)",color:"#fff",border:"none",borderRadius:6,fontSize:12,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap"}}>Incluir</button>
       </div>
