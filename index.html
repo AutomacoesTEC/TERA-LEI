@@ -230,13 +230,22 @@ class ErrorBoundary extends React.Component{constructor(props){super(props);this
 
 // ═══ APP ═══
 function App(){
+  // ── Todos os hooks PRIMEIRO (regra do React) ────────────────────────────────
   const [theme,setTheme]=useState(()=>{try{return localStorage.getItem("t3-theme")||"dark"}catch{return"dark"}});
-  useEffect(()=>{document.body.setAttribute("data-theme",theme);try{localStorage.setItem("t3-theme",theme)}catch{}},[theme]);
-  const toggleTheme=()=>setTheme(t=>t==="dark"?"light":"dark");
-
-  // ── Auth state ──────────────────────────────────────────────────────────────
-  const [auth,setAuth]=useState(null); // {token,username,userId} | null
+  const [auth,setAuth]=useState(null);
   const [authLoading,setAuthLoading]=useState(true);
+  const [lib,setLib]=useState([]);
+  const [sel,setSel]=useState(null);
+  const [vw,setVw]=useState("library");
+  const [uping,setUp]=useState(false);
+  const [area,setArea]=useState("tributario");
+  const [study,setStudy]=useState({});
+  const [showApiKeyModal,setShowApiKeyModal]=useState(false);
+  const [apiKeyStatus,setApiKeyStatus]=useState(null);
+  const fRef=useRef(null);
+
+  // ── Effects ─────────────────────────────────────────────────────────────────
+  useEffect(()=>{document.body.setAttribute("data-theme",theme);try{localStorage.setItem("t3-theme",theme)}catch{}},[theme]);
 
   useEffect(()=>{
     const token=sessionStorage.getItem("t3-token");
@@ -255,6 +264,14 @@ function App(){
       .catch(()=>setAuthLoading(false));
   },[]);
 
+  useEffect(()=>{
+    if(!auth)return;
+    getUserApiKeyStatus().then(s=>setApiKeyStatus(s));
+  },[auth]);
+
+  // ── Handlers ────────────────────────────────────────────────────────────────
+  const toggleTheme=()=>setTheme(t=>t==="dark"?"light":"dark");
+
   const handleLogin=async(token,username,userId)=>{
     await storageInit(token);
     setLib(LS("t3-lib")||[]);
@@ -269,17 +286,9 @@ function App(){
     setAuth(null);
   };
 
+  // ── Returns condicionais (APÓS todos os hooks) ───────────────────────────────
   if(authLoading)return <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"var(--bg)"}}><Sp/><span style={{marginLeft:10,color:"var(--text-sec)"}}>Carregando…</span></div>;
   if(!auth)return <LoginScreen onLogin={handleLogin} theme={theme} toggleTheme={toggleTheme}/>;
-  // ───────────────────────────────────────────────────────────────────────────
-
-  const [lib,setLib]=useState([]);const [sel,setSel]=useState(null);const [vw,setVw]=useState("library");const [uping,setUp]=useState(false);const [area,setArea]=useState("tributario");const [study,setStudy]=useState({});const fRef=useRef(null);
-  const [showApiKeyModal,setShowApiKeyModal]=useState(false);
-  const [apiKeyStatus,setApiKeyStatus]=useState(null); // null | {configured,masked}
-
-  useEffect(()=>{
-    getUserApiKeyStatus().then(s=>setApiKeyStatus(s));
-  },[auth]);
 
   const upF=async e=>{const f=e.target.files?.[0];if(!f)return;setUp(true);try{const t=await pdfToText(f);const ds=parse(t);const l={id:Date.now()+"",nome:f.name.replace(/\.pdf$/i,""),data:new Date().toLocaleDateString("pt-BR"),ds,nA:ds.filter(d=>d.tipo==="ARTIGO").length,nD:ds.length,area,anexos:[]};const nl=[l,...lib];setLib(nl);LS("t3-lib",nl);setSel(l);setVw("reader");}catch(e){alert("Erro: "+e.message);}setUp(false);if(fRef.current)fRef.current.value="";};
   const del=id=>{const nl=lib.filter(l=>l.id!==id);setLib(nl);LS("t3-lib",nl);if(sel?.id===id){setSel(null);setVw("library");}};
