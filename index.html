@@ -3,10 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<!-- TERA v2026.03.19.1 -->
 <title>TERA — Raciocínio Jurídico</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23d4a853'/><text x='50' y='68' font-size='55' font-weight='bold' text-anchor='middle' fill='white' font-family='monospace'>T</text></svg>">
 
@@ -174,8 +170,13 @@ function _extractRefs(text) {
   return { internal, external };
 }
 
-// Constrói a árvore recursiva de remissões; visited evita ciclos infinitos
-function _buildTree(startId, ai, si, visited) {
+// Constrói a árvore recursiva de remissões.
+// visited é COMPARTILHADO entre todos os ramos — cada artigo aparece no máximo UMA vez
+// na árvore inteira (evita explosão combinatorial em leis altamente referenciadas).
+// depth limita o nível máximo para segurança adicional.
+const _MAX_DEPTH = 8;
+function _buildTree(startId, ai, si, visited, depth) {
+  if (depth > _MAX_DEPTH) return null;
   if (visited.has(startId)) return null;
   visited.add(startId);
   const dev = _findDevice(startId, ai);
@@ -188,7 +189,7 @@ function _buildTree(startId, ai, si, visited) {
   const filteredRefs = allRefs.internal.filter(r => r.replace(/[^0-9]/g, "") !== selfNum);
   const children = [];
   for (const ref of filteredRefs) {
-    const child = _buildTree(ref, ai, si, new Set(visited));
+    const child = _buildTree(ref, ai, si, visited, depth + 1);
     if (child) children.push(child);
   }
   return {
@@ -207,7 +208,7 @@ self.onmessage = function(e) {
   const { ds, startId } = e.data;
   try {
     const { ai, si } = _buildIndices(ds);
-    const tree = _buildTree(startId, ai, si, new Set());
+    const tree = _buildTree(startId, ai, si, new Set(), 0);
     self.postMessage({ ok: true, tree });
   } catch (err) {
     self.postMessage({ ok: false, error: err.message });
@@ -625,7 +626,11 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
     return subDevIndex.get(artId) || [];
   };
 
-  const buildRecursiveTree = (startId, visited = new Set()) => {
+  // visited COMPARTILHADO (não clonado por ramo) — evita explosão combinatorial.
+  // Mesma lógica do worker. depth adicional como segurança.
+  const _BRT_MAX_DEPTH = 8;
+  const buildRecursiveTree = (startId, visited = new Set(), depth = 0) => {
+    if (depth > _BRT_MAX_DEPTH) return null;
     if (visited.has(startId)) return null;
     visited.add(startId);
     const device = findDevice(startId);
@@ -633,13 +638,12 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
     const isRevogado = device.status === "revogado";
     const subs = getSubDevices(device.id);
     const fullText = [device.txt || "", ...subs.map(s => (s.id || "") + " " + (s.txt || ""))].join(" ");
-    // ENTREGA 3: usa extractRefsWithMetadata para capturar refs externas
     const allRefs = isRevogado ? { internal: [], external: [] } : extractRefsWithMetadata(fullText);
     const selfNum = device.id.replace(/[^0-9]/g, "");
     const filteredRefs = allRefs.internal.filter(r => r.replace(/[^0-9]/g, "") !== selfNum);
     const children = [];
     for (const ref of filteredRefs) {
-      const child = buildRecursiveTree(ref, new Set(visited));
+      const child = buildRecursiveTree(ref, visited, depth + 1);
       if (child) children.push(child);
     }
     return {
@@ -760,69 +764,174 @@ function TabArtigos({ds}){let art="";const rows=[];const tipos=new Set(["ARTIGO"
 
 function TabEstudo({ds,lei,gSt,uSt}){
   const [filtroStatus,setFiltroStatus]=useState("");
-  const [selIdx,setSelIdx]=useState(null);  // índice em ds do dispositivo expandido
+  const [selSection,setSelSection]=useState(null); // nó hierárquico selecionado para filtrar
+  const [collNav,setCollNav]=useState({});         // estado colapso da nav hierárquica
   const sts=["Não lido","Lido","Revisando","Dominado","Dúvida"];
   const sC={Dominado:"#27AE60",Dúvida:"#C0392B",Revisando:"#D4A017",Lido:"#2E86AB"};
-  const items = useMemo(() => ds.filter(d => !DIV.has(d.tipo)), [ds]);
-  const fd = useMemo(() => {
-    if (!filtroStatus) return items;
-    return items.filter((_, i) => gSt(lei.id, ds.indexOf(items[i]), "status") === filtroStatus);
-  }, [items, lei.id, filtroStatus, gSt, ds]);
 
-  // Constrói o painel de detalhes do dispositivo selecionado:
-  // Para ARTIGOs mostra o artigo + todos os sub-dispositivos vinculados.
-  // Para §, inciso, alínea etc. mostra o artigo pai + todos os sub-dispositivos.
-  const detalhe = useMemo(() => {
-    if (selIdx === null) return null;
-    const d = ds[selIdx];
-    if (!d) return null;
-    // Determina o artigo pai (ou o próprio, se for ARTIGO)
-    let artIdx = selIdx;
-    if (d.tipo !== "ARTIGO") {
-      for (let i = selIdx - 1; i >= 0; i--) {
-        if (ds[i].tipo === "ARTIGO") { artIdx = i; break; }
+  // ── Estrutura hierárquica (igual ao TabMapa, sem artigos) ──────────────────
+  const estrutura = useMemo(()=>{
+    const mapa=[];
+    const stack={PARTE:null,LIVRO:null,"TÍTULO":null,"CAPÍTULO":null,"SEÇÃO":null,"SUBSEÇÃO":null};
+    const levels=["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"];
+    const clearBelow=(tipo)=>{const idx=levels.indexOf(tipo);for(let i=idx+1;i<levels.length;i++)stack[levels[i]]=null;};
+    const getParent=(tipo)=>{const idx=levels.indexOf(tipo);for(let i=idx-1;i>=0;i--){if(stack[levels[i]])return stack[levels[i]];}return null;};
+    for(const d of ds){
+      if(DIV.has(d.tipo)){
+        const node={tipo:d.tipo,id:d.id,rub:d.rub,dsStart:null,dsEnd:null,children:[]};
+        clearBelow(d.tipo);stack[d.tipo]=node;
+        const parent=getParent(d.tipo);
+        if(parent)parent.children.push(node);else mapa.push(node);
       }
     }
-    const art = ds[artIdx];
-    const subs = [];
-    for (let i = artIdx + 1; i < ds.length; i++) {
-      if (ds[i].tipo === "ARTIGO" || DIV.has(ds[i].tipo)) break;
-      subs.push({ d: ds[i], ri: i });
+    // Computa dsStart/dsEnd de cada nó para filtrar a tabela
+    const computeRange=(nodes)=>{
+      for(const n of nodes){
+        const startIdx=ds.findIndex(d=>d.tipo===n.tipo&&d.id===n.id);
+        n.dsStart=startIdx;
+        let endIdx=ds.length;
+        const myLevel=levels.indexOf(n.tipo);
+        for(let i=startIdx+1;i<ds.length;i++){
+          if(DIV.has(ds[i].tipo)&&levels.indexOf(ds[i].tipo)<=myLevel){endIdx=i;break;}
+        }
+        n.dsEnd=endIdx;
+        computeRange(n.children);
+      }
+    };
+    computeRange(mapa);
+    return mapa;
+  },[ds]);
+
+  // Inicializa nav recolhida
+  const navRef=useRef(null);
+  if(estrutura!==navRef.current){
+    navRef.current=estrutura;
+    const allK={};
+    const mark=(ns,prefix)=>ns.forEach((n,i)=>{const k=prefix+"-"+n.id;if(n.children?.length>0)allK[k]=true;mark(n.children,k+"-"+i);});
+    mark(estrutura,"enav");
+    if(Object.keys(allK).length>0&&Object.keys(collNav).length===0)
+      setTimeout(()=>setCollNav(allK),0);
+  }
+
+  const allNavKeysRef=useRef({});
+  const estNavRef=useRef(null);
+  if(estrutura!==estNavRef.current){
+    estNavRef.current=estrutura;
+    const allK={};
+    const mark=(ns,prefix)=>ns.forEach((n,i)=>{const k=prefix+"-"+n.id;if(n.children?.length>0)allK[k]=true;mark(n.children,k+"-"+i);});
+    mark(estrutura,"enav");
+    allNavKeysRef.current=allK;
+  }
+
+  const toggleNav=(key)=>{
+    setCollNav(p=>{
+      const open=p[key];
+      const ns={...p,[key]:open?false:true};
+      Object.keys(allNavKeysRef.current).forEach(k=>{if(k.startsWith(key+"-"))ns[k]=true;});
+      return ns;
+    });
+  };
+
+  // ── Items filtrados ────────────────────────────────────────────────────────
+  const items = useMemo(()=>ds.filter(d=>!DIV.has(d.tipo)),[ds]);
+  const fd = useMemo(()=>{
+    let base=items;
+    if(selSection){
+      // Filtra para o intervalo ds[dsStart..dsEnd) do nó selecionado
+      base=ds.slice(selSection.dsStart,selSection.dsEnd).filter(d=>!DIV.has(d.tipo));
     }
-    const ctx = hierarquia(ds);
-    return { art, artIdx, subs, loc: ctx[art?.id] || "" };
-  }, [selIdx, ds]);
+    if(!filtroStatus)return base;
+    return base.filter(d=>{const ri=ds.indexOf(d);return gSt(lei.id,ri,"status")===filtroStatus;});
+  },[items,selSection,filtroStatus,lei.id,gSt,ds]);
 
-  return <div style={{display:"flex",gap:12,height:"72vh"}}>
+  // ── Render de nó da nav hierárquica ───────────────────────────────────────
+  const levelStyle={
+    "PARTE":{bg:"var(--grad)",color:"#fff",fw:700,fs:13,pad:"8px 10px"},
+    "LIVRO":{bg:"var(--gold)",color:"#fff",fw:700,fs:12,pad:"7px 10px"},
+    "TÍTULO":{bg:"var(--gold-subtle)",color:"var(--gold)",fw:600,fs:12,pad:"6px 10px"},
+    "CAPÍTULO":{bg:"var(--bg-hover)",color:"var(--text)",fw:600,fs:11,pad:"5px 8px"},
+    "SEÇÃO":{bg:"transparent",color:"var(--text-sec)",fw:500,fs:11,pad:"4px 8px"},
+    "SUBSEÇÃO":{bg:"transparent",color:"var(--text-mute)",fw:400,fs:10,pad:"3px 8px"},
+  };
+  const renderNavNode=(node,depth,pathKey)=>{
+    const key=pathKey+"-"+node.id;
+    const isOpen=!collNav[key];
+    const hasChildren=node.children&&node.children.length>0;
+    const isSel=selSection===node;
+    const st=levelStyle[node.tipo]||levelStyle["SEÇÃO"];
+    const indent=depth*10;
+    return <div key={key} style={{marginLeft:indent,marginTop:2}}>
+      <div
+        onClick={()=>{setSelSection(isSel?null:node);if(hasChildren)toggleNav(key);}}
+        style={{background:isSel?"var(--gold)":st.bg,color:isSel?"#fff":st.color,
+                fontWeight:st.fw,fontSize:st.fs,padding:st.pad,borderRadius:5,
+                cursor:"pointer",display:"flex",alignItems:"center",gap:5,
+                border:node.tipo==="CAPÍTULO"||node.tipo==="SEÇÃO"?"1px solid var(--border)":"none",
+                userSelect:"none",lineHeight:1.3}}>
+        {hasChildren&&<span style={{fontSize:9,opacity:.7,flexShrink:0,transition:"transform .12s",
+                                    transform:isOpen?"rotate(90deg)":"rotate(0deg)"}}>▶</span>}
+        <span style={{fontFamily:"'Segoe UI',sans-serif",whiteSpace:"nowrap",overflow:"hidden",
+                      textOverflow:"ellipsis"}}>{node.tipo} — <b>{node.id}</b>
+          {node.rub&&<span style={{opacity:.75,fontWeight:400}}> — {node.rub.slice(0,30)}{node.rub.length>30?"…":""}</span>}
+        </span>
+      </div>
+      {isOpen&&hasChildren&&<div>{node.children.map((ch,i)=>renderNavNode(ch,depth+1,key+"-"+i))}</div>}
+    </div>;
+  };
 
-    {/* ── Tabela principal ── */}
-    <div style={{flex:"1 1 60%",display:"flex",flexDirection:"column",minWidth:0}}>
+  return <div style={{display:"flex",gap:10,height:"72vh"}}>
+
+    {/* ── Sidebar hierárquica ── */}
+    <div style={{width:230,flexShrink:0,display:"flex",flexDirection:"column",
+                 border:"1px solid var(--border)",borderRadius:8,overflow:"hidden"}}>
+      <div style={{padding:"8px 10px",background:"var(--grad)",color:"#fff",
+                   fontSize:11,fontWeight:700,letterSpacing:.5,flexShrink:0}}>
+        NAVEGAR POR SEÇÃO
+      </div>
+      {selSection&&<div style={{padding:"4px 8px",background:"var(--gold-subtle)",
+                                borderBottom:"1px solid var(--border)",flexShrink:0}}>
+        <span style={{fontSize:10,color:"var(--gold)"}}>Filtro: {selSection.id}</span>
+        <button onClick={()=>setSelSection(null)}
+          style={{float:"right",background:"none",border:"none",cursor:"pointer",
+                  fontSize:11,color:"var(--text-mute)",padding:0}}>✕ todos</button>
+      </div>}
+      <div style={{flex:1,overflow:"auto",padding:6}}>
+        {estrutura.length===0
+          ?<div style={{padding:20,textAlign:"center",color:"var(--text-mute)",fontSize:12}}>Sem estrutura hierárquica</div>
+          :estrutura.map((node,i)=>renderNavNode(node,0,"enav"))}
+      </div>
+    </div>
+
+    {/* ── Tabela de estudo (layout original) ── */}
+    <div style={{flex:1,display:"flex",flexDirection:"column",minWidth:0}}>
       <div style={{marginBottom:10,display:"flex",gap:6,flexWrap:"wrap"}}>
-        <button onClick={()=>setFiltroStatus("")} style={{padding:"5px 11px",background:!filtroStatus?"var(--grad)":"var(--bg-hover)",color:!filtroStatus?"#fff":"var(--text-sec)",border:"none",borderRadius:6,cursor:"pointer",fontSize:12,fontWeight:600}}>Todos</button>
-        {sts.map(s=><button key={s} onClick={()=>setFiltroStatus(s)} style={{padding:"5px 11px",background:filtroStatus===s?"var(--grad)":"var(--bg-hover)",color:filtroStatus===s?"#fff":"var(--text-sec)",border:"none",borderRadius:6,cursor:"pointer",fontSize:12,fontWeight:600}}>{s}</button>)}
+        <button onClick={()=>setFiltroStatus("")}
+          style={{padding:"5px 11px",background:!filtroStatus?"var(--grad)":"var(--bg-hover)",
+                  color:!filtroStatus?"#fff":"var(--text-sec)",border:"none",borderRadius:6,
+                  cursor:"pointer",fontSize:12,fontWeight:600}}>Todos</button>
+        {sts.map(s=><button key={s} onClick={()=>setFiltroStatus(s)}
+          style={{padding:"5px 11px",background:filtroStatus===s?"var(--grad)":"var(--bg-hover)",
+                  color:filtroStatus===s?"#fff":"var(--text-sec)",border:"none",borderRadius:6,
+                  cursor:"pointer",fontSize:12,fontWeight:600}}>{s}</button>)}
+        <span style={{marginLeft:"auto",fontSize:11,color:"var(--text-mute)",alignSelf:"center"}}>
+          {fd.length} dispositivo(s){selSection?` em ${selSection.tipo} ${selSection.id}`:""}
+        </span>
       </div>
       <div style={{flex:1,overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>
         <table className="dt" style={{width:"100%",tableLayout:"fixed"}}>
           <thead><tr>
-            <th style={{width:"90px"}}>Dispositivo</th>
-            <th style={{width:"35%"}}>Texto</th>
-            <th style={{width:"110px"}}>Status</th>
-            <th style={{width:"110px"}}>Dificuldade</th>
+            <th style={{width:"100px"}}>Dispositivo</th>
+            <th style={{width:"40%"}}>Texto</th>
+            <th style={{width:"120px"}}>Status</th>
+            <th style={{width:"120px"}}>Dificuldade</th>
             <th>Anotação</th>
           </tr></thead>
-          <tbody>{fd.map((d, i) => {
-            const ri = ds.indexOf(d);
-            const st = gSt(lei.id,ri,"status"); const dif = gSt(lei.id,ri,"dif"); const nt = gSt(lei.id,ri,"note");
-            const isVetado = d.status==="vetado"; const isRevogado = d.status==="revogado"; const isInativo = isVetado||isRevogado;
-            const isSel = selIdx === ri;
-            return <tr key={ri}
-              onClick={() => setSelIdx(isSel ? null : ri)}
-              style={{cursor:"pointer",opacity:isInativo?0.6:1,
-                background: isSel ? "var(--gold-subtle)"
-                  : isVetado ? "rgba(231,76,60,0.06)"
-                  : isRevogado ? "rgba(231,76,60,0.04)" : "inherit",
-                outline: isSel ? "2px solid var(--gold)" : "none",
-                outlineOffset: "-2px"}}>
+          <tbody>{fd.map((d,i)=>{
+            const ri=ds.indexOf(d);
+            const st=gSt(lei.id,ri,"status");const dif=gSt(lei.id,ri,"dif");const nt=gSt(lei.id,ri,"note");
+            const isVetado=d.status==="vetado";const isRevogado=d.status==="revogado";const isInativo=isVetado||isRevogado;
+            return <tr key={ri} style={{opacity:isInativo?0.6:1,
+              background:isVetado?"rgba(231,76,60,0.06)":isRevogado?"rgba(231,76,60,0.04)":"inherit"}}>
               <td style={{fontWeight:700,fontSize:12,verticalAlign:"top"}}>
                 {d.id}
                 {isVetado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>VETADO</span></div>}
@@ -835,7 +944,7 @@ function TabEstudo({ds,lei,gSt,uSt}){
                   borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db",
                   textDecoration:"none",fontWeight:400}}>↳ {d.alteracao}</div>}
               </td>
-              <td style={{verticalAlign:"top"}} onClick={e=>e.stopPropagation()}>
+              <td style={{verticalAlign:"top"}}>
                 <select value={st} onChange={e=>uSt(lei.id,ri,"status",e.target.value)}
                   style={{width:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",
                           borderRadius:4,color:sC[st]||"var(--text)",padding:"4px",fontSize:11}}>
@@ -843,7 +952,7 @@ function TabEstudo({ds,lei,gSt,uSt}){
                   {sts.map(s=><option key={s} value={s}>{s}</option>)}
                 </select>
               </td>
-              <td style={{verticalAlign:"top"}} onClick={e=>e.stopPropagation()}>
+              <td style={{verticalAlign:"top"}}>
                 <select value={dif} onChange={e=>uSt(lei.id,ri,"dif",e.target.value)}
                   style={{width:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",
                           borderRadius:4,padding:"4px",fontSize:11}}>
@@ -853,10 +962,10 @@ function TabEstudo({ds,lei,gSt,uSt}){
                   <option value="Difícil">Difícil</option>
                 </select>
               </td>
-              <td style={{verticalAlign:"top"}} onClick={e=>e.stopPropagation()}>
+              <td style={{verticalAlign:"top"}}>
                 <textarea defaultValue={nt} onBlur={e=>uSt(lei.id,ri,"note",e.target.value)}
                   placeholder="Expandir anotação..."
-                  style={{width:"100%",minHeight:"72px",background:"var(--input-bg)",
+                  style={{width:"100%",minHeight:"80px",background:"var(--input-bg)",
                           border:"1px solid var(--border)",borderRadius:4,padding:"6px",
                           fontSize:12,resize:"both",fontFamily:"inherit"}}/>
               </td>
@@ -864,71 +973,9 @@ function TabEstudo({ds,lei,gSt,uSt}){
           })}</tbody>
         </table>
       </div>
-      <div style={{fontSize:11,color:"var(--text-mute)",marginTop:5}}>
-        Clique em qualquer linha para expandir o artigo completo →
-      </div>
     </div>
-
-    {/* ── Painel de detalhes (igual ao Mapa) ── */}
-    <div style={{flex:"0 0 38%",minWidth:280,overflow:"auto",
-                 background:"var(--bg-hover)",borderRadius:12,
-                 border:"1px solid var(--border)",padding:16}}>
-      {!detalhe
-        ? <div style={{textAlign:"center",paddingTop:80,color:"var(--text-sec)"}}>
-            <div style={{fontSize:28,marginBottom:12}}>📑</div>
-            <div style={{fontSize:14}}>Selecione um dispositivo na tabela para ver o artigo completo.</div>
-          </div>
-        : <div className="fade">
-            {detalhe.loc && <div style={{fontSize:11,color:"var(--text-sec)",marginBottom:8,
-                                         fontStyle:"italic",lineHeight:1.5}}>{detalhe.loc}</div>}
-            {/* Artigo + sub-dispositivos */}
-            {[{d:detalhe.art, ri:detalhe.artIdx}, ...detalhe.subs].map(({d,ri},i)=>{
-              if(!d) return null;
-              const isArt = d.tipo==="ARTIGO";
-              const isRev = d.status==="revogado"; const isVet = d.status==="vetado"; const isIn = isRev||isVet;
-              const st  = gSt(lei.id, ri, "status");
-              const nt  = gSt(lei.id, ri, "note");
-              return <div key={ri} style={{marginBottom:isArt?10:2,paddingLeft:isArt?0:14,opacity:isIn?0.65:1}}>
-                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2,flexWrap:"wrap"}}>
-                  <span style={{color:isIn?"#e74c3c":"var(--gold)",fontWeight:700,
-                                fontSize:isArt?14:12}}>{d.id}</span>
-                  {isArt&&<span className={isIn?"badge badge-revogado":"badge badge-vigente"}>
-                    {isVet?"VETADO":isRev?"REVOGADO":"VIGENTE"}
-                  </span>}
-                  {!isArt&&isIn&&<span className="badge badge-revogado" style={{fontSize:9}}>
-                    {isVet?"VETADO":"REVOGADO"}
-                  </span>}
-                  {st&&<span style={{marginLeft:"auto",fontSize:10,fontWeight:600,
-                                     color:sC[st]||"var(--text-sec)",
-                                     padding:"1px 7px",borderRadius:10,
-                                     background:sC[st]?sC[st]+"22":"var(--bg-hover)"}}>
-                    {st}
-                  </span>}
-                </div>
-                <div style={{fontSize:isArt?13:12,lineHeight:1.6,
-                             textDecoration:isIn?"line-through":"none",color:"var(--text)"}}>
-                  {d.rub&&<i style={{color:"var(--text-sec)"}}>{d.rub} </i>}
-                  {d.txt}
-                </div>
-                {d.alteracao&&<div style={{marginTop:2,padding:"2px 8px",
-                  background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",
-                  borderRadius:3,fontSize:11,color:"#3498db",textDecoration:"none"}}>
-                  ↳ {d.alteracao}
-                </div>}
-                {nt&&<div style={{marginTop:3,padding:"3px 8px",
-                  background:"var(--gold-subtle)",borderLeft:"2px solid var(--gold)",
-                  borderRadius:3,fontSize:11,color:"var(--gold)",lineHeight:1.5}}>
-                  📝 {nt}
-                </div>}
-              </div>;
-            })}
-          </div>
-      }
-    </div>
-
   </div>;
 }
-
 // ─── D3 Tree Renderer — função pura fora do React (sem JSX, sem hooks) ────────
 // Recebe o tree retornado pelo worker e renderiza no <svg> via D3 v7.
 // Nós recolhidos automaticamente a partir de depth >= 2 para não sobrecarregar o canvas.
@@ -1400,15 +1447,17 @@ function TabMapa({ds}){
   }, []);
 
   // Collapsed: iniciar TUDO recolhido, recalcular quando estrutura mudar
+  // allKeysRef mantém TODAS as chaves possíveis da estrutura para uso no toggle,
+  // independente do estado atual do collapsed (evita bug de descendants não-inicializados).
+  const allKeysRef = useRef({});
   const [collapsed,setCollapsed]=useState({});
   const estruturaRef=useRef(null);
   if(estrutura!==estruturaRef.current){
     estruturaRef.current=estrutura;
     const allKeys=buildAllCollapsedKeys(estrutura);
+    allKeysRef.current=allKeys;
     if(Object.keys(allKeys).length>0){
-      // Setar diretamente no render para evitar flash de tudo aberto
       if(Object.keys(collapsed).length===0||!Object.values(collapsed).some(v=>v===true)){
-        // Primeira renderização ou reset: forçar tudo collapsed
         setTimeout(()=>setCollapsed(allKeys),0);
       }
     }
@@ -1417,11 +1466,10 @@ function TabMapa({ds}){
   const toggle=(key)=>{
     setCollapsed(p=>{
       const isCurrentlyCollapsed=p[key];
-      // Ao expandir OU recolher: sempre resetar todos os descendentes para collapsed=true.
-      // Isso garante que abrir um LIVRO mostra os TÍTULOs recolhidos,
-      // abrir um TÍTULO mostra os CAPÍTULOs recolhidos, etc. (hierarquia LC 95/1998).
       const newState={...p,[key]:isCurrentlyCollapsed?false:true};
-      Object.keys(p).forEach(k=>{
+      // Usa allKeysRef (não Object.keys(p)) para garantir que todos os descendants
+      // sejam recolhidos, mesmo antes do primeiro setTimeout ter disparado.
+      Object.keys(allKeysRef.current).forEach(k=>{
         if(k.startsWith(key+"-")) newState[k]=true;
       });
       return newState;
