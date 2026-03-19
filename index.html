@@ -12,6 +12,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script>pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
 <style>
 :root{
@@ -780,49 +781,196 @@ function TabEstudo({ds,lei,gSt,uSt}){
             </tr>})}</tbody></table></div></div>;
 }
 
-function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
-  const [startArt,setStartArt]=useState("");
-  const [tree,setTree]=useState(null);
-  const [traced,setTraced]=useState(false);
-  const [loading,setLoading]=useState(false);
-  const workerRef = useRef(null);
-  const arts = useMemo(() => ds.filter(d => d.tipo === "ARTIGO" && d.status !== "vetado").map(d => d.id), [ds]);
+// ─── D3 Tree Renderer — função pura fora do React (sem JSX, sem hooks) ────────
+// Recebe o tree retornado pelo worker e renderiza no <svg> via D3 v7.
+// Nós recolhidos automaticamente a partir de depth >= 2 para não sobrecarregar o canvas.
+function renderD3Tree(data, svgEl, onSelect) {
+  if (!window.d3 || !svgEl || !data) return;
+  const d3 = window.d3;
+  const cs = v => getComputedStyle(document.body).getPropertyValue(v).trim();
+  const C  = {
+    gold   : cs("--gold"),
+    goldB  : cs("--gold-bright"),
+    border : cs("--border"),
+    text   : cs("--text"),
+    sec    : cs("--text-sec"),
+    err    : "#e74c3c",
+    ext    : "#3498db",
+  };
+  const W = svgEl.clientWidth  || 900;
+  const H = svgEl.clientHeight || 500;
 
-  // Termina worker pendente ao desmontar o componente
+  d3.select(svgEl).selectAll("*").remove();
+  const svg = d3.select(svgEl);
+
+  // Defs: arrowhead
+  const defs = svg.append("defs");
+  defs.append("marker")
+    .attr("id","teia-arrow")
+    .attr("viewBox","0 -5 10 10")
+    .attr("refX",26).attr("refY",0)
+    .attr("markerWidth",6).attr("markerHeight",6)
+    .attr("orient","auto")
+    .append("path").attr("d","M0,-5L10,0L0,5").attr("fill",C.border);
+
+  // Drop-shadow filter
+  const filt = defs.append("filter").attr("id","teia-shadow").attr("x","-20%").attr("y","-20%").attr("width","140%").attr("height","140%");
+  filt.append("feDropShadow").attr("dx",0).attr("dy",2).attr("stdDeviation",3).attr("flood-color","rgba(0,0,0,0.25)");
+
+  const g = svg.append("g");
+
+  const zoom = d3.zoom().scaleExtent([0.08, 4])
+    .on("zoom", e => g.attr("transform", e.transform));
+  svg.call(zoom).on("dblclick.zoom", null);
+
+  // Build hierarchy; collapse depth >= 2 on first render
+  const root = d3.hierarchy(data);
+  root.eachBefore(d => {
+    if (d.depth >= 2 && d.children) { d._children = d.children; d.children = null; }
+  });
+
+  const layout = d3.tree().nodeSize([56, 300]);
+
+  const nodeLabel = d => d.data.id.replace(/^Art\.\s*/i,"").replace(/[ºo°]/g,"").trim().slice(0,6);
+  const isRev     = d => d.data.status === "revogado";
+  const hasHidden = d => !!(d._children && d._children.length);
+  const nodeColor = d => isRev(d) ? C.err : hasHidden(d) ? C.goldB : C.gold;
+
+  function draw() {
+    layout(root);
+    const nodes = root.descendants();
+    const links = root.links();
+
+    // ── Links ──────────────────────────────────────────────────────────────────
+    g.selectAll(".t-link").remove();
+    g.selectAll(".t-link").data(links).enter().append("path")
+      .attr("class","t-link")
+      .attr("fill","none")
+      .attr("stroke", C.border)
+      .attr("stroke-width", 1.5)
+      .attr("stroke-opacity", 0.65)
+      .attr("d", d3.linkHorizontal().x(d => d.y).y(d => d.x));
+
+    // ── Nodes ──────────────────────────────────────────────────────────────────
+    g.selectAll(".t-node").remove();
+    const node = g.selectAll(".t-node").data(nodes).enter().append("g")
+      .attr("class","t-node")
+      .attr("transform", d => "translate("+d.y+","+d.x+")")
+      .style("cursor","pointer")
+      .on("click", function(ev, d) {
+        ev.stopPropagation();
+        if (d.children)  { d._children = d.children;  d.children  = null; }
+        else if (d._children) { d.children = d._children; d._children = null; }
+        onSelect(d.data);
+        draw();
+      });
+
+    // Main circle
+    node.append("circle")
+      .attr("r", 20)
+      .attr("fill", nodeColor)
+      .attr("fill-opacity", d => isRev(d) ? 0.7 : 1)
+      .attr("stroke", "rgba(255,255,255,0.2)")
+      .attr("stroke-width", 2)
+      .attr("filter", "url(#teia-shadow)");
+
+    // Hover ring
+    node.append("circle")
+      .attr("r", 20)
+      .attr("fill", "transparent")
+      .attr("stroke", "rgba(255,255,255,0)")
+      .attr("stroke-width", 3)
+      .on("mouseover", function() { d3.select(this).attr("stroke","rgba(255,255,255,0.4)"); })
+      .on("mouseout",  function() { d3.select(this).attr("stroke","rgba(255,255,255,0)"); });
+
+    // Article number label inside circle
+    node.append("text")
+      .attr("text-anchor","middle")
+      .attr("dominant-baseline","central")
+      .attr("fill","#fff")
+      .attr("font-size","10px")
+      .attr("font-weight","700")
+      .attr("pointer-events","none")
+      .text(nodeLabel);
+
+    // Collapsed children badge  (+N)
+    node.filter(d => hasHidden(d)).append("text")
+      .attr("x", 22).attr("y",-18)
+      .attr("fill", C.goldB)
+      .attr("font-size","9px").attr("font-weight","700")
+      .text(d => "+"+d._children.length);
+
+    // External-refs dot (blue, top-left of circle)
+    node.filter(d => d.data.externalRefs && d.data.externalRefs.length > 0)
+      .append("circle")
+      .attr("cx",-16).attr("cy",-16).attr("r",5)
+      .attr("fill", C.ext)
+      .attr("stroke","rgba(255,255,255,0.5)").attr("stroke-width",1.5);
+
+    // Children count label to the right of node (when expanded)
+    node.filter(d => d.children && d.children.length > 0).append("text")
+      .attr("x", 24).attr("y", 4)
+      .attr("fill", C.sec).attr("font-size","9px")
+      .text(d => d.children.length+" >");
+  }
+
+  // Compute initial center before first draw
+  layout(root);
+  const xs  = root.descendants().map(d => d.x);
+  const mid = (Math.min(...xs) + Math.max(...xs)) / 2;
+  svg.call(zoom.transform, d3.zoomIdentity.translate(90, H / 2 - mid));
+
+  draw();
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
+  const [startArt,  setStartArt]  = useState("");
+  const [tree,      setTree]      = useState(null);
+  const [traced,    setTraced]    = useState(false);
+  const [loading,   setLoading]   = useState(false);
+  const [selNode,   setSelNode]   = useState(null);   // nó selecionado → painel de detalhes
+  const workerRef = useRef(null);
+  const svgRef    = useRef(null);
+
+  const arts = useMemo(
+    () => ds.filter(d => d.tipo === "ARTIGO" && d.status !== "vetado").map(d => d.id),
+    [ds]
+  );
+
+  // Termina worker ao desmontar
   useEffect(() => {
-    return () => {
-      if (workerRef.current) { workerRef.current.terminate(); workerRef.current = null; }
-    };
+    return () => { if (workerRef.current) { workerRef.current.terminate(); workerRef.current = null; } };
   }, []);
+
+  // Renderiza/re-renderiza D3 sempre que tree mudar
+  useEffect(() => {
+    if (!tree || !svgRef.current) return;
+    renderD3Tree(tree, svgRef.current, setSelNode);
+  }, [tree]);
 
   const tracar = () => {
     if (!startArt) return;
-    // Cancela worker anterior se ainda estiver rodando
     if (workerRef.current) { workerRef.current.terminate(); workerRef.current = null; }
-    setLoading(true); setTree(null); setTraced(false);
+    setLoading(true); setTree(null); setTraced(false); setSelNode(null);
     try {
-      // Cria worker inline via Blob URL — mantém SPA monolítica sem arquivos externos
-      const blob = new Blob([TEIA_WORKER_SCRIPT], { type: "application/javascript" });
+      const blob    = new Blob([TEIA_WORKER_SCRIPT], { type: "application/javascript" });
       const blobUrl = URL.createObjectURL(blob);
-      const worker = new Worker(blobUrl);
+      const worker  = new Worker(blobUrl);
       workerRef.current = worker;
-      worker.onmessage = (e) => {
-        URL.revokeObjectURL(blobUrl);
-        workerRef.current = null;
+      worker.onmessage = e => {
+        URL.revokeObjectURL(blobUrl); workerRef.current = null;
         setTree(e.data.ok ? e.data.tree : null);
         if (!e.data.ok) console.error("Teia worker erro:", e.data.error);
         setTraced(true); setLoading(false);
       };
-      worker.onerror = (err) => {
-        URL.revokeObjectURL(blobUrl);
-        workerRef.current = null;
+      worker.onerror = err => {
+        URL.revokeObjectURL(blobUrl); workerRef.current = null;
         console.error("Teia worker falhou:", err);
         setTree(null); setTraced(true); setLoading(false);
       };
-      // Envia ds completo — worker constrói seus próprios índices
       worker.postMessage({ ds, startId: startArt });
     } catch (e) {
-      // Fallback: main thread com setTimeout para não bloquear o render do spinner
       console.warn("Web Worker indisponível, usando main thread:", e);
       setTimeout(() => {
         try { setTree(buildRecursiveTree(startArt)); } catch (ex) { console.error(ex); setTree(null); }
@@ -831,83 +979,155 @@ function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
     }
   };
 
-  // Contagem de nós para estatísticas
-  const countNodes = (node) => {
-    if (!node) return 0;
-    let count = 1;
-    if (node.children) { for (const child of node.children) count += countNodes(child); }
-    return count;
-  };
+  const countNodes = nd => !nd ? 0 : 1 + (nd.children||[]).reduce((s,c)=>s+countNodes(c),0);
   const totalNodes = tree ? countNodes(tree) : 0;
-  const maxDepth = (() => {
-    const calc = (node, d = 0) => {
-      if (!node || !node.children || node.children.length === 0) return d;
-      return Math.max(...node.children.map(c => calc(c, d + 1)));
-    };
-    return tree ? calc(tree) : 0;
-  })();
 
-  const TreeNode = ({node, depth = 0}) => {
-    if (!node) return null;
-    const isRevogado = node.status === "revogado";
-    const hasChildren = node.children && node.children.length > 0;
-    const hasExternal = node.externalRefs && node.externalRefs.length > 0;
-    return <div style={{marginLeft: depth > 0 ? 20 : 0, position: "relative", minWidth: "fit-content"}}>
-      {depth > 0 && <div style={{position:"absolute",left:-14,top:0,width:10,height:18,borderLeft:"2px solid var(--gold)",borderBottom:"2px solid var(--gold)",borderRadius:"0 0 0 5px"}}/>}
-      <div className="cd" style={{padding:"10px 14px",marginBottom:6,borderColor:isRevogado?"#e74c3c":"var(--gold)",opacity:isRevogado?0.7:1,position:"relative",minWidth:280,maxWidth:700}}>
-        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4,flexWrap:"wrap"}}>
-          <span style={{background:isRevogado?"#e74c3c":"var(--grad)",color:"#fff",padding:"2px 10px",borderRadius:12,fontSize:12,fontWeight:700}}>{node.id}</span>
-          {isRevogado&&<span className="badge badge-revogado">REVOGADO</span>}
-          {node.status==="vigente"&&<span className="badge badge-vigente">VIGENTE</span>}
-          {hasChildren&&<span style={{fontSize:10,color:"var(--text-mute)",marginLeft:"auto"}}>→ {node.children.length} ramificação(ões)</span>}
-        </div>
-        <div style={{fontSize:12.5,lineHeight:1.6,whiteSpace:"pre-wrap",textDecoration:isRevogado?"line-through":"none"}}>{node.text}</div>
-        {node.subs&&node.subs.length>0&&<div style={{marginTop:5,paddingTop:5,borderTop:"1px dashed var(--border)"}}>
-          {node.subs.map((s,j)=><div key={j} style={{fontSize:11.5,lineHeight:1.5,color:"var(--text-sec)",paddingLeft:10,marginTop:1}}>
-            <span style={{color:"var(--gold)",fontWeight:600,marginRight:4}}>{s.id}</span>{s.txt}
-            {s.status==="revogado"&&<span className="badge badge-revogado" style={{marginLeft:4}}>REVOGADO</span>}
-          </div>)}
-        </div>}
-        {node.alteracao&&<div style={{marginTop:3,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db"}}>↳ {node.alteracao}</div>}
-        {isRevogado&&<div style={{marginTop:4,fontSize:11,color:"#e74c3c",fontStyle:"italic"}}>Dispositivo revogado — ramificações não seguidas.</div>}
-        {node.refs.length > 0 && !isRevogado && <div style={{marginTop:4,fontSize:11,color:"var(--text-sec)"}}>Remissões internas: {node.refs.join(", ")}</div>}
-        {hasExternal && !isRevogado && <div style={{marginTop:4,display:"flex",flexWrap:"wrap",gap:4}}>
-          {node.externalRefs.map((ext, j) => <span key={j} style={{display:"inline-flex",alignItems:"center",gap:3,padding:"1px 8px",borderRadius:10,fontSize:10,fontWeight:600,background:"rgba(52,152,219,0.1)",color:"#3498db",border:"1px solid rgba(52,152,219,0.25)"}}>↗ {ext}</span>)}
-        </div>}
-      </div>
-      {hasChildren && <div style={{paddingLeft:6}}>
-        {node.children.map((child, i) => <TreeNode key={child?.id||i} node={child} depth={depth + 1}/>)}
-      </div>}
-    </div>;
-  };
   return <div style={{display:"flex",gap:16,height:"70vh"}}>
-    <div style={{width:250,display:"flex",flexDirection:"column",gap:10,flexShrink:0}}>
+
+    {/* ── Painel esquerdo ── */}
+    <div style={{width:240,display:"flex",flexDirection:"column",gap:10,flexShrink:0}}>
       <div style={{fontSize:13,fontWeight:700,color:"var(--gold)"}}>TRAÇAR TEIA</div>
-      <select value={startArt} onChange={e=>setStartArt(e.target.value)} style={{padding:"8px",borderRadius:6,fontSize:13}}>
+      <select value={startArt} onChange={e=>setStartArt(e.target.value)}
+        style={{padding:"8px",borderRadius:6,fontSize:13}}>
         <option value="">Selecione o Artigo...</option>
         {arts.map(a=><option key={a} value={a}>{a}</option>)}
       </select>
-      <button onClick={tracar} disabled={loading||!startArt} style={{padding:"10px",background:loading?"var(--bg-hover)":"var(--grad)",color:loading?"var(--text-sec)":"#fff",border:"none",borderRadius:7,fontWeight:600,cursor:loading?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+      <button onClick={tracar} disabled={loading||!startArt}
+        style={{padding:"10px",background:loading?"var(--bg-hover)":"var(--grad)",
+                color:loading?"var(--text-sec)":"#fff",border:"none",borderRadius:7,
+                fontWeight:600,cursor:loading?"not-allowed":"pointer",
+                display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
         {loading?<><Sp/> Processando...</>:"Traçar Teia"}
       </button>
-      {traced && tree && <div style={{fontSize:11,color:"var(--text-sec)",lineHeight:1.6,padding:"8px 10px",background:"var(--bg-hover)",borderRadius:6}}>
+
+      {traced && tree && <div style={{fontSize:11,color:"var(--text-sec)",lineHeight:1.7,
+          padding:"8px 10px",background:"var(--bg-hover)",borderRadius:6}}>
         <div style={{fontWeight:600,marginBottom:4}}>Estatísticas:</div>
         <div>{totalNodes} nó(s) na árvore</div>
-        <div>{maxDepth} nível(is) de profundidade</div>
-        <div>{tree.externalRefs?.length||0} ref(s) externa(s) no nó raiz</div>
+        <div>{tree.externalRefs?.length||0} ref(s) externa(s) na raiz</div>
       </div>}
-      <div style={{fontSize:11,color:"var(--text-sec)",lineHeight:1.5}}>
-        A teia segue <b>todas</b> as remissões internas (mesma lei) recursivamente, formando uma árvore.<br/><br/>
-        <span style={{color:"#3498db"}}>↗ Azul</span> = referências a outras leis (metadata).<br/>
-        Dispositivos <span style={{color:"#e74c3c"}}>revogados</span> são sinalizados e não ramificam.<br/>
-        Dispositivos vetados mostram apenas a versão vigente.
+
+      {/* Legenda e controles */}
+      <div style={{fontSize:11,color:"var(--text-sec)",lineHeight:1.7,
+          padding:"8px 10px",background:"var(--bg-hover)",borderRadius:6}}>
+        <div style={{fontWeight:600,marginBottom:4}}>Controles:</div>
+        <div>🖱 <b>Scroll</b> — zoom</div>
+        <div>✋ <b>Drag</b> — mover canvas</div>
+        <div>👆 <b>Clique</b> — expandir/recolher nó e ver detalhes</div>
+        <div style={{marginTop:6,paddingTop:6,borderTop:"1px solid var(--border)"}}>
+          <div style={{fontWeight:600,marginBottom:3}}>Legenda:</div>
+          {[
+            ["var(--gold)",        "Vigente (folha)"],
+            ["var(--gold-bright)", "Com filhos recolhidos"],
+            ["#e74c3c",            "Revogado"],
+            ["#3498db",            "Tem refs. externas"],
+          ].map(([bg,lb])=>(
+            <div key={lb} style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
+              <span style={{flexShrink:0,display:"inline-block",width:10,height:10,
+                            borderRadius:"50%",background:bg}}/>
+              <span>{lb}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-    <div style={{flex:1,overflow:"auto",padding:"10px",background:"var(--bg-hover)",borderRadius:12,border:"1px solid var(--border)"}}>
-      {loading ? <div style={{textAlign:"center",paddingTop:100,color:"var(--text-sec)"}}><Sp/><div style={{marginTop:10}}>Processando teia de remissões…</div></div>
-      : !traced ? <div style={{textAlign:"center",paddingTop:100,color:"var(--text-sec)"}}>Selecione um artigo para ver a teia de remissões internas.</div>
-      : !tree ? <div style={{textAlign:"center",paddingTop:100}}>Artigo não encontrado ou sem dispositivo vigente.</div>
-      : <div style={{minWidth:"fit-content"}}><TreeNode node={tree} depth={0}/></div>}
+
+    {/* ── Painel direito: canvas D3 ── */}
+    <div style={{flex:1,overflow:"hidden",position:"relative",
+                 background:"var(--bg-hover)",borderRadius:12,
+                 border:"1px solid var(--border)"}}>
+
+      {loading
+        ? <div style={{textAlign:"center",paddingTop:100,color:"var(--text-sec)"}}>
+            <Sp/><div style={{marginTop:10}}>Processando teia de remissões…</div>
+          </div>
+        : !traced
+        ? <div style={{textAlign:"center",paddingTop:100,color:"var(--text-sec)"}}>
+            Selecione um artigo e clique em Traçar Teia.<br/>
+            <span style={{fontSize:11}}>Profundidade ≥ 2 começa recolhida — clique nos nós para expandir.</span>
+          </div>
+        : !tree
+        ? <div style={{textAlign:"center",paddingTop:100}}>
+            Artigo não encontrado ou sem dispositivo vigente.
+          </div>
+        : <>
+            <svg ref={svgRef} style={{width:"100%",height:"100%",display:"block"}}/>
+
+            {/* ── Painel de detalhes do nó selecionado ── */}
+            {selNode && <div style={{
+                position:"absolute",bottom:12,right:12,width:330,
+                background:"var(--bg-card)",border:"1px solid var(--gold)",
+                borderRadius:10,padding:14,
+                boxShadow:"0 6px 24px rgba(0,0,0,0.25)",
+                maxHeight:"55%",overflow:"auto",
+              }}>
+              <div style={{display:"flex",justifyContent:"space-between",
+                           alignItems:"center",marginBottom:8}}>
+                <span style={{
+                  background: selNode.status==="revogado"?"#e74c3c":"var(--grad)",
+                  color:"#fff",padding:"2px 10px",borderRadius:12,
+                  fontSize:12,fontWeight:700}}>
+                  {selNode.id}
+                </span>
+                <div style={{display:"flex",gap:6,alignItems:"center"}}>
+                  {selNode.status==="vigente"
+                    && <span className="badge badge-vigente">VIGENTE</span>}
+                  {selNode.status==="revogado"
+                    && <span className="badge badge-revogado">REVOGADO</span>}
+                  <button onClick={()=>setSelNode(null)}
+                    style={{background:"none",border:"none",cursor:"pointer",
+                            fontSize:16,color:"var(--text-sec)",lineHeight:1,padding:2}}>✕</button>
+                </div>
+              </div>
+
+              {selNode.status==="revogado"
+                && <div style={{fontSize:11,color:"#e74c3c",marginBottom:6,fontStyle:"italic"}}>
+                    Dispositivo revogado — ramificações não seguidas.
+                   </div>}
+
+              <div style={{fontSize:12.5,lineHeight:1.6,marginBottom:selNode.subs?.length?6:0,
+                           textDecoration:selNode.status==="revogado"?"line-through":"none"}}>
+                {selNode.text||"(sem texto)"}
+              </div>
+
+              {selNode.subs?.length > 0 && <div style={{
+                  borderTop:"1px dashed var(--border)",paddingTop:6,marginTop:4}}>
+                {selNode.subs.map((s,i)=>(
+                  <div key={i} style={{fontSize:11.5,color:"var(--text-sec)",
+                                       paddingLeft:8,marginTop:2,lineHeight:1.5}}>
+                    <span style={{color:"var(--gold)",fontWeight:600,marginRight:4}}>{s.id}</span>
+                    {s.txt}
+                    {s.status==="revogado"
+                      && <span className="badge badge-revogado" style={{marginLeft:4}}>REVOGADO</span>}
+                  </div>
+                ))}
+              </div>}
+
+              {selNode.alteracao
+                && <div style={{marginTop:6,padding:"2px 8px",
+                                background:"rgba(52,152,219,0.08)",
+                                borderLeft:"2px solid #3498db",borderRadius:3,
+                                fontSize:11,color:"#3498db"}}>
+                    ↳ {selNode.alteracao}
+                   </div>}
+
+              {selNode.refs?.length > 0 && selNode.status !== "revogado"
+                && <div style={{marginTop:6,fontSize:11,color:"var(--text-sec)"}}>
+                    Remissões internas: {selNode.refs.join(", ")}
+                   </div>}
+
+              {selNode.externalRefs?.length > 0
+                && <div style={{marginTop:6,display:"flex",flexWrap:"wrap",gap:4}}>
+                    {selNode.externalRefs.map((ext,i)=>(
+                      <span key={i} style={{
+                        padding:"1px 8px",borderRadius:10,fontSize:10,fontWeight:600,
+                        background:"rgba(52,152,219,0.1)",color:"#3498db",
+                        border:"1px solid rgba(52,152,219,0.25)"}}>↗ {ext}</span>
+                    ))}
+                   </div>}
+            </div>}
+          </>
+      }
     </div>
   </div>;
 }
@@ -1049,17 +1269,14 @@ function TabMapa({ds}){
   const toggle=(key)=>{
     setCollapsed(p=>{
       const isCurrentlyCollapsed=p[key];
-      if(isCurrentlyCollapsed){
-        return {...p,[key]:false};
-      }else{
-        const newState={...p,[key]:true};
-        Object.keys(p).forEach(k=>{
-          if(k.startsWith(key+"-")){
-            newState[k]=true;
-          }
-        });
-        return newState;
-      }
+      // Ao expandir OU recolher: sempre resetar todos os descendentes para collapsed=true.
+      // Isso garante que abrir um LIVRO mostra os TÍTULOs recolhidos,
+      // abrir um TÍTULO mostra os CAPÍTULOs recolhidos, etc. (hierarquia LC 95/1998).
+      const newState={...p,[key]:isCurrentlyCollapsed?false:true};
+      Object.keys(p).forEach(k=>{
+        if(k.startsWith(key+"-")) newState[k]=true;
+      });
+      return newState;
     });
   };
 
