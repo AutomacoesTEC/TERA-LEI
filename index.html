@@ -1485,7 +1485,7 @@ function Ref(){const [sub,setSub]=useState("leg");const [tMsgs,setTMsgs]=useStat
         <div style={{fontSize:11,color:"var(--text-mute)",marginTop:6,fontStyle:"italic"}}>Fonte: {t.fonte}{t.url&&<> · <a href={t.url} target="_blank" onClick={e=>e.stopPropagation()} style={{color:"var(--gold)"}}>ver legislação</a></>}</div>
       </div>
     </div>)}</div></div>}
-    {sub==="tutor"&&<div style={{display:"flex",flexDirection:"column",height:"60vh"}}>
+    {sub==="tutor"&&(<div style={{display:"flex",flexDirection:"column",height:"60vh"}}>
       <div ref={cr} style={{flex:1,overflowY:"auto",padding:10}}>{tMsgs.length===0&&<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Pergunte sobre a Reforma Tributária, IBS, CBS, Imposto Seletivo...</div>}{tMsgs.map((m,i)=><div key={i} style={{marginBottom:10,textAlign:m.role==="user"?"right":"left"}}><div style={{display:"inline-block",padding:10,borderRadius:10,maxWidth:"80%",background:m.role==="user"?"var(--grad)":"var(--bg-hover)",color:m.role==="user"?"#fff":"var(--text)",whiteSpace:"pre-wrap"}}>{m.text}</div></div>)}</div>
       <div style={{display:"flex",gap:10}}><input value={tInp} onChange={e=>setTInp(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sendT()} placeholder="Pergunte sobre a Reforma..." style={{flex:1,padding:10,borderRadius:6}}/><button onClick={sendT} className="btn-primary" disabled={tLd}>{tLd?<Sp/>:"Enviar"}</button></div>
     </div>)}
