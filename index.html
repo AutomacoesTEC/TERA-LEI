@@ -523,8 +523,8 @@ function Lib({lib,sel,onSel,onDel,onUp,uping,fRef}){return <div className="fade"
 // - Removidas as renderizações condicionais de tab==="remissoes" e tab==="tutor"
 // - Export Excel: removida aba "Remissões"
 function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
-  const [tab,setTab]=useState("texto");const [saved,setSaved]=useState(false);const [goSearch,setGoSearch]=useState("");
-  const tabs=[{id:"sumario",lb:"Sumário"},{id:"texto",lb:"Texto Integral"},{id:"artigos",lb:"Artigos"},{id:"estudo",lb:"Estudo Guiado"},{id:"prazos",lb:"Prazos/Valores"},{id:"busca",lb:"Busca"},{id:"mapa",lb:"Mapa"},{id:"anexos",lb:`Anexos (${(lei.anexos||[]).length})`},{id:"teia",lb:"🕸 Teia"},{id:"perguntasrespostas",lb:"Perguntas e Respostas"}];
+  const [tab,setTab]=useState("mapa");const [saved,setSaved]=useState(false);const [goSearch,setGoSearch]=useState("");
+  const tabs=[{id:"mapa",lb:"Mapa"},{id:"teia",lb:"🕸 Teia"},{id:"busca",lb:"Busca"},{id:"estudo",lb:"Estudo Guiado"},{id:"texto",lb:"Texto Integral"},{id:"artigos",lb:"Artigos"},{id:"anexos",lb:`Anexos (${(lei.anexos||[]).length})`}];
   const ds=lei.ds;
   const showSaved=()=>{setSaved(true);setTimeout(()=>setSaved(false),1500);};
   const wrappedUSt=(a,b,c,d)=>{uSt(a,b,c,d);showSaved();};
@@ -735,20 +735,16 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
       </div>
     </div>
     <div style={{display:"flex",gap:0,borderBottom:"1px solid var(--border)",marginBottom:14,overflowX:"auto"}}>{tabs.map(t=><button key={t.id} className={`stab ${tab===t.id?"on":""}`} onClick={()=>setTab(t.id)}>{t.lb}</button>)}</div>
-    {tab==="sumario"&&<TabSumario ds={ds}/>}
     {tab==="texto"&&<TabTexto ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt}/>}
     {tab==="artigos"&&<TabArtigos ds={ds}/>}
     {tab==="estudo"&&<TabEstudo ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt}/>}
-    {tab==="prazos"&&<TabPrazos ds={ds}/>}
     {tab==="busca"&&<TabIndice ds={ds} area={area} onGoToArt={a=>{setGoSearch(a);setTab("texto");}}/>}
     {tab==="mapa"&&<TabMapa ds={ds}/>}
     {tab==="anexos"&&<TabAnexos lei={lei} addAnexo={addAnexo} delAnexo={delAnexo}/>}
     {tab==="teia"&&<TabTeia ds={ds} buildRecursiveTree={buildRecursiveTree} buildRecursiveChain={buildRecursiveChain}/>}
-    {tab==="perguntasrespostas"&&<TabSabatina lei={lei} area={area}/>}
   </div>;
 }
 
-function TabSumario({ds}){const items=ds.filter(d=>DIV.has(d.tipo));return <div style={{maxHeight:"70vh",overflow:"auto"}}><table className="dt"><thead><tr><th>#</th><th>Tipo</th><th>Identificador</th><th>Rubrica</th></tr></thead><tbody>{items.map((d,i)=><tr key={i} style={{background:CT[d.tipo]||"#fff",color:d.tipo==="PARTE"||d.tipo==="LIVRO"||d.tipo==="TÍTULO"||d.tipo==="CAPÍTULO"?"#fff":"#2D2A26"}}><td>{i+1}</td><td><span className="badge" style={{background:"rgba(0,0,0,.15)",color:"inherit"}}>{d.tipo}</span></td><td style={{fontWeight:700}}>{d.id}</td><td>{d.rub}</td></tr>)}</tbody></table></div>;}
 
 // ALTERAÇÃO ENTREGA 2: removida barra de busca do Texto Integral
 function TabTexto({ds,lei,gSt,uSt}){
@@ -766,7 +762,7 @@ function TabTexto({ds,lei,gSt,uSt}){
           <span style={{color:isD?"inherit":"#B8965A",fontFamily:"'Segoe UI',sans-serif",fontSize:12,marginRight:4,textDecoration:"none"}}>{d.id}</span>
           {d.rub&&<i style={{opacity:.7}}>{d.rub} </i>}{d.txt}
           {d.alteracao&&<div style={{marginTop:3,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db",textDecoration:"none",fontWeight:400,opacity:1}}>↳ {d.alteracao}</div>}
-          {nt&&<div style={{marginTop:3,padding:"2px 6px",background:"var(--gold-subtle)",borderLeft:"2px solid #B8965A",borderRadius:3,fontSize:11,color:"var(--gold)",textDecoration:"none",fontWeight:400,opacity:1}}>{nt}</div>}
+          {nt&&<div style={{marginTop:3,padding:"2px 6px",background:"var(--gold-subtle)",borderLeft:"2px solid #B8965A",borderRadius:3,fontSize:11,color:"var(--gold)",textDecoration:"none",fontWeight:400,opacity:1}} dangerouslySetInnerHTML={{__html:nt}}/>}
         </div>
         {!isD&&<div style={{minWidth:100,padding:"5px 4px",display:"flex",flexDirection:"column",gap:3}}>
           <select value={st} onChange={e=>uSt(lei.id,ri,"status",e.target.value)} style={{background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:3,color:sC[st]||"#8A8279",padding:"2px",fontSize:11,cursor:"pointer"}}>{sts.map(s=><option key={s} value={s}>{s||"Status"}</option>)}</select>
@@ -778,6 +774,124 @@ function TabTexto({ds,lei,gSt,uSt}){
 function TabArtigos({ds}){let art="";const rows=[];const tipos=new Set(["ARTIGO","PARÁGRAFO","INCISO","ALÍNEA","ITEM"]);
   for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;if(tipos.has(d.tipo))rows.push({art,tipo:d.tipo,id:d.id,rub:d.rub,txt:d.txt,status:d.status||"vigente",alteracao:d.alteracao||""});}
   return <div style={{maxHeight:"70vh",overflow:"auto"}}><table className="dt"><thead><tr><th>Artigo</th><th>Tipo</th><th>Identificador</th><th>Status</th><th>Texto</th><th>Alteração</th></tr></thead><tbody>{rows.map((r,i)=><tr key={i} style={{opacity:r.status==="vetado"||r.status==="revogado"?0.5:1}}><td style={{fontWeight:700,color:"var(--gold)"}}>{r.art}</td><td><span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)"}}>{r.tipo}</span></td><td style={{fontSize:12}}>{r.id}</td><td>{r.status==="vetado"?<span className="badge badge-revogado">VETADO</span>:r.status==="revogado"?<span className="badge badge-revogado">REVOGADO</span>:<span className="badge badge-vigente">VIGENTE</span>}</td><td style={{fontSize:12,textDecoration:r.status!=="vigente"?"line-through":"none"}}>{r.txt}</td><td style={{fontSize:11,color:"var(--text-sec)"}}>{r.alteracao}</td></tr>)}</tbody></table></div>;}
+
+// ─── RichTextEditor ────────────────────────────────────────────────────────────
+// Caixa de anotação com toolbar de formatação. Usa contentEditable para garantir
+// compatibilidade máxima sem dependências externas.
+// Persiste innerHTML via onBlur — retro-compatível com notas em texto puro já salvas.
+// Toolbar: Negrito | Itálico | Sublinhado | Tachado | Lista • | Lista 1. | Limpar
+function RichTextEditor({value, onBlur, placeholder}){
+  const edRef=useRef(null);
+  const lastSaved=useRef(value||"");
+
+  // Sincroniza conteúdo externo na montagem ou quando value muda vindo de fora
+  // sem sobrescrever o que o usuário está digitando (focado)
+  useEffect(()=>{
+    if(!edRef.current)return;
+    if(document.activeElement===edRef.current)return;
+    // Só reinjeta se o conteúdo realmente mudou para evitar perder cursor
+    if(edRef.current.innerHTML!==(value||"")){
+      edRef.current.innerHTML=value||"";
+    }
+  },[value]);
+
+  const cmd=(command,val=null)=>{
+    try{
+      edRef.current && edRef.current.focus();
+      document.execCommand(command,false,val);
+    }catch(e){console.warn("execCommand falhou:",command,e);}
+  };
+
+  const clearFmt=()=>{
+    try{
+      edRef.current && edRef.current.focus();
+      document.execCommand("removeFormat",false,null);
+      // Remove listas também
+      document.execCommand("insertOrderedList",false,null);
+      document.execCommand("insertOrderedList",false,null);
+      document.execCommand("insertUnorderedList",false,null);
+      document.execCommand("insertUnorderedList",false,null);
+    }catch(e){console.warn("clearFmt:",e);}
+  };
+
+  const handleBlur=()=>{
+    if(!edRef.current)return;
+    const html=edRef.current.innerHTML||"";
+    if(html!==lastSaved.current){
+      lastSaved.current=html;
+      onBlur&&onBlur(html);
+    }
+  };
+
+  // Evita que Enter no editor propague para o formulário pai
+  const handleKeyDown=(e)=>{
+    if(e.key==="Enter")e.stopPropagation();
+  };
+
+  const btnStyle=(active)=>({
+    background:"none",
+    border:"1px solid var(--border)",
+    borderRadius:4,
+    cursor:"pointer",
+    padding:"2px 6px",
+    fontSize:12,
+    color:active?"var(--gold)":"var(--text-sec)",
+    fontFamily:"inherit",
+    lineHeight:"18px",
+    transition:"color .1s,border-color .1s",
+    flexShrink:0,
+  });
+
+  return <div style={{display:"flex",flexDirection:"column",width:"100%",border:"1px solid var(--border)",borderRadius:6,overflow:"hidden",background:"var(--input-bg)"}}>
+    {/* Toolbar */}
+    <div style={{display:"flex",gap:3,padding:"4px 6px",borderBottom:"1px solid var(--border)",background:"var(--bg-hover)",flexWrap:"wrap"}}>
+      <button onMouseDown={e=>{e.preventDefault();cmd("bold");}} style={btnStyle(false)} title="Negrito"><b>N</b></button>
+      <button onMouseDown={e=>{e.preventDefault();cmd("italic");}} style={btnStyle(false)} title="Itálico"><i>I</i></button>
+      <button onMouseDown={e=>{e.preventDefault();cmd("underline");}} style={btnStyle(false)} title="Sublinhado"><u>S</u></button>
+      <button onMouseDown={e=>{e.preventDefault();cmd("strikeThrough");}} style={btnStyle(false)} title="Tachado"><s>T</s></button>
+      <span style={{width:1,background:"var(--border)",margin:"2px 2px",flexShrink:0}}/>
+      <button onMouseDown={e=>{e.preventDefault();cmd("insertUnorderedList");}} style={btnStyle(false)} title="Lista com marcadores">•≡</button>
+      <button onMouseDown={e=>{e.preventDefault();cmd("insertOrderedList");}} style={btnStyle(false)} title="Lista numerada">1≡</button>
+      <span style={{width:1,background:"var(--border)",margin:"2px 2px",flexShrink:0}}/>
+      <button onMouseDown={e=>{e.preventDefault();clearFmt();}} style={btnStyle(false)} title="Remover formatação">✕<sub style={{fontSize:9}}>fmt</sub></button>
+    </div>
+    {/* Área editável */}
+    <div
+      ref={edRef}
+      contentEditable={true}
+      suppressContentEditableWarning={true}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      data-placeholder={placeholder||"Expandir anotação..."}
+      style={{
+        minHeight:"120px",
+        maxHeight:"280px",
+        overflowY:"auto",
+        padding:"8px 10px",
+        fontSize:12,
+        lineHeight:1.6,
+        fontFamily:"inherit",
+        color:"var(--text)",
+        outline:"none",
+        resize:"vertical",
+        wordBreak:"break-word",
+        // Placeholder via CSS — compatível com todos os browsers modernos
+      }}
+    />
+    <style>{`
+      [contenteditable][data-placeholder]:empty::before{
+        content:attr(data-placeholder);
+        color:var(--text-mute);
+        pointer-events:none;
+        font-style:italic;
+      }
+      [contenteditable] ul{padding-left:18px;margin:2px 0;}
+      [contenteditable] ol{padding-left:18px;margin:2px 0;}
+      [contenteditable] li{margin:1px 0;}
+    `}</style>
+  </div>;
+}
+// ──────────────────────────────────────────────────────────────────────────────
 
 function TabEstudo({ds,lei,gSt,uSt}){
   const [filtroStatus,setFiltroStatus]=useState("");
@@ -980,12 +1094,12 @@ function TabEstudo({ds,lei,gSt,uSt}){
                   <option value="Difícil">Difícil</option>
                 </select>
               </td>
-              <td style={{verticalAlign:"top"}}>
-                <textarea defaultValue={nt} onBlur={e=>uSt(lei.id,ri,"note",e.target.value)}
+              <td style={{verticalAlign:"top",minWidth:200}}>
+                <RichTextEditor
+                  value={nt}
+                  onBlur={html=>uSt(lei.id,ri,"note",html)}
                   placeholder="Expandir anotação..."
-                  style={{width:"100%",minHeight:"80px",background:"var(--input-bg)",
-                          border:"1px solid var(--border)",borderRadius:4,padding:"6px",
-                          fontSize:12,resize:"both",fontFamily:"inherit"}}/>
+                />
               </td>
             </tr>;
           })}</tbody>
@@ -1464,7 +1578,6 @@ function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
   </div>;
 }
 
-function TabPrazos({ds}){const pv=useMemo(()=>extrairPrazosValores(ds),[ds]);return <div style={{maxHeight:"70vh",overflow:"auto"}}>{pv.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhum prazo ou valor encontrado</div>:<table className="dt"><thead><tr><th>Tipo</th><th>Conteúdo</th><th>Artigo</th><th>Capítulo</th><th>Contexto</th></tr></thead><tbody>{pv.map((p,i)=><tr key={i}><td><span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)"}}>{p.tipo}</span></td><td style={{fontWeight:600}}>{p.val}</td><td>{p.art}</td><td style={{fontSize:12}}>{p.cap}</td><td style={{fontSize:12}}>{p.ctx}</td></tr>)}</tbody></table>}</div>;}
 
 function TabIndice({ds,area,onGoToArt}){
   const [filtro,setFiltro]=useState("");
@@ -1754,142 +1867,6 @@ function TabAnexos({lei,addAnexo,delAnexo}){const [uping,setUp]=useState(false);
   </div>;
 }
 
-// ALTERAÇÃO ENTREGA 2: "Sabatina" → "Perguntas e Respostas", "Corrigir com IA" → "Verificar Respostas"
-function TabSabatina({lei,area}){
-  const [perguntas,setPerguntas]=useState(()=>LS("t3-sab-"+lei.id)||[]);
-  const [respostas,setRespostas]=useState(()=>LS("t3-sab-r-"+lei.id)||{});
-  const [uploading,setUploading]=useState(false);
-  const fRef=useRef(null);
-  const salvarRespostas=(novas)=>{setRespostas(novas);LS("t3-sab-r-"+lei.id,novas);};
-  const uploadDocx=async(e)=>{
-    const f=e.target.files?.[0];if(!f)return;
-    setUploading(true);
-    try{
-      const ab=await f.arrayBuffer();
-      const qs=[];
-
-      // Tentativa 1: HTML via mammoth — captura listas automáticas do Word (<li>)
-      // Cobre o caso mais comum: numeração automática Word sem prefixo explícito no texto
-      try{
-        const htmlResult=await mammoth.convertToHtml({arrayBuffer:ab});
-        const html=htmlResult.value||"";
-        const liMatches=html.match(/<li[^>]*>([\s\S]*?)<\/li>/gi)||[];
-        for(const li of liMatches){
-          const txt=li
-            .replace(/<[^>]+>/g,"")
-            .replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">")
-            .replace(/&nbsp;/g," ").replace(/&#\d+;/g,"").trim();
-          if(txt.length>10) qs.push(txt);
-        }
-      }catch(_){}
-
-      // Tentativa 2: texto puro com numeração explícita ("1. Pergunta" ou "1) Pergunta")
-      // Mantém compatibilidade com o formato original esperado pelo sistema
-      if(qs.length===0){
-        const result=await mammoth.extractRawText({arrayBuffer:ab});
-        const text=result.value||"";
-        const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);
-        let current="";
-        for(const line of lines){
-          const match=line.match(/^(\d+)\s*[\.\)\-]\s*(.+)/);
-          if(match){if(current)qs.push(current);current=match[2].trim();}
-          else if(current){current+=" "+line;}
-        }
-        if(current)qs.push(current);
-      }
-
-      if(qs.length>0){
-        setPerguntas(qs);LS("t3-sab-"+lei.id,qs);
-        setRespostas({});LS("t3-sab-r-"+lei.id,{});
-        setCorrecoes({});LS("t3-sab-c-"+lei.id,{});
-      }else{
-        alert("Não foram encontradas perguntas no documento.\n\nFormatos aceitos:\n• Lista automática do Word (numeração via Word)\n• Numeração explícita: 1. Pergunta\n2. Pergunta...");
-      }
-    }catch(e){alert("Erro ao processar .docx: "+e.message);}
-    setUploading(false);
-    if(fRef.current)fRef.current.value="";
-  };
-  const limparTudo=()=>{if(confirm("Limpar todas as perguntas, respostas e verificações?")){
-    setPerguntas([]);setRespostas({});
-    LS("t3-sab-"+lei.id,null);LS("t3-sab-r-"+lei.id,null);
-  }};
-
-  const exportDocx=()=>{
-    try{
-      // Construir HTML formatado compatível com Word
-      let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8">
-<style>
-  body { font-family: Calibri, sans-serif; font-size: 11pt; color: #1a1a1a; margin: 2cm; }
-  .titulo { font-size: 14pt; font-weight: bold; color: #1a365d; text-align: center; margin-bottom: 20pt; }
-  .subtitulo { font-size: 10pt; color: #666; text-align: center; margin-bottom: 30pt; }
-  .pergunta { font-size: 11pt; font-weight: bold; color: #1a1a1a; margin-top: 18pt; margin-bottom: 6pt; }
-  .numero { color: #B8965A; font-weight: bold; }
-  .resposta-label { font-size: 10pt; font-weight: bold; color: #2e86ab; margin-top: 8pt; margin-bottom: 4pt; }
-  .resposta { font-size: 11pt; color: #333; margin-bottom: 4pt; padding-left: 12pt; border-left: 3px solid #B8965A; line-height: 1.6; }
-  .sem-resposta { font-size: 10pt; color: #999; font-style: italic; margin-bottom: 4pt; padding-left: 12pt; }
-  .separador { border: none; border-top: 1px solid #e0dcd4; margin: 14pt 0; }
-</style></head><body>`;
-
-      html += `<div class="titulo">Perguntas e Respostas</div>`;
-      html += `<div class="subtitulo">${lei.nome} — Exportado em ${new Date().toLocaleDateString("pt-BR")}</div>`;
-
-      for(let i=0;i<perguntas.length;i++){
-        const resp = (respostas[i]||"").trim();
-        html += `<div class="pergunta"><span class="numero">${i+1}.</span> ${perguntas[i].replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>`;
-        if(resp){
-          html += `<div class="resposta-label">Resposta:</div>`;
-          html += `<div class="resposta">${resp.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br/>")}</div>`;
-        }else{
-          html += `<div class="sem-resposta">(Sem resposta)</div>`;
-        }
-        if(i<perguntas.length-1) html += `<hr class="separador"/>`;
-      }
-
-      html += `</body></html>`;
-
-      const blob = new Blob(['\ufeff'+html], {type:'application/msword'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = lei.nome.replace(/[^a-zA-Z0-9À-ü\s\-_]/g,"").trim().slice(0,50) + "_Perguntas_Respostas.doc";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }catch(e){
-      alert("Erro ao exportar: "+e.message);
-    }
-  };
-  if(!_authToken)return <div className="cd" style={{padding:20}}><div style={{color:"var(--err)"}}>Sessão expirada. Recarregue a página e faça login novamente.</div></div>;
-  return <div className="fade">
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14,flexWrap:"wrap",gap:8}}>
-      <div>
-        <h3 style={{margin:0,fontSize:16}}>Perguntas e Respostas — {lei.nome}</h3>
-        <div style={{fontSize:12,color:"var(--text-sec)",marginTop:2}}>{perguntas.length} pergunta(s) carregada(s)</div>
-      </div>
-      <div style={{display:"flex",gap:6}}>
-        <label style={{display:"inline-flex",alignItems:"center",gap:5,padding:"7px 14px",background:"var(--grad)",color:"#fff",borderRadius:6,cursor:"pointer",fontSize:13,fontWeight:600}}>
-          {uploading?<><Sp/> Processando...</>:<><Ic d={IC.up} s={13} c="#fff"/> Carregar .docx</>}
-          <input ref={fRef} type="file" accept=".docx" onChange={uploadDocx} style={{display:"none"}}/>
-        </label>
-        {perguntas.length>0&&<button onClick={exportDocx} style={{display:"inline-flex",alignItems:"center",gap:5,padding:"7px 14px",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:6,cursor:"pointer",fontSize:13,fontWeight:600,color:"var(--text)"}}><Ic d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" s={13} c="var(--gold)"/> Exportar .docx</button>}
-        {perguntas.length>0&&<button onClick={limparTudo} className="btn-secondary" style={{fontSize:12,padding:"7px 12px",color:"var(--err)"}}>Limpar</button>}
-      </div>
-    </div>
-    {perguntas.length===0?
-      <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}><div style={{fontSize:48,marginBottom:12}}>📝</div><div style={{fontSize:16,marginBottom:8}}>Nenhuma pergunta carregada</div><div style={{fontSize:13,lineHeight:1.6}}>Faça upload de um arquivo .docx com perguntas numeradas.<br/>Formato esperado:<br/><code style={{background:"var(--bg-hover)",padding:"2px 6px",borderRadius:3}}>1. Pergunta um?<br/>2. Pergunta dois?</code></div></div>
-    :<div style={{display:"flex",flexDirection:"column",gap:16,maxHeight:"68vh",overflow:"auto",paddingRight:8}}>
-      {perguntas.map((p,idx)=><div key={idx} className="cd" style={{padding:16}}>
-        <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:10}}>
-          <span style={{background:"var(--grad)",color:"#fff",minWidth:28,height:28,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,flexShrink:0}}>{idx+1}</span>
-          <div style={{fontSize:14,fontWeight:600,lineHeight:1.5,flex:1}}>{p}</div>
-        </div>
-        <textarea value={respostas[idx]||""} onChange={e=>{const novas={...respostas,[idx]:e.target.value};salvarRespostas(novas);}} placeholder="Escreva sua resposta aqui..." style={{width:"100%",minHeight:100,background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:8,padding:"10px 12px",fontSize:13,lineHeight:1.6,resize:"vertical",fontFamily:"inherit",boxSizing:"border-box"}}/>
-      </div>)}
-    </div>}
-  </div>;
-}
 
 // ═══ E-CONSULTOR ═══
 function EConsultor({lib}){
