@@ -765,14 +765,14 @@ function TabTexto({ds,lei,gSt,uSt}){
   const sts=["","Não lido","Lido","Revisando","Dominado","Dúvida"];const sC={Dominado:"#27AE60",Dúvida:"#C0392B",Revisando:"#D4A017",Lido:"#2E86AB"};
   return <div>
     <div style={{maxHeight:"68vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>{ds.map((d,i)=>{const ri=i;const isD=DIV.has(d.tipo);const st=gSt(lei.id,ri,"status");const nt=gSt(lei.id,ri,"note");const isVetado=d.status==="vetado";const isRevogado=d.status==="revogado";
-      return <div key={ri} style={{display:"flex",borderBottom:"1px solid var(--border)",background:isVetado?"rgba(231,76,60,0.06)":isRevogado?"rgba(231,76,60,0.04)":isD?CT[d.tipo]||"#F5EDDF":ri%2===0?"#fff":"#FAF7F2",paddingLeft:ind[d.tipo]||0}}>
+      return <div key={ri} style={{display:"flex",borderBottom:"1px solid var(--border)",background:isVetado?"rgba(231,76,60,0.06)":isRevogado?"rgba(231,76,60,0.04)":isD?CT[d.tipo]||"var(--bg-hover)":ri%2===0?"var(--bg-card)":"var(--bg-hover)",paddingLeft:ind[d.tipo]||0}}>
         <div style={{minWidth:70,padding:"6px 4px",textAlign:"center"}}>
-          <span className="badge" style={{background:isD?"rgba(0,0,0,.1)":"#F3EDE4",color:isD?(d.tipo==="PARTE"||d.tipo==="LIVRO"||d.tipo==="TÍTULO"||d.tipo==="CAPÍTULO"?"#fff":"#5C554A"):"#8A8279"}}>{d.tipo}</span>
+          <span className="badge" style={{background:isD?"rgba(0,0,0,.1)":"var(--bg-hover)",color:isD?(d.tipo==="PARTE"||d.tipo==="LIVRO"||d.tipo==="TÍTULO"||d.tipo==="CAPÍTULO"?"#fff":"var(--text-sec)"):"var(--text-mute)"}}>{d.tipo}</span>
           {isVetado&&<div><span className="badge badge-revogado" style={{marginTop:3,display:"inline-block"}}>VETADO</span></div>}
           {isRevogado&&<div><span className="badge badge-revogado" style={{marginTop:3,display:"inline-block"}}>REVOGADO</span></div>}
         </div>
-        <div style={{flex:1,padding:"6px 8px",fontSize:12.5,lineHeight:1.6,color:isD?(d.tipo==="PARTE"||d.tipo==="LIVRO"||d.tipo==="TÍTULO"?"#fff":"#2D2A26"):"#2D2A26",fontWeight:isD||d.tipo==="ARTIGO"?600:400,textDecoration:(isVetado||isRevogado)?"line-through":"none",opacity:(isVetado||isRevogado)?0.6:1}}>
-          <span style={{color:isD?"inherit":"#B8965A",fontFamily:"'Segoe UI',sans-serif",fontSize:12,marginRight:4,textDecoration:"none"}}>{d.id}</span>
+        <div style={{flex:1,padding:"6px 8px",fontSize:12.5,lineHeight:1.6,color:isD?(d.tipo==="PARTE"||d.tipo==="LIVRO"||d.tipo==="TÍTULO"?"#fff":"var(--text)"):"var(--text)",fontWeight:isD||d.tipo==="ARTIGO"?600:400,textDecoration:(isVetado||isRevogado)?"line-through":"none",opacity:(isVetado||isRevogado)?0.6:1}}>
+          <span style={{color:isD?"inherit":"var(--gold)",fontFamily:"'Segoe UI',sans-serif",fontSize:12,marginRight:4,textDecoration:"none"}}>{d.id}</span>
           {d.rub&&<i style={{opacity:.7}}>{d.rub} </i>}{d.txt}
           {d.alteracao&&<div style={{marginTop:3,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db",textDecoration:"none",fontWeight:400,opacity:1}}>↳ {d.alteracao}</div>}
           {nt&&<div style={{marginTop:3,padding:"2px 6px",background:"var(--gold-subtle)",borderLeft:"2px solid #B8965A",borderRadius:3,fontSize:11,color:"var(--gold)",textDecoration:"none",fontWeight:400,opacity:1}} dangerouslySetInnerHTML={{__html:nt}}/>}
