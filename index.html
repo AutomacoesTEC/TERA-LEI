@@ -912,6 +912,32 @@ function TabEstudo({ds,lei,gSt,uSt}){
   const [collNav,setCollNav]=useState({});         // estado colapso da nav hierárquica
   const sts=["Não lido","Lido","Revisando","Dominado","Dúvida"];
   const sC={Dominado:"#27AE60",Dúvida:"#C0392B",Revisando:"#D4A017",Lido:"#2E86AB"};
+  // ── Redimensionamento de colunas ──────────────────────────────────────────
+  const [colWidths,setColWidths]=useState([100,360,120,120,220]);
+  const dragRef=useRef(null);
+  useEffect(()=>{
+    const onMove=e=>{
+      if(!dragRef.current)return;
+      const {colIdx,startX,startW}=dragRef.current;
+      const newW=Math.max(60,startW+(e.clientX-startX));
+      setColWidths(p=>{const n=[...p];n[colIdx]=newW;return n;});
+    };
+    const onUp=()=>{
+      if(!dragRef.current)return;
+      dragRef.current=null;
+      document.body.style.cursor="";
+      document.body.style.userSelect="";
+    };
+    window.addEventListener("mousemove",onMove);
+    window.addEventListener("mouseup",onUp);
+    return()=>{window.removeEventListener("mousemove",onMove);window.removeEventListener("mouseup",onUp);};
+  },[]);
+  const handleColResizeMouseDown=(e,colIdx)=>{
+    e.preventDefault();
+    dragRef.current={colIdx,startX:e.clientX,startW:colWidths[colIdx]};
+    document.body.style.cursor="col-resize";
+    document.body.style.userSelect="none";
+  };
 
   // ── Estrutura hierárquica (igual ao TabMapa, sem artigos) ──────────────────
   const estrutura = useMemo(()=>{
@@ -1065,11 +1091,22 @@ function TabEstudo({ds,lei,gSt,uSt}){
       <div style={{flex:1,overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>
         <table className="dt" style={{width:"100%",tableLayout:"fixed"}}>
           <thead><tr>
-            <th style={{width:"100px"}}>Dispositivo</th>
-            <th style={{width:"40%"}}>Texto</th>
-            <th style={{width:"120px"}}>Status</th>
-            <th style={{width:"120px"}}>Dificuldade</th>
-            <th>Anotação</th>
+            {["Dispositivo","Texto","Status","Dificuldade","Anotação"].map((lbl,ci)=>(
+              <th key={ci} style={{width:colWidths[ci],userSelect:"none",padding:"8px 6px 8px 10px",overflow:"hidden"}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:4}}>
+                  <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{lbl}</span>
+                  {ci<4&&<div
+                    onMouseDown={e=>handleColResizeMouseDown(e,ci)}
+                    title="Arraste para redimensionar a coluna"
+                    style={{width:4,minHeight:16,cursor:"col-resize",
+                            background:"rgba(255,255,255,0.28)",borderRadius:2,
+                            flexShrink:0,transition:"background .15s"}}
+                    onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.65)"}
+                    onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,0.28)"}
+                  />}
+                </div>
+              </th>
+            ))}
           </tr></thead>
           <tbody>{fd.map((d,i)=>{
             const ri=ds.indexOf(d);
@@ -1107,7 +1144,7 @@ function TabEstudo({ds,lei,gSt,uSt}){
                   <option value="Difícil">Difícil</option>
                 </select>
               </td>
-              <td style={{verticalAlign:"top",minWidth:200}}>
+              <td style={{verticalAlign:"top"}}>
                 <RichTextEditor
                   value={nt}
                   onBlur={html=>uSt(lei.id,ri,"note",html)}
