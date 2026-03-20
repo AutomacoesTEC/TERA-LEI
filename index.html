@@ -1758,12 +1758,9 @@ function TabAnexos({lei,addAnexo,delAnexo}){const [uping,setUp]=useState(false);
 function TabSabatina({lei,area}){
   const [perguntas,setPerguntas]=useState(()=>LS("t3-sab-"+lei.id)||[]);
   const [respostas,setRespostas]=useState(()=>LS("t3-sab-r-"+lei.id)||{});
-  const [correcoes,setCorrecoes]=useState(()=>LS("t3-sab-c-"+lei.id)||{});
-  const [loading,setLoading]=useState({});
   const [uploading,setUploading]=useState(false);
   const fRef=useRef(null);
   const salvarRespostas=(novas)=>{setRespostas(novas);LS("t3-sab-r-"+lei.id,novas);};
-  const salvarCorrecoes=(novas)=>{setCorrecoes(novas);LS("t3-sab-c-"+lei.id,novas);};
   const uploadDocx=async(e)=>{
     const f=e.target.files?.[0];if(!f)return;
     setUploading(true);
@@ -1812,46 +1809,9 @@ function TabSabatina({lei,area}){
     setUploading(false);
     if(fRef.current)fRef.current.value="";
   };
-  const corrigir=async(idx)=>{
-    if(!_authToken){alert("Sessão expirada. Faça login novamente.");return;}
-    const pergunta=perguntas[idx];
-    const resposta=respostas[idx]||"";
-    if(!resposta.trim()){alert("Escreva sua resposta antes de solicitar a verificação.");return;}
-    setLoading(p=>({...p,[idx]:true}));
-    try{
-      const termos=pergunta.toLowerCase().split(/\s+/).filter(t=>t.length>3);
-      const artigosRelevantes=lei.ds.filter(d=>{
-        if(d.status==="vetado")return false;
-        const txt=((d.txt||"")+" "+(d.id||"")+" "+(d.rub||"")).toLowerCase();
-        return termos.some(t=>txt.includes(t));
-      }).slice(0,30).map(d=>`[${d.tipo} ${d.id}] ${d.txt}`).join("\n");
-      const systemPrompt=`Você é um professor jurídico tributário especialista em ${AREAS[area]?.nome}, atuando como examinador oral rigoroso mas justo.
-Sua função é corrigir a resposta do aluno com base EXCLUSIVAMENTE na lei "${lei.nome}".
-
-CONTEXTO DA LEI (dispositivos relevantes):
-${artigosRelevantes || "(Nenhum dispositivo relevante encontrado — use seu conhecimento da lei)"}
-
-REGRAS DE CORREÇÃO:
-1. Analise se a resposta está CORRETA, PARCIALMENTE CORRETA ou INCORRETA
-2. Aponte o que está certo e o que precisa ser melhorado
-3. SEMPRE cite a base legal específica (artigo, parágrafo, inciso) da lei "${lei.nome}"
-4. Se a resposta estiver incompleta, indique o que faltou com a referência legal
-5. Seja técnico mas didático — como um professor em banca de exame oral
-6. Responda em português brasileiro`;
-      const r=await callAI({model:"claude-sonnet-4-20250514",max_tokens:2048,system:systemPrompt,messages:[{role:"user",content:`PERGUNTA DA SABATINA:\n${pergunta}\n\nRESPOSTA DO ALUNO:\n${resposta}\n\nCorrija a resposta acima com base legal específica na lei "${lei.nome}".`}]});
-      const d=await r.json();
-      const texto=d.content?.[0]?.text||"Erro na verificação.";
-      const novas={...correcoes,[idx]:texto};
-      salvarCorrecoes(novas);
-    }catch(e){
-      const novas={...correcoes,[idx]:"Erro: "+e.message};
-      salvarCorrecoes(novas);
-    }
-    setLoading(p=>({...p,[idx]:false}));
-  };
   const limparTudo=()=>{if(confirm("Limpar todas as perguntas, respostas e verificações?")){
-    setPerguntas([]);setRespostas({});setCorrecoes({});
-    LS("t3-sab-"+lei.id,null);LS("t3-sab-r-"+lei.id,null);LS("t3-sab-c-"+lei.id,null);
+    setPerguntas([]);setRespostas({});
+    LS("t3-sab-"+lei.id,null);LS("t3-sab-r-"+lei.id,null);
   }};
 
   const exportDocx=()=>{
@@ -1926,15 +1886,6 @@ REGRAS DE CORREÇÃO:
           <div style={{fontSize:14,fontWeight:600,lineHeight:1.5,flex:1}}>{p}</div>
         </div>
         <textarea value={respostas[idx]||""} onChange={e=>{const novas={...respostas,[idx]:e.target.value};salvarRespostas(novas);}} placeholder="Escreva sua resposta aqui..." style={{width:"100%",minHeight:100,background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:8,padding:"10px 12px",fontSize:13,lineHeight:1.6,resize:"vertical",fontFamily:"inherit",boxSizing:"border-box"}}/>
-        <div style={{display:"flex",justifyContent:"flex-end",marginTop:8}}>
-          <button onClick={()=>corrigir(idx)} disabled={loading[idx]} style={{padding:"8px 16px",background:loading[idx]?"var(--bg-hover)":"var(--grad)",color:loading[idx]?"var(--text-sec)":"#fff",border:"none",borderRadius:6,fontSize:13,fontWeight:600,cursor:loading[idx]?"not-allowed":"pointer",display:"flex",alignItems:"center",gap:6}}>
-            {loading[idx]?<><Sp/> Verificando...</>:"✏️ Verificar Respostas"}
-          </button>
-        </div>
-        {correcoes[idx]&&<div style={{marginTop:10,padding:"12px 16px",background:"var(--bg-hover)",borderRadius:8,borderLeft:"3px solid var(--gold)",fontSize:13,lineHeight:1.7,whiteSpace:"pre-wrap"}}>
-          <div style={{fontWeight:700,color:"var(--gold)",marginBottom:6,fontSize:12}}>VERIFICAÇÃO DO PROFESSOR IA</div>
-          {correcoes[idx]}
-        </div>}
       </div>)}
     </div>}
   </div>;
