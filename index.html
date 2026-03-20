@@ -574,6 +574,9 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
       }
     }
     const reLeiInline = /(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.]+|Medida\s+Provis[óo]ria\s+n[ºo°]?\s*[\d.]+|Instru[çc][ãa]o\s+Normativa\s+(?:RFB\s+|SRF\s+|[A-Z]{2,}\s+)?n[ºo°]?\s*[\d.]+)/gi;
+  // Guarda-2: regex para detectar nome de lei logo APÓS a referência ao artigo
+  // Cobre: "art. 15 da Lei nº 6.404", "art. 3º do Decreto nº 1.598", etc.
+  const reLeiDirectlyAfter = /^\s*(?:[,;]\s*)?(?:d[aoe]s?\s+)?(?:Lei(?:\s+Complementar)?|Decreto(?:-Lei)?|Medida\s+Provis[óo]ria|Instru[çc][ãa]o\s+Normativa(?:\s+(?:RFB|SRF|[A-Z]{2,}))?|C[óo]digo\s+\w+|Constitui[çc][ãa]o)\s+[Nn][ºo°]?\s*[\d.]/i;
 
     // Extrair TODAS as leis externas mencionadas no texto
     const reLeiCapture = /(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.\/]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.\/]+|Medida\s+Provis[óo]ria\s+n[ºo°]?\s*[\d.\/\-]+|Instru[çc][ãa]o\s+Normativa\s+(?:RFB\s+|SRF\s+|[A-Z]{2,}\s+)?n[ºo°]?\s*[\d.\/]+|C[óo]digo\s+(?:Tribut[áa]rio|Civil|Penal|de\s+Processo)\s+Nacional|Constitui[çc][ãa]o\s+Federal)/gi;
@@ -603,6 +606,9 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
       const pos = m.index;
       const inExtParen = externalRanges.some(([s, e]) => pos >= s && pos <= e);
       if (inExtParen) continue;
+      // Guarda-2: nome de lei aparece logo APÓS o artigo — ex: "art. 15 da Lei nº 6.404"
+      const textAfterMatch = text.slice(m.index + m[0].length, m.index + m[0].length + 130);
+      if (reLeiDirectlyAfter.test(textAfterMatch)) continue;
       const before = text.slice(Math.max(0, pos - 250), pos);
       let isExternal = false;
       reLeiInline.lastIndex = 0;
@@ -668,7 +674,14 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
       text: (device.txt || "").trim(),
       status: device.status || "vigente",
       alteracao: device.alteracao || "",
-      subs: subs.slice(0, 10),
+      subs: subs.slice(0, 10).map(s => {
+        try {
+          const sr = extractRefsWithMetadata((s.id || "") + " " + (s.txt || ""));
+          return { ...s, externalRefs: sr.external };
+        } catch (_) {
+          return { ...s, externalRefs: [] };
+        }
+      }),
       refs: filteredRefs,
       externalRefs: allRefs.external,
       children
