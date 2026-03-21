@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-19T11:39:29.031705-03:00",
-  "data_busca": "2026-03-19",
-  "total": 80,
-  "novos_nesta_execucao": 13,
+  "ultima_atualizacao": "2026-03-21T10:55:05.810916-03:00",
+  "data_busca": "2026-03-21",
+  "total": 97,
+  "novos_nesta_execucao": 17,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,142 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "a9f836f37ebc4ff4",
+      "data": "2026-03-21",
+      "titulo": "20/03/2026 21:15▶️Caminho da EscolaLula entrega 324 novos ônibus escolares e exalta a educação como política essencial",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/lula-entrega-324-novos-onibus-escolares-e-exalta-a-educacao-como-investimento-essencial",
+      "resumo": ""
+    },
+    {
+      "id": "0d3a598334e8df7a",
+      "data": "2026-03-21",
+      "titulo": "20/03/2026 16:22FISCALIZAÇÃOGoverno Federal e Delegacias do Consumidor reforçam articulação nacional",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/governo-federal-e-delegacias-do-consumidor-reforcam-articulacao-nacional",
+      "resumo": ""
+    },
+    {
+      "id": "9bc4ec0f5bc52988",
+      "data": "2026-03-21",
+      "titulo": "20/03/2026 22:05ContinuidadeMinistro da Fazenda, Durigan assegura manter consolidação fiscal com justiça social",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/ministro-da-fazenda-durrigan-consolidacao-fiscal-com-justica-social",
+      "resumo": ""
+    },
+    {
+      "id": "d56a6211173035cd",
+      "data": "2026-03-21",
+      "titulo": "19/03/2026 18:46Na 6ª, dia 20Canal Gov estreia segunda temporada de PodCulturaR, com entrevistas e arte",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/canal-gov-estreia-segunda-temporada-de-podculturar-com-entrevistas-e-cultura",
+      "resumo": ""
+    },
+    {
+      "id": "a809e6632173aaac",
+      "data": "2026-03-21",
+      "titulo": "EQUILÍBRIO FISCAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=EQUIL%C3%8DBRIO%20FISCAL",
+      "resumo": ""
+    },
+    {
+      "id": "9980e95cd49dcf14",
+      "data": "2026-03-21",
+      "titulo": "JUSTIÇA TRIBUTÁRIA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=JUSTI%C3%87A%20TRIBUT%C3%81RIA",
+      "resumo": ""
+    },
+    {
+      "id": "2f280437158c8ba2",
+      "data": "2026-03-21",
+      "titulo": "COOPERAÇÃO ADUANEIRA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=COOPERA%C3%87%C3%83O%20ADUANEIRA",
+      "resumo": ""
+    },
+    {
+      "id": "6d8a6b668e48dc8b",
+      "data": "2026-03-21",
+      "titulo": "QUADRANTE RONDON",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=QUADRANTE%20RONDON",
+      "resumo": ""
+    },
+    {
+      "id": "ed2215344e2125d9",
+      "data": "2026-03-21",
+      "titulo": "INSTRUMENTOS MULTILATERAIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INSTRUMENTOS%20MULTILATERAIS",
+      "resumo": ""
+    },
+    {
+      "id": "3db657a844587f81",
+      "data": "2026-03-21",
+      "titulo": "SUBSÍDIOS FINANCEIROS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SUBS%C3%8DDIOS%20FINANCEIROS",
+      "resumo": ""
+    },
+    {
+      "id": "1e5bd77d929ccbe3",
+      "data": "2026-03-21",
+      "titulo": "APOIO À AGRICULTURA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=APOIO%20%C3%80%20AGRICULTURA",
+      "resumo": ""
+    },
+    {
+      "id": "f85dac64a6bc08a2",
+      "data": "2026-03-21",
+      "titulo": "APOIO À PECUÁRIA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=APOIO%20%C3%80%20PECU%C3%81RIA",
+      "resumo": ""
+    },
+    {
+      "id": "35d5282814c75dd2",
+      "data": "2026-03-21",
+      "titulo": "SOLUÇÕES CLIMÁTICAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SOLU%C3%87%C3%95ES%20CLIM%C3%81TICAS",
+      "resumo": ""
+    },
+    {
+      "id": "436ca820dc2dcc9f",
+      "data": "2026-03-21",
+      "titulo": "RESPONSABILIDADE FISCAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=RESPONSABILIDADE%20FISCAL",
+      "resumo": ""
+    },
+    {
+      "id": "0166cd6750a81fc8",
+      "data": "2026-03-21",
+      "titulo": "PROTEÇÃO SOCIAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PROTE%C3%87%C3%83O%20SOCIAL",
+      "resumo": ""
+    },
+    {
+      "id": "22499c0af38bbabb",
+      "data": "2026-03-21",
+      "titulo": "IMPOSTO DE RENDA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=IMPOSTO%20DE%20RENDA",
+      "resumo": ""
+    },
+    {
+      "id": "c8bcb1866b73c2d0",
+      "data": "2026-03-21",
+      "titulo": "POLÍTICA INDUSTRIAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=POL%C3%8DTICA%20INDUSTRIAL",
+      "resumo": ""
+    },
     {
       "id": "f47a4fa2be1555da",
       "data": "2026-03-19",
