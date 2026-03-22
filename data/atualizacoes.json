@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-21T10:55:05.810916-03:00",
-  "data_busca": "2026-03-21",
-  "total": 97,
-  "novos_nesta_execucao": 17,
+  "ultima_atualizacao": "2026-03-22T10:55:45.897718-03:00",
+  "data_busca": "2026-03-22",
+  "total": 98,
+  "novos_nesta_execucao": 1,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,14 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "24b67068f4ba4732",
+      "data": "2026-03-22",
+      "titulo": "21/03/2026 22:15IndependênciaEm cúpula regional, Governo do Brasil defende autonomia da América Latina e do Caribe",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/x-celac-em-discurso-aos-lideres-da-regiao-lula-defende-uma-identidade-latino-americana-e-caribenha-propria-no-cenario-internacional",
+      "resumo": ""
+    },
     {
       "id": "a9f836f37ebc4ff4",
       "data": "2026-03-21",
