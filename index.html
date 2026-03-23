@@ -374,7 +374,7 @@ async function callAI(body){
 // ─────────────────────────────────────────────────────────────────────────────
 
 const Ic=({d,s=16,c="currentColor"})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
-const IC={up:"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12",bk:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z",tg:"M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z",sd:"M22 2L11 13M22 2l-7 20-4-9-9-4z",tr:"M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2",br:"M9.5 2a3.5 3.5 0 0 0-3.19 4.94A3.5 3.5 0 0 0 4 10.5a3.5 3.5 0 0 0 1.98 3.15A3.5 3.5 0 0 0 8.5 18h1a.5.5 0 0 0 .5-.5V2.5a.5.5 0 0 0-.5-.5z",bl:"M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",lk:"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71",sc:"M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",ls:"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",rf:"M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"};
+const IC={up:"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12",bk:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z",tg:"M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z",sd:"M22 2L11 13M22 2l-7 20-4-9-9-4z",tr:"M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2",br:"M9.5 2a3.5 3.5 0 0 0-3.19 4.94A3.5 3.5 0 0 0 4 10.5a3.5 3.5 0 0 0 1.98 3.15A3.5 3.5 0 0 0 8.5 18h1a.5.5 0 0 0 .5-.5V2.5a.5.5 0 0 0-.5-.5z",bl:"M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",lk:"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71",sc:"M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",ls:"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",rf:"M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15",sr:"M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"};
 const Sp=()=><svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2" style={{animation:"spin 1s linear infinite"}}><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>;
 
 // ═══ ERROR BOUNDARY ═══
@@ -456,7 +456,7 @@ function App(){
   const gSt=(lid,di,f)=>study[`${lid}-${di}`]?.[f]||"";
   const exportBackup=()=>{try{const data={lib,study,area,notas:LS("t3-notas"),temas:LS("t3-temas"),exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="TERA_backup_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);}catch(e){alert("Erro ao exportar: "+e.message);}};
   const importBackup=()=>{const inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const txt=await f.text();const data=JSON.parse(txt);if(data.lib){setLib(data.lib);LS("t3-lib",data.lib);}if(data.study){setStudy(data.study);LS("t3-st",data.study);}if(data.notas)LS("t3-notas",data.notas);if(data.temas)LS("t3-temas",data.temas);alert("Backup restaurado com sucesso! "+((data.lib||[]).length)+" leis, "+(Object.keys(data.study||{}).length)+" anotações de estudo e "+((data.notas||[]).length)+" anotações do E-Consultor importadas.");}catch(e){alert("Erro ao importar: "+e.message);}};inp.click();};
-  const nav=[{id:"library",ic:IC.bk,lb:"Biblioteca"},...(sel?[{id:"reader",ic:IC.ls,lb:sel.nome.slice(0,20)}]:[]),{id:"econsultor",ic:IC.br,lb:"E-Consultor"},{id:"reforma",ic:IC.sc,lb:"Reforma"},{id:"atualizacoes",ic:IC.bl,lb:"Atualizações"}];
+  const nav=[{id:"library",ic:IC.bk,lb:"Biblioteca"},...(sel?[{id:"reader",ic:IC.ls,lb:sel.nome.slice(0,20)}]:[]),{id:"econsultor",ic:IC.br,lb:"E-Consultor"},{id:"buscageral",ic:IC.sr,lb:"Busca Geral"},{id:"reforma",ic:IC.sc,lb:"Reforma"},{id:"atualizacoes",ic:IC.bl,lb:"Atualizações"}];
 
   return <div style={{minHeight:"100vh"}}>
     <header style={{background:"var(--bg-card)",borderBottom:"1px solid var(--border)",padding:"8px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100,boxShadow:"var(--shadow)"}}>
@@ -478,6 +478,7 @@ function App(){
       {vw==="library"&&<Lib lib={lib} sel={sel} onSel={l=>{setSel(l);setVw("reader");}} onDel={del} onUp={upF} uping={uping} fRef={fRef}/>}
       {vw==="reader"&&sel&&<Reader lei={sel} area={area} gSt={gSt} uSt={uSt} addAnexo={addAnexo} delAnexo={delAnexo} study={study}/>}
       {vw==="econsultor"&&<EConsultor lib={lib}/>}
+      {vw==="buscageral"&&<BuscaGeral lib={lib}/>}
       {vw==="reforma"&&<Ref/>}
       {vw==="atualizacoes"&&<Atl/>}
     </main>
@@ -1914,6 +1915,189 @@ function TabAnexos({lei,addAnexo,delAnexo}){const [uping,setUp]=useState(false);
         )}</tbody></table>
       </div>}
     </div>}
+  </div>;
+}
+
+
+// ═══ BUSCA GERAL ═══
+function BuscaGeral({lib}){
+  const [filtro,setFiltro]=useState("");
+  const [expandedIdx,setExpandedIdx]=useState(null);
+  const [selLeis,setSelLeis]=useState(()=>new Set(lib.map(l=>l.id)));
+  const allSelected=lib.length>0&&selLeis.size===lib.length;
+
+  // Sincroniza seleção quando lib muda (lei adicionada/removida)
+  useEffect(()=>{
+    setSelLeis(prev=>{
+      const ids=new Set(lib.map(l=>l.id));
+      const next=new Set();
+      for(const id of prev){if(ids.has(id))next.add(id);}
+      // Leis novas entram selecionadas
+      for(const id of ids){if(!prev.has(id))next.add(id);}
+      return next;
+    });
+  },[lib]);
+
+  const toggleLei=(id)=>{
+    setSelLeis(prev=>{const n=new Set(prev);if(n.has(id))n.delete(id);else n.add(id);return n;});
+    setExpandedIdx(null);
+  };
+  const toggleAll=()=>{
+    if(allSelected)setSelLeis(new Set());
+    else setSelLeis(new Set(lib.map(l=>l.id)));
+    setExpandedIdx(null);
+  };
+
+  // Busca cross-lei: roda fullTextSearch em cada lei selecionada
+  const resultados=useMemo(()=>{
+    if(!filtro||filtro.trim().length<3)return[];
+    const res=[];
+    for(const lei of lib){
+      if(!selLeis.has(lei.id))continue;
+      try{
+        const hits=fullTextSearch(lei.ds,filtro);
+        for(const h of hits){
+          res.push({...h,leiId:lei.id,leiNome:lei.nome,ds:lei.ds});
+        }
+      }catch(_){}
+    }
+    return res;
+  },[filtro,lib,selLeis]);
+
+  const totalOcorrencias=useMemo(()=>resultados.reduce((s,r)=>s+r.ocorrencias,0),[resultados]);
+  const leisComResultados=useMemo(()=>new Set(resultados.map(r=>r.leiId)).size,[resultados]);
+  const buscaAtiva=filtro.trim().length>=3;
+
+  // Hierarquias por lei (cache)
+  const ctxMap=useMemo(()=>{
+    const m={};
+    for(const lei of lib){
+      try{m[lei.id]=hierarquia(lei.ds);}catch(_){m[lei.id]={};}
+    }
+    return m;
+  },[lib]);
+
+  const highlightText=(text,term)=>{
+    if(!term||term.length<3||!text)return text;
+    try{
+      const re=new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");
+      const parts=text.split(re);
+      return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2}},p):p);
+    }catch(_){return text;}
+  };
+
+  const getArtigoDisps=(ds,artId)=>{
+    const result=[];let inside=false;
+    for(const d of ds){
+      if(d.tipo==="ARTIGO"&&d.id===artId){inside=true;result.push(d);continue;}
+      if(inside){if(d.tipo==="ARTIGO"||DIV.has(d.tipo))break;result.push(d);}
+    }
+    return result;
+  };
+
+  return <div className="fade">
+    <h2 style={{fontSize:20,fontWeight:700,marginBottom:12}}>Busca Geral</h2>
+    <p style={{fontSize:13,color:"var(--text-sec)",marginBottom:14}}>Pesquise em todas as leis da biblioteca ou selecione quais incluir na busca.</p>
+
+    {/* Seletor de leis */}
+    {lib.length===0?(
+      <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>
+        Nenhuma lei na biblioteca. Adicione leis pela aba <b>Biblioteca</b> para utilizar a busca geral.
+      </div>
+    ):(
+      <>
+        <div style={{marginBottom:14,border:"1px solid var(--border)",borderRadius:8,padding:"10px 14px",background:"var(--bg-card)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+            <label style={{display:"flex",alignItems:"center",gap:5,cursor:"pointer",fontSize:12,fontWeight:600,color:"var(--gold)"}}>
+              <input type="checkbox" checked={allSelected} onChange={toggleAll}
+                style={{accentColor:"var(--gold)"}}/>
+              {allSelected?"Desmarcar todas":"Selecionar todas"} ({lib.length} lei(s))
+            </label>
+          </div>
+          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+            {lib.map(l=>(
+              <label key={l.id} style={{display:"flex",alignItems:"center",gap:4,cursor:"pointer",
+                fontSize:11,padding:"3px 8px",borderRadius:5,
+                background:selLeis.has(l.id)?"var(--gold-subtle)":"var(--bg-hover)",
+                border:"1px solid "+(selLeis.has(l.id)?"var(--gold)":"var(--border)"),
+                transition:"all .15s"}}>
+                <input type="checkbox" checked={selLeis.has(l.id)} onChange={()=>toggleLei(l.id)}
+                  style={{accentColor:"var(--gold)",width:12,height:12}}/>
+                <span style={{maxWidth:220,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{l.nome}</span>
+                <span style={{color:"var(--text-mute)",fontSize:10}}>({l.nA} art.)</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Campo de busca */}
+        <div style={{marginBottom:12}}>
+          <input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}}
+            placeholder="Buscar qualquer palavra em todas as leis selecionadas (mínimo 3 caracteres)..."
+            style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",
+              borderRadius:6,padding:"10px 14px",fontSize:14,boxSizing:"border-box"}}/>
+          {buscaAtiva&&(
+            <div style={{marginTop:6,fontSize:12,color:"var(--text-sec)"}}>
+              {totalOcorrencias} ocorrência(s) em {resultados.length} dispositivo(s) de {leisComResultados} lei(s)
+            </div>
+          )}
+        </div>
+
+        {/* Resultados */}
+        {buscaAtiva&&selLeis.size===0&&(
+          <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Selecione pelo menos uma lei para realizar a busca.</div>
+        )}
+        {buscaAtiva&&selLeis.size>0&&resultados.length===0&&(
+          <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhum dispositivo encontrado para "{filtro}" nas leis selecionadas.</div>
+        )}
+        {buscaAtiva&&resultados.length>0&&(
+          <div style={{maxHeight:"65vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>
+            <table className="dt">
+              <thead><tr>
+                <th style={{width:40}}>#</th>
+                <th style={{width:180}}>Lei</th>
+                <th style={{width:70}}>Tipo</th>
+                <th style={{width:90}}>Id</th>
+                <th style={{width:80}}>Artigo</th>
+                <th>Texto</th>
+                <th style={{width:40}}>Qtd</th>
+              </tr></thead>
+              <tbody>{resultados.map((r,i)=><React.Fragment key={r.leiId+"-"+i}>
+                <tr style={{opacity:r.status==="vetado"||r.status==="revogado"?0.5:1,cursor:"pointer",
+                  background:expandedIdx===i?"var(--gold-subtle)":"inherit"}}
+                  onClick={()=>setExpandedIdx(expandedIdx===i?null:i)}>
+                  <td>{i+1}</td>
+                  <td style={{fontSize:11,fontWeight:500,maxWidth:180,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={r.leiNome}>{r.leiNome}</td>
+                  <td><span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)"}}>{r.tipo}</span></td>
+                  <td style={{fontSize:12,fontWeight:600}}>{r.id}</td>
+                  <td style={{color:"var(--gold)",fontWeight:600}}>{r.art}</td>
+                  <td style={{fontSize:12,lineHeight:1.5}}>{highlightText((r.txt||"").slice(0,250)+(r.txt?.length>250?"…":""),filtro)}</td>
+                  <td style={{fontWeight:700,textAlign:"center",color:"var(--gold)"}}>{r.ocorrencias}</td>
+                </tr>
+                {expandedIdx===i&&<tr><td colSpan={7} style={{padding:0}}>
+                  <div style={{padding:"12px 16px",background:"var(--bg-hover)",borderLeft:"3px solid var(--gold)"}}>
+                    <div style={{fontSize:11,color:"var(--gold)",marginBottom:4,fontWeight:600}}>{r.leiNome}</div>
+                    {ctxMap[r.leiId]?.[r.art]&&<div style={{fontSize:11,color:"var(--text-sec)",marginBottom:8,fontStyle:"italic"}}>{ctxMap[r.leiId][r.art]}</div>}
+                    <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                      {getArtigoDisps(r.ds,r.art||r.id).map((d,j)=>{
+                        const isMatch=(d.txt||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").includes(filtro.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""));
+                        return <div key={j} style={{padding:"4px 8px",borderRadius:4,
+                          background:isMatch?"rgba(212,168,83,0.1)":"transparent",fontSize:12,lineHeight:1.6}}>
+                          <span style={{color:"var(--gold)",fontWeight:600,marginRight:6}}>{d.id}</span>
+                          {highlightText(d.txt||"",filtro)}
+                          {d.status==="vetado"&&<span className="badge badge-revogado" style={{marginLeft:6}}>VETADO</span>}
+                          {d.status==="revogado"&&<span className="badge badge-revogado" style={{marginLeft:6}}>REVOGADO</span>}
+                        </div>;
+                      })}
+                    </div>
+                  </div>
+                </td></tr>}
+              </React.Fragment>)}</tbody>
+            </table>
+          </div>
+        )}
+      </>
+    )}
   </div>;
 }
 
