@@ -206,7 +206,7 @@ function _buildTree(startId, ai, si, visited, depth) {
     text: (dev.txt || "").trim(),
     status: dev.status || "vigente",
     alteracao: dev.alteracao || "",
-    subs: subs.slice(0, 10).map(function(s) {
+    subs: subs.map(function(s) {
       try {
         var sr = _extractRefs((s.id || "") + " " + (s.txt || ""));
         return Object.assign({}, s, { externalRefs: sr.external });
@@ -674,7 +674,7 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
       text: (device.txt || "").trim(),
       status: device.status || "vigente",
       alteracao: device.alteracao || "",
-      subs: subs.slice(0, 10).map(s => {
+      subs: subs.map(s => {
         try {
           const sr = extractRefsWithMetadata((s.id || "") + " " + (s.txt || ""));
           return { ...s, externalRefs: sr.external };
