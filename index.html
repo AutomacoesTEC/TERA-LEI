@@ -273,17 +273,27 @@ function extrairPrazosValores(ds){const reVal=/R\$\s*[\d\.]+,\d{2}/g;const rePct
 function buildIdx(ds,area){const ws=AREAS[area]?.palavras||[];const idx={};let art="";for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;const t=(d.txt+" "+d.rub).toLowerCase();for(const w of ws)if(t.includes(w.toLowerCase())&&art){if(!idx[w])idx[w]=[];if(!idx[w].includes(art))idx[w].push(art);}}return Object.fromEntries(Object.entries(idx).sort((a,b)=>a[0].localeCompare(b[0],"pt")));}
 
 function fullTextSearch(ds,termo){
-  if(!termo||termo.length<3)return[];
-  const t=termo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  if(!termo||termo.trim().length<3)return[];
+  // Operador AND via '+': "lucro presumido + faturamento" exige ambos no dispositivo.
+  // Sem '+', comportamento idêntico ao original (retrocompatível).
+  const termos=termo.split("+")
+    .map(t=>t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""))
+    .filter(t=>t.length>=3); // descarta fragmentos < 3 chars
+  if(termos.length===0)return[];
   const resultados=[];let artAtual="";
-  for(let i=0;i<ds.length;i++){const d=ds[i];
-    if(DIV.has(d.tipo))artAtual="";
-    else if(d.tipo==="ARTIGO")artAtual=d.id;
-    const texto=((d.id||"")+" "+(d.rub||"")+" "+(d.txt||"")).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-    if(texto.includes(t)){
-      const ocorrencias=(texto.split(t).length-1);
-      resultados.push({idx:i,tipo:d.tipo,id:d.id,art:artAtual,txt:d.txt,rub:d.rub,ocorrencias,status:d.status||"vigente"});
-    }
+  for(let i=0;i<ds.length;i++){
+    try{
+      const d=ds[i];
+      if(DIV.has(d.tipo))artAtual="";
+      else if(d.tipo==="ARTIGO")artAtual=d.id;
+      const texto=((d.id||"")+" "+(d.rub||"")+" "+(d.txt||"")).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+      // AND: dispositivo deve conter TODOS os termos
+      if(termos.every(t=>texto.includes(t))){
+        // ocorrencias = soma das contagens de cada termo no dispositivo
+        const ocorrencias=termos.reduce((s,t)=>s+(texto.split(t).length-1),0);
+        resultados.push({idx:i,tipo:d.tipo,id:d.id,art:artAtual,txt:d.txt,rub:d.rub,ocorrencias,status:d.status||"vigente"});
+      }
+    }catch(e){/* dispositivo malformado — ignora e continua */}
   }
   return resultados;
 }
@@ -1640,9 +1650,15 @@ function TabIndice({ds,area,onGoToArt}){
   const ctx=useMemo(()=>hierarquia(ds),[ds]);
   const highlightText=(text,term)=>{
     if(!term||term.length<3||!text)return text;
-    const re=new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");
-    const parts=text.split(re);
-    return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2}},p):p);
+    try{
+      // Suporta AND via '+': marca cada termo com highlight separado
+      const termos=term.split("+").map(t=>t.trim()).filter(t=>t.length>=3);
+      if(termos.length===0)return text;
+      const escaped=termos.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|");
+      const re=new RegExp(`(${escaped})`,"gi");
+      const parts=text.split(re);
+      return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2}},p):p);
+    }catch(e){return text;}
   };
   const getArtigoDisps=(artId)=>{
     const result=[];let inside=false;
@@ -1654,7 +1670,7 @@ function TabIndice({ds,area,onGoToArt}){
   };
   return <div>
     <div style={{marginBottom:12}}>
-      <input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}} placeholder="Buscar qualquer palavra (mínimo 3 caracteres)..." style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:6,padding:"10px 14px",fontSize:14,boxSizing:"border-box"}}/>
+      <input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}} placeholder="Buscar palavra (mín. 3 letras) · Use + para AND: lucro presumido + faturamento" style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:6,padding:"10px 14px",fontSize:14,boxSizing:"border-box"}}/>
       {buscaAtiva&&<div style={{marginTop:6,fontSize:12,color:"var(--text-sec)"}}>{totalOcorrencias} ocorrência(s) em {resultadosBusca.length} dispositivo(s)</div>}
     </div>
     {buscaAtiva?
@@ -1670,7 +1686,7 @@ function TabIndice({ds,area,onGoToArt}){
               {ctx[r.art]&&<div style={{fontSize:11,color:"var(--text-sec)",marginBottom:8,fontStyle:"italic"}}>{ctx[r.art]}</div>}
               <div style={{display:"flex",flexDirection:"column",gap:6}}>
                 {getArtigoDisps(r.art||r.id).map((d,j)=>{
-                  const isMatch=(d.txt||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").includes(filtro.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""));
+                  const isMatch=(()=>{const ts=filtro.split("+").map(t=>t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")).filter(t=>t.length>=3);const tx=(d.txt||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");return ts.length>0&&ts.every(t=>tx.includes(t));})();
                   return <div key={j} style={{padding:"4px 8px",borderRadius:4,background:isMatch?"rgba(212,168,83,0.1)":"transparent",fontSize:12,lineHeight:1.6}}>
                     <span style={{color:"var(--gold)",fontWeight:600,marginRight:6}}>{d.id}</span>
                     {highlightText(d.txt||"",filtro)}
@@ -1980,7 +1996,11 @@ function BuscaGeral({lib}){
   const highlightText=(text,term)=>{
     if(!term||term.length<3||!text)return text;
     try{
-      const re=new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");
+      // Suporta AND via '+': marca cada termo com highlight separado
+      const termos=term.split("+").map(t=>t.trim()).filter(t=>t.length>=3);
+      if(termos.length===0)return text;
+      const escaped=termos.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|");
+      const re=new RegExp(`(${escaped})`,"gi");
       const parts=text.split(re);
       return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2}},p):p);
     }catch(_){return text;}
@@ -2033,7 +2053,7 @@ function BuscaGeral({lib}){
         {/* Campo de busca */}
         <div style={{marginBottom:12}}>
           <input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}}
-            placeholder="Buscar qualquer palavra em todas as leis selecionadas (mínimo 3 caracteres)..."
+            placeholder="Buscar palavra (mín. 3 letras) · Use + para AND: cofins + importação + crédito"
             style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",
               borderRadius:6,padding:"10px 14px",fontSize:14,boxSizing:"border-box"}}/>
           {buscaAtiva&&(
@@ -2080,7 +2100,7 @@ function BuscaGeral({lib}){
                     {ctxMap[r.leiId]?.[r.art]&&<div style={{fontSize:11,color:"var(--text-sec)",marginBottom:8,fontStyle:"italic"}}>{ctxMap[r.leiId][r.art]}</div>}
                     <div style={{display:"flex",flexDirection:"column",gap:6}}>
                       {getArtigoDisps(r.ds,r.art||r.id).map((d,j)=>{
-                        const isMatch=(d.txt||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").includes(filtro.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""));
+                        const isMatch=(()=>{const ts=filtro.split("+").map(t=>t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")).filter(t=>t.length>=3);const tx=(d.txt||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");return ts.length>0&&ts.every(t=>tx.includes(t));})();
                         return <div key={j} style={{padding:"4px 8px",borderRadius:4,
                           background:isMatch?"rgba(212,168,83,0.1)":"transparent",fontSize:12,lineHeight:1.6}}>
                           <span style={{color:"var(--gold)",fontWeight:600,marginRight:6}}>{d.id}</span>
