@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-22T10:55:45.897718-03:00",
-  "data_busca": "2026-03-22",
-  "total": 98,
-  "novos_nesta_execucao": 1,
+  "ultima_atualizacao": "2026-03-23T12:40:26.069424-03:00",
+  "data_busca": "2026-03-23",
+  "total": 107,
+  "novos_nesta_execucao": 9,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,78 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "9013de69f77695e0",
+      "data": "2026-03-23",
+      "titulo": "23/03/2026 10:30Prazo abertoContribuinte já pode enviar a declaração do Imposto de Renda 2026",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/receita-federal-comeca-a-receber-declaracoes-do-irpf-nesta-segunda-feira-as-8-horas",
+      "resumo": ""
+    },
+    {
+      "id": "816f14a15b11a373",
+      "data": "2026-03-23",
+      "titulo": "22/03/2026 21:00COP 15Lula anuncia novas medidas ambientais e mais proteção ao Cerrado e ao Pantanal",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/lula-anuncia-novas-medidas-ambientais-e-mais-protecao-cerrado-pantanal",
+      "resumo": ""
+    },
+    {
+      "id": "bafa5ce4ce9c31e3",
+      "data": "2026-03-23",
+      "titulo": "22/03/2026 11:30Em RoraimaJustiça e Direitos Humanos manifestam pesar pela morte de agente da Força Nacional",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/justica-e-direitos-humanos-manifestam-pesar-pela-morte-de-agente-da-forca-nacional",
+      "resumo": ""
+    },
+    {
+      "id": "d3b735f78fe9a9f2",
+      "data": "2026-03-23",
+      "titulo": "Programa Confia recebe 51 requerimentos de certificação",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/marco/programa-confia-recebe-51-requerimentos-de-certificacao",
+      "resumo": "23/03/2026-Primeira edição selecionará 40 contribuintes para programa de relacionamento cooperativo com o Fisco"
+    },
+    {
+      "id": "f192d59eff7f5fde",
+      "data": "2026-03-23",
+      "titulo": "GRANDES EMPRESAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=GRANDES%20EMPRESAS",
+      "resumo": ""
+    },
+    {
+      "id": "8e5db7e192a9ee4f",
+      "data": "2026-03-23",
+      "titulo": "Receita Federal começa a receber declarações do IRPF nesta segunda-feira",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/marco/receita-federal-comeca-a-receber-declaracoes-do-irpf-nesta-segunda-feira",
+      "resumo": "23/03/2026-Declaração pré-preenchida também está disponível para auxiliar contribuintes no preenchimento"
+    },
+    {
+      "id": "cd1506ec4093f6b4",
+      "data": "2026-03-23",
+      "titulo": "RECEITA FEDERAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=RECEITA%20FEDERAL",
+      "resumo": ""
+    },
+    {
+      "id": "fa5f95595b6430e7",
+      "data": "2026-03-23",
+      "titulo": "Receita Federal recebe 51 requerimentos no Programa Confia",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/receita-federal-recebe-51-requerimentos-no-programa-confia",
+      "resumo": "23/03/2026-Iniciativa marca novo modelo de cooperação entre o Fisco e grandes contribuintes."
+    },
+    {
+      "id": "d95208ad2b977d15",
+      "data": "2026-03-23",
+      "titulo": "Receita Federal começa a receber declarações do IRPF nesta segunda-feira às 8 horas",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/receita-federal-comeca-a-receber-declaracoes-do-irpf-nesta-segunda-feira-as-8-horas",
+      "resumo": "23/03/2026-Declaração pré-preenchida estará disponível no mesmo horário para auxiliar contribuintes no preenchimento."
+    },
     {
       "id": "24b67068f4ba4732",
       "data": "2026-03-22",
