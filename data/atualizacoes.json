@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-23T12:40:26.069424-03:00",
-  "data_busca": "2026-03-23",
-  "total": 107,
-  "novos_nesta_execucao": 9,
+  "ultima_atualizacao": "2026-03-24T12:46:21.644973-03:00",
+  "data_busca": "2026-03-24",
+  "total": 118,
+  "novos_nesta_execucao": 11,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,94 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "daabbaa35040d4f7",
+      "data": "2026-03-24",
+      "titulo": "23/03/2026 18:55LeãoMais de um milhão de declarações do imposto de renda foram entregues no primeiro dia",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/receita-federal-recebe-mais-de-um-milhao-de-declaracoes-no-primeiro-dia-de-entrega-do-imposto-de-renda",
+      "resumo": ""
+    },
+    {
+      "id": "cef88152d73ef821",
+      "data": "2026-03-24",
+      "titulo": "24/03/2026 10:20Casa PrópriaLula participa de entrega simultânea de 2,2 mil moradias do Minha Casa, Minha Vida nesta terça (24). Acompanhe",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/lula-participa-de-entrega-simultanea-de-2-2-mil-moradias-do-minha-casa-minha-vida-nesta-terca-feira-24",
+      "resumo": ""
+    },
+    {
+      "id": "0a46e5cc35b62f48",
+      "data": "2026-03-24",
+      "titulo": "24/03/2026 10:34Atuação da AGUJustiça mantém condenação por fraude milionária contra o INSS",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/justica-mantem-condenacao-por-fraude-milionaria-contra-o-inss",
+      "resumo": ""
+    },
+    {
+      "id": "4842a641134169b8",
+      "data": "2026-03-24",
+      "titulo": "24/03/2026 10:37CombustíveisEm uma semana, ANP fiscaliza 154 postos e distribuidoras. 11 têm indícios de preços abusivos",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/em-forca-tarefa-anp-fiscalizou-154-agentes-economicos-em-12-unidades-da-federacao-para-apurar-abusividade-de-precos",
+      "resumo": ""
+    },
+    {
+      "id": "620268ce46499d74",
+      "data": "2026-03-24",
+      "titulo": "24/03/2026 12:10Comunicação PúblicaEBC firma parceria inédita com o China Media Group para cooperação em jornalismo e IA",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/ebc-firma-parceria-inedita-com-china-media-group",
+      "resumo": ""
+    },
+    {
+      "id": "37568a5ce50457dd",
+      "data": "2026-03-24",
+      "titulo": "Folha de S.Paulo: Contabilidade, confiança pública e o dever institucional de enfrentar os alertas do mercado",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/folha-de-s-paulo-contabilidade-confianca-publica-e-o-dever-institucional-de-enfrentar-os-alertas-do-mercado/",
+      "resumo": "Jornal Folha de S.Paulo publica artigo do presidente do CFC, Joaquim Bezerra Filho, que aborda, sob perspectiva técnica e institucional, os recentes episódios envolvendo instituições financeiras e companhias abertas, e destaca a importância da contabilidade, da auditoria independente e dos mecanismos de governança para a preservação da confiança nos mercados. No texto, o presidente da autarquia defende o rigor naContinuar Lendo...Leia Mais"
+    },
+    {
+      "id": "dc9beb80506276cb",
+      "data": "2026-03-24",
+      "titulo": "CFC leva agenda estratégica da contabilidade a seminário internacional em Lisboa",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/cfc-leva-agenda-estrategica-da-contabilidade-a-seminario-internacional-em-lisboa/",
+      "resumo": "Seminário do CILEA reúne países para discutir inovação, governança e os impactos das transformações globais na profissão contábil O Conselho Federal de Contabilidade (CFC) integrou a programação oficial do XLIV Seminário Internacional de Países Latinos Europa-América, realizado nos dias 17 e 18 de março, em Lisboa, que colocou em pauta os desafios atuais da profissão contábil. Promovido pelo Comité deContinuar Lendo...Leia Mais"
+    },
+    {
+      "id": "5d947091753acb63",
+      "data": "2026-03-24",
+      "titulo": "Investimentos no Tesouro Direto somam R$ 8,25 bilhões em fevereiro",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/marco/investimentos-no-tesouro-direto-somam-r-8-25-bilhoes-em-fevereiro",
+      "resumo": "24/03/2026-Destaque do mês foi o início, ainda em período de testes, de venda do Tesouro Reserva, novo título do Tesouro Direto indexado à taxa Selic e sem marcação a mercado"
+    },
+    {
+      "id": "4559c5c7b88f675a",
+      "data": "2026-03-24",
+      "titulo": "CONVÊNIOS E CONTRATOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=CONV%C3%8ANIOS%20E%20CONTRATOS",
+      "resumo": ""
+    },
+    {
+      "id": "105cfec21e391b73",
+      "data": "2026-03-24",
+      "titulo": "SITUAÇÃO FISCAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SITUA%C3%87%C3%83O%20FISCAL",
+      "resumo": ""
+    },
+    {
+      "id": "3c22c233fa260c64",
+      "data": "2026-03-24",
+      "titulo": "Receita Federal e Receita Estadual de Minas Gerais desarticulam esquema de comercialização irregular avaliado em R$ 90 milhões em São José da Lapa",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/receita-federal-e-receita-estadual-de-minas-gerais-desarticulam-esquema-de-comercializacao-irregular-avaliado-em-r-90-milhoes-em-sao-jose-da-lapa",
+      "resumo": "24/03/2026-Operação conjunta mira centro logístico responsável por movimentar centenas de carretas de mercadorias sem cobertura fiscal, comercializadas ilegalmente nas principais plataformas de e-commerce do país."
+    },
     {
       "id": "9013de69f77695e0",
       "data": "2026-03-23",
