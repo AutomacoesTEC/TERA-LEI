@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-24T12:46:21.644973-03:00",
-  "data_busca": "2026-03-24",
-  "total": 118,
-  "novos_nesta_execucao": 11,
+  "ultima_atualizacao": "2026-03-25T12:51:33.353157-03:00",
+  "data_busca": "2026-03-25",
+  "total": 126,
+  "novos_nesta_execucao": 8,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,70 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "ade05abb945ae1c8",
+      "data": "2026-03-25",
+      "titulo": "24/03/2026 14:23Na quarta (25)Receita Federal realiza segunda live do IRPF 2026 com foco em despesas médicas",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/receita-federal-realiza-segunda-live-do-irpf-com-foco-em-despesas-medicas",
+      "resumo": ""
+    },
+    {
+      "id": "a6945d46d359f011",
+      "data": "2026-03-25",
+      "titulo": "24/03/2026 16:16Novos tetosCasa própria cria amizades para sempre, diz Lula, ao entregar chaves do Minha Casa, Minha Vida",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/casa-propria-amizades-para-sempre-diz-lula",
+      "resumo": ""
+    },
+    {
+      "id": "a33ecd565a37423e",
+      "data": "2026-03-25",
+      "titulo": "25/03/2026 10:09EficiênciaAgenda Conectar reúne governo e setor produtivo para ampliar competitividade da aviação",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/agenda-conectar-reune-governo-e-setor-produtivo-para-ampliar-competitividade-da-aviacao-brasileira",
+      "resumo": ""
+    },
+    {
+      "id": "b1db2e0ab218ea84",
+      "data": "2026-03-25",
+      "titulo": "25/03/2026 12:17ComunicaçõesCidades do Pará e do Ceará passam a receber retransmissão de sinal de TV digital",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/cidades-do-para-e-do-ceara-passam-a-receber-retransmissao-de-sinal-de-tv-digital",
+      "resumo": ""
+    },
+    {
+      "id": "f41ec2683c3edf4f",
+      "data": "2026-03-25",
+      "titulo": "Oportunidade acadêmica: RBC Especial 2026 recebe artigos até 5 de abril",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/oportunidade-academica-rbc-especial-2026-recebe-artigos-ate-5-de-abril/",
+      "resumo": "Profissionais e pesquisadores da área contábil têm até o dia 5 de abril para submeter artigos à edição especial de 2026 da Revista Brasileira de Contabilidade (RBC). A edição abordará o tema Uso de Tecnologias na Contabilidade e tem o objetivo de incentivar os debates acadêmicos sobre a inserção de diferentes tecnologias no ambiente educacional e de trabalho. A revista seráContinuar Lendo...Leia Mais"
+    },
+    {
+      "id": "54e6d961c6a038c3",
+      "data": "2026-03-25",
+      "titulo": "Relatório das Comissões de Conduta evidencia avanço na governança e amplia transparência no Sistema CFC/CRCs",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/relatorio-das-comissoes-de-conduta-evidencia-avanco-na-governanca-e-amplia-transparencia-no-sistema-cfc-crcs/",
+      "resumo": "O fortalecimento da ética e da governança no exercício da profissão contábil ganhou novos avanços em 2025, com a divulgação do Relatório de Atividades das Comissões de Conduta do Conselho Federal de Contabilidade (CFC). O documento apresenta ações, resultados e o quantitativo de processos analisados ao longo do ano, em conformidade com as normas institucionais que regem a atuação dessesContinuar Lendo...Leia Mais"
+    },
+    {
+      "id": "2d16cdb09e1c7e06",
+      "data": "2026-03-25",
+      "titulo": "Governo garante mais R$ 15 bilhões do Brasil Soberano para apoiar setor produtivo do país",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/marco/governo-garante-mais-r-15-bilhoes-do-brasil-soberano-para-apoiar-setor-produtivo-do-pais",
+      "resumo": "25/03/2026-Medida Provisória amplia apoio a empresas em meio a instabilidades geopolíticas como a guerra no Irã. Presidente Lula também sancionou projeto de lei que cria o Sistema Brasileiro de Crédito Oficial à Exportação"
+    },
+    {
+      "id": "f689df956880cad1",
+      "data": "2026-03-25",
+      "titulo": "LINHAS DE CRÉDITO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=LINHAS%20DE%20CR%C3%89DITO",
+      "resumo": ""
+    },
     {
       "id": "daabbaa35040d4f7",
       "data": "2026-03-24",
