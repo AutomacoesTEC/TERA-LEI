@@ -236,8 +236,8 @@ self.onmessage = function(e) {
 function idT(s){for(const p of PATS)if(p.r.test(s.trim()))return p.t;return null;}
 function exId(t,s){s=s.trim();if(DIV.has(t))return s;const R={ARTIGO:/^(Art\.\s*\d+[ºo°]?[\-\.]?)/,PARÁGRAFO:/^(§\s*\d+[ºo°]?\.?|Par[áa]grafo\s+[úu]nico\.?)/i,INCISO:/^([IVXLCDM]+)\s*[\-–—]/,ALÍNEA:/^([a-z]\))/,ITEM:/^(\d+\.)/};const m=R[t]?.exec(s);return m?m[1].trim():s.slice(0,30);}
 function exTx(t,s){s=s.trim();if(DIV.has(t))return"";const R={ARTIGO:/^Art\.\s*\d+[ºo°]?[\s\-\.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?\.?\s+|Par[áa]grafo\s+[úu]nico\.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[\-–—]\s+(.+)/,ALÍNEA:/^[a-z]\)\s+(.+)/,ITEM:/^\d+\.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
-function parse(txt){const ds=[];let a=null,ag=false;let preLines=[];const reAltera=/\[?\s*(Reda[çc][ãa]o dada pel[oa]\(a\)[^\]]*|Inclu[ií]d[oa]\(a\) pel[oa]\(a\)[^\]]*|Revogad[oa]\(a\) pel[oa]\(a\)[^\]]*)\]?/gi;const reVetado=/\(\s*(?:VETADO|Vetado|vetado)\s*\)/;const reRevogado=/\(\s*(?:REVOGADO|Revogado|revogado)\s*\)/;
-  for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}else if(!a){preLines.push(s);}}if(preLines.length>0){const preText=preLines.filter(l=>l.length>4).join(" ");if(preText.trim())ds.unshift({tipo:"EMENTA",id:"Ementa",rub:"",txt:preText.trim(),status:"vigente",alteracao:""});}return detectVetados(ds);}
+function parse(txt){const ds=[];let a=null,ag=false;const reAltera=/\[?\s*(Reda[çc][ãa]o dada pel[oa]\(a\)[^\]]*|Inclu[ií]d[oa]\(a\) pel[oa]\(a\)[^\]]*|Revogad[oa]\(a\) pel[oa]\(a\)[^\]]*)\]?/gi;const reVetado=/\(\s*(?:VETADO|Vetado|vetado)\s*\)/;const reRevogado=/\(\s*(?:REVOGADO|Revogado|revogado)\s*\)/;
+  for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}}return detectVetados(ds);}
 
 function detectVetados(ds){
   const normId=id=>(id||"").replace(/[^a-zA-Z0-9ºo°§úÚ]/g,"").toLowerCase();
@@ -484,7 +484,7 @@ function App(){
         <select value={area} onChange={e=>setArea(e.target.value)} style={{background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:5,color:"var(--text)",padding:"5px 8px",fontSize:11}}>{Object.entries(AREAS).map(([k,v])=><option key={k} value={k}>{v.nome}</option>)}</select>
       </div>
     </header>
-    <main style={{maxWidth:1440,margin:"0 auto",padding:"20px"}}>
+    <main style={{width:"100%",padding:"20px"}}>
       {vw==="library"&&<Lib lib={lib} sel={sel} onSel={l=>{setSel(l);setVw("reader");}} onDel={del} onUp={upF} uping={uping} fRef={fRef}/>}
       {vw==="reader"&&sel&&<Reader lei={sel} area={area} gSt={gSt} uSt={uSt} addAnexo={addAnexo} delAnexo={delAnexo} study={study}/>}
       {vw==="econsultor"&&<EConsultor lib={lib}/>}
@@ -1015,7 +1015,7 @@ function TabEstudo({ds,lei,gSt,uSt}){
   };
 
   // ── Items filtrados ────────────────────────────────────────────────────────
-  const items = useMemo(()=>ds.filter(d=>!DIV.has(d.tipo)&&d.tipo!=="EMENTA"),[ds]);
+  const items = useMemo(()=>ds.filter(d=>!DIV.has(d.tipo)),[ds]);
   const fd = useMemo(()=>{
     let base=items;
     if(selSection){
@@ -1748,14 +1748,6 @@ function TabMapa({ds}){
     return mapa;
   },[ds]);
 
-  const ementa=useMemo(()=>ds.find(d=>d.tipo==="EMENTA"),[ds]);
-
-  const orphanArtigos=useMemo(()=>{
-    const hasAnyDiv=ds.some(d=>DIV.has(d.tipo));
-    if(hasAnyDiv)return[];
-    return ds.filter(d=>d.tipo==="ARTIGO").map(d=>({id:d.id,status:d.status||"vigente"}));
-  },[ds]);
-
   // Helper: gerar todas as keys collapsed a partir da estrutura
   const buildAllCollapsedKeys = useCallback((nodes) => {
     const all={};
@@ -1889,18 +1881,8 @@ function TabMapa({ds}){
         <span>● <span style={{color:"#e74c3c"}}>Revogado/Vetado</span></span>
         <span style={{marginLeft:"auto",fontStyle:"italic"}}>Clique no artigo para ver o conteúdo →</span>
       </div>
-      {ementa&&<div style={{background:"var(--bg-hover)",borderRadius:8,padding:"10px 14px",marginBottom:8,border:"1px solid var(--border)"}}>
-        <div style={{fontSize:11,fontWeight:700,letterSpacing:1,color:"var(--gold)",marginBottom:6}}>PREÂMBULO / EMENTA</div>
-        <div style={{fontSize:12,color:"var(--text-sec)",lineHeight:1.7}}>{ementa.txt}</div>
-      </div>}
-      {estrutura.length===0&&orphanArtigos.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhuma estrutura hierárquica encontrada</div>
-      :<>
-        {estrutura.map((node,i)=>renderNode(node,0,"root"))}
-        {orphanArtigos.length>0&&<div style={{marginTop:8}}>
-          <div style={{fontSize:11,fontWeight:600,color:"var(--text-mute)",marginBottom:6,letterSpacing:.5}}>ARTIGOS</div>
-          {renderArtigos(orphanArtigos,"orphan")}
-        </div>}
-      </>}
+      {estrutura.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhuma estrutura hierárquica encontrada</div>
+      :estrutura.map((node,i)=>renderNode(node,0,"root"))}
     </div>
     <div style={{flex:"0 0 40%",minWidth:300,overflow:"auto",background:"var(--bg-hover)",borderRadius:12,border:"1px solid var(--border)",padding:16}}>
       {!selArt?<div style={{textAlign:"center",paddingTop:80,color:"var(--text-sec)"}}><div style={{fontSize:28,marginBottom:12}}>📑</div><div style={{fontSize:14}}>Selecione um artigo no mapa para visualizar seu conteúdo.</div></div>
