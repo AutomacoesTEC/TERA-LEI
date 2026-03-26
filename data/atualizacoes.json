@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-25T12:51:33.353157-03:00",
-  "data_busca": "2026-03-25",
-  "total": 126,
-  "novos_nesta_execucao": 8,
+  "ultima_atualizacao": "2026-03-26T12:57:55.876986-03:00",
+  "data_busca": "2026-03-26",
+  "total": 140,
+  "novos_nesta_execucao": 14,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,118 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "22d8f14358293081",
+      "data": "2026-03-26",
+      "titulo": "26/03/2026 08:51Maior desde 1995Arrecadação federal bate recorde em fevereiro e soma R$ 222,1 bilhões",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/arrecadacao-de-receitas-federais-alcanca-r-222-1-bilhoes-em-fevereiro-de-2026",
+      "resumo": ""
+    },
+    {
+      "id": "6cde925942bdd05b",
+      "data": "2026-03-26",
+      "titulo": "25/03/2026 21:06Voa, Brasil24 novas aeronaves Embraer sob medida para Latam: 'Parceria fantástica', diz Lula",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/201cparceria-fantastica201d-diz-lula-apos-latam-anunciar-aquisicao-de-24-novas-aeronaves-da-embraer",
+      "resumo": ""
+    },
+    {
+      "id": "d04af328b06bf5fd",
+      "data": "2026-03-26",
+      "titulo": "26/03/2026 11:04Em quedaIPCA-15 cai em março e puxa recuo da inflação no primeiro trimestre",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/ipca-cai-em-marco-e-puxa-recuo-da-inflacao-no-primeiro-trimestre",
+      "resumo": ""
+    },
+    {
+      "id": "43cf17008a3b53a0",
+      "data": "2026-03-26",
+      "titulo": "26/03/2026 11:53computadoresPopulação remota na tríplice fronteira brasileira recebe reforço de inclusão digital",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/populacao-remota-na-triplice-fronteira-brasileira-recebe-reforco-de-inclusao-digital",
+      "resumo": ""
+    },
+    {
+      "id": "adb4948de82f88c2",
+      "data": "2026-03-26",
+      "titulo": "Nova norma internacional exige mudanças na divulgação de ativos e passivos regulatórios a partir de 2029",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/nova-norma-internacional-exige-mudancas-na-divulgacao-de-ativos-e-passivos-regulatorios-a-partir-de-2029/",
+      "resumo": "A IFRS 20 – Regulatory Assets and Regulatory Liabilities terá impacto significativo especialmente sobre empresas de serviços públicos, energia e transporte A Fundação IFRS edita uma nova norma que modificará o modo como determinados setores apresentam seus resultados ao mercado. A novidade foi anunciada durante o webcast “Visão geral da futura norma contábil — IFRS 20”, no qual especialistas explicamContinuar Lendo...Leia Mais"
+    },
+    {
+      "id": "8678309f7e3c085b",
+      "data": "2026-03-26",
+      "titulo": "Receita Federal sedia III Reunião de Diretores Gerais de Aduana da região das Américas",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/marco/receita-federal-sedia-iii-reuniao-de-diretores-gerais-de-aduana-da-regiao-das-americas",
+      "resumo": "26/03/2026-Iniciativa promove debate regional sobre impactos do comércio internacional ilícito e o fortalecimento do controle aduaneiro"
+    },
+    {
+      "id": "708f715887cdffdd",
+      "data": "2026-03-26",
+      "titulo": "COMITÊ CONSULTIVO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=COMIT%C3%8A%20CONSULTIVO",
+      "resumo": ""
+    },
+    {
+      "id": "d9f8bd500b2b5bdd",
+      "data": "2026-03-26",
+      "titulo": "CRÉDITOS DE CARBONO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=CR%C3%89DITOS%20DE%20CARBONO",
+      "resumo": ""
+    },
+    {
+      "id": "ebaccc250822edc1",
+      "data": "2026-03-26",
+      "titulo": "SÉRIE HISTÓRICA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=S%C3%89RIE%20HIST%C3%93RICA",
+      "resumo": ""
+    },
+    {
+      "id": "7c5af8f731cf6d4f",
+      "data": "2026-03-26",
+      "titulo": "INDICADORES MACROECONÔMICOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INDICADORES%20MACROECON%C3%94MICOS",
+      "resumo": ""
+    },
+    {
+      "id": "9313cf68c70a4099",
+      "data": "2026-03-26",
+      "titulo": "IMPOSTO DE RENDA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=IMPOSTO%20DE%20RENDA%20",
+      "resumo": ""
+    },
+    {
+      "id": "6feaa684bdac7a78",
+      "data": "2026-03-26",
+      "titulo": "eSocial –Receita Federal orienta sobre convênios SESI/SENAI e contribuição adicional ao SENAI",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/esocial-2013receita-federal-orienta-sobre-convenios-sesi-senai-e-contribuicao-adicional-ao-senai",
+      "resumo": "26/03/2026-Empresas passarão a recolher as contribuições pelo eSocial/DCTFWeb."
+    },
+    {
+      "id": "0dcac95142073258",
+      "data": "2026-03-26",
+      "titulo": "Receita Federal sedia a III Reunião de Diretores Gerais de Aduana da região das Américas",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/a-receita-federal-sedia-no-rio-de-janeiro-a-iii-reuniao-de-diretores-gerais-de-aduana-sobre-combate-ao-comercio-exterior-ilicito-nas-americas",
+      "resumo": "26/03/2026-Iniciativa da TRACIT (Transnational Alliance to Combat Illict Trade) promove o debate regional sobre os impactos do comércio internacional ilícito e o fortalecimento do controle aduaneiro."
+    },
+    {
+      "id": "a189cdc680794cce",
+      "data": "2026-03-26",
+      "titulo": "Arrecadação de receitas federais alcança R$ 222,1 bilhões em fevereiro de 2026",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/arrecadacao-de-receitas-federais-alcanca-r-222-1-bilhoes-em-fevereiro-de-2026",
+      "resumo": "26/03/2026-No primeiro bimestre, os recolhimentos somaram R$ 547,9 bilhões ; Receita Federal informa que os resultados são recordes desde o início da série histórica, em 1995."
+    },
     {
       "id": "ade05abb945ae1c8",
       "data": "2026-03-25",
