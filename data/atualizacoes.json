@@ -1,7 +1,7 @@
 {
-  "ultima_atualizacao": "2026-03-26T12:57:55.876986-03:00",
-  "data_busca": "2026-03-26",
-  "total": 140,
+  "ultima_atualizacao": "2026-03-27T12:10:15.197728-03:00",
+  "data_busca": "2026-03-27",
+  "total": 154,
   "novos_nesta_execucao": 14,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
@@ -33,6 +33,118 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "656fd983c97bb74e",
+      "data": "2026-03-27",
+      "titulo": "27/03/2026 09:34EconomiaDesemprego atinge menor índice no trimestre e rendimento atinge patamar recorde",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/desemprego-atinge-menor-indice-rendimento-patamar-recorde",
+      "resumo": ""
+    },
+    {
+      "id": "a05251437db54413",
+      "data": "2026-03-27",
+      "titulo": "26/03/2026 14:22SintoniaProduções da Rede Nacional de Comunicação Pública entram em exibição na grade do Canal Educação",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/producoes-da-rede-nacional-de-comunicacao-publica-entram-em-exibicao-na-grade-do-canal-educacao",
+      "resumo": ""
+    },
+    {
+      "id": "8d2dcf48e7a01e3f",
+      "data": "2026-03-27",
+      "titulo": "Bons contribuintes terão mais benefícios junto à Receita Federal",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/marco/bons-contribuintes-terao-mais-beneficios-junto-a-receita-federal",
+      "resumo": "27/03/2026-Órgão regulamentou programas de conformidade previstos no Código de Defesa do Contribuinte"
+    },
+    {
+      "id": "c5d1fe066b46f992",
+      "data": "2026-03-27",
+      "titulo": "TERMOS DE EXCLUSÃO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=TERMOS%20DE%20EXCLUS%C3%83O",
+      "resumo": ""
+    },
+    {
+      "id": "845cdb36865db56f",
+      "data": "2026-03-27",
+      "titulo": "SIMPLES NACIONAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SIMPLES%20NACIONAL",
+      "resumo": ""
+    },
+    {
+      "id": "4766cf77cdcccd5e",
+      "data": "2026-03-27",
+      "titulo": "RELATÓRIO MENSAL DA DÍVIDA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=RELAT%C3%93RIO%20MENSAL%20DA%20D%C3%8DVIDA",
+      "resumo": ""
+    },
+    {
+      "id": "a3c0f25c1636ee5e",
+      "data": "2026-03-27",
+      "titulo": "GESTÃO DA DÍVIDA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=GEST%C3%83O%20DA%20D%C3%8DVIDA",
+      "resumo": ""
+    },
+    {
+      "id": "f0aae86624f171bd",
+      "data": "2026-03-27",
+      "titulo": "TRANSIÇÃO ENERGÉTICA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=TRANSI%C3%87%C3%83O%20ENERG%C3%89TICA",
+      "resumo": ""
+    },
+    {
+      "id": "20a752f9eb53d40e",
+      "data": "2026-03-27",
+      "titulo": "ECO INVEST BRASIL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ECO%20INVEST%20BRASIL",
+      "resumo": ""
+    },
+    {
+      "id": "ddd990d5cf8ebf54",
+      "data": "2026-03-27",
+      "titulo": "CHAMADA PÚBLICA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=CHAMADA%20P%C3%9ABLICA",
+      "resumo": ""
+    },
+    {
+      "id": "f68c9359153d9344",
+      "data": "2026-03-27",
+      "titulo": "REVISÃO DE NORMAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=REVIS%C3%83O%20DE%20NORMAS",
+      "resumo": ""
+    },
+    {
+      "id": "ac28adbc0a72b1a7",
+      "data": "2026-03-27",
+      "titulo": "SETORES REGULADOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SETORES%20REGULADOS",
+      "resumo": ""
+    },
+    {
+      "id": "d98e12cd0afe1dca",
+      "data": "2026-03-27",
+      "titulo": "Bons contribuintes terão mais benefícios junto à Receita Federal",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/bons-contribuintes-terao-mais-beneficios-junto-a-receita-federal-1",
+      "resumo": "27/03/2026-Órgão regulamentou programas de conformidade previstos no Código de Defesa do Contribuinte."
+    },
+    {
+      "id": "4b4f2ab05d4e131b",
+      "data": "2026-03-27",
+      "titulo": "Receita Federal realiza live sobre atualizações na administração aduaneira e no comércio exterior",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/receita-federal-realiza-live-sobre-atualizacoes-na-administracao-aduaneira-e-no-comercio-exterior",
+      "resumo": "27/03/2026-A live será realizada por meio do canal oficial da Receita Federal no YouTube e é aberta a todos os interessados."
+    },
     {
       "id": "22d8f14358293081",
       "data": "2026-03-26",
