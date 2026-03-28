@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-27T12:10:15.197728-03:00",
-  "data_busca": "2026-03-27",
-  "total": 154,
-  "novos_nesta_execucao": 14,
+  "ultima_atualizacao": "2026-03-28T11:03:11.962962-03:00",
+  "data_busca": "2026-03-28",
+  "total": 161,
+  "novos_nesta_execucao": 7,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,62 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "3e48350f817a696a",
+      "data": "2026-03-28",
+      "titulo": "27/03/2026 19:55Edital 11MEI's, pequenas e microempresas quitam tributos com até 41% de desconto da Fazenda",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/meis-pequenas-micro-pagam-divida-tributaria-41-desconto",
+      "resumo": ""
+    },
+    {
+      "id": "9011410097c59db6",
+      "data": "2026-03-28",
+      "titulo": "27/03/2026 14:48Dia da Inclusão DigitalMinistério das Comunicações lança livro que mostra como tecnologia transforma vidas no Brasil",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/no-dia-da-inclusao-digital-ministerio-das-comunicacoes-lanca-livro-que-mostra-como-tecnologia-transforma-vidas-no-brasil",
+      "resumo": "Dia da Inclusão Digital"
+    },
+    {
+      "id": "4fef162ecfcdedea",
+      "data": "2026-03-28",
+      "titulo": "PEQUENOS NEGÓCIOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PEQUENOS%20NEG%C3%93CIOS",
+      "resumo": ""
+    },
+    {
+      "id": "5f67ca42325d2cec",
+      "data": "2026-03-28",
+      "titulo": "TAXONOMIA SUSTENTÁVEL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=TAXONOMIA%20SUSTENT%C3%81VEL",
+      "resumo": ""
+    },
+    {
+      "id": "864e93683431f9c2",
+      "data": "2026-03-28",
+      "titulo": "ADMINISTRAÇÃO ADUANEIRA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ADMINISTRA%C3%87%C3%83O%20ADUANEIRA",
+      "resumo": ""
+    },
+    {
+      "id": "03ef96e1ac29f994",
+      "data": "2026-03-28",
+      "titulo": "COMÉRCIO EXTERIOR",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=COM%C3%89RCIO%20EXTERIOR",
+      "resumo": ""
+    },
+    {
+      "id": "fa5ad53425450a1e",
+      "data": "2026-03-28",
+      "titulo": "AVANÇOS NORMATIVOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=AVAN%C3%87OS%20NORMATIVOS",
+      "resumo": ""
+    },
     {
       "id": "656fd983c97bb74e",
       "data": "2026-03-27",
