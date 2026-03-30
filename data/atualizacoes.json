@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-29T11:03:40.606638-03:00",
-  "data_busca": "2026-03-29",
-  "total": 161,
-  "novos_nesta_execucao": 0,
+  "ultima_atualizacao": "2026-03-30T10:13:22.851870-03:00",
+  "data_busca": "2026-03-30",
+  "total": 163,
+  "novos_nesta_execucao": 2,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,22 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "ee964648856153f3",
+      "data": "2026-03-30",
+      "titulo": "30/03/2026 09:00Ritmo aceleradoMais de um milhão de contribuintes já entregaram o IRPF 2026. Prazo vai até 29 de maio",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/receita-federal-recebe-mais-de-um-milhao-de-declaracoes-do-imposto-de-renda",
+      "resumo": ""
+    },
+    {
+      "id": "2eda71341ecd4fa1",
+      "data": "2026-03-30",
+      "titulo": "Receita Federal recebe mais de cinco milhões de declarações do Imposto de Renda",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/receita-federal-recebe-mais-de-um-milhao-de-declaracoes-do-imposto-de-renda",
+      "resumo": "30/03/2026-Mais de 60% dos contribuintes optaram por utilizar declaração pré-preenchida."
+    },
     {
       "id": "3e48350f817a696a",
       "data": "2026-03-28",
