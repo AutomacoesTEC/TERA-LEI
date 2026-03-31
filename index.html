@@ -272,7 +272,7 @@ function extrairPrazosValores(ds){const reVal=/R\$\s*[\d\.]+,\d{2}/g;const rePct
 
 function buildIdx(ds,area){const ws=AREAS[area]?.palavras||[];const idx={};let art="";for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;const t=(d.txt+" "+d.rub).toLowerCase();for(const w of ws)if(t.includes(w.toLowerCase())&&art){if(!idx[w])idx[w]=[];if(!idx[w].includes(art))idx[w].push(art);}}return Object.fromEntries(Object.entries(idx).sort((a,b)=>a[0].localeCompare(b[0],"pt")));}
 
-function fullTextSearch(ds,termo){
+function fullTextSearch(ds,termo,leiId=null,study=null,tagsConfig=[],scope={legis:true,notas:true}){
   if(!termo||termo.trim().length<3)return[];
   // Operador AND via '+': "lucro presumido + faturamento" exige ambos no dispositivo.
   // Sem '+', comportamento idêntico ao original (retrocompatível).
@@ -286,11 +286,23 @@ function fullTextSearch(ds,termo){
       const d=ds[i];
       if(DIV.has(d.tipo))artAtual="";
       else if(d.tipo==="ARTIGO")artAtual=d.id;
-      const texto=((d.id||"")+" "+(d.rub||"")+" "+(d.txt||"")).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-      // AND: dispositivo deve conter TODOS os termos
-      if(termos.every(t=>texto.includes(t))){
-        // ocorrencias = soma das contagens de cada termo no dispositivo
-        const ocorrencias=termos.reduce((s,t)=>s+(texto.split(t).length-1),0);
+      let textoLegis = "";
+      if(scope.legis) textoLegis = ((d.id||"")+" "+(d.rub||"")+" "+(d.txt||""));
+      
+      let textoNotas = "";
+      if(scope.notas && leiId && study){
+        const k = `${leiId}-${i}`;
+        const note = study[k]?.note || "";
+        const tags = study[k]?.tags || [];
+        const noteTags = study[k]?.noteTags || [];
+        const tagNames = tagsConfig.filter(t => tags.includes(t.id) || noteTags.includes(t.id)).map(t => t.name).join(" ");
+        textoNotas = note + " " + tagNames;
+      }
+
+      const textoFinal = (textoLegis + " " + textoNotas).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+      
+      if(termos.every(t=>textoFinal.includes(t))){
+        const ocorrencias=termos.reduce((s,t)=>s+(textoFinal.split(t).length-1),0);
         resultados.push({idx:i,tipo:d.tipo,id:d.id,art:artAtual,txt:d.txt,rub:d.rub,ocorrencias,status:d.status||"vigente"});
       }
     }catch(e){/* dispositivo malformado — ignora e continua */}
@@ -405,6 +417,7 @@ function App(){
   const [uping,setUp]=useState(false);
   const [area,setArea]=useState("tributario");
   const [study,setStudy]=useState({});
+  const [tagsConfig,setTagsConfig]=useState(()=>LS("t3-tags-config")||[]);
   const [showApiKeyModal,setShowApiKeyModal]=useState(false);
   const [apiKeyStatus,setApiKeyStatus]=useState(null);
   const fRef=useRef(null);
@@ -422,6 +435,7 @@ function App(){
           await storageInit(token);
           setLib(LS("t3-lib")||[]);
           setStudy(LS("t3-st")||{});
+          setTagsConfig(LS("t3-tags-config")||[]);
           setAuth({token,username:d.username,userId:d.userId});
         }
         setAuthLoading(false);
@@ -441,13 +455,14 @@ function App(){
     await storageInit(token);
     setLib(LS("t3-lib")||[]);
     setStudy(LS("t3-st")||{});
+    setTagsConfig(LS("t3-tags-config")||[]);
     setAuth({token,username,userId});
   };
 
   const handleLogout=async()=>{
     try{await fetch(`${PROXY}/auth/logout`,{method:"POST",headers:{Authorization:`Bearer ${auth.token}`}});}catch{}
     storageLogout();
-    setLib([]);setStudy({});setSel(null);setVw("library");
+    setLib([]);setStudy({});setTagsConfig([]);setSel(null);setVw("library");
     setAuth(null);
   };
 
@@ -464,8 +479,8 @@ function App(){
   const delAnexo=(leiId,idx)=>{const nl=lib.map(l=>l.id===leiId?{...l,anexos:(l.anexos||[]).filter((_,i)=>i!==idx)}:l);setLib(nl);LS("t3-lib",nl);if(sel?.id===leiId)setSel(nl.find(l=>l.id===leiId));};
   const uSt=(lid,di,f,v)=>{const k=`${lid}-${di}`;const n={...study,[k]:{...study[k],[f]:v}};setStudy(n);LS("t3-st",n);};
   const gSt=(lid,di,f)=>study[`${lid}-${di}`]?.[f]||"";
-  const exportBackup=()=>{try{const data={lib,study,area,notas:LS("t3-notas"),temas:LS("t3-temas"),exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="TERA_backup_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);}catch(e){alert("Erro ao exportar: "+e.message);}};
-  const importBackup=()=>{const inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const txt=await f.text();const data=JSON.parse(txt);if(data.lib){setLib(data.lib);LS("t3-lib",data.lib);}if(data.study){setStudy(data.study);LS("t3-st",data.study);}if(data.notas)LS("t3-notas",data.notas);if(data.temas)LS("t3-temas",data.temas);alert("Backup restaurado com sucesso! "+((data.lib||[]).length)+" leis, "+(Object.keys(data.study||{}).length)+" anotações de estudo e "+((data.notas||[]).length)+" anotações do E-Consultor importadas.");}catch(e){alert("Erro ao importar: "+e.message);}};inp.click();};
+  const exportBackup=()=>{try{const data={lib,study,area,tagsConfig,notas:LS("t3-notas"),temas:LS("t3-temas"),exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="TERA_backup_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);}catch(e){alert("Erro ao exportar: "+e.message);}};
+  const importBackup=()=>{const inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const txt=await f.text();const data=JSON.parse(txt);if(data.lib){setLib(data.lib);LS("t3-lib",data.lib);}if(data.study){setStudy(data.study);LS("t3-st",data.study);}if(data.tagsConfig){setTagsConfig(data.tagsConfig);LS("t3-tags-config",data.tagsConfig);}if(data.notas)LS("t3-notas",data.notas);if(data.temas)LS("t3-temas",data.temas);alert("Backup restaurado com sucesso! "+((data.lib||[]).length)+" leis, "+(Object.keys(data.study||{}).length)+" anotações de estudo e "+((data.notas||[]).length)+" anotações do E-Consultor importadas.");}catch(e){alert("Erro ao importar: "+e.message);}};inp.click();};
   const nav=[{id:"library",ic:IC.bk,lb:"Biblioteca"},...(sel?[{id:"reader",ic:IC.ls,lb:sel.nome.slice(0,20)}]:[]),{id:"econsultor",ic:IC.br,lb:"E-Consultor"},{id:"buscageral",ic:IC.sr,lb:"Busca Geral"},{id:"reforma",ic:IC.sc,lb:"Reforma"},{id:"atualizacoes",ic:IC.bl,lb:"Atualizações"}];
 
   return <div style={{minHeight:"100vh"}}>
@@ -486,9 +501,9 @@ function App(){
     </header>
     <main style={{width:"100%",padding:"20px"}}>
       {vw==="library"&&<Lib lib={lib} sel={sel} onSel={l=>{setSel(l);setVw("reader");}} onDel={del} onUp={upF} uping={uping} fRef={fRef}/>}
-      {vw==="reader"&&sel&&<Reader lei={sel} area={area} gSt={gSt} uSt={uSt} addAnexo={addAnexo} delAnexo={delAnexo} study={study}/>}
+      {vw==="reader"&&sel&&<Reader lei={sel} area={area} gSt={gSt} uSt={uSt} addAnexo={addAnexo} delAnexo={delAnexo} study={study} tagsConfig={tagsConfig} setTagsConfig={(t)=>{setTagsConfig(t);LS("t3-tags-config",t);}}/>}
       {vw==="econsultor"&&<EConsultor lib={lib}/>}
-      {vw==="buscageral"&&<BuscaGeral lib={lib}/>}
+      {vw==="buscageral"&&<BuscaGeral lib={lib} study={study} tagsConfig={tagsConfig}/>}
       {vw==="reforma"&&<Ref/>}
       {vw==="atualizacoes"&&<Atl/>}
     </main>
@@ -533,7 +548,7 @@ function Lib({lib,sel,onSel,onDel,onUp,uping,fRef}){return <div className="fade"
 // - Renomeada "indice" → "Busca"
 // - Removidas as renderizações condicionais de tab==="remissoes" e tab==="tutor"
 // - Export Excel: removida aba "Remissões"
-function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
+function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study,tagsConfig,setTagsConfig}){
   const [tab,setTab]=useState("mapa");const [saved,setSaved]=useState(false);const [goSearch,setGoSearch]=useState("");
   const tabs=[{id:"mapa",lb:"Mapa"},{id:"teia",lb:"🕸 Teia"},{id:"busca",lb:"Busca"},{id:"estudo",lb:"Estudo Guiado"},{id:"texto",lb:"Texto Integral"},{id:"artigos",lb:"Artigos"},{id:"anexos",lb:`Anexos (${(lei.anexos||[]).length})`}];
   const ds=lei.ds;
@@ -761,8 +776,8 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study}){
     <div style={{display:"flex",gap:0,borderBottom:"1px solid var(--border)",marginBottom:14,overflowX:"auto"}}>{tabs.map(t=><button key={t.id} className={`stab ${tab===t.id?"on":""}`} onClick={()=>setTab(t.id)}>{t.lb}</button>)}</div>
     {tab==="texto"&&<TabTexto ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt}/>}
     {tab==="artigos"&&<TabArtigos ds={ds}/>}
-    {tab==="estudo"&&<TabEstudo ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt}/>}
-    {tab==="busca"&&<TabIndice ds={ds} area={area} onGoToArt={a=>{setGoSearch(a);setTab("texto");}}/>}
+    {tab==="estudo"&&<TabEstudo ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt} tagsConfig={tagsConfig} setTagsConfig={setTagsConfig}/>}
+    {tab==="busca"&&<TabIndice ds={ds} lei={lei} area={area} onGoToArt={a=>{setGoSearch(a);setTab("texto");}} study={study} tagsConfig={tagsConfig}/>}
     {tab==="mapa"&&<TabMapa ds={ds}/>}
     {tab==="anexos"&&<TabAnexos lei={lei} addAnexo={addAnexo} delAnexo={delAnexo}/>}
     {tab==="teia"&&<TabTeia ds={ds} buildRecursiveTree={buildRecursiveTree} buildRecursiveChain={buildRecursiveChain}/>}
@@ -917,7 +932,58 @@ function RichTextEditor({value, onBlur, placeholder}){
 }
 // ──────────────────────────────────────────────────────────────────────────────
 
-function TabEstudo({ds,lei,gSt,uSt}){
+function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
+  const [showAdd, setShowAdd] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newColor, setNewColor] = useState("#d4a853");
+
+  const addTag = () => {
+    if(!newName.trim()) return;
+    if(tagsConfig.find(t => t.name.toLowerCase() === newName.trim().toLowerCase())){
+      alert("Tag já existe"); return;
+    }
+    const nt = [...tagsConfig, {id: Date.now().toString(), name: newName.trim(), color: newColor}];
+    setTagsConfig(nt); setNewName(""); setShowAdd(false);
+  };
+
+  const removeTag = (id) => {
+    if(confirm("Excluir esta tag permanentemente?")){
+      setTagsConfig(tagsConfig.filter(t => t.id !== id));
+    }
+  };
+
+  return <div style={{display:"flex", flexWrap:"wrap", gap:4, alignItems:"center"}}>
+    {selectedTags.map(tagId => {
+      const t = tagsConfig.find(x => x.id === tagId);
+      if(!t) return null;
+      return <span key={t.id} onClick={() => onToggle(t.id)}
+        style={{background:t.color, color:"#fff", fontSize:10, fontWeight:700, padding:"2px 6px", borderRadius:4, cursor:"pointer", display:"flex", alignItems:"center", gap:3}}>
+        {t.name} ✕
+      </span>
+    })}
+    <button onClick={() => setShowAdd(!showAdd)} className="btn-secondary" style={{padding:"2px 6px", fontSize:10, borderStyle:"solid"}}>+</button>
+    {showAdd && <div className="cd" style={{position:"absolute", zIndex:200, padding:10, width:200, display:"flex", flexDirection:"column", gap:8}}>
+      <div style={{fontSize:11, fontWeight:600}}>Gerenciar Tags</div>
+      <div style={{maxHeight:100, overflow:"auto", display:"flex", flexDirection:"column", gap:4}}>
+        {tagsConfig.map(t => (
+          <div key={t.id} style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:4}}>
+            <span onClick={() => onToggle(t.id)} style={{flex:1, cursor:"pointer", fontSize:11, background:selectedTags.includes(t.id)?t.color:"var(--bg-hover)", color:selectedTags.includes(t.id)?"#fff":"var(--text)", padding:"2px 4px", borderRadius:3}}>{t.name}</span>
+            <button onClick={() => removeTag(t.id)} style={{border:"none", background:"none", color:"var(--err)", cursor:"pointer", fontSize:10}}>✕</button>
+          </div>
+        ))}
+      </div>
+      <div style={{borderTop:"1px solid var(--border)", paddingTop:8, display:"flex", flexDirection:"column", gap:4}}>
+        <input value={newName} onChange={e=>setNewName(e.target.value)} placeholder="Nova tag..." style={{fontSize:11, padding:4}} />
+        <div style={{display:"flex", gap:4}}>
+          <input type="color" value={newColor} onChange={e=>setNewColor(e.target.value)} style={{width:30, height:24, padding:0, border:"none"}} />
+          <button onClick={addTag} className="btn-primary" style={{flex:1, padding:2, fontSize:10}}>Adicionar</button>
+        </div>
+      </div>
+    </div>}
+  </div>;
+}
+
+function TabEstudo({ds,lei,gSt,uSt,tagsConfig,setTagsConfig}){
   const [filtroStatus,setFiltroStatus]=useState("");
   const [selSection,setSelSection]=useState(null); // nó hierárquico selecionado para filtrar
   const [collNav,setCollNav]=useState({});         // estado colapso da nav hierárquica
@@ -1102,7 +1168,7 @@ function TabEstudo({ds,lei,gSt,uSt}){
       <div style={{flex:1,overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>
         <table className="dt" style={{width:"100%",tableLayout:"fixed"}}>
           <thead><tr>
-            {["Dispositivo","Texto","Status","Dificuldade","Anotação"].map((lbl,ci)=>(
+            {["Dispositivo / Tags","Texto","Status","Dificuldade","Anotação / Tags"].map((lbl,ci)=>(
               <th key={ci} style={{width:colWidths[ci],userSelect:"none",padding:"8px 6px 8px 10px",overflow:"hidden"}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:4}}>
                   <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{lbl}</span>
@@ -1126,7 +1192,17 @@ function TabEstudo({ds,lei,gSt,uSt}){
             return <tr key={ri} style={{opacity:isInativo?0.6:1,
               background:isVetado?"rgba(231,76,60,0.06)":isRevogado?"rgba(231,76,60,0.04)":"inherit"}}>
               <td style={{fontWeight:700,fontSize:12,verticalAlign:"top"}}>
-                {d.id}
+                <div style={{marginBottom:4}}>{d.id}</div>
+                <TagSelector
+                  selectedTags={gSt(lei.id,ri,"tags")||[]}
+                  onToggle={tid => {
+                    const current = gSt(lei.id,ri,"tags")||[];
+                    const next = current.includes(tid) ? current.filter(x=>x!==tid) : [...current, tid];
+                    uSt(lei.id,ri,"tags",next);
+                  }}
+                  tagsConfig={tagsConfig}
+                  setTagsConfig={setTagsConfig}
+                />
                 {isVetado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>VETADO</span></div>}
                 {isRevogado&&<div><span className="badge badge-revogado" style={{marginTop:4,display:"inline-block"}}>REVOGADO</span></div>}
               </td>
@@ -1161,6 +1237,19 @@ function TabEstudo({ds,lei,gSt,uSt}){
                   onBlur={html=>uSt(lei.id,ri,"note",html)}
                   placeholder="Expandir anotação..."
                 />
+                <div style={{marginTop:6}}>
+                  <div style={{fontSize:10, color:"var(--text-mute)", marginBottom:2}}>Tags da Anotação:</div>
+                  <TagSelector
+                    selectedTags={gSt(lei.id,ri,"noteTags")||[]}
+                    onToggle={tid => {
+                      const current = gSt(lei.id,ri,"noteTags")||[];
+                      const next = current.includes(tid) ? current.filter(x=>x!==tid) : [...current, tid];
+                      uSt(lei.id,ri,"noteTags",next);
+                    }}
+                    tagsConfig={tagsConfig}
+                    setTagsConfig={setTagsConfig}
+                  />
+                </div>
               </td>
             </tr>;
           })}</tbody>
@@ -1640,11 +1729,11 @@ function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
 }
 
 
-function TabIndice({ds,area,onGoToArt}){
+function TabIndice({ds,lei,area,onGoToArt,study,tagsConfig}){
   const [filtro,setFiltro]=useState("");
   const [expandedIdx,setExpandedIdx]=useState(null);
   const idxPredefinido=useMemo(()=>buildIdx(ds,area),[ds,area]);
-  const resultadosBusca=useMemo(()=>fullTextSearch(ds,filtro),[ds,filtro]);
+  const resultadosBusca=useMemo(()=>fullTextSearch(ds,filtro,lei.id,study,tagsConfig),[ds,filtro,lei.id,study,tagsConfig]);
   const totalOcorrencias=useMemo(()=>resultadosBusca.reduce((s,r)=>s+r.ocorrencias,0),[resultadosBusca]);
   const buscaAtiva=filtro.trim().length>=3;
   const ctx=useMemo(()=>hierarquia(ds),[ds]);
@@ -1669,9 +1758,30 @@ function TabIndice({ds,area,onGoToArt}){
     return result;
   };
   return <div>
-    <div style={{marginBottom:12}}>
+    <div style={{marginBottom:12, display:"flex", flexDirection:"column", gap:10}}>
       <input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}} placeholder="Buscar palavra (mín. 3 letras) · Use + para AND: lucro presumido + faturamento" style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:6,padding:"10px 14px",fontSize:14,boxSizing:"border-box"}}/>
-      {buscaAtiva&&<div style={{marginTop:6,fontSize:12,color:"var(--text-sec)"}}>{totalOcorrencias} ocorrência(s) em {resultadosBusca.length} dispositivo(s)</div>}
+      
+      <div style={{display:"flex", gap:15, alignItems:"center", flexWrap:"wrap", background:"var(--bg-card)", padding:10, borderRadius:8, border:"1px solid var(--border)"}}>
+        <div style={{display:"flex", alignItems:"center", gap:6}}>
+          <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Buscar em:</span>
+          <label style={{display:"flex", alignItems:"center", gap:4, cursor:"pointer", fontSize:12}}>
+            <input type="checkbox" checked={scope.legis} onChange={e=>setScope({...scope, legis:e.target.checked})} /> Legislação
+          </label>
+          <label style={{display:"flex", alignItems:"center", gap:4, cursor:"pointer", fontSize:12}}>
+            <input type="checkbox" checked={scope.notas} onChange={e=>setScope({...scope, notas:e.target.checked})} /> Anotações
+          </label>
+        </div>
+        
+        <div style={{display:"flex", alignItems:"center", gap:6}}>
+          <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Filtrar por Tag:</span>
+          <select value={selTag} onChange={e=>setSelTag(e.target.value)} style={{fontSize:12, padding:"2px 6px", borderRadius:4}}>
+            <option value="">Todas as Tags</option>
+            {tagsConfig.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+          </select>
+        </div>
+      </div>
+
+      {buscaAtiva&&<div style={{marginTop:2,fontSize:12,color:"var(--text-sec)"}}>{totalOcorrencias} ocorrência(s) em {resultados.length} dispositivo(s) de {leisComResultados} lei(s)</div>}
     </div>
     {buscaAtiva?
       (resultadosBusca.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhum dispositivo encontrado para "{filtro}"</div>
@@ -1936,8 +2046,10 @@ function TabAnexos({lei,addAnexo,delAnexo}){const [uping,setUp]=useState(false);
 
 
 // ═══ BUSCA GERAL ═══
-function BuscaGeral({lib}){
+function BuscaGeral({lib,study,tagsConfig}){
   const [filtro,setFiltro]=useState("");
+  const [selTag,setSelTag]=useState("");
+  const [scope,setScope]=useState({legis:true,notas:true});
   const [expandedIdx,setExpandedIdx]=useState(null);
   const [selLeis,setSelLeis]=useState(()=>new Set(lib.map(l=>l.id)));
   const allSelected=lib.length>0&&selLeis.size===lib.length;
@@ -1966,23 +2078,31 @@ function BuscaGeral({lib}){
 
   // Busca cross-lei: roda fullTextSearch em cada lei selecionada
   const resultados=useMemo(()=>{
-    if(!filtro||filtro.trim().length<3)return[];
+    const termoBusca = (filtro || "").trim();
+    const tagFiltro = selTag ? tagsConfig.find(t=>t.id===selTag)?.name : "";
+    
+    // Se não tem termo nem tag, não busca
+    if(termoBusca.length < 3 && !tagFiltro) return [];
+    
+    // Se tem tag, adiciona ao termo de busca (AND)
+    const termoFinal = [termoBusca, tagFiltro].filter(Boolean).join(" + ");
+    
     const res=[];
     for(const lei of lib){
       if(!selLeis.has(lei.id))continue;
       try{
-        const hits=fullTextSearch(lei.ds,filtro);
+        const hits=fullTextSearch(lei.ds, termoFinal, lei.id, study, tagsConfig, scope);
         for(const h of hits){
           res.push({...h,leiId:lei.id,leiNome:lei.nome,ds:lei.ds});
         }
       }catch(_){}
     }
     return res;
-  },[filtro,lib,selLeis]);
+  },[filtro,selTag,scope,lib,selLeis,study,tagsConfig]);
 
   const totalOcorrencias=useMemo(()=>resultados.reduce((s,r)=>s+r.ocorrencias,0),[resultados]);
   const leisComResultados=useMemo(()=>new Set(resultados.map(r=>r.leiId)).size,[resultados]);
-  const buscaAtiva=filtro.trim().length>=3;
+  const buscaAtiva=filtro.trim().length>=3 || selTag;
 
   // Hierarquias por lei (cache)
   const ctxMap=useMemo(()=>{
@@ -2050,14 +2170,35 @@ function BuscaGeral({lib}){
           </div>
         </div>
 
-        {/* Campo de busca */}
-        <div style={{marginBottom:12}}>
+        {/* Campo de busca e filtros */}
+        <div style={{marginBottom:12, display:"flex", flexDirection:"column", gap:10}}>
           <input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}}
             placeholder="Buscar palavra (mín. 3 letras) · Use + para AND: cofins + importação + crédito"
             style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",
               borderRadius:6,padding:"10px 14px",fontSize:14,boxSizing:"border-box"}}/>
+          
+          <div style={{display:"flex", gap:15, alignItems:"center", flexWrap:"wrap", background:"var(--bg-card)", padding:10, borderRadius:8, border:"1px solid var(--border)"}}>
+            <div style={{display:"flex", alignItems:"center", gap:6}}>
+              <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Buscar em:</span>
+              <label style={{display:"flex", alignItems:"center", gap:4, cursor:"pointer", fontSize:12}}>
+                <input type="checkbox" checked={scope.legis} onChange={e=>setScope({...scope, legis:e.target.checked})} /> Legislação
+              </label>
+              <label style={{display:"flex", alignItems:"center", gap:4, cursor:"pointer", fontSize:12}}>
+                <input type="checkbox" checked={scope.notas} onChange={e=>setScope({...scope, notas:e.target.checked})} /> Anotações
+              </label>
+            </div>
+            
+            <div style={{display:"flex", alignItems:"center", gap:6}}>
+              <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Filtrar por Tag:</span>
+              <select value={selTag} onChange={e=>setSelTag(e.target.value)} style={{fontSize:12, padding:"2px 6px", borderRadius:4, background:"var(--bg-hover)", color:"var(--text)", border:"1px solid var(--border)"}}>
+                <option value="">Todas as Tags</option>
+                {tagsConfig.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+              </select>
+            </div>
+          </div>
+
           {buscaAtiva&&(
-            <div style={{marginTop:6,fontSize:12,color:"var(--text-sec)"}}>
+            <div style={{marginTop:2,fontSize:12,color:"var(--text-sec)"}}>
               {totalOcorrencias} ocorrência(s) em {resultados.length} dispositivo(s) de {leisComResultados} lei(s)
             </div>
           )}
@@ -2091,7 +2232,20 @@ function BuscaGeral({lib}){
                   <td><span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)"}}>{r.tipo}</span></td>
                   <td style={{fontSize:12,fontWeight:600}}>{r.id}</td>
                   <td style={{color:"var(--gold)",fontWeight:600}}>{r.art}</td>
-                  <td style={{fontSize:12,lineHeight:1.5}}>{highlightText((r.txt||"").slice(0,250)+(r.txt?.length>250?"…":""),filtro)}</td>
+                  <td style={{fontSize:12,lineHeight:1.5}}>
+                    {highlightText((r.txt||"").slice(0,250)+(r.txt?.length>250?"…":""),filtro)}
+                    {(() => {
+                      const k = `${r.leiId}-${r.idx}`;
+                      const note = study[k]?.note || "";
+                      if(note && scope.notas){
+                        const plainNote = note.replace(/<[^>]*>/g, "");
+                        return <div style={{marginTop:4, padding:4, background:"var(--gold-subtle)", borderRadius:4, fontSize:11, borderLeft:"2px solid var(--gold)"}}>
+                          <b>Anotação:</b> {highlightText(plainNote.slice(0,150)+(plainNote.length>150?"…":""), filtro)}
+                        </div>
+                      }
+                      return null;
+                    })()}
+                  </td>
                   <td style={{fontWeight:700,textAlign:"center",color:"var(--gold)"}}>{r.ocorrencias}</td>
                 </tr>
                 {expandedIdx===i&&<tr><td colSpan={7} style={{padding:0}}>
@@ -2100,11 +2254,37 @@ function BuscaGeral({lib}){
                     {ctxMap[r.leiId]?.[r.art]&&<div style={{fontSize:11,color:"var(--text-sec)",marginBottom:8,fontStyle:"italic"}}>{ctxMap[r.leiId][r.art]}</div>}
                     <div style={{display:"flex",flexDirection:"column",gap:6}}>
                       {getArtigoDisps(r.ds,r.art||r.id).map((d,j)=>{
-                        const isMatch=(()=>{const ts=filtro.split("+").map(t=>t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")).filter(t=>t.length>=3);const tx=(d.txt||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");return ts.length>0&&ts.every(t=>tx.includes(t));})();
-                        return <div key={j} style={{padding:"4px 8px",borderRadius:4,
-                          background:isMatch?"rgba(212,168,83,0.1)":"transparent",fontSize:12,lineHeight:1.6}}>
-                          <span style={{color:"var(--gold)",fontWeight:600,marginRight:6}}>{d.id}</span>
+                        const ri = r.ds.indexOf(d);
+                        const k = `${r.leiId}-${ri}`;
+                        const note = study[k]?.note || "";
+                        const tags = study[k]?.tags || [];
+                        const noteTags = study[k]?.noteTags || [];
+                        const tagNames = tagsConfig.filter(t => tags.includes(t.id) || noteTags.includes(t.id)).map(t => t.name).join(" ");
+                        
+                        const isMatch=(()=>{
+                          const tagFiltro = selTag ? tagsConfig.find(t=>t.id===selTag)?.name : "";
+                          const termoFinal = [filtro, tagFiltro].filter(Boolean).join(" + ");
+                          const ts=termoFinal.split("+").map(t=>t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")).filter(t=>t.length>=3);
+                          const tx=((d.txt||"") + " " + note + " " + tagNames).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+                          return ts.length>0&&ts.every(t=>tx.includes(t));
+                        })();
+                        
+                        return <div key={j} style={{padding:"8px",borderRadius:6,
+                          background:isMatch?"rgba(212,168,83,0.1)":"transparent",fontSize:12,lineHeight:1.6, border:isMatch?"1px solid var(--gold-subtle)":"1px solid transparent", marginBottom:4}}>
+                          <div style={{display:"flex", alignItems:"center", gap:6, marginBottom:2}}>
+                            <span style={{color:"var(--gold)",fontWeight:600}}>{d.id}</span>
+                            {tagsConfig.filter(t => tags.includes(t.id)).map(t => <span key={t.id} style={{background:t.color, color:"#fff", fontSize:9, padding:"1px 4px", borderRadius:3}}>{t.name}</span>)}
+                          </div>
                           {highlightText(d.txt||"",filtro)}
+                          {note && (
+                            <div style={{marginTop:6, padding:6, background:"var(--bg-card)", borderRadius:4, borderLeft:"3px solid var(--gold)"}}>
+                              <div style={{fontSize:10, fontWeight:700, color:"var(--gold)", marginBottom:2, display:"flex", alignItems:"center", gap:6}}>
+                                ANOTAÇÃO
+                                {tagsConfig.filter(t => noteTags.includes(t.id)).map(t => <span key={t.id} style={{background:t.color, color:"#fff", fontSize:9, padding:"1px 4px", borderRadius:3, fontWeight:400}}>{t.name}</span>)}
+                              </div>
+                              <div dangerouslySetInnerHTML={{__html: highlightText(note, filtro)}} />
+                            </div>
+                          )}
                           {d.status==="vetado"&&<span className="badge badge-revogado" style={{marginLeft:6}}>VETADO</span>}
                           {d.status==="revogado"&&<span className="badge badge-revogado" style={{marginLeft:6}}>REVOGADO</span>}
                         </div>;
