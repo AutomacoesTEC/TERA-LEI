@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-30T10:13:22.851870-03:00",
-  "data_busca": "2026-03-30",
-  "total": 163,
-  "novos_nesta_execucao": 2,
+  "ultima_atualizacao": "2026-03-31T10:12:36.654929-03:00",
+  "data_busca": "2026-03-31",
+  "total": 174,
+  "novos_nesta_execucao": 11,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,94 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "8d24ed82e7914f83",
+      "data": "2026-03-31",
+      "titulo": "31/03/2026 08:53Na quartaReceita faz terceira live do IRPF com o tema 'Utilizando Meu Imposto de Renda'",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/receita-federal-realiza-terceira-live-do-irpf-com-o-tema-utilizando-meu-imposto-de-renda",
+      "resumo": ""
+    },
+    {
+      "id": "38390c3ffb50f9ad",
+      "data": "2026-03-31",
+      "titulo": "30/03/2026 13:22Infância ProtegidaPF na Paraíba apresenta cordel com orientações para proteger crianças no ambiente virtual",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/pf-apresenta-cordel-com-orientacoes-para-proteger-criancas-no-ambiente-virtual",
+      "resumo": ""
+    },
+    {
+      "id": "ac29490cd2000c46",
+      "data": "2026-03-31",
+      "titulo": "30/03/2026 18:31CNH do BrasilMP do Bom Condutor gera mais de R$ 1 bilhão em economia para os brasileiros em apenas três meses",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/mp-do-bom-condutor-gera-mais-de-r-1-bilhao-em-economia-para-os-brasileiros-em-apenas-tres-meses",
+      "resumo": ""
+    },
+    {
+      "id": "e3c6e100aabaffc5",
+      "data": "2026-03-31",
+      "titulo": "30/03/2026 17:59Escolas ConectadasBrasil supera 99 mil escolas públicas com internet e avança para universalizar conectividade até o fim do ano",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/brasil-supera-99-mil-escolas-publicas-com-internet-e-avanca-para-universalizar-conectividade-ate-o-fim-do-ano",
+      "resumo": ""
+    },
+    {
+      "id": "5ec92bd57b728f85",
+      "data": "2026-03-31",
+      "titulo": "Reportagem da Band evidencia protagonismo da contabilidade em debates do Summit de Lisboa",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/reportagem-da-band-evidencia-protagonismo-da-contabilidade-em-debates-do-summit-de-lisboa/",
+      "resumo": "A realização do Summit – Inovação e Desenvolvimento Socioeconômico, na capital portuguesa Lisboa, colocou a contabilidade no centro das discussões sobre crescimento econômico, governança e transformação digital, conforme destacou reportagem exibida pela Band. O encontro reúne, nos dias 30 e 31 de março, representantes dos setores público e privado para debater soluções estruturantes para o ambiente de negócios, com impactoContinuar Lendo...Leia Mais"
+    },
+    {
+      "id": "8e9bcd66f9c0ef03",
+      "data": "2026-03-31",
+      "titulo": "RESULTADO DO TESOURO NACIONAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=RESULTADO%20DO%20TESOURO%20NACIONAL",
+      "resumo": ""
+    },
+    {
+      "id": "1ee911b53cfe93fc",
+      "data": "2026-03-31",
+      "titulo": "FUNDO VERDE DO CLIMA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=FUNDO%20VERDE%20DO%20CLIMA",
+      "resumo": ""
+    },
+    {
+      "id": "8f93d7eb90f94aac",
+      "data": "2026-03-31",
+      "titulo": "FINANCIAMENTO SUSTENTÁVEL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=FINANCIAMENTO%20SUSTENT%C3%81VEL",
+      "resumo": ""
+    },
+    {
+      "id": "f254f4ef836f7a44",
+      "data": "2026-03-31",
+      "titulo": "IMPOSTO DE RENDA 2026",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=IMPOSTO%20DE%20RENDA%202026",
+      "resumo": ""
+    },
+    {
+      "id": "98fbaf38fdd3c8a1",
+      "data": "2026-03-31",
+      "titulo": "AGENTES FINANCEIROS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=AGENTES%20FINANCEIROS",
+      "resumo": ""
+    },
+    {
+      "id": "5be0ec124d98fa61",
+      "data": "2026-03-31",
+      "titulo": "Receita Federal realiza terceira live do IRPF com o tema  \"Utilizando Meu Imposto de Renda\"",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/marco/receita-federal-realiza-terceira-live-do-irpf-com-o-tema-em-utilizando-meu-imposto-de-renda",
+      "resumo": "31/03/2026-Lives ocorrerão todas as quartas-feiras, com temas variados para orientar contribuintes sobre o IRPF 2026."
+    },
     {
       "id": "ee964648856153f3",
       "data": "2026-03-30",
