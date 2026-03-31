@@ -273,7 +273,8 @@ function extrairPrazosValores(ds){const reVal=/R\$\s*[\d\.]+,\d{2}/g;const rePct
 function buildIdx(ds,area){const ws=AREAS[area]?.palavras||[];const idx={};let art="";for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;const t=(d.txt+" "+d.rub).toLowerCase();for(const w of ws)if(t.includes(w.toLowerCase())&&art){if(!idx[w])idx[w]=[];if(!idx[w].includes(art))idx[w].push(art);}}return Object.fromEntries(Object.entries(idx).sort((a,b)=>a[0].localeCompare(b[0],"pt")));}
 
 function fullTextSearch(ds,termo,leiId=null,study=null,tagsConfig=[],scope={legis:true,notas:true}){
-  if(!termo||termo.trim().length<3)return[];
+  const hasTerm = termo && termo.trim().length >= 3;
+  if(!hasTerm && !termo.includes("#")) return []; // Se não tem termo nem tag (#), retorna vazio
   // Operador AND via '+': "lucro presumido + faturamento" exige ambos no dispositivo.
   // Sem '+', comportamento idêntico ao original (retrocompatível).
   const termos=termo.split("+")
@@ -290,19 +291,21 @@ function fullTextSearch(ds,termo,leiId=null,study=null,tagsConfig=[],scope={legi
       if(scope.legis) textoLegis = ((d.id||"")+" "+(d.rub||"")+" "+(d.txt||""));
       
       let textoNotas = "";
-      if(scope.notas && leiId && study){
+      let tagNames = "";
+      if(leiId && study){
         const k = `${leiId}-${i}`;
-        const note = study[k]?.note || "";
+        const note = (scope.notas ? study[k]?.note : "") || "";
         const tags = study[k]?.tags || [];
         const noteTags = study[k]?.noteTags || [];
-        const tagNames = tagsConfig.filter(t => tags.includes(t.id) || noteTags.includes(t.id)).map(t => t.name).join(" ");
+        tagNames = tagsConfig.filter(t => tags.includes(t.id) || noteTags.includes(t.id)).map(t => "#"+t.name).join(" ");
         textoNotas = note + " " + tagNames;
       }
 
       const textoFinal = (textoLegis + " " + textoNotas).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
       
       if(termos.every(t=>textoFinal.includes(t))){
-        const ocorrencias=termos.reduce((s,t)=>s+(textoFinal.split(t).length-1),0);
+        // Se a busca for apenas por tag, as ocorrências são 1 por padrão se o dispositivo bater
+        const ocorrencias = hasTerm ? termos.reduce((s,t)=>s+(textoFinal.split(t).length-1),0) : 1;
         resultados.push({idx:i,tipo:d.tipo,id:d.id,art:artAtual,txt:d.txt,rub:d.rub,ocorrencias,status:d.status||"vigente"});
       }
     }catch(e){/* dispositivo malformado — ignora e continua */}
@@ -936,47 +939,83 @@ function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
   const [showAdd, setShowAdd] = useState(false);
   const [newName, setNewName] = useState("");
   const [newColor, setNewColor] = useState("#d4a853");
+  const containerRef = useRef(null);
+
+  // Fecha o modal ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setShowAdd(false);
+      }
+    };
+    if (showAdd) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showAdd]);
 
   const addTag = () => {
     if(!newName.trim()) return;
-    if(tagsConfig.find(t => t.name.toLowerCase() === newName.trim().toLowerCase())){
+    const name = newName.trim().replace(/^#/, ""); // Remove # se o usuário digitar
+    if(tagsConfig.find(t => t.name.toLowerCase() === name.toLowerCase())){
       alert("Tag já existe"); return;
     }
-    const nt = [...tagsConfig, {id: Date.now().toString(), name: newName.trim(), color: newColor}];
-    setTagsConfig(nt); setNewName(""); setShowAdd(false);
+    const nt = [...tagsConfig, {id: Date.now().toString(), name, color: newColor}];
+    setTagsConfig(nt); setNewName("");
   };
 
   const removeTag = (id) => {
-    if(confirm("Excluir esta tag permanentemente?")){
+    if(confirm("Excluir esta tag permanentemente? Todas as marcações serão removidas.")){
       setTagsConfig(tagsConfig.filter(t => t.id !== id));
     }
   };
 
-  return <div style={{display:"flex", flexWrap:"wrap", gap:4, alignItems:"center"}}>
-    {selectedTags.map(tagId => {
-      const t = tagsConfig.find(x => x.id === tagId);
-      if(!t) return null;
-      return <span key={t.id} onClick={() => onToggle(t.id)}
-        style={{background:t.color, color:"#fff", fontSize:10, fontWeight:700, padding:"2px 6px", borderRadius:4, cursor:"pointer", display:"flex", alignItems:"center", gap:3}}>
-        {t.name} ✕
-      </span>
-    })}
-    <button onClick={() => setShowAdd(!showAdd)} className="btn-secondary" style={{padding:"2px 6px", fontSize:10, borderStyle:"solid"}}>+</button>
-    {showAdd && <div className="cd" style={{position:"absolute", zIndex:200, padding:10, width:200, display:"flex", flexDirection:"column", gap:8}}>
-      <div style={{fontSize:11, fontWeight:600}}>Gerenciar Tags</div>
-      <div style={{maxHeight:100, overflow:"auto", display:"flex", flexDirection:"column", gap:4}}>
-        {tagsConfig.map(t => (
-          <div key={t.id} style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:4}}>
-            <span onClick={() => onToggle(t.id)} style={{flex:1, cursor:"pointer", fontSize:11, background:selectedTags.includes(t.id)?t.color:"var(--bg-hover)", color:selectedTags.includes(t.id)?"#fff":"var(--text)", padding:"2px 4px", borderRadius:3}}>{t.name}</span>
-            <button onClick={() => removeTag(t.id)} style={{border:"none", background:"none", color:"var(--err)", cursor:"pointer", fontSize:10}}>✕</button>
-          </div>
-        ))}
+  return <div ref={containerRef} style={{display:"flex", flexWrap:"wrap", gap:4, alignItems:"center", position:"relative"}}>
+    {/* Tags Aplicadas - Sempre Visíveis */}
+    <div style={{display:"flex", flexWrap:"wrap", gap:4}}>
+      {selectedTags.map(tagId => {
+        const t = tagsConfig.find(x => x.id === tagId);
+        if(!t) return null;
+        return <span key={t.id} onClick={() => onToggle(t.id)}
+          style={{background:t.color, color:"#fff", fontSize:10, fontWeight:700, padding:"2px 8px", borderRadius:4, cursor:"pointer", display:"flex", alignItems:"center", gap:3, boxShadow:"0 1px 2px rgba(0,0,0,0.1)"}}>
+          #{t.name} <span style={{fontSize:8, opacity:0.8}}>✕</span>
+        </span>
+      })}
+    </div>
+    
+    <button onClick={() => setShowAdd(!showAdd)} className="btn-secondary" 
+      style={{padding:"2px 6px", fontSize:10, borderStyle:"solid", borderRadius:4, height:20, display:"flex", alignItems:"center", justifyContent:"center"}}>
+      {showAdd ? "Fechar" : "+ Tag"}
+    </button>
+
+    {showAdd && <div className="cd" style={{position:"absolute", top:24, left:0, zIndex:300, padding:12, width:220, display:"flex", flexDirection:"column", gap:10, boxShadow:"var(--shadow-lg)", border:"1px solid var(--border)", background:"var(--bg-card)"}}>
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+        <div style={{fontSize:11, fontWeight:700, color:"var(--gold)"}}>Gerenciar Tags</div>
+        <button onClick={() => setShowAdd(false)} style={{border:"none", background:"none", color:"var(--text-sec)", cursor:"pointer", fontSize:12}}>✕</button>
       </div>
-      <div style={{borderTop:"1px solid var(--border)", paddingTop:8, display:"flex", flexDirection:"column", gap:4}}>
-        <input value={newName} onChange={e=>setNewName(e.target.value)} placeholder="Nova tag..." style={{fontSize:11, padding:4}} />
-        <div style={{display:"flex", gap:4}}>
-          <input type="color" value={newColor} onChange={e=>setNewColor(e.target.value)} style={{width:30, height:24, padding:0, border:"none"}} />
-          <button onClick={addTag} className="btn-primary" style={{flex:1, padding:2, fontSize:10}}>Adicionar</button>
+      
+      <div style={{maxHeight:120, overflowY:"auto", display:"flex", flexDirection:"column", gap:4, paddingRight:4}}>
+        {tagsConfig.length === 0 && <div style={{fontSize:10, color:"var(--text-mute)", textAlign:"center", padding:10}}>Nenhuma tag cadastrada</div>}
+        {tagsConfig.map(t => {
+          const isSel = selectedTags.includes(t.id);
+          return (
+            <div key={t.id} style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:4, padding:2, borderRadius:4, background:isSel?"rgba(212,168,83,0.05)":"transparent"}}>
+              <span onClick={() => onToggle(t.id)} 
+                style={{flex:1, cursor:"pointer", fontSize:11, background:isSel?t.color:"var(--bg-hover)", color:isSel?"#fff":"var(--text)", padding:"3px 6px", borderRadius:3, transition:"all 0.2s", fontWeight:isSel?600:400}}>
+                #{t.name}
+              </span>
+              <button onClick={() => removeTag(t.id)} style={{border:"none", background:"none", color:"var(--err)", cursor:"pointer", fontSize:12, padding:"0 4px"}} title="Excluir Tag">×</button>
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{borderTop:"1px solid var(--border)", paddingTop:10, display:"flex", flexDirection:"column", gap:6}}>
+        <div style={{fontSize:10, fontWeight:600, color:"var(--text-sec)"}}>Nova Tag:</div>
+        <input value={newName} onChange={e=>setNewName(e.target.value)} placeholder="Ex: Lucro Presumido" style={{fontSize:11, padding:"5px 8px", borderRadius:4, border:"1px solid var(--border)", background:"var(--bg)"}} />
+        <div style={{display:"flex", gap:6, alignItems:"center"}}>
+          <input type="color" value={newColor} onChange={e=>setNewColor(e.target.value)} style={{width:34, height:26, padding:0, border:"1px solid var(--border)", borderRadius:4, cursor:"pointer"}} title="Escolher cor" />
+          <button onClick={addTag} className="btn-primary" style={{flex:1, padding:"4px", fontSize:11, fontWeight:600}}>Adicionar</button>
         </div>
       </div>
     </div>}
@@ -1741,12 +1780,12 @@ function TabIndice({ds,lei,area,onGoToArt,study,tagsConfig}){
     if(!term||term.length<3||!text)return text;
     try{
       // Suporta AND via '+': marca cada termo com highlight separado
-      const termos=term.split("+").map(t=>t.trim()).filter(t=>t.length>=3);
+      const termos=term.split("+").map(t=>t.trim()).filter(t=>t.length>=3 || t.startsWith("#"));
       if(termos.length===0)return text;
       const escaped=termos.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|");
       const re=new RegExp(`(${escaped})`,"gi");
       const parts=text.split(re);
-      return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2}},p):p);
+      return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2,fontWeight:p.startsWith("#")?700:400}},p):p);
     }catch(e){return text;}
   };
   const getArtigoDisps=(artId)=>{
@@ -2048,10 +2087,15 @@ function TabAnexos({lei,addAnexo,delAnexo}){const [uping,setUp]=useState(false);
 // ═══ BUSCA GERAL ═══
 function BuscaGeral({lib,study,tagsConfig}){
   const [filtro,setFiltro]=useState("");
-  const [selTag,setSelTag]=useState("");
+  const [selTags,setSelTags]=useState([]);
   const [scope,setScope]=useState({legis:true,notas:true});
   const [expandedIdx,setExpandedIdx]=useState(null);
   const [selLeis,setSelLeis]=useState(()=>new Set(lib.map(l=>l.id)));
+
+  const toggleTag = (tid) => {
+    setSelTags(prev => prev.includes(tid) ? prev.filter(x => x !== tid) : [...prev, tid]);
+    setExpandedIdx(null);
+  };
   const allSelected=lib.length>0&&selLeis.size===lib.length;
 
   // Sincroniza seleção quando lib muda (lei adicionada/removida)
@@ -2079,13 +2123,13 @@ function BuscaGeral({lib,study,tagsConfig}){
   // Busca cross-lei: roda fullTextSearch em cada lei selecionada
   const resultados=useMemo(()=>{
     const termoBusca = (filtro || "").trim();
-    const tagFiltro = selTag ? tagsConfig.find(t=>t.id===selTag)?.name : "";
+    const tagsFiltro = selTags.map(tid => "#" + tagsConfig.find(t=>t.id===tid)?.name).filter(Boolean);
     
     // Se não tem termo nem tag, não busca
-    if(termoBusca.length < 3 && !tagFiltro) return [];
+    if(termoBusca.length < 3 && tagsFiltro.length === 0) return [];
     
-    // Se tem tag, adiciona ao termo de busca (AND)
-    const termoFinal = [termoBusca, tagFiltro].filter(Boolean).join(" + ");
+    // Todas as tags + termo (Lógica AND)
+    const termoFinal = [...tagsFiltro, termoBusca].filter(t => t.length >= 3 || t.startsWith("#")).join(" + ");
     
     const res=[];
     for(const lei of lib){
@@ -2098,11 +2142,11 @@ function BuscaGeral({lib,study,tagsConfig}){
       }catch(_){}
     }
     return res;
-  },[filtro,selTag,scope,lib,selLeis,study,tagsConfig]);
+  },[filtro,selTags,scope,lib,selLeis,study,tagsConfig]);
 
   const totalOcorrencias=useMemo(()=>resultados.reduce((s,r)=>s+r.ocorrencias,0),[resultados]);
   const leisComResultados=useMemo(()=>new Set(resultados.map(r=>r.leiId)).size,[resultados]);
-  const buscaAtiva=filtro.trim().length>=3 || selTag;
+  const buscaAtiva=filtro.trim().length>=3 || selTags.length > 0;
 
   // Hierarquias por lei (cache)
   const ctxMap=useMemo(()=>{
@@ -2117,12 +2161,12 @@ function BuscaGeral({lib,study,tagsConfig}){
     if(!term||term.length<3||!text)return text;
     try{
       // Suporta AND via '+': marca cada termo com highlight separado
-      const termos=term.split("+").map(t=>t.trim()).filter(t=>t.length>=3);
+      const termos=term.split("+").map(t=>t.trim()).filter(t=>t.length>=3 || t.startsWith("#"));
       if(termos.length===0)return text;
       const escaped=termos.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|");
       const re=new RegExp(`(${escaped})`,"gi");
       const parts=text.split(re);
-      return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2}},p):p);
+      return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2,fontWeight:p.startsWith("#")?700:400}},p):p);
     }catch(_){return text;}
   };
 
@@ -2188,13 +2232,20 @@ function BuscaGeral({lib,study,tagsConfig}){
               </label>
             </div>
             
-            <div style={{display:"flex", alignItems:"center", gap:6}}>
-              <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Filtrar por Tag:</span>
-              <select value={selTag} onChange={e=>setSelTag(e.target.value)} style={{fontSize:12, padding:"2px 6px", borderRadius:4, background:"var(--bg-hover)", color:"var(--text)", border:"1px solid var(--border)"}}>
-                <option value="">Todas as Tags</option>
-                {tagsConfig.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-              </select>
-            </div>
+        <div style={{display:"flex", alignItems:"center", gap:8}}>
+          <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Filtrar por Tags:</span>
+          <div style={{display:"flex", flexWrap:"wrap", gap:4}}>
+            {tagsConfig.length === 0 && <span style={{fontSize:11, color:"var(--text-mute)"}}>Nenhuma tag cadastrada</span>}
+            {tagsConfig.map(t => {
+              const isSel = selTags.includes(t.id);
+              return <span key={t.id} onClick={() => toggleTag(t.id)}
+                style={{cursor:"pointer", fontSize:11, padding:"2px 8px", borderRadius:4, border:"1px solid "+(isSel?t.color:"var(--border)"), background:isSel?t.color:"var(--bg-hover)", color:isSel?"#fff":"var(--text-sec)", transition:"all 0.2s", fontWeight:isSel?600:400}}>
+                #{t.name}
+              </span>
+            })}
+            {selTags.length > 0 && <button onClick={() => setSelTags([])} style={{border:"none", background:"none", color:"var(--err)", fontSize:10, cursor:"pointer", textDecoration:"underline"}}>Limpar</button>}
+          </div>
+        </div>
           </div>
 
           {buscaAtiva&&(
@@ -2262,9 +2313,9 @@ function BuscaGeral({lib,study,tagsConfig}){
                         const tagNames = tagsConfig.filter(t => tags.includes(t.id) || noteTags.includes(t.id)).map(t => t.name).join(" ");
                         
                         const isMatch=(()=>{
-                          const tagFiltro = selTag ? tagsConfig.find(t=>t.id===selTag)?.name : "";
-                          const termoFinal = [filtro, tagFiltro].filter(Boolean).join(" + ");
-                          const ts=termoFinal.split("+").map(t=>t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")).filter(t=>t.length>=3);
+                          const tagsFiltro = selTags.map(tid => "#" + tagsConfig.find(t=>t.id===tid)?.name).filter(Boolean);
+                          const termoFinal = [...tagsFiltro, filtro].filter(t => t.trim().length >= 3 || t.startsWith("#")).join(" + ");
+                          const ts=termoFinal.split("+").map(t=>t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")).filter(t=>t.length>=3 || t.startsWith("#"));
                           const tx=((d.txt||"") + " " + note + " " + tagNames).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
                           return ts.length>0&&ts.every(t=>tx.includes(t));
                         })();
