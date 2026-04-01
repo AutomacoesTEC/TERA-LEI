@@ -939,6 +939,8 @@ function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
   const [showAdd, setShowAdd] = useState(false);
   const [newName, setNewName] = useState("");
   const [newColor, setNewColor] = useState("#d4a853");
+  const [tagFilter, setTagFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc"); // "asc" ou "desc"
   const containerRef = useRef(null);
 
   // Fecha o modal ao clicar fora
@@ -970,6 +972,26 @@ function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
     }
   };
 
+  const handleToggle = (tagId, isSelected) => {
+    if(!isSelected) {
+      if(confirm(`Deseja aplicar a tag #${tagsConfig.find(t=>t.id===tagId)?.name}?`)) {
+        onToggle(tagId);
+      }
+    } else {
+      if(confirm(`Deseja remover a tag #${tagsConfig.find(t=>t.id===tagId)?.name}?`)) {
+        onToggle(tagId);
+      }
+    }
+  };
+
+  const filteredTags = useMemo(() => {
+    let list = tagsConfig.filter(t => t.name.toLowerCase().includes(tagFilter.toLowerCase()));
+    return list.sort((a, b) => {
+      const res = a.name.localeCompare(b.name);
+      return sortOrder === "asc" ? res : -res;
+    });
+  }, [tagsConfig, tagFilter, sortOrder]);
+
   return <div ref={containerRef} style={{display:"flex", flexWrap:"wrap", gap:4, alignItems:"center", position:"relative"}}>
     {/* Tags Aplicadas - Sempre Visíveis */}
     <div style={{display:"flex", flexWrap:"wrap", gap:4}}>
@@ -988,23 +1010,32 @@ function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
       {showAdd ? "Fechar" : "+ Tag"}
     </button>
 
-    {showAdd && <div className="cd" style={{position:"absolute", top:24, left:0, zIndex:300, padding:12, width:220, display:"flex", flexDirection:"column", gap:10, boxShadow:"var(--shadow-lg)", border:"1px solid var(--border)", background:"var(--bg-card)"}}>
+    {showAdd && <div className="cd" style={{position:"absolute", top:24, left:0, zIndex:300, padding:14, width:280, display:"flex", flexDirection:"column", gap:10, boxShadow:"var(--shadow-lg)", border:"1px solid var(--border)", background:"var(--bg-card)"}}>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-        <div style={{fontSize:11, fontWeight:700, color:"var(--gold)"}}>Gerenciar Tags</div>
-        <button onClick={() => setShowAdd(false)} style={{border:"none", background:"none", color:"var(--text-sec)", cursor:"pointer", fontSize:12}}>✕</button>
+        <div style={{fontSize:12, fontWeight:700, color:"var(--gold)"}}>Gerenciar Tags</div>
+        <div style={{display:"flex", gap:6}}>
+          <button onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")} className="nb" style={{padding:2, fontSize:10, background:"var(--bg-hover)"}} title="Inverter Ordem">
+            {sortOrder === "asc" ? "A-Z ↓" : "Z-A ↑"}
+          </button>
+          <button onClick={() => setShowAdd(false)} style={{border:"none", background:"none", color:"var(--text-sec)", cursor:"pointer", fontSize:14}}>✕</button>
+        </div>
       </div>
+
+      <input value={tagFilter} onChange={e=>setTagFilter(e.target.value)} 
+        placeholder="Filtrar tags..." 
+        style={{fontSize:11, padding:"6px 10px", borderRadius:5, border:"1px solid var(--border)", background:"var(--bg-hover)"}} />
       
-      <div style={{maxHeight:120, overflowY:"auto", display:"flex", flexDirection:"column", gap:4, paddingRight:4}}>
-        {tagsConfig.length === 0 && <div style={{fontSize:10, color:"var(--text-mute)", textAlign:"center", padding:10}}>Nenhuma tag cadastrada</div>}
-        {tagsConfig.map(t => {
+      <div style={{maxHeight:180, overflowY:"auto", display:"flex", flexDirection:"column", gap:4, paddingRight:4}}>
+        {filteredTags.length === 0 && <div style={{fontSize:10, color:"var(--text-mute)", textAlign:"center", padding:10}}>Nenhuma tag encontrada</div>}
+        {filteredTags.map(t => {
           const isSel = selectedTags.includes(t.id);
           return (
             <div key={t.id} style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:4, padding:2, borderRadius:4, background:isSel?"rgba(212,168,83,0.05)":"transparent"}}>
-              <span onClick={() => onToggle(t.id)} 
-                style={{flex:1, cursor:"pointer", fontSize:11, background:isSel?t.color:"var(--bg-hover)", color:isSel?"#fff":"var(--text)", padding:"3px 6px", borderRadius:3, transition:"all 0.2s", fontWeight:isSel?600:400}}>
+              <span onClick={() => handleToggle(t.id, isSel)} 
+                style={{flex:1, cursor:"pointer", fontSize:11, background:isSel?t.color:"var(--bg-hover)", color:isSel?"#fff":"var(--text)", padding:"4px 8px", borderRadius:4, transition:"all 0.2s", fontWeight:isSel?600:400, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>
                 #{t.name}
               </span>
-              <button onClick={() => removeTag(t.id)} style={{border:"none", background:"none", color:"var(--err)", cursor:"pointer", fontSize:12, padding:"0 4px"}} title="Excluir Tag">×</button>
+              <button onClick={() => removeTag(t.id)} style={{border:"none", background:"none", color:"var(--err)", cursor:"pointer", fontSize:14, padding:"0 6px"}} title="Excluir Tag">×</button>
             </div>
           );
         })}
@@ -2093,6 +2124,8 @@ function BuscaGeral({lib,study,tagsConfig}){
   const [selLeis,setSelLeis]=useState(()=>new Set(lib.map(l=>l.id)));
   const [showSelector,setShowSelector]=useState(false);
   const [leiFilter,setLeiFilter]=useState("");
+  const [showTagSelector,setShowTagSelector]=useState(false);
+  const [tagSearch,setTagSearch]=useState("");
 
   const toggleTag = (tid) => {
     setSelTags(prev => prev.includes(tid) ? prev.filter(x => x !== tid) : [...prev, tid]);
@@ -2212,28 +2245,46 @@ function BuscaGeral({lib,study,tagsConfig}){
           
           <div style={{display:"flex", alignItems:"center", gap:8}}>
             <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Tags:</span>
-            <div style={{display:"flex", flexWrap:"wrap", gap:4}}>
-              {tagsConfig.length === 0 && <span style={{fontSize:11, color:"var(--text-mute)"}}>Nenhuma</span>}
-              {tagsConfig.map(t => {
-                const isSel = selTags.includes(t.id);
-                return <span key={t.id} onClick={() => toggleTag(t.id)}
-                  style={{cursor:"pointer", fontSize:11, padding:"2px 8px", borderRadius:4, border:"1px solid "+(isSel?t.color:"var(--border)"), background:isSel?t.color:"var(--bg-hover)", color:isSel?"#fff":"var(--text-sec)", transition:"all 0.2s", fontWeight:isSel?600:400}}>
-                  #{t.name}
-                </span>
-              })}
-              {selTags.length > 0 && <button onClick={() => setSelTags([])} style={{border:"none", background:"none", color:"var(--err)", fontSize:10, cursor:"pointer", textDecoration:"underline"}}>Limpar</button>}
-            </div>
+            <button onClick={()=>{setShowTagSelector(!showTagSelector); setShowSelector(false);}} className="nb" style={{background:showTagSelector?"var(--gold-subtle)":"var(--bg-hover)", border:"1px solid "+(showTagSelector?"var(--gold)":"var(--border)"), padding:"4px 8px", height:"auto"}}>
+              <span style={{fontSize:11, fontWeight:600, color:showTagSelector?"var(--gold)":"var(--text-sec)"}}>
+                {selTags.length === 0 ? "Todas as tags" : selTags.length + " selecionada(s)"}
+              </span>
+              <span style={{fontSize:9, opacity:0.7}}>{showTagSelector?"▲":"▼"}</span>
+            </button>
+            {selTags.length > 0 && <button onClick={() => setSelTags([])} style={{border:"none", background:"none", color:"var(--err)", fontSize:10, cursor:"pointer", textDecoration:"underline"}}>Limpar</button>}
           </div>
         </div>
 
         {/* Gatilho do Seletor de Leis */}
-        <button onClick={()=>setShowSelector(!showSelector)} className="nb" style={{background:showSelector?"var(--gold-subtle)":"var(--bg-hover)", border:"1px solid "+(showSelector?"var(--gold)":"var(--border)"), padding:"5px 10px", height:"auto"}}>
+        <button onClick={()=>{setShowSelector(!showSelector); setShowTagSelector(false);}} className="nb" style={{background:showSelector?"var(--gold-subtle)":"var(--bg-hover)", border:"1px solid "+(showSelector?"var(--gold)":"var(--border)"), padding:"5px 10px", height:"auto"}}>
           <span style={{fontSize:12, fontWeight:600, color:showSelector?"var(--gold)":"var(--text-sec)"}}>
             {selLeis.size === lib.length ? "Todas as leis ("+lib.length+")" : selLeis.size + " lei(s) selecionada(s)"}
           </span>
           <span style={{fontSize:10, opacity:0.7}}>{showSelector?"▲":"▼"}</span>
         </button>
       </div>
+
+      {/* Painel de Tags Retrátil */}
+      {showTagSelector && (
+        <div className="fade" style={{border:"1px solid var(--border)", borderRadius:8, padding:12, background:"var(--bg-card)", boxShadow:"var(--shadow)", marginTop:-5}}>
+          <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:10, marginBottom:10, borderBottom:"1px solid var(--border)", paddingBottom:8}}>
+            <input value={tagSearch} onChange={e=>setTagSearch(e.target.value)} 
+              placeholder="Pesquisar tags..." 
+              style={{fontSize:11, padding:"5px 10px", borderRadius:5, border:"1px solid var(--border)", background:"var(--bg-hover)", flex:1, maxWidth:250}} />
+            <button onClick={()=>setShowTagSelector(false)} className="nb" style={{fontSize:11, padding:"4px 8px"}}>Fechar</button>
+          </div>
+          <div style={{display:"flex", flexWrap:"wrap", gap:6, maxHeight:150, overflowY:"auto"}}>
+            {tagsConfig.length === 0 && <span style={{fontSize:11, color:"var(--text-mute)"}}>Nenhuma tag cadastrada</span>}
+            {tagsConfig.filter(t => t.name.toLowerCase().includes(tagSearch.toLowerCase())).map(t => {
+              const isSel = selTags.includes(t.id);
+              return <span key={t.id} onClick={() => toggleTag(t.id)}
+                style={{cursor:"pointer", fontSize:11, padding:"3px 10px", borderRadius:5, border:"1px solid "+(isSel?t.color:"var(--border)"), background:isSel?t.color:"var(--bg-hover)", color:isSel?"#fff":"var(--text-sec)", transition:"all 0.1s", fontWeight:isSel?600:400}}>
+                #{t.name}
+              </span>
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Painel de Escopo Retrátil */}
       {showSelector && (
