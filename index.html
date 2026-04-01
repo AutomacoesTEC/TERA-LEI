@@ -2185,6 +2185,12 @@ function BuscaGeral({lib,study,tagsConfig}){
     <h2 style={{fontSize:20,fontWeight:700,marginBottom:12}}>Busca Geral</h2>
     <p style={{fontSize:13,color:"var(--text-sec)",marginBottom:14}}>Pesquise em todas as leis da biblioteca ou selecione quais incluir na busca.</p>
 
+    {lib.length===0?(
+      <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>
+        Nenhuma lei na biblioteca. Adicione leis pela aba <b>Biblioteca</b> para utilizar a busca geral.
+      </div>
+    ):(
+      <>
     {/* Campo de busca principal */}
     <div style={{marginBottom:12, display:"flex", flexDirection:"column", gap:10}}>
       <input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}}
