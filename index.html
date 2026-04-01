@@ -1025,15 +1025,16 @@ function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
         placeholder="Filtrar tags..." 
         style={{fontSize:11, padding:"6px 10px", borderRadius:5, border:"1px solid var(--border)", background:"var(--bg-hover)"}} />
       
-      <div style={{maxHeight:165, overflowY:"auto", display:"flex", flexDirection:"column", gap:4, paddingRight:4}}>
+      {/* Lista de tags com altura fixa para 6 itens (aprox. 165px) */}
+      <div style={{maxHeight:165, overflowY:"auto", display:"flex", flexDirection:"column", gap:4, paddingRight:4, border:"1px solid var(--border)", borderRadius:6, padding:4, background:"var(--bg-hover)"}}>
         {filteredTags.length === 0 && <div style={{fontSize:10, color:"var(--text-mute)", textAlign:"center", padding:10}}>Nenhuma tag encontrada</div>}
         {filteredTags.map(t => {
           const isSel = selectedTags.includes(t.id);
           return (
-            <div key={t.id} style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:4, padding:2, borderRadius:4, background:isSel?"rgba(212,168,83,0.05)":"transparent"}}>
+            <div key={t.id} style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:4, padding:2, borderRadius:4, background:isSel?"rgba(212,168,83,0.1)":"transparent"}}>
               <span onClick={() => handleToggle(t.id, isSel)} 
-                style={{flex:1, cursor:"pointer", fontSize:11, background:isSel?t.color:"var(--bg-hover)", color:isSel?"#fff":"var(--text)", padding:"4px 8px", borderRadius:4, transition:"all 0.2s", fontWeight:isSel?600:400, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>
-                #{t.name}
+                style={{flex:1, cursor:"pointer", fontSize:11, background:t.color, color:"#fff", padding:"4px 8px", borderRadius:4, transition:"all 0.2s", fontWeight:isSel?700:400, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", border:isSel?"2px solid var(--gold)":"1px solid transparent", boxShadow:isSel?"0 0 0 1px #fff":"none"}}>
+                #{t.name} {isSel && "✓"}
               </span>
               <button onClick={() => removeTag(t.id)} style={{border:"none", background:"none", color:"var(--err)", cursor:"pointer", fontSize:14, padding:"0 6px"}} title="Excluir Tag">×</button>
             </div>
@@ -1045,8 +1046,10 @@ function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
         <div style={{fontSize:10, fontWeight:600, color:"var(--text-sec)"}}>Nova Tag:</div>
         <input value={newName} onChange={e=>setNewName(e.target.value)} placeholder="Ex: Lucro Presumido" style={{fontSize:11, padding:"5px 8px", borderRadius:4, border:"1px solid var(--border)", background:"var(--bg)"}} />
         <div style={{display:"flex", gap:6, alignItems:"center"}}>
-          <input type="color" value={newColor} onChange={e=>setNewColor(e.target.value)} style={{width:34, height:26, padding:0, border:"1px solid var(--border)", borderRadius:4, cursor:"pointer"}} title="Escolher cor" />
-          <button onClick={addTag} className="btn-primary" style={{flex:1, padding:"4px", fontSize:11, fontWeight:600}}>Adicionar</button>
+          <div style={{display:"flex", alignItems:"center", gap:4, flex:1}}>
+            <input type="color" value={newColor} onChange={e=>setNewColor(e.target.value)} style={{width:34, height:26, padding:0, border:"1px solid var(--border)", borderRadius:4, cursor:"pointer"}} title="Escolher cor" />
+            <button onClick={addTag} className="btn-primary" style={{flex:1, padding:"4px 8px", fontSize:11, fontWeight:600, height:26, display:"flex", alignItems:"center", justifyContent:"center"}}>OK / Adicionar</button>
+          </div>
         </div>
       </div>
     </div>}
