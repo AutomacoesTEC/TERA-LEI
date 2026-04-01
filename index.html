@@ -2091,6 +2091,8 @@ function BuscaGeral({lib,study,tagsConfig}){
   const [scope,setScope]=useState({legis:true,notas:true});
   const [expandedIdx,setExpandedIdx]=useState(null);
   const [selLeis,setSelLeis]=useState(()=>new Set(lib.map(l=>l.id)));
+  const [showSelector,setShowSelector]=useState(false);
+  const [leiFilter,setLeiFilter]=useState("");
 
   const toggleTag = (tid) => {
     setSelTags(prev => prev.includes(tid) ? prev.filter(x => x !== tid) : [...prev, tid]);
@@ -2183,70 +2185,83 @@ function BuscaGeral({lib,study,tagsConfig}){
     <h2 style={{fontSize:20,fontWeight:700,marginBottom:12}}>Busca Geral</h2>
     <p style={{fontSize:13,color:"var(--text-sec)",marginBottom:14}}>Pesquise em todas as leis da biblioteca ou selecione quais incluir na busca.</p>
 
-    {/* Seletor de leis */}
-    {lib.length===0?(
-      <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>
-        Nenhuma lei na biblioteca. Adicione leis pela aba <b>Biblioteca</b> para utilizar a busca geral.
-      </div>
-    ):(
-      <>
-        <div style={{marginBottom:14,border:"1px solid var(--border)",borderRadius:8,padding:"10px 14px",background:"var(--bg-card)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-            <label style={{display:"flex",alignItems:"center",gap:5,cursor:"pointer",fontSize:12,fontWeight:600,color:"var(--gold)"}}>
-              <input type="checkbox" checked={allSelected} onChange={toggleAll}
-                style={{accentColor:"var(--gold)"}}/>
-              {allSelected?"Desmarcar todas":"Selecionar todas"} ({lib.length} lei(s))
+    {/* Campo de busca principal */}
+    <div style={{marginBottom:12, display:"flex", flexDirection:"column", gap:10}}>
+      <input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}}
+        placeholder="Buscar palavra (mín. 3 letras) · Use + para AND: cofins + importação + crédito"
+        style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",
+          borderRadius:8,padding:"12px 16px",fontSize:15,boxSizing:"border-box",boxShadow:"var(--shadow)"}}/>
+      
+      <div style={{display:"flex", gap:15, alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", background:"var(--bg-card)", padding:"10px 14px", borderRadius:8, border:"1px solid var(--border)"}}>
+        <div style={{display:"flex", alignItems:"center", gap:15, flexWrap:"wrap"}}>
+          <div style={{display:"flex", alignItems:"center", gap:6}}>
+            <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Buscar em:</span>
+            <label style={{display:"flex", alignItems:"center", gap:4, cursor:"pointer", fontSize:12}}>
+              <input type="checkbox" checked={scope.legis} onChange={e=>setScope({...scope, legis:e.target.checked})} /> Legislação
+            </label>
+            <label style={{display:"flex", alignItems:"center", gap:4, cursor:"pointer", fontSize:12}}>
+              <input type="checkbox" checked={scope.notas} onChange={e=>setScope({...scope, notas:e.target.checked})} /> Anotações
             </label>
           </div>
-          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-            {lib.map(l=>(
-              <label key={l.id} style={{display:"flex",alignItems:"center",gap:4,cursor:"pointer",
-                fontSize:11,padding:"3px 8px",borderRadius:5,
-                background:selLeis.has(l.id)?"var(--gold-subtle)":"var(--bg-hover)",
-                border:"1px solid "+(selLeis.has(l.id)?"var(--gold)":"var(--border)"),
-                transition:"all .15s"}}>
+          
+          <div style={{display:"flex", alignItems:"center", gap:8}}>
+            <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Tags:</span>
+            <div style={{display:"flex", flexWrap:"wrap", gap:4}}>
+              {tagsConfig.length === 0 && <span style={{fontSize:11, color:"var(--text-mute)"}}>Nenhuma</span>}
+              {tagsConfig.map(t => {
+                const isSel = selTags.includes(t.id);
+                return <span key={t.id} onClick={() => toggleTag(t.id)}
+                  style={{cursor:"pointer", fontSize:11, padding:"2px 8px", borderRadius:4, border:"1px solid "+(isSel?t.color:"var(--border)"), background:isSel?t.color:"var(--bg-hover)", color:isSel?"#fff":"var(--text-sec)", transition:"all 0.2s", fontWeight:isSel?600:400}}>
+                  #{t.name}
+                </span>
+              })}
+              {selTags.length > 0 && <button onClick={() => setSelTags([])} style={{border:"none", background:"none", color:"var(--err)", fontSize:10, cursor:"pointer", textDecoration:"underline"}}>Limpar</button>}
+            </div>
+          </div>
+        </div>
+
+        {/* Gatilho do Seletor de Leis */}
+        <button onClick={()=>setShowSelector(!showSelector)} className="nb" style={{background:showSelector?"var(--gold-subtle)":"var(--bg-hover)", border:"1px solid "+(showSelector?"var(--gold)":"var(--border)"), padding:"5px 10px", height:"auto"}}>
+          <span style={{fontSize:12, fontWeight:600, color:showSelector?"var(--gold)":"var(--text-sec)"}}>
+            {selLeis.size === lib.length ? "Todas as leis ("+lib.length+")" : selLeis.size + " lei(s) selecionada(s)"}
+          </span>
+          <span style={{fontSize:10, opacity:0.7}}>{showSelector?"▲":"▼"}</span>
+        </button>
+      </div>
+
+      {/* Painel de Escopo Retrátil */}
+      {showSelector && (
+        <div className="fade" style={{border:"1px solid var(--border)", borderRadius:8, padding:12, background:"var(--bg-card)", boxShadow:"var(--shadow)", marginTop:-5}}>
+          <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:10, marginBottom:12, borderBottom:"1px solid var(--border)", paddingBottom:10}}>
+            <div style={{display:"flex", alignItems:"center", gap:10, flex:1}}>
+              <input value={leiFilter} onChange={e=>setLeiFilter(e.target.value)} 
+                placeholder="Filtrar leis por nome ou número..." 
+                style={{fontSize:12, padding:"6px 10px", borderRadius:5, border:"1px solid var(--border)", background:"var(--bg-hover)", width:"100%", maxWidth:300}} />
+              <span style={{fontSize:11, color:"var(--text-mute)"}}>{lib.filter(l=>l.nome.toLowerCase().includes(leiFilter.toLowerCase())).length} de {lib.length}</span>
+            </div>
+            <div style={{display:"flex", gap:8}}>
+              <button onClick={toggleAll} className="nb" style={{fontSize:11, padding:"4px 8px", background:"var(--bg-hover)"}}>
+                {allSelected ? "Desmarcar Todas" : "Selecionar Todas"}
+              </button>
+              <button onClick={()=>setShowSelector(false)} className="nb" style={{fontSize:11, padding:"4px 8px"}}>Fechar</button>
+            </div>
+          </div>
+          <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(200px, 1fr))", gap:6, maxHeight:250, overflowY:"auto", paddingRight:5}}>
+            {lib.filter(l=>l.nome.toLowerCase().includes(leiFilter.toLowerCase())).map(l=>(
+              <label key={l.id} style={{display:"flex",alignItems:"center",gap:6,cursor:"pointer",
+                fontSize:11,padding:"5px 8px",borderRadius:5,
+                background:selLeis.has(l.id)?"var(--gold-subtle)":"transparent",
+                border:"1px solid "+(selLeis.has(l.id)?"var(--gold)":"transparent"),
+                transition:"all .1s"}}>
                 <input type="checkbox" checked={selLeis.has(l.id)} onChange={()=>toggleLei(l.id)}
-                  style={{accentColor:"var(--gold)",width:12,height:12}}/>
-                <span style={{maxWidth:220,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{l.nome}</span>
-                <span style={{color:"var(--text-mute)",fontSize:10}}>({l.nA} art.)</span>
+                  style={{accentColor:"var(--gold)",width:13,height:13}}/>
+                <span style={{flex:1, overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={l.nome}>{l.nome}</span>
+                <span style={{color:"var(--text-mute)",fontSize:9, minWidth:40, textAlign:"right"}}>{l.nA} art.</span>
               </label>
             ))}
           </div>
         </div>
-
-        {/* Campo de busca e filtros */}
-        <div style={{marginBottom:12, display:"flex", flexDirection:"column", gap:10}}>
-          <input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}}
-            placeholder="Buscar palavra (mín. 3 letras) · Use + para AND: cofins + importação + crédito"
-            style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",
-              borderRadius:6,padding:"10px 14px",fontSize:14,boxSizing:"border-box"}}/>
-          
-          <div style={{display:"flex", gap:15, alignItems:"center", flexWrap:"wrap", background:"var(--bg-card)", padding:10, borderRadius:8, border:"1px solid var(--border)"}}>
-            <div style={{display:"flex", alignItems:"center", gap:6}}>
-              <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Buscar em:</span>
-              <label style={{display:"flex", alignItems:"center", gap:4, cursor:"pointer", fontSize:12}}>
-                <input type="checkbox" checked={scope.legis} onChange={e=>setScope({...scope, legis:e.target.checked})} /> Legislação
-              </label>
-              <label style={{display:"flex", alignItems:"center", gap:4, cursor:"pointer", fontSize:12}}>
-                <input type="checkbox" checked={scope.notas} onChange={e=>setScope({...scope, notas:e.target.checked})} /> Anotações
-              </label>
-            </div>
-            
-        <div style={{display:"flex", alignItems:"center", gap:8}}>
-          <span style={{fontSize:12, fontWeight:600, color:"var(--text-sec)"}}>Filtrar por Tags:</span>
-          <div style={{display:"flex", flexWrap:"wrap", gap:4}}>
-            {tagsConfig.length === 0 && <span style={{fontSize:11, color:"var(--text-mute)"}}>Nenhuma tag cadastrada</span>}
-            {tagsConfig.map(t => {
-              const isSel = selTags.includes(t.id);
-              return <span key={t.id} onClick={() => toggleTag(t.id)}
-                style={{cursor:"pointer", fontSize:11, padding:"2px 8px", borderRadius:4, border:"1px solid "+(isSel?t.color:"var(--border)"), background:isSel?t.color:"var(--bg-hover)", color:isSel?"#fff":"var(--text-sec)", transition:"all 0.2s", fontWeight:isSel?600:400}}>
-                #{t.name}
-              </span>
-            })}
-            {selTags.length > 0 && <button onClick={() => setSelTags([])} style={{border:"none", background:"none", color:"var(--err)", fontSize:10, cursor:"pointer", textDecoration:"underline"}}>Limpar</button>}
-          </div>
-        </div>
-          </div>
+      )}
 
           {buscaAtiva&&(
             <div style={{marginTop:2,fontSize:12,color:"var(--text-sec)"}}>
