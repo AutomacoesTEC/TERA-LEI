@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-03-31T10:12:36.654929-03:00",
-  "data_busca": "2026-03-31",
-  "total": 174,
-  "novos_nesta_execucao": 11,
+  "ultima_atualizacao": "2026-04-01T10:15:54.731369-03:00",
+  "data_busca": "2026-04-01",
+  "total": 188,
+  "novos_nesta_execucao": 14,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,118 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "184ae51c5b0a2605",
+      "data": "2026-04-01",
+      "titulo": "31/03/2026 14:22Reunião MinisterialLula para ministros: 'Nós ainda temos muita coisa para concluir até o dia 31 de dezembro'",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/lula-para-ministros-201cnos-ainda-temos-muita-coisa-para-concluir-ate-o-dia-31-de-dezembro",
+      "resumo": ""
+    },
+    {
+      "id": "715fe6e714e1d50a",
+      "data": "2026-04-01",
+      "titulo": "31/03/2026 18:15Mulher seguraMJSP lança site com dados sobre a jornada das vítimas de feminicídio em 2025",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/mjsp-lanca-site-com-dados-sobre-a-jornada-das-vitimas-de-feminicidio-em-2025",
+      "resumo": ""
+    },
+    {
+      "id": "cd8c0e41daf00a01",
+      "data": "2026-04-01",
+      "titulo": "31/03/2026 20:15Mês do ArtesãoGoverno do Brasil anuncia R$ 28 milhões para ampliar formalização e fortalecer o artesanato",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/201cmaos-que-fazem-o-brasil201d-governo-federal-anuncia-cerca-de-r-28-milhoes-para-ampliar-formalizacao-e-fortalecer-o-artesanato",
+      "resumo": ""
+    },
+    {
+      "id": "909d5806cf7aaad4",
+      "data": "2026-04-01",
+      "titulo": "31/03/2026 17:56telecomunicaçõesPrestadores de serviços podem negociar dívidas de pequeno valor com a Anatel",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202603/prestadores-de-servicos-podem-negociar-dividas-de-pequeno-valor-com-a-anatel",
+      "resumo": ""
+    },
+    {
+      "id": "42604a49c7b73aef",
+      "data": "2026-04-01",
+      "titulo": "Brasil lidera debate regional para implementação de imposto mínimo sobre ultrarricos na América Latina",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/abril/brasil-lidera-debate-regional-para-implementacao-de-imposto-minimo-sobre-ultra-ricos-na-america-latina",
+      "resumo": "01/04/2026-Estudo apresentado à PTLAC revela que sistemas tributários da região são regressivos no topo da pirâmide e propõe taxação de 2% sobre patrimônios superiores a US$ 100 milhões"
+    },
+    {
+      "id": "079d629678b9f679",
+      "data": "2026-04-01",
+      "titulo": "TAXAÇÃO DAS GRANDES FORTUNAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=TAXA%C3%87%C3%83O%20DAS%20GRANDES%20FORTUNAS",
+      "resumo": ""
+    },
+    {
+      "id": "dd8deb8c961fe86d",
+      "data": "2026-04-01",
+      "titulo": "Ministério da Fazenda participa da cerimônia de encerramento de programa de avaliação do FMI e Banco Mundial",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/abril/ministerio-da-fazenda-participa-da-cerimonia-de-encerramento-de-programa-de-avaliacao-do-fmi-e-banco-mundial",
+      "resumo": "01/04/2026-Secretário de Reformas Econômicas destaca importância do Programa de Avaliação do Setor Financeiro para a manutenção de solidez e resiliência do sistema financeiro brasileiro."
+    },
+    {
+      "id": "0648fb6489c75ba4",
+      "data": "2026-04-01",
+      "titulo": "SETOR FINANCEIRO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SETOR%20FINANCEIRO",
+      "resumo": ""
+    },
+    {
+      "id": "f74d080eec15d0cb",
+      "data": "2026-04-01",
+      "titulo": "REUNIÃO INTERMINISTERIAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=REUNI%C3%83O%20INTERMINISTERIAL",
+      "resumo": ""
+    },
+    {
+      "id": "95e1a280dae0092d",
+      "data": "2026-04-01",
+      "titulo": "REINDUSTRIALIZAÇÃO VERDE",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=REINDUSTRIALIZA%C3%87%C3%83O%20VERDE",
+      "resumo": ""
+    },
+    {
+      "id": "a3d2778e7e7bebff",
+      "data": "2026-04-01",
+      "titulo": "TESOURO NACIONAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=TESOURO%20NACIONAL",
+      "resumo": ""
+    },
+    {
+      "id": "b939323e77dced57",
+      "data": "2026-04-01",
+      "titulo": "EDUCAÇÃO FINANCEIRA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=EDUCA%C3%87%C3%83O%20FINANCEIRA",
+      "resumo": ""
+    },
+    {
+      "id": "da6873f7c6cc92ef",
+      "data": "2026-04-01",
+      "titulo": "MERCADO DE APOSTAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MERCADO%20DE%20APOSTAS",
+      "resumo": ""
+    },
+    {
+      "id": "c9fa56155e496e8c",
+      "data": "2026-04-01",
+      "titulo": "Operação Piratas apreende produtos irregulares no centro de Maceió",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/operacao-piratas-apreende-produtos-irregulares-no-centro-de-maceio",
+      "resumo": "01/04/2026-Fiscalização em estabelecimentos comerciais combate a venda de itens falsificados e protege o consumidor em Alagoas."
+    },
     {
       "id": "8d24ed82e7914f83",
       "data": "2026-03-31",
