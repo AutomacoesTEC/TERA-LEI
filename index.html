@@ -531,18 +531,147 @@ function Logo(){return <svg width={36} height={36} viewBox="0 0 36 36"><defs><li
 function ThemeBtn({theme,toggle}){return <button className="theme-toggle" onClick={toggle} title={theme==="dark"?"Modo Claro":"Modo Escuro"}><svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{theme==="dark"?<><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></>:<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>}</svg></button>;}
 
 // ═══ LIBRARY ═══
-function Lib({lib,sel,onSel,onDel,onUp,uping,fRef}){return <div className="fade">
-  <div style={{border:"2px dashed var(--border)",borderRadius:14,padding:"40px 28px",textAlign:"center",marginBottom:24,background:"var(--bg-hover)"}}>
-    {uping?<div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}><Sp/><span style={{color:"var(--text-sec)",fontSize:14}}>Processando PDF e extraindo estrutura...</span></div>
-    :<><Ic d={IC.up} s={26} c="#B8965A"/><div style={{marginTop:8,fontSize:17,fontWeight:600}}>Adicionar Lei</div><div style={{color:"var(--text-sec)",fontSize:14,marginTop:3,marginBottom:12}}>O parser LC 95/1998 roda local</div>
-      <label style={{display:"inline-flex",alignItems:"center",gap:7,padding:"9px 24px",background:"var(--grad)",color:"#fff",borderRadius:7,cursor:"pointer",fontSize:14,fontWeight:600}}><Ic d={IC.up} s={14} c="#fff"/>Selecionar PDF<input ref={fRef} type="file" accept=".pdf" onChange={onUp} style={{display:"none"}}/></label></>}
-  </div>
-  {lib.length>0&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:10}}>{lib.map(l=><div key={l.id} className="cd" style={{padding:14,cursor:"pointer",borderColor:sel?.id===l.id?"#B8965A":"#E8DFD0"}} onClick={()=>onSel(l)}>
-    <div style={{display:"flex",justifyContent:"space-between"}}><div><div style={{fontSize:14,fontWeight:600,marginBottom:4}}>{l.nome}</div><span className="tg" style={{background:"var(--gold-subtle)",color:"var(--gold)"}}>{AREAS[l.area]?.nome||l.area}</span></div>
-    <button onClick={e=>{e.stopPropagation();onDel(l.id);}} style={{background:"none",border:"none",color:"var(--text-sec)",cursor:"pointer"}}><Ic d={IC.tr} s={13} c="#8A8279"/></button></div>
-    <div style={{display:"flex",gap:10,marginTop:8,fontSize:11,color:"var(--text-sec)",fontFamily:"'Segoe UI',sans-serif"}}><span>{l.nA} artigos</span><span>{l.nD} dispositivos</span><span>{l.data}</span></div>
-  </div>)}</div>}
-</div>;}
+function Lib({lib,sel,onSel,onDel,onUp,uping,fRef}){
+  const [search, setSearch] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [sortOrder, setSortOrder] = useState("new"); // "new", "az", "za", "size"
+
+  // Tipos de leis para classificação (extraídos dinamicamente dos nomes)
+  const types = useMemo(() => {
+    const t = new Set();
+    lib.forEach(l => {
+      const match = l.nome.match(/^(Lcp|Lei|IN|Decreto|Resol|Portaria|AD|ADE|ADI)/i);
+      if(match) t.add(match[0].toUpperCase());
+      else t.add("OUTROS");
+    });
+    return ["all", ...Array.from(t).sort()];
+  }, [lib]);
+
+  const filteredLib = useMemo(() => {
+    let list = lib.filter(l => {
+      const matchesSearch = l.nome.toLowerCase().includes(search.toLowerCase());
+      const matchesType = filterType === "all" || (
+        filterType === "OUTROS" 
+          ? !l.nome.match(/^(Lcp|Lei|IN|Decreto|Resol|Portaria|AD|ADE|ADI)/i)
+          : l.nome.toUpperCase().startsWith(filterType)
+      );
+      return matchesSearch && matchesType;
+    });
+
+    return list.sort((a, b) => {
+      if(sortOrder === "az") return a.nome.localeCompare(b.nome);
+      if(sortOrder === "za") return b.nome.localeCompare(a.nome);
+      if(sortOrder === "size") return b.nD - a.nD;
+      return new Date(b.data || 0) - new Date(a.data || 0); // Default: Newest
+    });
+  }, [lib, search, filterType, sortOrder]);
+
+  // Agrupamento por Corredores (Áreas)
+  const corridors = useMemo(() => {
+    const groups = {};
+    filteredLib.forEach(l => {
+      const areaName = AREAS[l.area]?.nome || "Geral";
+      if(!groups[areaName]) groups[areaName] = [];
+      groups[areaName].push(l);
+    });
+    return Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [filteredLib]);
+
+  return <div className="fade">
+    {/* Cabeçalho da Biblioteca - Busca e Filtros */}
+    <div style={{display:"flex", flexDirection:"column", gap:15, marginBottom:25}}>
+      <div style={{display:"flex", gap:10, flexWrap:"wrap"}}>
+        <div style={{flex:1, minWidth:300, position:"relative"}}>
+          <input value={search} onChange={e=>setSearch(e.target.value)} 
+            placeholder="Pesquisar lei por nome ou número..." 
+            style={{width:"100%", padding:"12px 16px 12px 40px", borderRadius:10, border:"1px solid var(--border)", background:"var(--bg-card)", fontSize:15, boxShadow:"var(--shadow)"}} />
+          <div style={{position:"absolute", left:14, top:13, opacity:0.5}}><Ic d={IC.sc} s={16} c="var(--text)"/></div>
+        </div>
+        
+        <select value={filterType} onChange={e=>setFilterType(e.target.value)} 
+          style={{padding:"0 15px", borderRadius:10, border:"1px solid var(--border)", background:"var(--bg-card)", color:"var(--text)", fontWeight:600}}>
+          {types.map(t => <option key={t} value={t}>{t === "all" ? "📚 Todos os Tipos" : t}</option>)}
+        </select>
+
+        <select value={sortOrder} onChange={e=>setSortOrder(e.target.value)} 
+          style={{padding:"0 15px", borderRadius:10, border:"1px solid var(--border)", background:"var(--bg-card)", color:"var(--text)", fontWeight:600}}>
+          <option value="new">🕒 Recentes</option>
+          <option value="az">🔤 A-Z</option>
+          <option value="za">🔤 Z-A</option>
+          <option value="size">📊 Tamanho</option>
+        </select>
+      </div>
+
+      <div style={{border:"2px dashed var(--border)", borderRadius:14, padding:"20px", textAlign:"center", background:"var(--bg-hover)", transition:"all 0.3s"}}>
+        {uping ? <div style={{display:"flex", flexDirection:"column", alignItems:"center", gap:8}}><Sp/><span style={{color:"var(--text-sec)", fontSize:14}}>Indexando novo conteúdo...</span></div>
+        : <div style={{display:"flex", alignItems:"center", justifyContent:"center", gap:15}}>
+            <div style={{textAlign:"left"}}>
+              <div style={{fontSize:15, fontWeight:700}}>Novo Corredor?</div>
+              <div style={{color:"var(--text-sec)", fontSize:12}}>Adicione um PDF para expandir seu acervo.</div>
+            </div>
+            <label style={{display:"inline-flex", alignItems:"center", gap:7, padding:"8px 20px", background:"var(--grad)", color:"#fff", borderRadius:8, cursor:"pointer", fontSize:13, fontWeight:700, boxShadow:"var(--shadow)"}}>
+              <Ic d={IC.up} s={14} c="#fff"/>ADICIONAR LEI<input ref={fRef} type="file" accept=".pdf" onChange={onUp} style={{display:"none"}}/>
+            </label>
+          </div>}
+      </div>
+    </div>
+
+    {/* Corredores de Estantes */}
+    {corridors.length === 0 ? (
+      <div style={{textAlign:"center", padding:60, color:"var(--text-mute)"}}>
+        <div style={{fontSize:40, marginBottom:10}}>🏜️</div>
+        <div>Nenhuma lei encontrada neste corredor.</div>
+      </div>
+    ) : (
+      corridors.map(([area, items]) => (
+        <div key={area} style={{marginBottom:30}}>
+          <div style={{display:"flex", alignItems:"center", gap:10, marginBottom:15, borderBottom:"2px solid var(--gold-subtle)", paddingBottom:8}}>
+            <div style={{width:4, height:20, background:"var(--gold)", borderRadius:2}}></div>
+            <h3 style={{fontSize:16, fontWeight:800, color:"var(--text)", textTransform:"uppercase", letterSpacing:1}}>{area} <span style={{fontSize:12, fontWeight:400, color:"var(--text-sec)", marginLeft:5}}>({items.length})</span></h3>
+          </div>
+          
+          <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(280px, 1fr))", gap:12}}>
+            {items.map(l => (
+              <div key={l.id} className="cd" 
+                style={{padding:16, cursor:"pointer", position:"relative", transition:"all 0.2s", borderColor:sel?.id===l.id?"var(--gold)":"var(--border)", borderLeftWidth:sel?.id===l.id?6:1, overflow:"hidden"}} 
+                onClick={()=>onSel(l)}>
+                
+                <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8}}>
+                  <div style={{fontSize:14, fontWeight:700, color:"var(--text)", lineHeight:1.3, flex:1, paddingRight:10}}>{l.nome}</div>
+                  <button onClick={e=>{e.stopPropagation(); if(confirm(`Excluir ${l.nome} da biblioteca?`)) onDel(l.id);}} 
+                    style={{background:"none", border:"none", color:"var(--text-mute)", cursor:"pointer", padding:4, borderRadius:4}} 
+                    className="hover-bg" title="Remover da Estante">
+                    <Ic d={IC.tr} s={14} c="currentColor"/>
+                  </button>
+                </div>
+
+                <div style={{display:"flex", flexWrap:"wrap", gap:6, marginBottom:12}}>
+                  <span style={{fontSize:10, fontWeight:700, padding:"2px 6px", borderRadius:4, background:"var(--gold-subtle)", color:"var(--gold)"}}>
+                    {l.nome.split(" ")[0].toUpperCase()}
+                  </span>
+                  <span style={{fontSize:10, color:"var(--text-sec)", background:"var(--bg-hover)", padding:"2px 6px", borderRadius:4}}>
+                    ID: {l.id.slice(0,8)}
+                  </span>
+                </div>
+
+                <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", borderTop:"1px solid var(--border-subtle)", paddingTop:10}}>
+                  <div style={{display:"flex", gap:10, fontSize:11, color:"var(--text-sec)"}}>
+                    <span title="Artigos">📖 <b>{l.nA}</b></span>
+                    <span title="Dispositivos">🔗 <b>{l.nD}</b></span>
+                  </div>
+                  <div style={{fontSize:10, color:"var(--text-mute)", fontWeight:600}}>{l.data || "Sem data"}</div>
+                </div>
+
+                {/* Efeito Visual de Lombada */}
+                <div style={{position:"absolute", left:0, top:0, bottom:0, width:3, background:"var(--gold)", opacity:sel?.id===l.id?1:0.3}}></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))
+    )}
+  </div>;
+}
 
 // ═══ READER ═══
 // ALTERAÇÕES ENTREGA 2:
