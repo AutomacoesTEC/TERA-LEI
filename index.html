@@ -1010,7 +1010,7 @@ function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
       {showAdd ? "Fechar" : "+ Tag"}
     </button>
 
-    {showAdd && <div className="cd" style={{position:"absolute", top:24, left:0, zIndex:300, padding:14, width:280, display:"flex", flexDirection:"column", gap:10, boxShadow:"var(--shadow-lg)", border:"1px solid var(--border)", background:"var(--bg-card)"}}>
+    {showAdd && <div className="cd" style={{position:"absolute", top:24, left:0, zIndex:300, padding:14, width:280, display:"flex", flexDirection:"column", gap:10, boxShadow:"var(--shadow-lg)", border:"2px solid var(--gold)", background:"var(--bg-card)"}}>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
         <div style={{fontSize:12, fontWeight:700, color:"var(--gold)"}}>Gerenciar Tags</div>
         <div style={{display:"flex", gap:6}}>
@@ -1025,7 +1025,7 @@ function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
         placeholder="Filtrar tags..." 
         style={{fontSize:11, padding:"6px 10px", borderRadius:5, border:"1px solid var(--border)", background:"var(--bg-hover)"}} />
       
-      <div style={{maxHeight:180, overflowY:"auto", display:"flex", flexDirection:"column", gap:4, paddingRight:4}}>
+      <div style={{maxHeight:165, overflowY:"auto", display:"flex", flexDirection:"column", gap:4, paddingRight:4}}>
         {filteredTags.length === 0 && <div style={{fontSize:10, color:"var(--text-mute)", textAlign:"center", padding:10}}>Nenhuma tag encontrada</div>}
         {filteredTags.map(t => {
           const isSel = selectedTags.includes(t.id);
