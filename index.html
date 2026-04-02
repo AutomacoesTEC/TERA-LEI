@@ -1137,9 +1137,7 @@ function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
   const handleToggle = (tagId, isSelected) => {
     const tagName = tagsConfig.find(t=>t.id===tagId)?.name;
     if(!isSelected) {
-      if(confirm(`Deseja aplicar a tag #${tagName}?`)) {
-        onToggle(tagId);
-      }
+      onToggle(tagId);
     } else {
       if(confirm(`Deseja remover a tag #${tagName}?`)) {
         onToggle(tagId);
