@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-01T10:15:54.731369-03:00",
-  "data_busca": "2026-04-01",
-  "total": 188,
-  "novos_nesta_execucao": 14,
+  "ultima_atualizacao": "2026-04-02T10:06:47.180387-03:00",
+  "data_busca": "2026-04-02",
+  "total": 194,
+  "novos_nesta_execucao": 6,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,54 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "6f6e26e598a20123",
+      "data": "2026-04-02",
+      "titulo": "02/04/2026 08:29▶️Novo PACPresidente Lula participa de entregas do Novo PAC na área de mobilidade urbana em Salvador (BA)",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/presidente-lula-participa-de-entregas-do-novo-pac-na-area-de-mobilidade-urbana-em-salvador-ba-2",
+      "resumo": ""
+    },
+    {
+      "id": "ac10e2a699f9f22e",
+      "data": "2026-04-02",
+      "titulo": "01/04/2026 19:29Presença femininaMinistério da Fazenda implementa a iniciativa Mulheres Líderes em Finanças",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/ministerio-da-fazenda-implementa-a-iniciativa-mulheres-lideres-em-financas",
+      "resumo": ""
+    },
+    {
+      "id": "ecf1f2de2fce2d3b",
+      "data": "2026-04-02",
+      "titulo": "02/04/2026 09:30ReencontroFarofa Carioca marca final da temporada de programas inéditos do Sem Censura, da TV Brasil",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/farofa-carioca-marca-final-da-temporada-de-programas-ineditos-do-sem-censura-da-tv-brasil",
+      "resumo": ""
+    },
+    {
+      "id": "33fcb72189e2c4cc",
+      "data": "2026-04-02",
+      "titulo": "PROGRESSIVIDADE",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PROGRESSIVIDADE",
+      "resumo": ""
+    },
+    {
+      "id": "41d5d050da425e1d",
+      "data": "2026-04-02",
+      "titulo": "IMPOSTOS REGRESSIVOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=IMPOSTOS%20REGRESSIVOS",
+      "resumo": ""
+    },
+    {
+      "id": "bfd4bcb340bd6a3d",
+      "data": "2026-04-02",
+      "titulo": "Restituições não creditadas somam mais de R$ 265 milhões",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/restituicoes-nao-creditadas-somam-mais-de-r-265-milhoes",
+      "resumo": "02/04/2026-Mais de 17 mil pagamentos não foram efetivados no último lote. A Receita Federal orienta que os contribuintes devem regularizar dados bancários."
+    },
     {
       "id": "184ae51c5b0a2605",
       "data": "2026-04-01",
