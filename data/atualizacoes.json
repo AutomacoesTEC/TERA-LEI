@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-02T10:06:47.180387-03:00",
-  "data_busca": "2026-04-02",
-  "total": 194,
-  "novos_nesta_execucao": 6,
+  "ultima_atualizacao": "2026-04-03T09:58:15.732604-03:00",
+  "data_busca": "2026-04-03",
+  "total": 203,
+  "novos_nesta_execucao": 9,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,78 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "0091cc187a33bca8",
+      "data": "2026-04-03",
+      "titulo": "02/04/2026 14:52Novo PAC'É assim que a gente vai transformando esse país numa nação mais justa', diz Lula em Salvador (BA)",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/201ce-assim-que-a-gente-vai-transformando-esse-pais-numa-nacao-mais-justa201d-diz-lula-ao-entregar-obras-de-mobilidade-e-contencao-de-encostas-em-salvador",
+      "resumo": ""
+    },
+    {
+      "id": "c83a2c154b549d37",
+      "data": "2026-04-03",
+      "titulo": "02/04/2026 12:09Cartão vermelhoGoverno do Brasil lança política nacional para combater a manipulação de resultados esportivos",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/politica-nacional-combater-manipulacao-resultados-esportivos",
+      "resumo": ""
+    },
+    {
+      "id": "35465a55698d5553",
+      "data": "2026-04-03",
+      "titulo": "02/04/2026 14:51Nota à ImprensaReforma Tributária: são falsas as informações sobre multas antes de 90 dias após publicação do regulamento",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/nota-a-imprensa-reforma-tributaria-receita-federal-esclarece-que-nao-ha-aplicacao-de-multas-antes-de-90-dias-apos-a-publicacao-do-regulamento",
+      "resumo": ""
+    },
+    {
+      "id": "21b7b02e08f24efa",
+      "data": "2026-04-03",
+      "titulo": "02/04/2026 18:30Confira!Entrevistas, reportagens e debates: Rádio Nacional estreia, neste sábado, 'Frequência Nacional'",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/radio-nacional-estreia-programa-frequencia-nacional",
+      "resumo": ""
+    },
+    {
+      "id": "67610465516217bf",
+      "data": "2026-04-03",
+      "titulo": "COMBATE AO CRIME ORGANIZADO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=COMBATE%20AO%20CRIME%20ORGANIZADO",
+      "resumo": ""
+    },
+    {
+      "id": "4eb85e2c05ef8072",
+      "data": "2026-04-03",
+      "titulo": "FINANÇAS SUSTENTÁVEIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=FINAN%C3%87AS%20SUSTENT%C3%81VEIS",
+      "resumo": ""
+    },
+    {
+      "id": "82ef23ea0ebf7496",
+      "data": "2026-04-03",
+      "titulo": "ADENSAMENTO TECNOLÓGICO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ADENSAMENTO%20TECNOL%C3%93GICO",
+      "resumo": ""
+    },
+    {
+      "id": "4789de31d767f80b",
+      "data": "2026-04-03",
+      "titulo": "SISTEMAS AGROALIMENTARES",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SISTEMAS%20AGROALIMENTARES",
+      "resumo": ""
+    },
+    {
+      "id": "527f07d60b1a833b",
+      "data": "2026-04-03",
+      "titulo": "INFRAESTRUTURA VERDE",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INFRAESTRUTURA%20VERDE",
+      "resumo": ""
+    },
     {
       "id": "6f6e26e598a20123",
       "data": "2026-04-02",
