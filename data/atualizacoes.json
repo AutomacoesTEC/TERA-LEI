@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-03T09:58:15.732604-03:00",
-  "data_busca": "2026-04-03",
-  "total": 203,
-  "novos_nesta_execucao": 9,
+  "ultima_atualizacao": "2026-04-04T09:50:19.922474-03:00",
+  "data_busca": "2026-04-04",
+  "total": 205,
+  "novos_nesta_execucao": 2,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,22 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "e925b99a881a651b",
+      "data": "2026-04-04",
+      "titulo": "02/04/2026 18:25DesenvolvimentoMárcio Elias Rosa é o novo ministro do Desenvolvimento, Indústria, Comércio e Serviços",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/marcio-elias-rosa-e-o-novo-ministro-do-desenvolvimento-industria-comercio-e-servicos",
+      "resumo": ""
+    },
+    {
+      "id": "a99a936929af1e68",
+      "data": "2026-04-04",
+      "titulo": "04/04/2026 09:05Defesa do ConsumidorOperação Páscoa Segura: MJSP e MAPA retiram 2 mil anúncios de produtos piratas típicos do período",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/operacao-pascoa-segura-mjsp-mapa-retiram-2-mil-anuncios-produtos-piratas-tipicos-periodo",
+      "resumo": ""
+    },
     {
       "id": "0091cc187a33bca8",
       "data": "2026-04-03",
