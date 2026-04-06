@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-01T10:15:54.731369-03:00",
-  "data_busca": "2026-04-01",
-  "total": 188,
-  "novos_nesta_execucao": 14,
+  "ultima_atualizacao": "2026-04-06T10:04:07.055206-03:00",
+  "data_busca": "2026-04-06",
+  "total": 201,
+  "novos_nesta_execucao": 13,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,110 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "b9309b0f9329b205",
+      "data": "2026-04-06",
+      "titulo": "06/04/2026 08:04Tira-dúvidasReceita Federal realiza live do Imposto de Renda sobre Carnê-leão e Receita Saúde",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/receita-federal-realiza-quarta-live-do-irpf-com-o-tema-carne-leao-e-receita-saude",
+      "resumo": ""
+    },
+    {
+      "id": "3560769ebe092946",
+      "data": "2026-04-06",
+      "titulo": "04/04/2026 14:45Resumo da SemanaAs conquistas de 21 anos de Prouni, de dois anos de Pé-de-Meia e obras de mobilidade do Novo PAC marcaram a semana",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/as-conquistas-de-21-anos-de-prouni-e-de-dois-anos-do-pe-de-meia-e-obras-de-mobilidade-do-novo-pac-marcaram-a-semana",
+      "resumo": ""
+    },
+    {
+      "id": "73f6b6a0ae570570",
+      "data": "2026-04-06",
+      "titulo": "04/04/2026 09:05Defesa do ConsumidorOperação Páscoa Segura retira 2 mil anúncios de produtos piratas típicos do período",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/operacao-pascoa-segura-mjsp-mapa-retiram-2-mil-anuncios-produtos-piratas-tipicos-periodo",
+      "resumo": ""
+    },
+    {
+      "id": "35465a55698d5553",
+      "data": "2026-04-06",
+      "titulo": "02/04/2026 14:51Nota à ImprensaReforma Tributária: são falsas as informações sobre multas antes de 90 dias após publicação do regulamento",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/nota-a-imprensa-reforma-tributaria-receita-federal-esclarece-que-nao-ha-aplicacao-de-multas-antes-de-90-dias-apos-a-publicacao-do-regulamento",
+      "resumo": ""
+    },
+    {
+      "id": "21b7b02e08f24efa",
+      "data": "2026-04-06",
+      "titulo": "02/04/2026 18:30Confira!Entrevistas, reportagens e debates: Rádio Nacional estreia, neste sábado, 'Frequência Nacional'",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/radio-nacional-estreia-programa-frequencia-nacional",
+      "resumo": ""
+    },
+    {
+      "id": "67610465516217bf",
+      "data": "2026-04-06",
+      "titulo": "COMBATE AO CRIME ORGANIZADO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=COMBATE%20AO%20CRIME%20ORGANIZADO",
+      "resumo": ""
+    },
+    {
+      "id": "4eb85e2c05ef8072",
+      "data": "2026-04-06",
+      "titulo": "FINANÇAS SUSTENTÁVEIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=FINAN%C3%87AS%20SUSTENT%C3%81VEIS",
+      "resumo": ""
+    },
+    {
+      "id": "82ef23ea0ebf7496",
+      "data": "2026-04-06",
+      "titulo": "ADENSAMENTO TECNOLÓGICO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ADENSAMENTO%20TECNOL%C3%93GICO",
+      "resumo": ""
+    },
+    {
+      "id": "4789de31d767f80b",
+      "data": "2026-04-06",
+      "titulo": "SISTEMAS AGROALIMENTARES",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SISTEMAS%20AGROALIMENTARES",
+      "resumo": ""
+    },
+    {
+      "id": "527f07d60b1a833b",
+      "data": "2026-04-06",
+      "titulo": "INFRAESTRUTURA VERDE",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INFRAESTRUTURA%20VERDE",
+      "resumo": ""
+    },
+    {
+      "id": "33fcb72189e2c4cc",
+      "data": "2026-04-06",
+      "titulo": "PROGRESSIVIDADE",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PROGRESSIVIDADE",
+      "resumo": ""
+    },
+    {
+      "id": "41d5d050da425e1d",
+      "data": "2026-04-06",
+      "titulo": "IMPOSTOS REGRESSIVOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=IMPOSTOS%20REGRESSIVOS",
+      "resumo": ""
+    },
+    {
+      "id": "5d8464aed56827d7",
+      "data": "2026-04-06",
+      "titulo": "Receita Federal realiza quarta live do IRPF com o tema \"Carnê-leão e Receita Saúde\"",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/receita-federal-realiza-quarta-live-do-irpf-com-o-tema-carne-leao-e-receita-saude",
+      "resumo": "06/04/2026-Lives ocorrerão todas as quartas-feiras, com temas variados para orientar contribuintes sobre o IRPF 2026."
+    },
     {
       "id": "184ae51c5b0a2605",
       "data": "2026-04-01",
