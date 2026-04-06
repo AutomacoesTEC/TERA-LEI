@@ -263,21 +263,23 @@ function detectVetados(ds){
 }
 
 // Analysis functions
-function extrairRemissoes(ds){const re=/(?:§\s*\d+[ºo°]?\s+d[oe]\s+)?(?:arts?\.\s*)(\d+[ºo°]?(?:\s*(?:,|e|a)\s*\d+[ºo°]?)*)/gi;const res=[];let art="";
+function extrairRemissoes(ds){if(!Array.isArray(ds))return[];const re=/(?:§\s*\d+[ºo°]?\s+d[oe]\s+)?(?:arts?\.\s*)(\d+[ºo°]?(?:\s*(?:,|e|a)\s*\d+[ºo°]?)*)/gi;const res=[];let art="";
   for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;const full=d.txt+" "+d.rub;let m;re.lastIndex=0;while((m=re.exec(full))!==null){const refs=m[1].match(/\d+[ºo°]?/g)||[];for(const r of refs){const dest="Art. "+r;if(dest!==art&&art)res.push({origem:art,disp:d.id,destino:dest,ctx:full.trim(),tipo:d.tipo});}}}return res;}
 
-function extrairPrazosValores(ds){const reVal=/R\$\s*[\d\.]+,\d{2}/g;const rePct=/\d+(?:[,\.]\d+)?\s*%/g;const rePrazo=/(?:\d+\s*(?:dias?|meses?|anos?|horas?))|(?:at[ée]\s+\d{1,2}\s+de\s+\w+)/gi;
+function extrairPrazosValores(ds){if(!Array.isArray(ds))return[];const reVal=/R\$\s*[\d\.]+,\d{2}/g;const rePct=/\d+(?:[,\.]\d+)?\s*%/g;const rePrazo=/(?:\d+\s*(?:dias?|meses?|anos?|horas?))|(?:at[ée]\s+\d{1,2}\s+de\s+\w+)/gi;
   const res=[];let art="",cap="";for(const d of ds){if(d.tipo==="CAPÍTULO")cap=d.rub||d.id;if(d.tipo==="ARTIGO")art=d.id;if(!d.txt)continue;
     for(const rx of[[reVal,"VALOR (R$)"],[rePct,"PERCENTUAL (%)"],[rePrazo,"PRAZO"]]){rx[0].lastIndex=0;let m;while((m=rx[0].exec(d.txt))!==null)res.push({art,cap,disp:d.id,tipo:rx[1],val:m[0],ctx:d.txt});}}return res;}
 
-function buildIdx(ds,area){const ws=AREAS[area]?.palavras||[];const idx={};let art="";for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;const t=(d.txt+" "+d.rub).toLowerCase();for(const w of ws)if(t.includes(w.toLowerCase())&&art){if(!idx[w])idx[w]=[];if(!idx[w].includes(art))idx[w].push(art);}}return Object.fromEntries(Object.entries(idx).sort((a,b)=>a[0].localeCompare(b[0],"pt")));}
+function buildIdx(ds,area){if(!Array.isArray(ds))return{};const ws=AREAS[area]?.palavras||[];const idx={};let art="";for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;const t=(d.txt+" "+d.rub).toLowerCase();for(const w of ws)if(t.includes(w.toLowerCase())&&art){if(!idx[w])idx[w]=[];if(!idx[w].includes(art))idx[w].push(art);}}return Object.fromEntries(Object.entries(idx).sort((a,b)=>a[0].localeCompare(b[0],"pt")));}
 
 function fullTextSearch(ds,termo,leiId=null,study=null,tagsConfig=[],scope={legis:true,notas:true}){
-  const hasTerm = termo && termo.trim().length >= 3;
-  if(!hasTerm && !termo.includes("#")) return []; // Se não tem termo nem tag (#), retorna vazio
+  if(!Array.isArray(ds))return[];
+  const termoSeguro=typeof termo==="string"?termo:"";
+  const hasTerm = termoSeguro.trim().length >= 3;
+  if(!hasTerm && !termoSeguro.includes("#")) return []; // Se não tem termo nem tag (#), retorna vazio
   // Operador AND via '+': "lucro presumido + faturamento" exige ambos no dispositivo.
   // Sem '+', comportamento idêntico ao original (retrocompatível).
-  const termos=termo.split("+")
+  const termos=termoSeguro.split("+")
     .map(t=>t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""))
     .filter(t=>t.length>=3); // descarta fragmentos < 3 chars
   if(termos.length===0)return[];
@@ -313,7 +315,7 @@ function fullTextSearch(ds,termo,leiId=null,study=null,tagsConfig=[],scope={legi
   return resultados;
 }
 
-function hierarquia(ds){const ctx={};const trilha={PARTE:"",LIVRO:"",TÍTULO:"",CAPÍTULO:"",SEÇÃO:"",SUBSEÇÃO:""};const niv=["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"];
+function hierarquia(ds){if(!Array.isArray(ds))return{};const ctx={};const trilha={PARTE:"",LIVRO:"",TÍTULO:"",CAPÍTULO:"",SEÇÃO:"",SUBSEÇÃO:""};const niv=["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"];
   for(const d of ds){if(DIV.has(d.tipo)){trilha[d.tipo]=d.rub||d.id;const i=niv.indexOf(d.tipo);for(let j=i+1;j<niv.length;j++)trilha[niv[j]]="";}
     if(d.tipo==="ARTIGO")ctx[d.id]=Object.values(trilha).filter(Boolean).join(" > ");}return ctx;}
 
@@ -337,6 +339,45 @@ async function pdfToText(f){const ab=await f.arrayBuffer();const pdf=await pdfjs
   fullText=fullText.replace(/ANEXO\s+[IVXLCDM]+\.pdf/gi,"");
   fullText=fullText.replace(/\* Este texto não substitui o publicado oficialmente\./gi,"");
   return fullText;}
+
+function fallbackPlainTextDs(txt){
+  return (txt||"").split("\n").map(l=>l.trim()).filter(Boolean).map((l,i)=>({tipo:"TEXTO",id:`Linha ${i+1}`,rub:"",txt:l,status:"vigente",alteracao:""}));
+}
+
+function resolveLawDs(lei){
+  try{
+    if(!lei||typeof lei!=="object")return[];
+    if(Array.isArray(lei.ds)&&lei.ds.length)return lei.ds;
+
+    const nested=[];
+    if(lei.principal)nested.push(lei.principal);
+    if(lei.documentoPrincipal)nested.push(lei.documentoPrincipal);
+    if(lei.documento)nested.push(lei.documento);
+    if(Array.isArray(lei.documentos))nested.push(...lei.documentos);
+    if(Array.isArray(lei.docs))nested.push(...lei.docs);
+    if(Array.isArray(lei.arquivos))nested.push(...lei.arquivos);
+    if(Array.isArray(lei.fontes))nested.push(...lei.fontes);
+    if(Array.isArray(lei.anexos))nested.push(...lei.anexos);
+
+    for(const item of nested){
+      if(Array.isArray(item?.ds)&&item.ds.length)return item.ds;
+      const raw=item?.texto||item?.conteudo||item?.["conteúdo"]||item?.content||item?.rawText||"";
+      if(typeof raw==="string"&&raw.trim()){
+        let ds=parse(raw);
+        if(ds.length<3)ds=fallbackPlainTextDs(raw);
+        if(ds.length)return ds;
+      }
+    }
+
+    const raw=lei.texto||lei.conteudo||lei["conteúdo"]||lei.content||lei.rawText||"";
+    if(typeof raw==="string"&&raw.trim()){
+      let ds=parse(raw);
+      if(ds.length<3)ds=fallbackPlainTextDs(raw);
+      return ds;
+    }
+  }catch(e){console.warn("resolveLawDs:",e);}
+  return Array.isArray(lei?.ds)?lei.ds:[];
+}
 // ─── Storage Module — KV cache + async sync ───────────────────────────────────
 const PROXY="https://tera-proxy.naytributos.workers.dev";
 let _authToken=null;
@@ -473,7 +514,7 @@ function App(){
   if(authLoading)return <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"var(--bg)"}}><Sp/><span style={{marginLeft:10,color:"var(--text-sec)"}}>Carregando…</span></div>;
   if(!auth)return <LoginScreen onLogin={handleLogin} theme={theme} toggleTheme={toggleTheme}/>;
 
-  const upF=async e=>{const f=e.target.files?.[0];if(!f)return;setUp(true);try{const t=await pdfToText(f);const ds=parse(t);const l={id:Date.now()+"",nome:f.name.replace(/\.pdf$/i,""),data:new Date().toLocaleDateString("pt-BR"),ds,nA:ds.filter(d=>d.tipo==="ARTIGO").length,nD:ds.length,area,anexos:[]};const nl=[l,...lib];setLib(nl);LS("t3-lib",nl);setSel(l);setVw("reader");}catch(e){alert("Erro: "+e.message);}setUp(false);if(fRef.current)fRef.current.value="";};
+  const upF=async e=>{const f=e.target.files?.[0];if(!f)return;setUp(true);try{const t=await pdfToText(f);let ds=parse(t);if(ds.length<3)ds=fallbackPlainTextDs(t);const l={id:Date.now()+"",nome:f.name.replace(/\.pdf$/i,""),data:new Date().toLocaleDateString("pt-BR"),ds,nA:ds.filter(d=>d.tipo==="ARTIGO").length,nD:ds.length,area,anexos:[]};const nl=[l,...lib];setLib(nl);LS("t3-lib",nl);setSel(l);setVw("reader");}catch(e){alert("Erro: "+e.message);}setUp(false);if(fRef.current)fRef.current.value="";};
   const del=id=>{const nl=lib.filter(l=>l.id!==id);setLib(nl);LS("t3-lib",nl);if(sel?.id===id){setSel(null);setVw("library");}};
   const addAnexo=async(leiId,file)=>{try{const t=await pdfToText(file);let ds=parse(t);
     if(ds.length<3){const lines=t.split("\n").map(l=>l.trim()).filter(Boolean);ds=lines.map(l=>({tipo:"TEXTO",id:"",rub:"",txt:l}));}
@@ -682,8 +723,11 @@ function Lib({lib,sel,onSel,onDel,onUp,uping,fRef}){
 // - Export Excel: removida aba "Remissões"
 function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study,tagsConfig,setTagsConfig}){
   const [tab,setTab]=useState("mapa");const [saved,setSaved]=useState(false);const [goSearch,setGoSearch]=useState("");
-  const tabs=[{id:"mapa",lb:"Mapa"},{id:"teia",lb:"🕸 Teia"},{id:"busca",lb:"Busca"},{id:"estudo",lb:"Estudo Guiado"},{id:"texto",lb:"Texto Integral"},{id:"artigos",lb:"Artigos"},{id:"anexos",lb:`Anexos (${(lei.anexos||[]).length})`}];
-  const ds=lei.ds;
+  const anexos=Array.isArray(lei.anexos)?lei.anexos:[];
+  const ds=useMemo(()=>resolveLawDs(lei),[lei]);
+  const totalArtigos=useMemo(()=>{const parsed=ds.filter(d=>d.tipo==="ARTIGO").length;return parsed||lei.nA||0;},[ds,lei.nA]);
+  const totalDispositivos=useMemo(()=>ds.length||lei.nD||0,[ds,lei.nD]);
+  const tabs=[{id:"mapa",lb:"Mapa"},{id:"teia",lb:"🕸 Teia"},{id:"busca",lb:"Busca"},{id:"estudo",lb:"Estudo Guiado"},{id:"texto",lb:"Texto Integral"},{id:"artigos",lb:"Artigos"},{id:"anexos",lb:`Anexos (${anexos.length})`}];
   const showSaved=()=>{setSaved(true);setTimeout(()=>setSaved(false),1500);};
   const wrappedUSt=(a,b,c,d)=>{uSt(a,b,c,d);showSaved();};
 
@@ -897,9 +941,21 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study,tagsConfig,setTagsConf
     XLSX.utils.book_append_sheet(wb,wsIdx,"Índice Remissivo");
     XLSX.writeFile(wb,lei.nome+"_TERA.xlsx");}catch(e){alert("Erro ao exportar: "+e.message);}};
 
+  if(ds.length===0){
+    return <div className="fade">
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:4}}>
+        <div><h2 style={{fontSize:17,fontWeight:700}}>{lei.nome}</h2><div style={{fontSize:12,color:"var(--text-sec)",fontFamily:"'Segoe UI',sans-serif"}}>{lei.nD||0} dispositivos · {lei.nA||0} artigos · {anexos.length} anexos · {AREAS[area]?.nome}</div></div>
+      </div>
+      <div className="cd" style={{padding:"18px 20px",borderColor:"rgba(231,76,60,0.25)",background:"var(--bg-card)"}}>
+        <div style={{fontSize:14,fontWeight:700,color:"var(--err)",marginBottom:6}}>Conteúdo da lei não localizado</div>
+        <div style={{fontSize:12.5,color:"var(--text-sec)",lineHeight:1.7}}>A lei foi aberta, mas nenhum bloco estruturado foi encontrado em <code>ds</code> nem nos formatos alternativos dos documentos novos. Isso acontece quando o arquivo foi salvo com outro contrato de dados ou quando o parser não reconheceu a estrutura do conteúdo.</div>
+      </div>
+    </div>;
+  }
+
   return <div className="fade">
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:4}}>
-      <div><h2 style={{fontSize:17,fontWeight:700}}>{lei.nome}</h2><div style={{fontSize:12,color:"var(--text-sec)",fontFamily:"'Segoe UI',sans-serif"}}>{lei.nD} dispositivos · {lei.nA} artigos · {(lei.anexos||[]).length} anexos · {AREAS[area]?.nome}</div></div>
+      <div><h2 style={{fontSize:17,fontWeight:700}}>{lei.nome}</h2><div style={{fontSize:12,color:"var(--text-sec)",fontFamily:"'Segoe UI',sans-serif"}}>{totalDispositivos} dispositivos · {totalArtigos} artigos · {anexos.length} anexos · {AREAS[area]?.nome}</div></div>
       <div style={{display:"flex",gap:6,alignItems:"center"}}>
         {saved&&<span style={{fontSize:12,color:"var(--ok)",fontWeight:600,animation:"fadeIn .2s"}}>Salvo!</span>}
         <button onClick={exportXlsx} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 14px",background:"var(--grad)",color:"#fff",border:"none",borderRadius:6,fontSize:12,fontWeight:600,cursor:"pointer"}}>Exportar Excel</button>
@@ -921,6 +977,7 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study,tagsConfig,setTagsConf
 function TabTexto({ds,lei,gSt,uSt}){
   const ind={PARTE:0,LIVRO:0,TÍTULO:0,CAPÍTULO:12,SEÇÃO:24,SUBSEÇÃO:36,ARTIGO:0,PARÁGRAFO:20,INCISO:36,ALÍNEA:52,ITEM:68};
   const sts=["","Não lido","Lido","Revisando","Dominado","Dúvida"];const sC={Dominado:"#27AE60",Dúvida:"#C0392B",Revisando:"#D4A017",Lido:"#2E86AB"};
+  if(!Array.isArray(ds)||ds.length===0)return <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhum dispositivo estruturado foi localizado para exibir o texto integral.</div>;
   return <div>
     <div style={{maxHeight:"68vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>{ds.map((d,i)=>{const ri=i;const isD=DIV.has(d.tipo);const st=gSt(lei.id,ri,"status");const nt=gSt(lei.id,ri,"note");const isVetado=d.status==="vetado";const isRevogado=d.status==="revogado";
       return <div key={ri} style={{display:"flex",borderBottom:"1px solid var(--border)",background:isVetado?"rgba(231,76,60,0.06)":isRevogado?"rgba(231,76,60,0.04)":isD?CT[d.tipo]||"var(--bg-hover)":ri%2===0?"var(--bg-card)":"var(--bg-hover)",paddingLeft:ind[d.tipo]||0}}>
@@ -944,6 +1001,7 @@ function TabTexto({ds,lei,gSt,uSt}){
 
 function TabArtigos({ds}){let art="";const rows=[];const tipos=new Set(["ARTIGO","PARÁGRAFO","INCISO","ALÍNEA","ITEM"]);
   for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;if(tipos.has(d.tipo))rows.push({art,tipo:d.tipo,id:d.id,rub:d.rub,txt:d.txt,status:d.status||"vigente",alteracao:d.alteracao||""});}
+  if(rows.length===0)return <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhum artigo ou subdispositivo reconhecível foi encontrado neste documento.</div>;
   return <div style={{maxHeight:"70vh",overflow:"auto"}}><table className="dt"><thead><tr><th>Artigo</th><th>Tipo</th><th>Identificador</th><th>Status</th><th>Texto</th><th>Alteração</th></tr></thead><tbody>{rows.map((r,i)=><tr key={i} style={{opacity:r.status==="vetado"||r.status==="revogado"?0.5:1}}><td style={{fontWeight:700,color:"var(--gold)"}}>{r.art}</td><td><span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)"}}>{r.tipo}</span></td><td style={{fontSize:12}}>{r.id}</td><td>{r.status==="vetado"?<span className="badge badge-revogado">VETADO</span>:r.status==="revogado"?<span className="badge badge-revogado">REVOGADO</span>:<span className="badge badge-vigente">VIGENTE</span>}</td><td style={{fontSize:12,textDecoration:r.status!=="vigente"?"line-through":"none"}}>{r.txt}</td><td style={{fontSize:11,color:"var(--text-sec)"}}>{r.alteracao}</td></tr>)}</tbody></table></div>;}
 
 // ─── RichTextEditor ────────────────────────────────────────────────────────────
@@ -1974,11 +2032,23 @@ function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
 
 function TabIndice({ds,lei,area,onGoToArt,study,tagsConfig}){
   const [filtro,setFiltro]=useState("");
+  const [scope,setScope]=useState({legis:true,notas:true});
+  const [selTag,setSelTag]=useState("");
   const [expandedIdx,setExpandedIdx]=useState(null);
   const idxPredefinido=useMemo(()=>buildIdx(ds,area),[ds,area]);
-  const resultadosBusca=useMemo(()=>fullTextSearch(ds,filtro,lei.id,study,tagsConfig),[ds,filtro,lei.id,study,tagsConfig]);
+  const termoBusca=useMemo(()=>{
+    const partes=[];
+    if(filtro.trim())partes.push(filtro.trim());
+    if(selTag){
+      const tag=tagsConfig.find(t=>t.id===selTag);
+      if(tag?.name)partes.push("#"+tag.name);
+    }
+    return partes.join(" + ");
+  },[filtro,selTag,tagsConfig]);
+  const resultadosBusca=useMemo(()=>fullTextSearch(ds,termoBusca,lei.id,study,tagsConfig,scope),[ds,termoBusca,lei.id,study,tagsConfig,scope]);
   const totalOcorrencias=useMemo(()=>resultadosBusca.reduce((s,r)=>s+r.ocorrencias,0),[resultadosBusca]);
-  const buscaAtiva=filtro.trim().length>=3;
+  const leisComResultados=resultadosBusca.length?1:0;
+  const buscaAtiva=filtro.trim().length>=3||Boolean(selTag);
   const ctx=useMemo(()=>hierarquia(ds),[ds]);
   const highlightText=(text,term)=>{
     if(!term||term.length<3||!text)return text;
@@ -2024,7 +2094,7 @@ function TabIndice({ds,lei,area,onGoToArt,study,tagsConfig}){
         </div>
       </div>
 
-      {buscaAtiva&&<div style={{marginTop:2,fontSize:12,color:"var(--text-sec)"}}>{totalOcorrencias} ocorrência(s) em {resultados.length} dispositivo(s) de {leisComResultados} lei(s)</div>}
+      {buscaAtiva&&<div style={{marginTop:2,fontSize:12,color:"var(--text-sec)"}}>{totalOcorrencias} ocorrência(s) em {resultadosBusca.length} dispositivo(s) de {leisComResultados} lei(s)</div>}
     </div>
     {buscaAtiva?
       (resultadosBusca.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhum dispositivo encontrado para "{filtro}"</div>
@@ -2163,6 +2233,10 @@ function TabMapa({ds}){
     const ctx=hierarquia(ds);
     return ctx[selArt]||"";
   },[ds,selArt]);
+
+  if(estrutura.length===0){
+    return <div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhuma hierarquia legal foi reconhecida para montar o mapa desta lei.</div>;
+  }
 
   const renderArtigos=(artigos,pathKey)=>{
     if(!artigos||artigos.length===0)return null;
