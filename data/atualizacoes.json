@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-06T10:04:07.055206-03:00",
-  "data_busca": "2026-04-06",
-  "total": 201,
-  "novos_nesta_execucao": 13,
+  "ultima_atualizacao": "2026-04-07T10:13:38.620161-03:00",
+  "data_busca": "2026-04-07",
+  "total": 211,
+  "novos_nesta_execucao": 10,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,86 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "10c176c438d0c2c3",
+      "data": "2026-04-07",
+      "titulo": "06/04/2026 17:45Nova direçãoEm 90 dias, mais de 1,6 milhão de bons motoristas renovaram CNH de graça e pouparam R$ 1,2 bi",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/em-apenas-tres-meses-mp-do-bom-condutor-gera-economia-de-mais-de-r-1-2-bilhao-aos-brasileiros",
+      "resumo": ""
+    },
+    {
+      "id": "8537238e797b2b4c",
+      "data": "2026-04-07",
+      "titulo": "07/04/2026 08:31Operação MastigiaForças integradas de segurança desarticulam esquema de tráfico interestadual de drogas",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/ficco-se-desarticula-esquema-de-trafico-interestadual-de-drogas",
+      "resumo": ""
+    },
+    {
+      "id": "7657991ecba03ab5",
+      "data": "2026-04-07",
+      "titulo": "06/04/2026 19:40GuerraMinistérios anunciam medidas para conter alta do combustível de aviação",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/governo-brasileiro-anuncia-medidas-para-conter-alta-do-combustivel-de-aviacao",
+      "resumo": ""
+    },
+    {
+      "id": "5d67a902eb420bcc",
+      "data": "2026-04-07",
+      "titulo": "06/04/2026 12:20ConfiraNa Mesa com Datena recebe o senador e jornalista Jorge Kajuru nesta terça, às 21h, na TV Brasil",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/na-mesa-com-datena-recebe-o-senador-e-jornalista-jorge-kajuru-nesta-terca-as-21h-na-tv-brasil",
+      "resumo": ""
+    },
+    {
+      "id": "e3fb0f0cc9ddc34d",
+      "data": "2026-04-07",
+      "titulo": "PESSOAS JURÍDICAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PESSOAS%20JUR%C3%8DDICAS",
+      "resumo": ""
+    },
+    {
+      "id": "a51de1dc18850eba",
+      "data": "2026-04-07",
+      "titulo": "MULTA POR ATRASO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MULTA%20POR%20ATRASO",
+      "resumo": ""
+    },
+    {
+      "id": "93a4bbc25228aa1d",
+      "data": "2026-04-07",
+      "titulo": "TRIBUTOS FEDERAIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=TRIBUTOS%20FEDERAIS",
+      "resumo": ""
+    },
+    {
+      "id": "96ec35c5f28c6be8",
+      "data": "2026-04-07",
+      "titulo": "NOVA INDÚSTRIA BRASIL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=NOVA%20IND%C3%9ASTRIA%20BRASIL",
+      "resumo": ""
+    },
+    {
+      "id": "745d65c4314e2c04",
+      "data": "2026-04-07",
+      "titulo": "Receita Federal apreende nova carga milionária de smartphones em Goiânia em menos de uma semana",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/receita-federal-apreende-nova-carga-milionaria-de-smartphones-em-goiania-em-menos-de-uma-semana",
+      "resumo": "07/04/2026-Em duas operações, foram retirados de circulação 4.150 aparelhos celulares em situação irregular e 254 ampolas de medicamento do tipo emagrecedor."
+    },
+    {
+      "id": "ff12ef95e0ec9388",
+      "data": "2026-04-07",
+      "titulo": "Operação Três Corpos: Receita Federal e Polícia Federal combatem importação irregular de equipamentos para academias",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/operacao-tres-corpos-receita-federal-e-policia-federal-combatem-importacao-irregular-de-equipamentos-para-academias",
+      "resumo": "07/04/2026-A Operação tem por objetivo apurar a prática dos delitos de descaminho, falsidade ideológica, evasão de divisas e lavagem de dinheiro relacionados à importação irregular de equipamentos para academias de ginástica."
+    },
     {
       "id": "b9309b0f9329b205",
       "data": "2026-04-06",
