@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-07T10:13:38.620161-03:00",
-  "data_busca": "2026-04-07",
-  "total": 211,
-  "novos_nesta_execucao": 10,
+  "ultima_atualizacao": "2026-04-08T10:15:35.240360-03:00",
+  "data_busca": "2026-04-08",
+  "total": 233,
+  "novos_nesta_execucao": 22,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,182 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "2fc995946d5e62ec",
+      "data": "2026-04-08",
+      "titulo": "07/04/2026 14:55Dinheiro à mão17 mil contribuintes têm R$ 265 milhões em restituições do IR a receber; saiba mais",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/restituicoes-nao-creditadas-somam-mais-de-r-265-milhoes-cerca-de-17-mil-pagamentos",
+      "resumo": ""
+    },
+    {
+      "id": "b462f5f26ff45201",
+      "data": "2026-04-08",
+      "titulo": "08/04/2026 08:27Operação RecidivaPolícia Federal faz operação no Maranhão contra fraudes no INSS",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/pf-faz-operacao-contra-fraudes-no-inss",
+      "resumo": ""
+    },
+    {
+      "id": "67101b26092ef35b",
+      "data": "2026-04-08",
+      "titulo": "07/04/2026 20:35Balança positivaExportações do Brasil no primeiro trimestre crescem 7% na comparação com ano passado",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/exportacoes-brasil-7-maiores-no-primeiro-trimestre",
+      "resumo": ""
+    },
+    {
+      "id": "11448fe1b978b90b",
+      "data": "2026-04-08",
+      "titulo": "08/04/2026 08:08InovaçãoTV 3.0 começa a operar em junho para levar interatividade e ultradefinição aos brasileiros",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/tv-3-0-comeca-a-operar-em-junho-para-levar-interatividade-e-ultradefinicao-aos-brasileiros",
+      "resumo": ""
+    },
+    {
+      "id": "a6eccd2e2854cd2a",
+      "data": "2026-04-08",
+      "titulo": "CFC e FENACON promovem live sobre Imposto de Renda e campanha Declare Certo",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/cfc-e-fenacon-promovem-live-sobre-imposto-de-renda-e-campanha-declare-certo/",
+      "resumo": "Transmissão acontece nesta quarta-feira (8/4), às 10h, no YouTube do CFC, com detalhes sobre a parceria inédita e orientações aos contribuintes....Leia Mais"
+    },
+    {
+      "id": "555528347a61a23a",
+      "data": "2026-04-08",
+      "titulo": "Declare Certo 2026: confira os locais de atendimento",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/declare-certo-2026-confira-os-locais-de-atendimento/",
+      "resumo": "Ação mobiliza profissionais em todo o país para orientar contribuintes no Dia D No próximo dia 10 de abril, o Conselho Federal de Contabilidade e a Fenacon promovem uma grande mobilização nacional para orientar gratuitamente a população sobre a Declaração do Imposto de Renda. Os profissionais da contabilidade estarão mobilizados em todo o país para oferecer orientação gratuita à populaçãoContinuar Lendo...Leia Mais"
+    },
+    {
+      "id": "0a359d3a11e2041a",
+      "data": "2026-04-08",
+      "titulo": "Secretário da Fazenda destaca modernização do PAT e reforça foco no trabalhador em evento de 50 anos do programa",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/abril/secretario-da-fazenda-destaca-modernizacao-do-pat-e-reforca-foco-no-trabalhador-em-evento-de-50-anos-do-programa",
+      "resumo": "08/04/2026-Participação no evento marca compromisso com o fortalecimento do programa e a promoção da segurança alimentar dos trabalhadores"
+    },
+    {
+      "id": "e0e0751edf1aa9af",
+      "data": "2026-04-08",
+      "titulo": "POLÍTICA PÚBLICA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=POL%C3%8DTICA%20P%C3%9ABLICA",
+      "resumo": ""
+    },
+    {
+      "id": "f27531b33ee9490b",
+      "data": "2026-04-08",
+      "titulo": "SEGURANÇA ALIMENTAR",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SEGURAN%C3%87A%20ALIMENTAR",
+      "resumo": ""
+    },
+    {
+      "id": "061e752200832db5",
+      "data": "2026-04-08",
+      "titulo": "INTEGRIDADE INSTITUCIONAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INTEGRIDADE%20INSTITUCIONAL",
+      "resumo": ""
+    },
+    {
+      "id": "a0e5ae913af9f021",
+      "data": "2026-04-08",
+      "titulo": "CAIXA POSTAL DO E-CAC",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=CAIXA%20POSTAL%20DO%20E-CAC",
+      "resumo": ""
+    },
+    {
+      "id": "1b30acb74bf75ada",
+      "data": "2026-04-08",
+      "titulo": "APLICATIVO DA RECEITA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=APLICATIVO%20DA%20RECEITA",
+      "resumo": ""
+    },
+    {
+      "id": "74f6810e6af15dd0",
+      "data": "2026-04-08",
+      "titulo": "FAZENDA NACIONAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=FAZENDA%20NACIONAL",
+      "resumo": ""
+    },
+    {
+      "id": "8c01c708544f28a9",
+      "data": "2026-04-08",
+      "titulo": "DÍVIDA ATIVA DA UNIÃO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=D%C3%8DVIDA%20ATIVA%20DA%20UNI%C3%83O",
+      "resumo": ""
+    },
+    {
+      "id": "31fa69f552018bfa",
+      "data": "2026-04-08",
+      "titulo": "INVESTIDORES INTERNACIONAIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INVESTIDORES%20INTERNACIONAIS",
+      "resumo": ""
+    },
+    {
+      "id": "58a55cc4beb55136",
+      "data": "2026-04-08",
+      "titulo": "MERCADO INTERNACIONAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MERCADO%20INTERNACIONAL",
+      "resumo": ""
+    },
+    {
+      "id": "12100001d9fce527",
+      "data": "2026-04-08",
+      "titulo": "ENSINO SUPERIOR",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ENSINO%20SUPERIOR",
+      "resumo": ""
+    },
+    {
+      "id": "9fd589cc2c12b797",
+      "data": "2026-04-08",
+      "titulo": "INOVAÇÃO TECNOLÓGICA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INOVA%C3%87%C3%83O%20TECNOL%C3%93GICA",
+      "resumo": ""
+    },
+    {
+      "id": "2bcad275ba5bc3a2",
+      "data": "2026-04-08",
+      "titulo": "DESENVOLVIMENTO TECNOLÓGICO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=DESENVOLVIMENTO%20TECNOL%C3%93GICO",
+      "resumo": ""
+    },
+    {
+      "id": "73388a20d568e3df",
+      "data": "2026-04-08",
+      "titulo": "Receita Federal no aeroporto de Brasília atua no desembaraço aduaneiro da MotoGP Brasil",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/receita-federal-no-aeroporto-de-brasilia-atua-no-desembaraco-aduaneiro-da-motogp-brasil",
+      "resumo": "08/04/2026-As cargas incluíram equipamentos de box, ferramentas dos mecânicos, pneus e as próprias motocicletas das equipes competidoras."
+    },
+    {
+      "id": "7b892c6ade02120d",
+      "data": "2026-04-08",
+      "titulo": "Receita Federal retém 28 quilos de cocaína no Porto de Itapoá",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/receita-federal-retem-28-quilos-de-cocaina-no-porto-de-itapoa",
+      "resumo": "08/04/2026-Droga tinha como destino a Espanha."
+    },
+    {
+      "id": "5db4c4c0c9765282",
+      "data": "2026-04-08",
+      "titulo": "Receita Federal e Polícia Federal realizam Operação Platinum",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/receita-federal-e-policia-federal-realizam-operacao-platinum",
+      "resumo": "08/04/2026-A Operação tem como objetivo desarticular uma organização criminosa altamente estruturada, voltada à prática dos crimes de contrabando, descaminho e lavagem de capitais."
+    },
     {
       "id": "10c176c438d0c2c3",
       "data": "2026-04-07",
