@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-08T10:15:35.240360-03:00",
-  "data_busca": "2026-04-08",
-  "total": 233,
-  "novos_nesta_execucao": 22,
+  "ultima_atualizacao": "2026-04-09T10:21:18.247675-03:00",
+  "data_busca": "2026-04-09",
+  "total": 243,
+  "novos_nesta_execucao": 10,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,86 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "bc84c83bf8722f7f",
+      "data": "2026-04-09",
+      "titulo": "08/04/2026 10:18IRPF 2026Receita já recebeu 9 milhões de declarações de IRPF. 61% são pré-preenchidas",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/receita-ja-recebeu-9-milhoes-de-declaracoes-de-irpf-61-pre-preenchidas",
+      "resumo": ""
+    },
+    {
+      "id": "d0983ff70925177b",
+      "data": "2026-04-09",
+      "titulo": "09/04/2026 08:00Sensibilidade socialLula fala sobre governar: 'Se você não pensar com o coração, não cuida das pessoas'",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/lula-fala-sobre-governar-se-voce-nao-pensar-com-o-coracao-nao-cuida-das-pessoas",
+      "resumo": ""
+    },
+    {
+      "id": "f9506e0410361d8a",
+      "data": "2026-04-09",
+      "titulo": "09/04/2026 08:55Aumentos abusivosForça-Tarefa fiscaliza estabelecimentos de venda de gás de botijão em 15 estados e no DF",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/forca-tarefa-fiscaliza-estabelecimentos-de-venda-de-gas-de-botijao-15-estados-df",
+      "resumo": ""
+    },
+    {
+      "id": "23400f9e4c6776be",
+      "data": "2026-04-09",
+      "titulo": "08/04/2026 14:34Efeitos da guerraGoverno do Brasil publica decreto que zera tributos sobre querosene de aviação",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/governo-do-brasil-publica-decreto-que-zera-tributos-sobre-querosene-de-aviacao-e-reforca-pacote-para-conter-a-alta-dos-combustiveis",
+      "resumo": ""
+    },
+    {
+      "id": "a4c00f0a35e92839",
+      "data": "2026-04-09",
+      "titulo": "08/04/2026 12:105G e fibra óticaInvestimento no setor de telecomunicações cresce em 2025 e chega a R$ 36,3 bi no Brasil",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/investimento-no-setor-de-telecomunicacoes-cresce-em-2025-e-chega-a-r-36-3-bilhoes-no-brasil",
+      "resumo": ""
+    },
+    {
+      "id": "ea533c0033d25a73",
+      "data": "2026-04-09",
+      "titulo": "ORGANIZAÇÃO CRIMINOSA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ORGANIZA%C3%87%C3%83O%20CRIMINOSA",
+      "resumo": ""
+    },
+    {
+      "id": "5ebec289b3138e50",
+      "data": "2026-04-09",
+      "titulo": "EMPRESAS DE FACHADA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=EMPRESAS%20DE%20FACHADA",
+      "resumo": ""
+    },
+    {
+      "id": "90fade374959e1c6",
+      "data": "2026-04-09",
+      "titulo": "CONFERÊNCIA INTERNACIONAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=CONFER%C3%8ANCIA%20INTERNACIONAL",
+      "resumo": ""
+    },
+    {
+      "id": "70816eb7cc5a57e0",
+      "data": "2026-04-09",
+      "titulo": "SISTEMA BRASILEIRO DE COMÉRCIO DE EMISSÕES",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SISTEMA%20BRASILEIRO%20DE%20COM%C3%89RCIO%20DE%20EMISS%C3%95ES",
+      "resumo": ""
+    },
+    {
+      "id": "b17841ed3bf8f954",
+      "data": "2026-04-09",
+      "titulo": "Receita Federal retém eletrônicos avaliados em R$ 1,8 milhão ocultos em fundo falso de caminhão na Ponte Internacional da Amizade",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/receita-federal-retem-eletronicos-avaliados-em-r-1-8-milhao-ocultos-em-fundo-falso-de-caminhao-na-ponte-internacional-da-amizade",
+      "resumo": "09/04/2026-Mercadorias estavam escondidas em compartimento adulterado; motorista abandonou o veículo e evadiu-se para o Paraguai."
+    },
     {
       "id": "2fc995946d5e62ec",
       "data": "2026-04-08",
