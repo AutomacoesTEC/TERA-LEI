@@ -1,7 +1,7 @@
 {
-  "ultima_atualizacao": "2026-04-09T10:21:18.247675-03:00",
-  "data_busca": "2026-04-09",
-  "total": 243,
+  "ultima_atualizacao": "2026-04-10T10:03:52.080518-03:00",
+  "data_busca": "2026-04-10",
+  "total": 253,
   "novos_nesta_execucao": 10,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
@@ -33,6 +33,86 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "5eec450741accba7",
+      "data": "2026-04-10",
+      "titulo": "09/04/2026 15:31▶️ Todos por TodasTornozeleira para agressores e mais medidas de proteção às mulheres são sancionadas por Lula",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/presidente-lula-sanciona-conjunto-de-medidas-que-ampliam-protecao-as-mulheres-e-modernizam-enfrentamento-a-violencia-de-genero",
+      "resumo": ""
+    },
+    {
+      "id": "a47f9ebb9d4bf489",
+      "data": "2026-04-10",
+      "titulo": "09/04/2026 13:18De olhoPF deflagra 2ª fase da Operação Patronos contra fraudes previdenciárias",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/pf-deflagra-2a-fase-da-operacao-patronos-contra-fraudes-previdenciarias",
+      "resumo": ""
+    },
+    {
+      "id": "20af2ff96e0024f1",
+      "data": "2026-04-10",
+      "titulo": "09/04/2026 18:18Imposto de RendaReceita Federal alcança 10 milhões de declarações do IRPF 2026 em tempo recorde",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/receita-federal-alcanca-10-milhoes-de-declaracoes-do-irpf-2026-em-tempo-recorde",
+      "resumo": ""
+    },
+    {
+      "id": "68c2b8464b53b1cd",
+      "data": "2026-04-10",
+      "titulo": "09/04/2026 17:40ComunicaçõesConcurso Dom Phillips e Bruno Pereira premia iniciativas de comunicação",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/concurso-dom-phillips-e-bruno-pereira-premia-iniciativas-de-comunicacao",
+      "resumo": ""
+    },
+    {
+      "id": "5f17117a08052e3c",
+      "data": "2026-04-10",
+      "titulo": "Declare Certo: Dia D do IRPF 2026 mobiliza profissionais da contabilidade em todo o país",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/declare-certo-dia-d-do-irpf-2026-mobiliza-profissionais-da-contabilidade-em-todo-o-pais/",
+      "resumo": "Profissionais da contabilidade de todo o Brasil estão mobilizados nesta sexta-feira (10) para orientar gratuitamente contribuintes durante o Dia D do Imposto de Renda da Pessoa Física (IRPF) 2026. A iniciativa é uma parceria do Conselho Federal de Contabilidade (CFC) com a Federação Nacional das Empresas de Serviços Contábeis e das Empresas de Assessoramento, Perícias, Informações e Pesquisas (Fenacon) eContinuar Lendo...Leia Mais"
+    },
+    {
+      "id": "1f228dff8c7bc453",
+      "data": "2026-04-10",
+      "titulo": "Governo Federal anuncia nesta sexta-feira \"Ação Brasil-EUA contra o crime organizado\"",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/abril/governo-federal-anuncia-nesta-sexta-feira-acao-brasil-eua-contra-o-crime-organizado",
+      "resumo": "10/04/2026-Projeto MIT (Mutual Interdiction Team) visa integrar esforços de inteligência e operações conjuntas para interceptar remessas ilícitas de armamentos e entorpecentes"
+    },
+    {
+      "id": "1282b6f888a05a25",
+      "data": "2026-04-10",
+      "titulo": "COOPERAÇÃO INTERNACIONAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=COOPERA%C3%87%C3%83O%20INTERNACIONAL",
+      "resumo": ""
+    },
+    {
+      "id": "054321f6f43240e6",
+      "data": "2026-04-10",
+      "titulo": "COMBATE AO CRIME TRANSNACIONAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=COMBATE%20AO%20CRIME%20TRANSNACIONAL",
+      "resumo": ""
+    },
+    {
+      "id": "96eed4afcf8c1836",
+      "data": "2026-04-10",
+      "titulo": "PAINÉIS TEMÁTICOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PAIN%C3%89IS%20TEM%C3%81TICOS",
+      "resumo": ""
+    },
+    {
+      "id": "a9e84275ba64b2eb",
+      "data": "2026-04-10",
+      "titulo": "MENORES DE IDADE",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MENORES%20DE%20IDADE",
+      "resumo": ""
+    },
     {
       "id": "bc84c83bf8722f7f",
       "data": "2026-04-09",
