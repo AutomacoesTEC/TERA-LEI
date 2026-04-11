@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-10T10:03:52.080518-03:00",
-  "data_busca": "2026-04-10",
-  "total": 253,
-  "novos_nesta_execucao": 10,
+  "ultima_atualizacao": "2026-04-11T09:52:04.579252-03:00",
+  "data_busca": "2026-04-11",
+  "total": 273,
+  "novos_nesta_execucao": 20,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,166 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "03b0454225e9be19",
+      "data": "2026-04-11",
+      "titulo": "10/04/2026 11:23Fique ligadoReceita Federal alerta para golpe digital envolvendo falsas pendências do IRPF",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/receita-federal-alerta-para-golpe-digital-envolvendo-falsas-pendencias-do-irpf",
+      "resumo": ""
+    },
+    {
+      "id": "e65f9da0bc5e1534",
+      "data": "2026-04-11",
+      "titulo": "10/04/2026 19:44▶️ Novo prédioExpansão dos Institutos Federais: 'Vamos continuar investindo na educação', diz Lula, em Sorocaba",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/expansao-institutos-federais-vamos-continuar-investindo-em-educacao-diz-lula-sorocaba",
+      "resumo": ""
+    },
+    {
+      "id": "a5c8d2f14db4eff6",
+      "data": "2026-04-11",
+      "titulo": "10/04/2026 16:04PujançaPolo Industrial de Manaus fatura R$ 37 bilhões no 1º bimestre, com 129 mil empregos diretos",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/polo-industrial-de-manaus-fatura-r-37-bilhoes-no-primeiro-bimestre",
+      "resumo": ""
+    },
+    {
+      "id": "7e4ae9669c86865e",
+      "data": "2026-04-11",
+      "titulo": "10/04/2026 18:51RoteiristaAntonia Pellegrino é a nova presidenta da Empresa Brasil de Comunicação",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/antonia-pellegrino-e-a-nova-presidenta-da-ebc",
+      "resumo": ""
+    },
+    {
+      "id": "8123f241ed1da496",
+      "data": "2026-04-11",
+      "titulo": "PROGRAMA CONFIA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PROGRAMA%20CONFIA",
+      "resumo": ""
+    },
+    {
+      "id": "36632dfa31d1320e",
+      "data": "2026-04-11",
+      "titulo": "AUTORREGULARIZAÇÃO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=AUTORREGULARIZA%C3%87%C3%83O",
+      "resumo": ""
+    },
+    {
+      "id": "8bb28358dc9f574c",
+      "data": "2026-04-11",
+      "titulo": "BONS CONTRIBUINTES",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=BONS%20CONTRIBUINTES",
+      "resumo": ""
+    },
+    {
+      "id": "1af226dd5681e009",
+      "data": "2026-04-11",
+      "titulo": "MINISTRO DA FAZENDA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MINISTRO%20DA%20FAZENDA",
+      "resumo": ""
+    },
+    {
+      "id": "1d5bca11d4adfb45",
+      "data": "2026-04-11",
+      "titulo": "REFORMA TRIBUTÁRIA GLOBAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=REFORMA%20TRIBUT%C3%81RIA%20GLOBAL",
+      "resumo": ""
+    },
+    {
+      "id": "8ed4f627fcc20fdb",
+      "data": "2026-04-11",
+      "titulo": "ALERTA CONTRA  GOLPES",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ALERTA%20CONTRA%20%20GOLPES%20",
+      "resumo": ""
+    },
+    {
+      "id": "3c8bdf50fc4f4822",
+      "data": "2026-04-11",
+      "titulo": "SERVIÇOS DIGITAIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=SERVI%C3%87OS%20DIGITAIS",
+      "resumo": ""
+    },
+    {
+      "id": "b449e5e757bfa45c",
+      "data": "2026-04-11",
+      "titulo": "INSTRUÇÃO NORMATIVA N.2.320",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INSTRU%C3%87%C3%83O%20NORMATIVA%20N.2.320",
+      "resumo": ""
+    },
+    {
+      "id": "6ab13a058b471bef",
+      "data": "2026-04-11",
+      "titulo": "PORTAL DE SERVIÇOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PORTAL%20DE%20SERVI%C3%87OS%20",
+      "resumo": ""
+    },
+    {
+      "id": "133ab7517e414a76",
+      "data": "2026-04-11",
+      "titulo": "CARGA TRIBUTÁRIA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=CARGA%20TRIBUT%C3%81RIA",
+      "resumo": ""
+    },
+    {
+      "id": "90297762adf8e1bb",
+      "data": "2026-04-11",
+      "titulo": "PRODUTO INTERNO BRUTO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=PRODUTO%20INTERNO%20BRUTO",
+      "resumo": ""
+    },
+    {
+      "id": "7d02aae75071ccae",
+      "data": "2026-04-11",
+      "titulo": "TRIBUTOS ARRECADADOS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=TRIBUTOS%20ARRECADADOS",
+      "resumo": ""
+    },
+    {
+      "id": "115ce917dad76f80",
+      "data": "2026-04-11",
+      "titulo": "GOVERNO CENTRAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=GOVERNO%20CENTRAL",
+      "resumo": ""
+    },
+    {
+      "id": "70a0e5e3baec7084",
+      "data": "2026-04-11",
+      "titulo": "ESCRITURAÇÕES DIGITAIS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=ESCRITURA%C3%87%C3%95ES%20DIGITAIS",
+      "resumo": ""
+    },
+    {
+      "id": "8dd7d8c5498d561e",
+      "data": "2026-04-11",
+      "titulo": "CONTRIBUIÇÕES PREVIDENCIÁRIAS",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=CONTRIBUI%C3%87%C3%95ES%20PREVIDENCI%C3%81RIAS",
+      "resumo": ""
+    },
+    {
+      "id": "4b7affba7cc8674e",
+      "data": "2026-04-11",
+      "titulo": "INSTRUÇÃO NORMATIVA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=INSTRU%C3%87%C3%83O%20NORMATIVA",
+      "resumo": ""
+    },
     {
       "id": "5eec450741accba7",
       "data": "2026-04-10",
