@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-11T09:52:04.579252-03:00",
-  "data_busca": "2026-04-11",
-  "total": 273,
-  "novos_nesta_execucao": 20,
+  "ultima_atualizacao": "2026-04-12T09:55:56.656535-03:00",
+  "data_busca": "2026-04-12",
+  "total": 274,
+  "novos_nesta_execucao": 1,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,14 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "546fdda2fd0daba8",
+      "data": "2026-04-12",
+      "titulo": "11/04/2026 13:00▶️ Novo prédioExpansão dos Institutos Federais: 'Vamos continuar investindo na educação', diz Lula, em Sorocaba",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/expansao-institutos-federais-vamos-continuar-investindo-em-educacao-diz-lula-sorocaba",
+      "resumo": ""
+    },
     {
       "id": "03b0454225e9be19",
       "data": "2026-04-11",
