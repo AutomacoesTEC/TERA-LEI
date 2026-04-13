@@ -1975,9 +1975,12 @@ function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
 function TabIndice({ds,lei,area,onGoToArt,study,tagsConfig}){
   const [filtro,setFiltro]=useState("");
   const [expandedIdx,setExpandedIdx]=useState(null);
+  const [scope,setScope]=useState({legis:true,notas:true});
+  const [selTag,setSelTag]=useState("");
   const idxPredefinido=useMemo(()=>buildIdx(ds,area),[ds,area]);
-  const resultadosBusca=useMemo(()=>fullTextSearch(ds,filtro,lei.id,study,tagsConfig),[ds,filtro,lei.id,study,tagsConfig]);
+  const resultadosBusca=useMemo(()=>fullTextSearch(ds,filtro,lei.id,study,tagsConfig,scope),[ds,filtro,lei.id,study,tagsConfig,scope]);
   const totalOcorrencias=useMemo(()=>resultadosBusca.reduce((s,r)=>s+r.ocorrencias,0),[resultadosBusca]);
+  const leisComResultados=1;
   const buscaAtiva=filtro.trim().length>=3;
   const ctx=useMemo(()=>hierarquia(ds),[ds]);
   const highlightText=(text,term)=>{
@@ -2024,7 +2027,7 @@ function TabIndice({ds,lei,area,onGoToArt,study,tagsConfig}){
         </div>
       </div>
 
-      {buscaAtiva&&<div style={{marginTop:2,fontSize:12,color:"var(--text-sec)"}}>{totalOcorrencias} ocorrência(s) em {resultados.length} dispositivo(s) de {leisComResultados} lei(s)</div>}
+      {buscaAtiva&&<div style={{marginTop:2,fontSize:12,color:"var(--text-sec)"}}>{totalOcorrencias} ocorrência(s) em {resultadosBusca.length} dispositivo(s)</div>}
     </div>
     {buscaAtiva?
       (resultadosBusca.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhum dispositivo encontrado para "{filtro}"</div>
