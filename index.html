@@ -236,8 +236,43 @@ self.onmessage = function(e) {
 function idT(s){for(const p of PATS)if(p.r.test(s.trim()))return p.t;return null;}
 function exId(t,s){s=s.trim();if(DIV.has(t))return s;const R={ARTIGO:/^(Art\.\s*\d+[ºo°]?[\-\.]?)/,PARÁGRAFO:/^(§\s*\d+[ºo°]?\.?|Par[áa]grafo\s+[úu]nico\.?)/i,INCISO:/^([IVXLCDM]+)\s*[\-–—]/,ALÍNEA:/^([a-z]\))/,ITEM:/^(\d+\.)/};const m=R[t]?.exec(s);return m?m[1].trim():s.slice(0,30);}
 function exTx(t,s){s=s.trim();if(DIV.has(t))return"";const R={ARTIGO:/^Art\.\s*\d+[ºo°]?[\s\-\.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?\.?\s+|Par[áa]grafo\s+[úu]nico\.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[\-–—]\s+(.+)/,ALÍNEA:/^[a-z]\)\s+(.+)/,ITEM:/^\d+\.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
-function parse(txt){const ds=[];let a=null,ag=false;const reAltera=/\[?\s*(Reda[çc][ãa]o dada pel[oa]\(a\)[^\]]*|Inclu[ií]d[oa]\(a\) pel[oa]\(a\)[^\]]*|Revogad[oa]\(a\) pel[oa]\(a\)[^\]]*)\]?/gi;const reVetado=/\(\s*(?:VETADO|Vetado|vetado)\s*\)/;const reRevogado=/\(\s*(?:REVOGADO|Revogado|revogado)\s*\)/;
-  for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}}return detectVetados(ds);}
+function parse(txt){const ds=[];let a=null,ag=false;const reAltera=/\[?\s*(Reda[çc][ãa]o dada pel[oa]\(a\)[^\]]*|Inclu[ií]d[oa]\(a\) pel[oa]\(a\)[^\]]*|Revogad[oa]\(a\) pel[oa]\(a\)[^\]]*|Renumerado[^\]]*)\]?/gi;
+  const reVetado=/\(\s*(?:VETADO|Vetado|vetado)\s*\)/;
+  const reRevogado=/\(\s*(?:REVOGADO|Revogado|revogado)\s*\)|Vigência encerrada/i;
+  for(const l of txt.split("\n")){
+    const s=l.trim();
+    if(!s){if(ag&&a)ag=false;continue;}
+    const t=idT(s);
+    if(t){
+      let alteracao="";let status="vigente";
+      const altM=s.match(reAltera);
+      if(altM)alteracao=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");
+      const cleanTxt=s.replace(reAltera,"").trim();
+      if(reVetado.test(cleanTxt))status="vetado";
+      else if(reRevogado.test(cleanTxt))status="revogado";
+      if(/revogad/i.test(alteracao)||/vigência encerrada/i.test(alteracao))status="revogado";
+      a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};
+      ds.push(a);ag=DIV.has(t);
+    }else if(a){
+      if(ag&&!a.rub){a.rub=s;ag=false;}
+      else{
+        const altM=s.match(reAltera);
+        if(altM){
+          const newAlt=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");
+          a.alteracao=a.alteracao?(a.alteracao+"; "+newAlt):newAlt;
+          const cleaned=s.replace(reAltera,"").trim();
+          if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;
+        }else{
+          a.txt=a.txt?a.txt+" "+s:s;
+        }
+      }
+      if(reVetado.test(a.txt))a.status="vetado";
+      if(reRevogado.test(a.txt))a.status="revogado";
+      if(a.alteracao&&( /revogad/i.test(a.alteracao)||/vigência encerrada/i.test(a.alteracao) ))a.status="revogado";
+    }
+  }
+  return detectVetados(ds);
+}
 
 function detectVetados(ds){
   const normId=id=>(id||"").replace(/[^a-zA-Z0-9ºo°§úÚ]/g,"").toLowerCase();
@@ -274,12 +309,12 @@ function buildIdx(ds,area){const ws=AREAS[area]?.palavras||[];const idx={};let a
 
 function fullTextSearch(ds,termo,leiId=null,study=null,tagsConfig=[],scope={legis:true,notas:true}){
   const hasTerm = termo && termo.trim().length >= 3;
-  if(!hasTerm && !termo.includes("#")) return []; // Se não tem termo nem tag (#), retorna vazio
-  // Operador AND via '+': "lucro presumido + faturamento" exige ambos no dispositivo.
-  // Sem '+', comportamento idêntico ao original (retrocompatível).
+  const hasTag = termo && termo.includes("#");
+  if(!hasTerm && !hasTag) return []; 
+  
   const termos=termo.split("+")
     .map(t=>t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""))
-    .filter(t=>t.length>=3); // descarta fragmentos < 3 chars
+    .filter(t=>t.length>=3 || t.startsWith("#")); 
   if(termos.length===0)return[];
   const resultados=[];let artAtual="";
   for(let i=0;i<ds.length;i++){
@@ -304,9 +339,8 @@ function fullTextSearch(ds,termo,leiId=null,study=null,tagsConfig=[],scope={legi
       const textoFinal = (textoLegis + " " + textoNotas).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
       
       if(termos.every(t=>textoFinal.includes(t))){
-        // Se a busca for apenas por tag, as ocorrências são 1 por padrão se o dispositivo bater
-        const ocorrencias = hasTerm ? termos.reduce((s,t)=>s+(textoFinal.split(t).length-1),0) : 1;
-        resultados.push({idx:i,tipo:d.tipo,id:d.id,art:artAtual,txt:d.txt,rub:d.rub,ocorrencias,status:d.status||"vigente"});
+        const ocorrencias = termos.reduce((s,t)=>s+(textoFinal.split(t).length-1),0);
+        resultados.push({idx:i,tipo:d.tipo,id:d.id,art:artAtual,txt:d.txt,rub:d.rub,ocorrencias:ocorrencias||1,status:d.status||"vigente"});
       }
     }catch(e){/* dispositivo malformado — ignora e continua */}
   }
@@ -1975,8 +2009,10 @@ function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
 function TabIndice({ds,lei,area,onGoToArt,study,tagsConfig}){
   const [filtro,setFiltro]=useState("");
   const [expandedIdx,setExpandedIdx]=useState(null);
+  const [scope,setScope]=useState({legis:true,notas:true});
+  const [selTag,setSelTag]=useState("");
   const idxPredefinido=useMemo(()=>buildIdx(ds,area),[ds,area]);
-  const resultadosBusca=useMemo(()=>fullTextSearch(ds,filtro,lei.id,study,tagsConfig),[ds,filtro,lei.id,study,tagsConfig]);
+  const resultadosBusca=useMemo(()=>fullTextSearch(ds,filtro,lei.id,study,tagsConfig,scope),[ds,filtro,lei.id,study,tagsConfig,scope]);
   const totalOcorrencias=useMemo(()=>resultadosBusca.reduce((s,r)=>s+r.ocorrencias,0),[resultadosBusca]);
   const buscaAtiva=filtro.trim().length>=3;
   const ctx=useMemo(()=>hierarquia(ds),[ds]);
@@ -2024,7 +2060,7 @@ function TabIndice({ds,lei,area,onGoToArt,study,tagsConfig}){
         </div>
       </div>
 
-      {buscaAtiva&&<div style={{marginTop:2,fontSize:12,color:"var(--text-sec)"}}>{totalOcorrencias} ocorrência(s) em {resultados.length} dispositivo(s) de {leisComResultados} lei(s)</div>}
+      {buscaAtiva&&<div style={{marginTop:2,fontSize:12,color:"var(--text-sec)"}}>{totalOcorrencias} ocorrência(s) em {resultadosBusca.length} dispositivo(s)</div>}
     </div>
     {buscaAtiva?
       (resultadosBusca.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhum dispositivo encontrado para "{filtro}"</div>
