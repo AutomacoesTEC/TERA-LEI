@@ -236,8 +236,8 @@ self.onmessage = function(e) {
 function idT(s){for(const p of PATS)if(p.r.test(s.trim()))return p.t;return null;}
 function exId(t,s){s=s.trim();if(DIV.has(t))return s;const R={ARTIGO:/^(Art\.?\s*\d+[ºo°]?[\-\.]?)/,PARÁGRAFO:/^(§\s*\d+[ºo°]?\.?|Par[áa]grafo\s+[úu]nico\.?)/i,INCISO:/^([IVXLCDM]+)\s*[\-–—]/,ALÍNEA:/^([a-z]\))/,ITEM:/^(\d+\.)/};const m=R[t]?.exec(s);return m?m[1].trim():s.slice(0,30);}
 function exTx(t,s){s=s.trim();if(DIV.has(t))return"";const R={ARTIGO:/^Art\.?\s*\d+[ºo°]?[\s\-\.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?\.?\s+|Par[áa]grafo\s+[úu]nico\.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[\-–—]\s+(.+)/,ALÍNEA:/^[a-z]\)\s+(.+)/,ITEM:/^\d+\.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
-function parse(txt){const ds=[];let a=null,ag=false;const reAltera=/\[?\s*(Reda[çc][ãa]o dada pel[oa]\(a\)[^\]]*|Inclu[ií]d[oa]\(a\) pel[oa]\(a\)[^\]]*|Revogad[oa]\(a\) pel[oa]\(a\)[^\]]*)\]?/gi;const reVetado=/\(\s*(?:VETADO|Vetado|vetado)\s*\)/;const reRevogado=/\(\s*(?:REVOGADO|Revogado|revogado)\s*\)/;
-  for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}}return detectVetados(ds);}
+function parse(txt){const ds=[];let a=null,ag=false;const pre=[];const reAltera=/\[?\s*(Reda[çc][ãa]o dada pel[oa]\(a\)[^\]]*|Inclu[ií]d[oa]\(a\) pel[oa]\(a\)[^\]]*|Revogad[oa]\(a\) pel[oa]\(a\)[^\]]*)\]?/gi;const reVetado=/\(\s*(?:VETADO|Vetado|vetado)\s*\)/;const reRevogado=/\(\s*(?:REVOGADO|Revogado|revogado)\s*\)/;
+  for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}else if(!a){pre.push(s);}}if(pre.length>0){const eTxt=pre.join(" ").trim();if(eTxt)ds.unshift({tipo:"EMENTA",id:"",rub:"",txt:eTxt,status:"vigente",alteracao:""});}return detectVetados(ds);}
 
 function detectVetados(ds){
   const normId=id=>(id||"").replace(/[^a-zA-Z0-9ºo°§úÚ]/g,"").toLowerCase();
@@ -336,6 +336,9 @@ async function pdfToText(f){const ab=await f.arrayBuffer();const pdf=await pdfjs
   fullText=fullText.replace(/\s*(?:\u0000|\ufffd)?\s*ANEXO\s+[IVXLCDM]+\.pdf/gi,"");
   fullText=fullText.replace(/ANEXO\s+[IVXLCDM]+\.pdf/gi,"");
   fullText=fullText.replace(/\* Este texto não substitui o publicado oficialmente\./gi,"");
+  fullText=fullText.replace(/[\u25A1\uFFFD]/g,"");
+  fullText=fullText.replace(/(\b[a-záéíóúàâêôãõüçA-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ]+)\s+\d{1,4}\/\d{1,4}\s+([a-záéíóúàâêôãõüçA-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ]+\b)/gi,"$1 $2");
+  fullText=fullText.replace(/  +/g," ");
   return fullText;}
 // ─── Storage Module — KV cache + async sync ───────────────────────────────────
 const PROXY="https://tera-proxy.naytributos.workers.dev";
@@ -919,7 +922,7 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study,tagsConfig,setTagsConf
 
 // ALTERAÇÃO ENTREGA 2: removida barra de busca do Texto Integral
 function TabTexto({ds,lei,gSt,uSt}){
-  const ind={PARTE:0,LIVRO:0,TÍTULO:0,CAPÍTULO:12,SEÇÃO:24,SUBSEÇÃO:36,ARTIGO:0,PARÁGRAFO:20,INCISO:36,ALÍNEA:52,ITEM:68};
+  const ind={PARTE:0,LIVRO:0,TÍTULO:0,CAPÍTULO:12,SEÇÃO:24,SUBSEÇÃO:36,ARTIGO:0,PARÁGRAFO:20,INCISO:36,ALÍNEA:52,ITEM:68,EMENTA:0};
   const sts=["","Não lido","Lido","Revisando","Dominado","Dúvida"];const sC={Dominado:"#27AE60",Dúvida:"#C0392B",Revisando:"#D4A017",Lido:"#2E86AB"};
   return <div>
     <div style={{maxHeight:"68vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>{ds.map((d,i)=>{const ri=i;const isD=DIV.has(d.tipo);const st=gSt(lei.id,ri,"status");const nt=gSt(lei.id,ri,"note");const isVetado=d.status==="vetado";const isRevogado=d.status==="revogado";
@@ -2192,7 +2195,9 @@ function TabMapa({ds}){
   const renderNode=(node,depth,pathKey)=>{
     // Nó virtual para leis sem divisões hierárquicas
     if(node.__virtual){
+      const ementa=ds.find(d=>d.tipo==="EMENTA");
       return <div key={pathKey+"-virtual"} style={{marginTop:4}}>
+        {ementa&&<div style={{fontSize:13,color:"var(--text)",marginBottom:12,padding:"12px 16px",background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:8,lineHeight:1.6,fontStyle:"italic"}}>{ementa.txt}</div>}
         <div style={{fontSize:11,color:"var(--text-sec)",marginBottom:6,fontStyle:"italic"}}>Lei sem divisões hierárquicas — artigos listados diretamente:</div>
         {renderArtigos(node.artigos,pathKey+"-virtual")}
       </div>;
