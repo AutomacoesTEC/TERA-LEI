@@ -76,7 +76,7 @@ function getCS(v){return getComputedStyle(document.body).getPropertyValue(v).tri
 const AREAS={tributario:{nome:"Tributário",palavras:["microempresa","empresa de pequeno porte","simples nacional","receita bruta","alíquota","base de cálculo","fato gerador","contribuinte","sujeito passivo","obrigação tributária","crédito tributário","lançamento","isenção","imunidade","prescrição","decadência","compensação","multa","juros","mora","ICMS","ISS","IPI","PIS","COFINS","IRPJ","CSLL","INSS","nota fiscal","escrituração","declaração","MEI","parcelamento","certidão negativa","substituição tributária","dívida ativa","execução fiscal","IBS","CBS","imposto seletivo","IVA","não cumulatividade","cashback","split payment","comitê gestor"]},civil:{nome:"Civil",palavras:["capacidade civil","casamento","divórcio","propriedade","posse","usucapião","contrato","obrigação","dano moral","indenização","sucessão","herança","testamento","inventário"]},penal:{nome:"Penal",palavras:["crime","dolo","culpa","pena","reclusão","legítima defesa","tentativa","reincidência","homicídio","furto","roubo","habeas corpus"]},trabalhista:{nome:"Trabalhista",palavras:["empregado","empregador","CLT","salário","horas extras","férias","FGTS","aviso prévio","rescisão","justa causa","terceirização","convenção coletiva"]},constitucional:{nome:"Constitucional",palavras:["direitos fundamentais","liberdade","igualdade","contraditório","ampla defesa","mandado de segurança","dignidade","cláusula pétrea","STF","medida provisória"]},administrativo:{nome:"Administrativo",palavras:["administração pública","servidor público","licitação","pregão","contrato administrativo","concessão","poder de polícia","improbidade","PAD"]}};
 
 // Parser
-const PATS=[{t:"PARTE",r:/^\s*PARTE\s+(?:GERAL|ESPECIAL|[IVXLCDM]+|PRELIMINAR)\s*$/i},{t:"LIVRO",r:/^\s*LIVRO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"TÍTULO",r:/^\s*T[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"CAPÍTULO",r:/^\s*CAP[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"SEÇÃO",r:/^\s*SE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:"SUBSEÇÃO",r:/^\s*SUBSE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:"ARTIGO",r:/^\s*Art\.\s*\d+[ºo°]?[\s\-\.]+/},{t:"PARÁGRAFO",r:/^\s*(?:§\s*\d+[ºo°]?\.?\s|Par[áa]grafo\s+[úu]nico\.?\s)/i},{t:"INCISO",r:/^\s*[IVXLCDM]+\s*[\-–—]\s+/},{t:"ALÍNEA",r:/^\s*[a-z]\)\s+/},{t:"ITEM",r:/^\s*\d+\.\s+/}];
+const PATS=[{t:"PARTE",r:/^\s*PARTE\s+(?:GERAL|ESPECIAL|[IVXLCDM]+|PRELIMINAR)\s*$/i},{t:"LIVRO",r:/^\s*LIVRO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"TÍTULO",r:/^\s*T[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"CAPÍTULO",r:/^\s*CAP[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"SEÇÃO",r:/^\s*SE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:"SUBSEÇÃO",r:/^\s*SUBSE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:"ARTIGO",r:/^\s*Art\.?\s*\d+[ºo°]?[\s\-\.]+/},{t:"PARÁGRAFO",r:/^\s*(?:§\s*\d+[ºo°]?\.?\s|Par[áa]grafo\s+[úu]nico\.?\s)/i},{t:"INCISO",r:/^\s*[IVXLCDM]+\s*[\-–—]\s+/},{t:"ALÍNEA",r:/^\s*[a-z]\)\s+/},{t:"ITEM",r:/^\s*\d+\.\s+/}];
 const DIV=new Set(["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"]);
 const CT={get PARTE(){return getCS("--gold")},get LIVRO(){return getCS("--gold")},get TÍTULO(){return getCS("--gold")},get CAPÍTULO(){return getCS("--gold-bright")},get SEÇÃO(){return getCS("--border")},get SUBSEÇÃO(){return getCS("--bg-hover")}};
 
@@ -114,7 +114,7 @@ function _buildIndices(ds) {
 
 // Localiza dispositivo pelo ID do artigo — O(1) via Map
 function _findDevice(artId, ai) {
-  const k = artId.replace(/^Art\.\s*/i, "").replace(/[^0-9]/g, "").trim();
+  const k = artId.replace(/^Art\.?\s*/i, "").replace(/[^0-9]/g, "").trim();
   const e = ai.get(k);
   return e ? (e.v || e.r || e.l) : null;
 }
@@ -234,8 +234,8 @@ self.onmessage = function(e) {
 // ═════════════════════════════════════════════════════════════════════════════
 
 function idT(s){for(const p of PATS)if(p.r.test(s.trim()))return p.t;return null;}
-function exId(t,s){s=s.trim();if(DIV.has(t))return s;const R={ARTIGO:/^(Art\.\s*\d+[ºo°]?[\-\.]?)/,PARÁGRAFO:/^(§\s*\d+[ºo°]?\.?|Par[áa]grafo\s+[úu]nico\.?)/i,INCISO:/^([IVXLCDM]+)\s*[\-–—]/,ALÍNEA:/^([a-z]\))/,ITEM:/^(\d+\.)/};const m=R[t]?.exec(s);return m?m[1].trim():s.slice(0,30);}
-function exTx(t,s){s=s.trim();if(DIV.has(t))return"";const R={ARTIGO:/^Art\.\s*\d+[ºo°]?[\s\-\.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?\.?\s+|Par[áa]grafo\s+[úu]nico\.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[\-–—]\s+(.+)/,ALÍNEA:/^[a-z]\)\s+(.+)/,ITEM:/^\d+\.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
+function exId(t,s){s=s.trim();if(DIV.has(t))return s;const R={ARTIGO:/^(Art\.?\s*\d+[ºo°]?[\-\.]?)/,PARÁGRAFO:/^(§\s*\d+[ºo°]?\.?|Par[áa]grafo\s+[úu]nico\.?)/i,INCISO:/^([IVXLCDM]+)\s*[\-–—]/,ALÍNEA:/^([a-z]\))/,ITEM:/^(\d+\.)/};const m=R[t]?.exec(s);return m?m[1].trim():s.slice(0,30);}
+function exTx(t,s){s=s.trim();if(DIV.has(t))return"";const R={ARTIGO:/^Art\.?\s*\d+[ºo°]?[\s\-\.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?\.?\s+|Par[áa]grafo\s+[úu]nico\.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[\-–—]\s+(.+)/,ALÍNEA:/^[a-z]\)\s+(.+)/,ITEM:/^\d+\.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
 function parse(txt){const ds=[];let a=null,ag=false;const reAltera=/\[?\s*(Reda[çc][ãa]o dada pel[oa]\(a\)[^\]]*|Inclu[ií]d[oa]\(a\) pel[oa]\(a\)[^\]]*|Revogad[oa]\(a\) pel[oa]\(a\)[^\]]*)\]?/gi;const reVetado=/\(\s*(?:VETADO|Vetado|vetado)\s*\)/;const reRevogado=/\(\s*(?:REVOGADO|Revogado|revogado)\s*\)/;
   for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}}return detectVetados(ds);}
 
@@ -796,7 +796,7 @@ function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study,tagsConfig,setTagsConf
 
   // ENTREGA 3: findDevice agora usa artIndex — O(1) em vez de O(n)
   const findDevice = (artId) => {
-    const cleanId = artId.replace(/^Art\.\s*/i, "").replace(/[^0-9]/g, "").trim();
+    const cleanId = artId.replace(/^Art\.?\s*/i, "").replace(/[^0-9]/g, "").trim();
     const entry = artIndex.get(cleanId);
     if (!entry) return null;
     return entry.vigente || entry.revogado || entry.last;
@@ -1551,7 +1551,7 @@ function renderD3Tree(data, svgEl, onSelect) {
 
   const layout = d3.tree().nodeSize([56, 300]);
 
-  const nodeLabel = d => d.data.id.replace(/^Art\.\s*/i,"").replace(/[ºo°]/g,"").trim().slice(0,6);
+  const nodeLabel = d => d.data.id.replace(/^Art\.?\s*/i,"").replace(/[ºo°]/g,"").trim().slice(0,6);
   const isRev     = d => d.data.status === "revogado";
   const hasHidden = d => !!(d._children && d._children.length);
   const nodeColor = d => isRev(d) ? C.err : hasHidden(d) ? C.goldB : C.gold;
@@ -2099,6 +2099,14 @@ function TabMapa({ds}){
         for(let i=levels.length-1;i>=0;i--){if(stack[levels[i]]){target=stack[levels[i]];break;}}
         const artEntry={id:d.id,status:d.status||"vigente"};
         if(target){target.artigos.push(artEntry);}
+        else{
+          // Lei sem divisões hierárquicas: criar nó raiz virtual se ainda não existir
+          if(mapa.length===0||mapa[0].__virtual!==true){
+            const virtualNode={tipo:"__RAIZ__",id:"Artigos",rub:"",children:[],artigos:[],__virtual:true};
+            mapa.unshift(virtualNode);
+          }
+          mapa[0].artigos.push(artEntry);
+        }
       }
     }
     return mapa;
@@ -2182,6 +2190,13 @@ function TabMapa({ds}){
   };
 
   const renderNode=(node,depth,pathKey)=>{
+    // Nó virtual para leis sem divisões hierárquicas
+    if(node.__virtual){
+      return <div key={pathKey+"-virtual"} style={{marginTop:4}}>
+        <div style={{fontSize:11,color:"var(--text-sec)",marginBottom:6,fontStyle:"italic"}}>Lei sem divisões hierárquicas — artigos listados diretamente:</div>
+        {renderArtigos(node.artigos,pathKey+"-virtual")}
+      </div>;
+    }
     const key=pathKey+"-"+node.id;
     const isOpen=collapsed[key]===false; // undefined → closed by default
     const hasContent=(node.children&&node.children.length>0)||(node.artigos&&node.artigos.length>0);
