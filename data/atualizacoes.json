@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-12T09:55:56.656535-03:00",
-  "data_busca": "2026-04-12",
-  "total": 274,
-  "novos_nesta_execucao": 1,
+  "ultima_atualizacao": "2026-04-13T10:20:58.895481-03:00",
+  "data_busca": "2026-04-13",
+  "total": 277,
+  "novos_nesta_execucao": 3,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,30 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "d4b0c33145c9f6b4",
+      "data": "2026-04-13",
+      "titulo": "13/04/2026 09:30▶️ Ação federal no ParanáCampanha Trabalho pelo Brasil destaca maternidade, campus universitário e melhoria rodoviária no Paraná",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/campanha-trabalho-pelo-brasil-destaca-maternidade-campus-universitario-e-ifs-melhoria-rodoviaria-e-integracao-com-paraguai-como-avancos-no-parana",
+      "resumo": "▶️ Ação federal no Paraná"
+    },
+    {
+      "id": "3f6c32cff2ed61c2",
+      "data": "2026-04-13",
+      "titulo": "Receita Federal destaca marco de 50 milhões de Carteiras de Identidade Nacional emitidas no país",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/receita-federal-destaca-marco-de-50-milhoes-de-carteiras-de-identidade-nacional-emitidas-no-pais",
+      "resumo": "13/04/2026-Emissões da CIN seguem em ritmo contínuo e expressivo."
+    },
+    {
+      "id": "816f190536c10514",
+      "data": "2026-04-13",
+      "titulo": "Receita Federal apresenta resultados da fiscalização em 2025 e planejamento para 2026",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/receita-federal-apresenta-resultados-da-fiscalizacao-em-2025-e-planejamento-para-2026",
+      "resumo": "13/04/2026-Autuações da Receita somaram R$ 233 bilhões; orientações e diferentes abordagens serão intensificadas para correção de divergências e contra a sonegação."
+    },
     {
       "id": "546fdda2fd0daba8",
       "data": "2026-04-12",
