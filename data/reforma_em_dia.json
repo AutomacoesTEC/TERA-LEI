@@ -1,0 +1,162 @@
+{
+  "ultima_atualizacao": "2026-04-13T19:00:00-03:00",
+  "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
+  "categorias": ["Legislação", "Regulamentação", "Nota Técnica", "Comunicado", "Ato Normativo", "Orientação", "Prazo", "Sistema"],
+  "fontes": [
+    "Planalto", "Ministério da Fazenda", "Receita Federal", "CGIBS",
+    "Portal NF-e", "Portal CT-e", "Portal NFS-e", "Portal MDF-e",
+    "Portal BP-e", "Portal NF-ABI", "SPED", "DOU"
+  ],
+  "itens": [
+    {
+      "id": "ec132-2023",
+      "data": "2023-12-20",
+      "titulo": "EC 132/2023 — Emenda Constitucional da Reforma Tributária promulgada",
+      "categoria": "Legislação",
+      "tags": ["EC", "IBS", "CBS", "IS", "Marco"],
+      "resumo": "Promulgada pelo Congresso Nacional a Emenda Constitucional que institui o IBS, a CBS e o Imposto Seletivo em substituição a PIS, COFINS, IPI, ICMS e ISS. Período de transição de 2026 a 2033.",
+      "fonte": "Planalto",
+      "link": "https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc/emc132.htm"
+    },
+    {
+      "id": "plp68-envio",
+      "data": "2024-04-24",
+      "titulo": "PLP 68/2024 — Projeto de regulamentação da Reforma enviado ao Congresso",
+      "categoria": "Legislação",
+      "tags": ["PLP", "IBS", "CBS", "IS", "Regulamentação"],
+      "resumo": "Poder Executivo envia ao Congresso o primeiro projeto de lei complementar para regulamentar o IBS, a CBS e o Imposto Seletivo, conforme previsto na EC 132/2023.",
+      "fonte": "Ministério da Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/reforma-tributaria"
+    },
+    {
+      "id": "plp108-envio",
+      "data": "2024-06-25",
+      "titulo": "PLP 108/2024 — Projeto do Comitê Gestor do IBS enviado ao Congresso",
+      "categoria": "Legislação",
+      "tags": ["PLP", "CGIBS", "IBS", "Comitê Gestor"],
+      "resumo": "Segundo projeto complementar da Reforma Tributária, trata da criação e regulamentação do Comitê Gestor do IBS, contencioso administrativo e distribuição da arrecadação.",
+      "fonte": "Ministério da Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/reforma-tributaria"
+    },
+    {
+      "id": "plp68-camara",
+      "data": "2024-07-10",
+      "titulo": "Câmara dos Deputados aprova PLP 68/2024",
+      "categoria": "Legislação",
+      "tags": ["PLP", "Câmara", "IBS", "CBS"],
+      "resumo": "Câmara aprova texto-base do projeto de regulamentação da Reforma Tributária com detalhamento de alíquotas, regimes especiais, cashback e split payment.",
+      "fonte": "Planalto",
+      "link": ""
+    },
+    {
+      "id": "plp68-senado",
+      "data": "2024-12-12",
+      "titulo": "Senado Federal aprova PLP 68/2024",
+      "categoria": "Legislação",
+      "tags": ["PLP", "Senado", "IBS", "CBS"],
+      "resumo": "Senado aprova o projeto de regulamentação da Reforma Tributária com alterações. Texto retorna à Câmara para análise das mudanças.",
+      "fonte": "Planalto",
+      "link": ""
+    },
+    {
+      "id": "lc214-2025",
+      "data": "2025-01-16",
+      "titulo": "LC 214/2025 — Lei Complementar da Reforma Tributária publicada",
+      "categoria": "Legislação",
+      "tags": ["LC", "IBS", "CBS", "IS", "Marco", "Regulamentação"],
+      "resumo": "Sancionada com vetos a Lei Complementar nº 214/2025, que regulamenta o IBS, a CBS e o Imposto Seletivo. Detalha incidência, base de cálculo, alíquotas, créditos, regimes específicos, cashback e split payment. Transição gradual de 2026 a 2033.",
+      "fonte": "Planalto",
+      "link": "https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp214.htm"
+    },
+    {
+      "id": "comunicado-cgibs-rfb-01-2025",
+      "data": "2025-12-02",
+      "titulo": "Comunicado Conjunto CGIBS/RFB nº 01/2025 — Orientações para CBS e IBS em 2026",
+      "categoria": "Comunicado",
+      "tags": ["CBS", "IBS", "CGIBS", "RFB", "Obrigações Acessórias", "2026"],
+      "resumo": "Primeiras orientações oficiais sobre a entrada em vigor da CBS e do IBS a partir de 01/01/2026. Define documentos fiscais com destaque CBS/IBS (NF-e, NFC-e, CT-e, NFS-e, NF3e, BP-e), dispensa de recolhimento em 2026 para quem cumprir obrigações acessórias, CNPJ para PF contribuintes a partir de jul/2026, e habilitação para compensação de benefícios onerosos de ICMS.",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/comite-gestor-do-ibs-e-receita-federal-divulgam-orientacoes-sobre-a-entrada-em-vigor-da-cbs-e-do-ibs-em-1-de-janeiro-de-2026"
+    },
+    {
+      "id": "ato-conjunto-rfb-cgibs-01-2025",
+      "data": "2025-12-22",
+      "titulo": "Ato Conjunto RFB/CGIBS nº 1/2025 — Obrigações acessórias da Reforma para 2026",
+      "categoria": "Ato Normativo",
+      "tags": ["RFB", "CGIBS", "Obrigações Acessórias", "DeRE", "NF-e", "2026"],
+      "resumo": "Disciplina obrigações acessórias de IBS e CBS para 2026. Define rol de documentos fiscais existentes recepcionados e novos a serem criados (DeRE, NF-ABI, NFAg, NF-e Gás, BP-e Aéreo). Garante 3 meses de adaptação sem penalidades após publicação dos regulamentos. Preserva competências do CGSN e CGNFS-e.",
+      "fonte": "Receita Federal",
+      "link": "https://in.gov.br/en/web/dou/-/ato-conjunto-rfb/cgibs-n-1-de-22-de-dezembro-de-2025-602670467"
+    },
+    {
+      "id": "inicio-testes-2026",
+      "data": "2026-01-01",
+      "titulo": "Início da fase de testes — CBS 0,9% e IBS 0,1%",
+      "categoria": "Prazo",
+      "tags": ["CBS", "IBS", "Teste", "Marco", "Transição", "2026"],
+      "resumo": "Entrada em vigor jurídica dos novos tributos com alíquotas-teste (CBS 0,9% e IBS 0,1%). Ano de caráter essencialmente informativo — contribuintes dispensados do recolhimento efetivo mediante cumprimento das obrigações acessórias. PIS/COFINS/ICMS/ISS permanecem integralmente exigíveis.",
+      "fonte": "Receita Federal",
+      "link": ""
+    },
+    {
+      "id": "lc227-2026",
+      "data": "2026-01-13",
+      "titulo": "LC 227/2026 — Lei do Comitê Gestor do IBS sancionada",
+      "categoria": "Legislação",
+      "tags": ["LC", "CGIBS", "IBS", "Comitê Gestor", "Marco", "Contencioso"],
+      "resumo": "Sancionada a Lei Complementar que institui o Comitê Gestor do IBS de forma definitiva, dispõe sobre contencioso administrativo integrado (União + Estados + Municípios), distribuição da arrecadação do IBS e alterações pontuais à LC 214/2025 (incluindo período de 60 dias para correção de obrigações acessórias sem penalidade).",
+      "fonte": "Ministério da Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/janeiro/nova-lei-de-regulamentacao-da-reforma-tributaria-aprofunda-o-federalismo-fiscal-cooperativo"
+    },
+    {
+      "id": "dere-material-2026",
+      "data": "2026-02-10",
+      "titulo": "Material da DeRE — Declaração de Regimes Específicos disponibilizado",
+      "categoria": "Orientação",
+      "tags": ["DeRE", "Obrigações Acessórias", "Regimes Específicos"],
+      "resumo": "Disponibilizado material de apoio para preenchimento da DeRE, nova obrigação acessória prevista no Ato Conjunto RFB/CGIBS nº 1/2025.",
+      "fonte": "Ministério da Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/reforma-tributaria"
+    },
+    {
+      "id": "nt-efd-reinf-01-2026",
+      "data": "2026-03-25",
+      "titulo": "NT EFD-Reinf nº 01/2026 — Orientações atualizadas",
+      "categoria": "Nota Técnica",
+      "tags": ["NT", "EFD-Reinf", "RFB", "SPED"],
+      "resumo": "Receita Federal publica Nota Técnica com orientações atualizadas para a escrituração da EFD-Reinf no contexto da Reforma Tributária.",
+      "fonte": "Receita Federal",
+      "link": ""
+    },
+    {
+      "id": "nt-efd-contrib-12-2026",
+      "data": "2026-03-30",
+      "titulo": "NT nº 12/2026 — EFD-Contribuições atualizada para Reforma",
+      "categoria": "Nota Técnica",
+      "tags": ["NT", "EFD-Contribuições", "SPED", "CBS"],
+      "resumo": "Publicada no Portal SPED a Nota Técnica nº 12/2026, com orientações atualizadas para a escrituração da EFD-Contribuições no contexto da CBS.",
+      "fonte": "Receita Federal",
+      "link": ""
+    },
+    {
+      "id": "nt-2025002-v135",
+      "data": "2026-03-31",
+      "titulo": "NT 2025.002 v1.35 — Reforma Tributária do Consumo (NF-e)",
+      "categoria": "Nota Técnica",
+      "tags": ["NT", "RTC", "NF-e", "Schema"],
+      "resumo": "Publicada no Portal NF-e a versão 1.35 da Nota Técnica 2025.002 — Reforma Tributária do Consumo, com ajustes no cronograma de implementação dos campos IBS/CBS na NF-e.",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+    },
+    {
+      "id": "agencia-multas-esclarecimento",
+      "data": "2026-04-06",
+      "titulo": "Receita Federal esclarece: sem multas nos primeiros 90 dias após regulamento",
+      "categoria": "Comunicado",
+      "tags": ["RFB", "Multas", "Adaptação", "2026"],
+      "resumo": "Receita Federal e AgênciaGov publicam nota esclarecendo que são falsas as informações sobre aplicação de multas antes de 90 dias após publicação do regulamento da CBS/IBS.",
+      "fonte": "Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/nota-a-imprensa-reforma-tributaria-receita-federal-esclarece-que-nao-ha-aplicacao-de-multas-antes-de-90-dias-apos-a-publicacao-do-regulamento"
+    }
+  ]
+}
