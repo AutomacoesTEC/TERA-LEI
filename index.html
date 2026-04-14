@@ -88,7 +88,7 @@ const AREAS={tributario:{nome:"Tributário",palavras:["microempresa","empresa de
 // Parser
 const PATS=[{t:“PARTE”,r:/^\s*PARTE\s+(?:GERAL|ESPECIAL|[IVXLCDM]+|PRELIMINAR)\s*$/i},{t:“LIVRO”,r:/^\s*LIVRO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:“TÍTULO”,r:/^\s*T[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:“CAPÍTULO”,r:/^\s*CAP[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:“SEÇÃO”,r:/^\s*SE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:“SUBSEÇÃO”,r:/^\s*SUBSE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:“ARTIGO”,r:/^\s*Art.?\s*\d+[ºo°]?[\s-.]+/},{t:“PARÁGRAFO”,r:/^\s*(?:§\s*\d+[ºo°]?.?\s|Par[áa]grafo\s+[úu]nico.?\s)/i},{t:“INCISO”,r:/^\s*[IVXLCDM]+\s*[-–—]\s+/},{t:“ALÍNEA”,r:/^\s*[a-z])\s+/},{t:“ITEM”,r:/^\s*\d+.\s+/}];
 const DIV=new Set([“PARTE”,“LIVRO”,“TÍTULO”,“CAPÍTULO”,“SEÇÃO”,“SUBSEÇÃO”]);
-const CT={get PARTE(){return getCS(”–gold”)},get LIVRO(){return getCS(”–gold”)},get TÍTULO(){return getCS(”–gold”)},get CAPÍTULO(){return getCS(”–gold-bright”)},get SEÇÃO(){return getCS(”–border”)},get SUBSEÇÃO(){return getCS(”–bg-hover”)}};
+const CT={get PARTE(){return getCS("--gold")},get LIVRO(){return getCS("--gold")},get TÍTULO(){return getCS("--gold")},get CAPÍTULO(){return getCS("--gold-bright")},get SEÇÃO(){return getCS("--border")},get SUBSEÇÃO(){return getCS("--bg-hover")}};
 
 // ═══ TEIA WEB WORKER — script autocontido executado fora da main thread ═══
 // String.raw preserva barras invertidas dos regex sem double-escape.
@@ -416,13 +416,13 @@ return fetch(`${PROXY}/api/anthropic`,{method:“POST”,headers:{Authorization:
 
 const Ic=({d,s=16,c=“currentColor”})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
 const IC={up:“M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12”,bk:“M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z”,tg:“M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z”,sd:“M22 2L11 13M22 2l-7 20-4-9-9-4z”,tr:“M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2”,br:“M9.5 2a3.5 3.5 0 0 0-3.19 4.94A3.5 3.5 0 0 0 4 10.5a3.5 3.5 0 0 0 1.98 3.15A3.5 3.5 0 0 0 8.5 18h1a.5.5 0 0 0 .5-.5V2.5a.5.5 0 0 0-.5-.5z”,bl:“M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0”,lk:“M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71”,sc:“M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01”,ls:“M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01”,rf:“M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15”,sr:“M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z”};
-const Sp=()=><svg width={14} height={14} viewBox=“0 0 24 24” fill=“none” stroke=“var(–gold)” strokeWidth=“2” style={{animation:“spin 1s linear infinite”}}><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>;
+const Sp=()=><svg width={14} height={14} viewBox=“0 0 24 24” fill=“none” stroke=“var(--gold)” strokeWidth=“2” style={{animation:“spin 1s linear infinite”}}><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>;
 
 // ═══ ERROR BOUNDARY ═══
 class ErrorBoundary extends React.Component{constructor(props){super(props);this.state={hasError:false,error:null};}
 static getDerivedStateFromError(error){return{hasError:true,error};}
 componentDidCatch(error,errorInfo){console.error(“Erro capturado:”,error,errorInfo);}
-render(){if(this.state.hasError){return <div style={{minHeight:“100vh”,display:“flex”,alignItems:“center”,justifyContent:“center”,background:“var(–bg)”,padding:20}}><div style={{maxWidth:500,textAlign:“center”}}><div style={{fontSize:32,marginBottom:16}}>⚠️</div><h1 style={{fontSize:24,fontWeight:700,marginBottom:12,color:“var(–text)”}}>Erro na Renderização</h1><p style={{fontSize:14,color:“var(–text-sec)”,marginBottom:16,lineHeight:1.6}}>Ocorreu um erro ao carregar a aplicação. Por favor, recarregue a página.</p><details style={{marginTop:16,padding:12,background:“var(–bg-hover)”,borderRadius:8,textAlign:“left”,fontSize:12}}><summary style={{cursor:“pointer”,fontWeight:600,marginBottom:8}}>Detalhes do Erro</summary><pre style={{overflow:“auto”,padding:8,background:“var(–bg-card)”,borderRadius:4,fontSize:11}}>{this.state.error?.toString()}</pre></details><button onClick={()=>window.location.reload()} style={{marginTop:16,padding:“10px 20px”,background:“var(–grad)”,color:”#fff”,border:“none”,borderRadius:8,cursor:“pointer”,fontSize:14,fontWeight:600}}>Recarregar Página</button></div></div>;}return this.props.children;}}
+render(){if(this.state.hasError){return <div style={{minHeight:“100vh”,display:“flex”,alignItems:“center”,justifyContent:“center”,background:“var(--bg)”,padding:20}}><div style={{maxWidth:500,textAlign:“center”}}><div style={{fontSize:32,marginBottom:16}}>⚠️</div><h1 style={{fontSize:24,fontWeight:700,marginBottom:12,color:“var(--text)”}}>Erro na Renderização</h1><p style={{fontSize:14,color:“var(--text-sec)”,marginBottom:16,lineHeight:1.6}}>Ocorreu um erro ao carregar a aplicação. Por favor, recarregue a página.</p><details style={{marginTop:16,padding:12,background:“var(--bg-hover)”,borderRadius:8,textAlign:“left”,fontSize:12}}><summary style={{cursor:“pointer”,fontWeight:600,marginBottom:8}}>Detalhes do Erro</summary><pre style={{overflow:“auto”,padding:8,background:“var(--bg-card)”,borderRadius:4,fontSize:11}}>{this.state.error?.toString()}</pre></details><button onClick={()=>window.location.reload()} style={{marginTop:16,padding:“10px 20px”,background:“var(--grad)”,color:”#fff”,border:“none”,borderRadius:8,cursor:“pointer”,fontSize:14,fontWeight:600}}>Recarregar Página</button></div></div>;}return this.props.children;}}
 
 // ═══ APP ═══
 function App(){
@@ -486,7 +486,7 @@ setAuth(null);
 };
 
 // ── Returns condicionais (APÓS todos os hooks) ───────────────────────────────
-if(authLoading)return <div style={{minHeight:“100vh”,display:“flex”,alignItems:“center”,justifyContent:“center”,background:“var(–bg)”}}><Sp/><span style={{marginLeft:10,color:“var(–text-sec)”}}>Carregando…</span></div>;
+if(authLoading)return <div style={{minHeight:“100vh”,display:“flex”,alignItems:“center”,justifyContent:“center”,background:“var(--bg)”}}><Sp/><span style={{marginLeft:10,color:“var(--text-sec)”}}>Carregando…</span></div>;
 if(!auth)return <LoginScreen onLogin={handleLogin} theme={theme} toggleTheme={toggleTheme}/>;
 
 const upF=async e=>{const f=e.target.files?.[0];if(!f)return;setUp(true);try{const t=await pdfToText(f);const ds=parse(t);const l={id:Date.now()+””,nome:f.name.replace(/.pdf$/i,””),data:new Date().toLocaleDateString(“pt-BR”),ds,nA:ds.filter(d=>d.tipo===“ARTIGO”).length,nD:ds.length,area,anexos:[]};const nl=[l,…lib];setLib(nl);LS(“t3-lib”,nl);setSel(l);setVw(“reader”);}catch(e){alert(“Erro: “+e.message);}setUp(false);if(fRef.current)fRef.current.value=””;};
@@ -503,19 +503,19 @@ const importBackup=()=>{const inp=document.createElement(“input”);inp.type=�
 const nav=[{id:“library”,ic:IC.bk,lb:“Biblioteca”},…(sel?[{id:“reader”,ic:IC.ls,lb:sel.nome.slice(0,20)}]:[]),{id:“econsultor”,ic:IC.br,lb:“E-Consultor”},{id:“buscageral”,ic:IC.sr,lb:“Busca Geral”},{id:“reforma”,ic:IC.sc,lb:“Reforma em Dia”},{id:“atualizacoes”,ic:IC.bl,lb:“Atualizações”}];
 
 return <div style={{minHeight:“100vh”}}>
-<header style={{background:“var(–bg-card)”,borderBottom:“1px solid var(–border)”,padding:“8px 20px”,display:“flex”,alignItems:“center”,justifyContent:“space-between”,position:“sticky”,top:0,zIndex:100,boxShadow:“var(–shadow)”}}>
+<header style={{background:“var(--bg-card)”,borderBottom:“1px solid var(--border)”,padding:“8px 20px”,display:“flex”,alignItems:“center”,justifyContent:“space-between”,position:“sticky”,top:0,zIndex:100,boxShadow:“var(--shadow)”}}>
 <div style={{display:“flex”,alignItems:“center”,gap:10}}>
 <Logo/>
-<div><div style={{fontSize:15,fontWeight:700,letterSpacing:“1px”}}>TERA</div><div style={{fontSize:11,color:“var(–text-sec)”}}>CADERNO ELETRÔNICO</div></div>
+<div><div style={{fontSize:15,fontWeight:700,letterSpacing:“1px”}}>TERA</div><div style={{fontSize:11,color:“var(--text-sec)”}}>CADERNO ELETRÔNICO</div></div>
 </div>
-<nav style={{display:“flex”,gap:2,overflowX:“auto”}}>{nav.map(n=><button key={n.id} className={`nb ${vw===n.id?"on":""}`} onClick={()=>setVw(n.id)}><Ic d={n.ic} s={14} c={vw===n.id?“var(–gold)”:“var(–text-sec)”}/>{n.lb}</button>)}</nav>
+<nav style={{display:“flex”,gap:2,overflowX:“auto”}}>{nav.map(n=><button key={n.id} className={`nb ${vw===n.id?"on":""}`} onClick={()=>setVw(n.id)}><Ic d={n.ic} s={14} c={vw===n.id?“var(--gold)”:“var(--text-sec)”}/>{n.lb}</button>)}</nav>
 <div style={{display:“flex”,gap:6,alignItems:“center”}}>
 <ThemeBtn theme={theme} toggle={toggleTheme}/>
-<button onClick={exportBackup} title=“Exportar Backup (Leis + Anotações)” style={{fontSize:11,color:“var(–text-sec)”,padding:“5px 8px”,border:“1px solid var(–border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" s={11} c="var(--text-sec)"/>Backup</button>
-<button onClick={importBackup} title=“Importar Backup” style={{fontSize:11,color:“var(–text-sec)”,padding:“5px 8px”,border:“1px solid var(–border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d={IC.up} s={11} c="var(--text-sec)"/>Restaurar</button>
-<button onClick={()=>setShowApiKeyModal(true)} title=“Configurar API Key Anthropic” style={{fontSize:11,color:apiKeyStatus?.configured?“var(–ok)”:“var(–err)”,padding:“5px 8px”,border:“1px solid var(–border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d=“M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm0 14.2a7.2 7.2 0 0 1-6-3.22c.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08a7.2 7.2 0 0 1-6 3.22z” s={11} c={apiKeyStatus?.configured?“var(–ok)”:“var(–err)”}/>API Key</button>
-<button onClick={handleLogout} title=“Sair” style={{fontSize:11,color:“var(–text-sec)”,padding:“5px 8px”,border:“1px solid var(–border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" s={11} c="var(--text-sec)"/>{auth.username}</button>
-<select value={area} onChange={e=>setArea(e.target.value)} style={{background:“var(–input-bg)”,border:“1px solid var(–border)”,borderRadius:5,color:“var(–text)”,padding:“5px 8px”,fontSize:11}}>{Object.entries(AREAS).map(([k,v])=><option key={k} value={k}>{v.nome}</option>)}</select>
+<button onClick={exportBackup} title=“Exportar Backup (Leis + Anotações)” style={{fontSize:11,color:“var(--text-sec)”,padding:“5px 8px”,border:“1px solid var(--border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" s={11} c="var(--text-sec)"/>Backup</button>
+<button onClick={importBackup} title=“Importar Backup” style={{fontSize:11,color:“var(--text-sec)”,padding:“5px 8px”,border:“1px solid var(--border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d={IC.up} s={11} c="var(--text-sec)"/>Restaurar</button>
+<button onClick={()=>setShowApiKeyModal(true)} title=“Configurar API Key Anthropic” style={{fontSize:11,color:apiKeyStatus?.configured?“var(--ok)”:“var(--err)”,padding:“5px 8px”,border:“1px solid var(--border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d=“M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm0 14.2a7.2 7.2 0 0 1-6-3.22c.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08a7.2 7.2 0 0 1-6 3.22z” s={11} c={apiKeyStatus?.configured?“var(--ok)”:“var(--err)”}/>API Key</button>
+<button onClick={handleLogout} title=“Sair” style={{fontSize:11,color:“var(--text-sec)”,padding:“5px 8px”,border:“1px solid var(--border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" s={11} c="var(--text-sec)"/>{auth.username}</button>
+<select value={area} onChange={e=>setArea(e.target.value)} style={{background:“var(--input-bg)”,border:“1px solid var(--border)”,borderRadius:5,color:“var(--text)”,padding:“5px 8px”,fontSize:11}}>{Object.entries(AREAS).map(([k,v])=><option key={k} value={k}>{v.nome}</option>)}</select>
 </div>
 </header>
 <main style={{width:“100%”,padding:“20px”}}>
@@ -604,7 +604,7 @@ return <div className="fade">
 <div style={{flex:1, minWidth:300, position:“relative”}}>
 <input value={search} onChange={e=>setSearch(e.target.value)}
 placeholder=“Pesquisar lei por nome ou número…”
-style={{width:“100%”, padding:“12px 16px 12px 40px”, borderRadius:10, border:“1px solid var(–border)”, background:“var(–bg-card)”, fontSize:15, boxShadow:“var(–shadow)”}} />
+style={{width:“100%”, padding:“12px 16px 12px 40px”, borderRadius:10, border:“1px solid var(--border)”, background:“var(--bg-card)”, fontSize:15, boxShadow:“var(--shadow)”}} />
 <div style={{position:“absolute”, left:14, top:13, opacity:0.5}}><Ic d={IC.sc} s={16} c="var(--text)"/></div>
 </div>
 
@@ -925,13 +925,13 @@ XLSX.writeFile(wb,lei.nome+”_TERA.xlsx”);}catch(e){alert(“Erro ao exportar
 
 return <div className="fade">
 <div style={{display:“flex”,justifyContent:“space-between”,alignItems:“flex-start”,marginBottom:4}}>
-<div><h2 style={{fontSize:17,fontWeight:700}}>{lei.nome}</h2><div style={{fontSize:12,color:“var(–text-sec)”,fontFamily:”‘Segoe UI’,sans-serif”}}>{lei.nD} dispositivos · {lei.nA} artigos · {(lei.anexos||[]).length} anexos · {AREAS[area]?.nome}</div></div>
+<div><h2 style={{fontSize:17,fontWeight:700}}>{lei.nome}</h2><div style={{fontSize:12,color:“var(--text-sec)”,fontFamily:”‘Segoe UI’,sans-serif”}}>{lei.nD} dispositivos · {lei.nA} artigos · {(lei.anexos||[]).length} anexos · {AREAS[area]?.nome}</div></div>
 <div style={{display:“flex”,gap:6,alignItems:“center”}}>
-{saved&&<span style={{fontSize:12,color:“var(–ok)”,fontWeight:600,animation:“fadeIn .2s”}}>Salvo!</span>}
-<button onClick={exportXlsx} style={{display:“flex”,alignItems:“center”,gap:4,padding:“6px 14px”,background:“var(–grad)”,color:”#fff”,border:“none”,borderRadius:6,fontSize:12,fontWeight:600,cursor:“pointer”}}>Exportar Excel</button>
+{saved&&<span style={{fontSize:12,color:“var(--ok)”,fontWeight:600,animation:“fadeIn .2s”}}>Salvo!</span>}
+<button onClick={exportXlsx} style={{display:“flex”,alignItems:“center”,gap:4,padding:“6px 14px”,background:“var(--grad)”,color:”#fff”,border:“none”,borderRadius:6,fontSize:12,fontWeight:600,cursor:“pointer”}}>Exportar Excel</button>
 </div>
 </div>
-<div style={{display:“flex”,gap:0,borderBottom:“1px solid var(–border)”,marginBottom:14,overflowX:“auto”}}>{tabs.map(t=><button key={t.id} className={`stab ${tab===t.id?"on":""}`} onClick={()=>setTab(t.id)}>{t.lb}</button>)}</div>
+<div style={{display:“flex”,gap:0,borderBottom:“1px solid var(--border)”,marginBottom:14,overflowX:“auto”}}>{tabs.map(t=><button key={t.id} className={`stab ${tab===t.id?"on":""}`} onClick={()=>setTab(t.id)}>{t.lb}</button>)}</div>
 {tab===“estudo”&&<TabEstudo ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt} tagsConfig={tagsConfig} setTagsConfig={setTagsConfig}/>}
 {tab===“busca”&&<TabIndice ds={ds} lei={lei} area={area} onGoToArt={a=>{setGoSearch(a);setTab(“texto”);}} study={study} tagsConfig={tagsConfig}/>}
 {tab===“mapa”&&<TabMapa ds={ds}/>}
@@ -946,29 +946,29 @@ function TabTexto({ds,lei,gSt,uSt}){
 const ind={PARTE:0,LIVRO:0,TÍTULO:0,CAPÍTULO:12,SEÇÃO:24,SUBSEÇÃO:36,ARTIGO:0,PARÁGRAFO:20,INCISO:36,ALÍNEA:52,ITEM:68,EMENTA:0};
 const sts=[””,“Não lido”,“Lido”,“Revisando”,“Dominado”,“Dúvida”];const sC={Dominado:”#27AE60”,Dúvida:”#C0392B”,Revisando:”#D4A017”,Lido:”#2E86AB”};
 return <div>
-<div style={{maxHeight:“68vh”,overflow:“auto”,border:“1px solid var(–border)”,borderRadius:8}}>{ds.map((d,i)=>{const ri=i;const isD=DIV.has(d.tipo);const st=gSt(lei.id,ri,“status”);const nt=gSt(lei.id,ri,“note”);const isVetado=d.status===“vetado”;const isRevogado=d.status===“revogado”;
-return <div key={ri} style={{display:“flex”,borderBottom:“1px solid var(–border)”,background:isVetado?“rgba(231,76,60,0.06)”:isRevogado?“rgba(231,76,60,0.04)”:isD?CT[d.tipo]||“var(–bg-hover)”:ri%2===0?“var(–bg-card)”:“var(–bg-hover)”,paddingLeft:ind[d.tipo]||0}}>
+<div style={{maxHeight:“68vh”,overflow:“auto”,border:“1px solid var(--border)”,borderRadius:8}}>{ds.map((d,i)=>{const ri=i;const isD=DIV.has(d.tipo);const st=gSt(lei.id,ri,“status”);const nt=gSt(lei.id,ri,“note”);const isVetado=d.status===“vetado”;const isRevogado=d.status===“revogado”;
+return <div key={ri} style={{display:“flex”,borderBottom:“1px solid var(--border)”,background:isVetado?“rgba(231,76,60,0.06)”:isRevogado?“rgba(231,76,60,0.04)”:isD?CT[d.tipo]||“var(--bg-hover)”:ri%2===0?“var(--bg-card)”:“var(--bg-hover)”,paddingLeft:ind[d.tipo]||0}}>
 <div style={{minWidth:70,padding:“6px 4px”,textAlign:“center”}}>
-<span className=“badge” style={{background:isD?“rgba(0,0,0,.1)”:“var(–bg-hover)”,color:isD?(d.tipo===“PARTE”||d.tipo===“LIVRO”||d.tipo===“TÍTULO”||d.tipo===“CAPÍTULO”?”#fff”:“var(–text-sec)”):“var(–text-mute)”}}>{d.tipo}</span>
+<span className=“badge” style={{background:isD?“rgba(0,0,0,.1)”:“var(--bg-hover)”,color:isD?(d.tipo===“PARTE”||d.tipo===“LIVRO”||d.tipo===“TÍTULO”||d.tipo===“CAPÍTULO”?”#fff”:“var(--text-sec)”):“var(--text-mute)”}}>{d.tipo}</span>
 {isVetado&&<div><span className=“badge badge-revogado” style={{marginTop:3,display:“inline-block”}}>VETADO</span></div>}
 {isRevogado&&<div><span className=“badge badge-revogado” style={{marginTop:3,display:“inline-block”}}>REVOGADO</span></div>}
 </div>
-<div style={{flex:1,padding:“6px 8px”,fontSize:12.5,lineHeight:1.6,color:isD?(d.tipo===“PARTE”||d.tipo===“LIVRO”||d.tipo===“TÍTULO”?”#fff”:“var(–text)”):“var(–text)”,fontWeight:isD||d.tipo===“ARTIGO”?600:400,textDecoration:(isVetado||isRevogado)?“line-through”:“none”,opacity:(isVetado||isRevogado)?0.6:1}}>
-<span style={{color:isD?“inherit”:“var(–gold)”,fontFamily:”‘Segoe UI’,sans-serif”,fontSize:12,marginRight:4,textDecoration:“none”}}>{d.id}</span>
+<div style={{flex:1,padding:“6px 8px”,fontSize:12.5,lineHeight:1.6,color:isD?(d.tipo===“PARTE”||d.tipo===“LIVRO”||d.tipo===“TÍTULO”?”#fff”:“var(--text)”):“var(--text)”,fontWeight:isD||d.tipo===“ARTIGO”?600:400,textDecoration:(isVetado||isRevogado)?“line-through”:“none”,opacity:(isVetado||isRevogado)?0.6:1}}>
+<span style={{color:isD?“inherit”:“var(--gold)”,fontFamily:”‘Segoe UI’,sans-serif”,fontSize:12,marginRight:4,textDecoration:“none”}}>{d.id}</span>
 {d.rub&&<i style={{opacity:.7}}>{d.rub} </i>}{d.txt}
 {d.alteracao&&<div style={{marginTop:3,padding:“2px 8px”,background:“rgba(52,152,219,0.08)”,borderLeft:“2px solid #3498db”,borderRadius:3,fontSize:11,color:”#3498db”,textDecoration:“none”,fontWeight:400,opacity:1}}>↳ {d.alteracao}</div>}
-{nt&&<div style={{marginTop:3,padding:“2px 6px”,background:“var(–gold-subtle)”,borderLeft:“2px solid #B8965A”,borderRadius:3,fontSize:11,color:“var(–gold)”,textDecoration:“none”,fontWeight:400,opacity:1}} dangerouslySetInnerHTML={{__html:nt}}/>}
+{nt&&<div style={{marginTop:3,padding:“2px 6px”,background:“var(--gold-subtle)”,borderLeft:“2px solid #B8965A”,borderRadius:3,fontSize:11,color:“var(--gold)”,textDecoration:“none”,fontWeight:400,opacity:1}} dangerouslySetInnerHTML={{__html:nt}}/>}
 </div>
 {!isD&&<div style={{minWidth:100,padding:“5px 4px”,display:“flex”,flexDirection:“column”,gap:3}}>
-<select value={st} onChange={e=>uSt(lei.id,ri,“status”,e.target.value)} style={{background:“var(–bg-hover)”,border:“1px solid var(–border)”,borderRadius:3,color:sC[st]||”#8A8279”,padding:“2px”,fontSize:11,cursor:“pointer”}}>{sts.map(s=><option key={s} value={s}>{s||“Status”}</option>)}</select>
-<textarea placeholder=“Anotação…” defaultValue={nt} onBlur={e=>uSt(lei.id,ri,“note”,e.target.value)} style={{background:“var(–input-bg)”,border:“1px solid var(–border)”,borderRadius:4,padding:“4px 6px”,fontSize:12,width:“100%”,minHeight:50,maxHeight:150,resize:“vertical”,fontFamily:“inherit”}}/>
+<select value={st} onChange={e=>uSt(lei.id,ri,“status”,e.target.value)} style={{background:“var(--bg-hover)”,border:“1px solid var(--border)”,borderRadius:3,color:sC[st]||”#8A8279”,padding:“2px”,fontSize:11,cursor:“pointer”}}>{sts.map(s=><option key={s} value={s}>{s||“Status”}</option>)}</select>
+<textarea placeholder=“Anotação…” defaultValue={nt} onBlur={e=>uSt(lei.id,ri,“note”,e.target.value)} style={{background:“var(--input-bg)”,border:“1px solid var(--border)”,borderRadius:4,padding:“4px 6px”,fontSize:12,width:“100%”,minHeight:50,maxHeight:150,resize:“vertical”,fontFamily:“inherit”}}/>
 </div>}
 </div>;})}</div></div>;
 }
 
 function TabArtigos({ds}){let art=””;const rows=[];const tipos=new Set([“ARTIGO”,“PARÁGRAFO”,“INCISO”,“ALÍNEA”,“ITEM”]);
 for(const d of ds){if(d.tipo===“ARTIGO”)art=d.id;if(tipos.has(d.tipo))rows.push({art,tipo:d.tipo,id:d.id,rub:d.rub,txt:d.txt,status:d.status||“vigente”,alteracao:d.alteracao||””});}
-return <div style={{maxHeight:“70vh”,overflow:“auto”}}><table className="dt"><thead><tr><th>Artigo</th><th>Tipo</th><th>Identificador</th><th>Status</th><th>Texto</th><th>Alteração</th></tr></thead><tbody>{rows.map((r,i)=><tr key={i} style={{opacity:r.status===“vetado”||r.status===“revogado”?0.5:1}}><td style={{fontWeight:700,color:“var(–gold)”}}>{r.art}</td><td><span className=“badge” style={{background:“var(–gold-subtle)”,color:“var(–gold)”}}>{r.tipo}</span></td><td style={{fontSize:12}}>{r.id}</td><td>{r.status===“vetado”?<span className="badge badge-revogado">VETADO</span>:r.status===“revogado”?<span className="badge badge-revogado">REVOGADO</span>:<span className="badge badge-vigente">VIGENTE</span>}</td><td style={{fontSize:12,textDecoration:r.status!==“vigente”?“line-through”:“none”}}>{r.txt}</td><td style={{fontSize:11,color:“var(–text-sec)”}}>{r.alteracao}</td></tr>)}</tbody></table></div>;}
+return <div style={{maxHeight:“70vh”,overflow:“auto”}}><table className="dt"><thead><tr><th>Artigo</th><th>Tipo</th><th>Identificador</th><th>Status</th><th>Texto</th><th>Alteração</th></tr></thead><tbody>{rows.map((r,i)=><tr key={i} style={{opacity:r.status===“vetado”||r.status===“revogado”?0.5:1}}><td style={{fontWeight:700,color:“var(--gold)”}}>{r.art}</td><td><span className=“badge” style={{background:“var(--gold-subtle)”,color:“var(--gold)”}}>{r.tipo}</span></td><td style={{fontSize:12}}>{r.id}</td><td>{r.status===“vetado”?<span className="badge badge-revogado">VETADO</span>:r.status===“revogado”?<span className="badge badge-revogado">REVOGADO</span>:<span className="badge badge-vigente">VIGENTE</span>}</td><td style={{fontSize:12,textDecoration:r.status!==“vigente”?“line-through”:“none”}}>{r.txt}</td><td style={{fontSize:11,color:“var(--text-sec)”}}>{r.alteracao}</td></tr>)}</tbody></table></div>;}
 
 // ─── RichTextEditor ────────────────────────────────────────────────────────────
 // Caixa de anotação com toolbar de formatação. Usa contentEditable para garantir
@@ -1025,29 +1025,29 @@ if(e.key===“Enter”)e.stopPropagation();
 
 const btnStyle=(active)=>({
 background:“none”,
-border:“1px solid var(–border)”,
+border:“1px solid var(--border)”,
 borderRadius:4,
 cursor:“pointer”,
 padding:“2px 6px”,
 fontSize:12,
-color:active?“var(–gold)”:“var(–text-sec)”,
+color:active?“var(--gold)”:“var(--text-sec)”,
 fontFamily:“inherit”,
 lineHeight:“18px”,
 transition:“color .1s,border-color .1s”,
 flexShrink:0,
 });
 
-return <div style={{display:“flex”,flexDirection:“column”,width:“100%”,border:“1px solid var(–border)”,borderRadius:6,overflow:“hidden”,background:“var(–input-bg)”}}>
+return <div style={{display:“flex”,flexDirection:“column”,width:“100%”,border:“1px solid var(--border)”,borderRadius:6,overflow:“hidden”,background:“var(--input-bg)”}}>
 {/* Toolbar */}
-<div style={{display:“flex”,gap:3,padding:“4px 6px”,borderBottom:“1px solid var(–border)”,background:“var(–bg-hover)”,flexWrap:“wrap”}}>
+<div style={{display:“flex”,gap:3,padding:“4px 6px”,borderBottom:“1px solid var(--border)”,background:“var(--bg-hover)”,flexWrap:“wrap”}}>
 <button onMouseDown={e=>{e.preventDefault();cmd(“bold”);}} style={btnStyle(false)} title=“Negrito”><b>N</b></button>
 <button onMouseDown={e=>{e.preventDefault();cmd(“italic”);}} style={btnStyle(false)} title=“Itálico”><i>I</i></button>
 <button onMouseDown={e=>{e.preventDefault();cmd(“underline”);}} style={btnStyle(false)} title=“Sublinhado”><u>S</u></button>
 <button onMouseDown={e=>{e.preventDefault();cmd(“strikeThrough”);}} style={btnStyle(false)} title=“Tachado”><s>T</s></button>
-<span style={{width:1,background:“var(–border)”,margin:“2px 2px”,flexShrink:0}}/>
+<span style={{width:1,background:“var(--border)”,margin:“2px 2px”,flexShrink:0}}/>
 <button onMouseDown={e=>{e.preventDefault();cmd(“insertUnorderedList”);}} style={btnStyle(false)} title=“Lista com marcadores”>•≡</button>
 <button onMouseDown={e=>{e.preventDefault();cmd(“insertOrderedList”);}} style={btnStyle(false)} title=“Lista numerada”>1≡</button>
-<span style={{width:1,background:“var(–border)”,margin:“2px 2px”,flexShrink:0}}/>
+<span style={{width:1,background:“var(--border)”,margin:“2px 2px”,flexShrink:0}}/>
 <button onMouseDown={e=>{e.preventDefault();clearFmt();}} style={btnStyle(false)} title=“Remover formatação”>✕<sub style={{fontSize:9}}>fmt</sub></button>
 </div>
 {/* Área editável */}
@@ -1066,7 +1066,7 @@ padding:“8px 10px”,
 fontSize:12,
 lineHeight:1.6,
 fontFamily:“inherit”,
-color:“var(–text)”,
+color:“var(--text)”,
 outline:“none”,
 resize:“vertical”,
 wordBreak:“break-word”,
@@ -1287,7 +1287,7 @@ const mapa=[];
 const stack={PARTE:null,LIVRO:null,“TÍTULO”:null,“CAPÍTULO”:null,“SEÇÃO”:null,“SUBSEÇÃO”:null};
 const levels=[“PARTE”,“LIVRO”,“TÍTULO”,“CAPÍTULO”,“SEÇÃO”,“SUBSEÇÃO”];
 const clearBelow=(tipo)=>{const idx=levels.indexOf(tipo);for(let i=idx+1;i<levels.length;i++)stack[levels[i]]=null;};
-const getParent=(tipo)=>{const idx=levels.indexOf(tipo);for(let i=idx-1;i>=0;i–){if(stack[levels[i]])return stack[levels[i]];}return null;};
+const getParent=(tipo)=>{const idx=levels.indexOf(tipo);for(let i=idx-1;i>=0;i--){if(stack[levels[i]])return stack[levels[i]];}return null;};
 for(let dsIdx=0;dsIdx<ds.length;dsIdx++){
 const d=ds[dsIdx];
 if(DIV.has(d.tipo)){
@@ -1359,12 +1359,12 @@ return base.filter(d=>{const ri=ds.indexOf(d);return gSt(lei.id,ri,“status”)
 
 // ── Render de nó da nav hierárquica ───────────────────────────────────────
 const levelStyle={
-“PARTE”:{bg:“var(–grad)”,color:”#fff”,fw:700,fs:13,pad:“8px 10px”},
-“LIVRO”:{bg:“var(–gold)”,color:”#fff”,fw:700,fs:12,pad:“7px 10px”},
-“TÍTULO”:{bg:“var(–gold-subtle)”,color:“var(–gold)”,fw:600,fs:12,pad:“6px 10px”},
-“CAPÍTULO”:{bg:“var(–bg-hover)”,color:“var(–text)”,fw:600,fs:11,pad:“5px 8px”},
-“SEÇÃO”:{bg:“transparent”,color:“var(–text-sec)”,fw:500,fs:11,pad:“4px 8px”},
-“SUBSEÇÃO”:{bg:“transparent”,color:“var(–text-mute)”,fw:400,fs:10,pad:“3px 8px”},
+“PARTE”:{bg:“var(--grad)”,color:”#fff”,fw:700,fs:13,pad:“8px 10px”},
+“LIVRO”:{bg:“var(--gold)”,color:”#fff”,fw:700,fs:12,pad:“7px 10px”},
+“TÍTULO”:{bg:“var(--gold-subtle)”,color:“var(--gold)”,fw:600,fs:12,pad:“6px 10px”},
+“CAPÍTULO”:{bg:“var(--bg-hover)”,color:“var(--text)”,fw:600,fs:11,pad:“5px 8px”},
+“SEÇÃO”:{bg:“transparent”,color:“var(--text-sec)”,fw:500,fs:11,pad:“4px 8px”},
+“SUBSEÇÃO”:{bg:“transparent”,color:“var(--text-mute)”,fw:400,fs:10,pad:“3px 8px”},
 };
 const renderNavNode=(node,depth,pathKey)=>{
 const key=pathKey+”-”+node.id;
@@ -1376,10 +1376,10 @@ const indent=depth*10;
 return <div key={key} style={{marginLeft:indent,marginTop:2}}>
 <div
 onClick={()=>{setSelSection(isSel?null:node);if(hasChildren)toggleNav(key);}}
-style={{background:isSel?“var(–gold)”:st.bg,color:isSel?”#fff”:st.color,
+style={{background:isSel?“var(--gold)”:st.bg,color:isSel?”#fff”:st.color,
 fontWeight:st.fw,fontSize:st.fs,padding:st.pad,borderRadius:5,
 cursor:“pointer”,display:“flex”,alignItems:“center”,gap:5,
-border:node.tipo===“CAPÍTULO”||node.tipo===“SEÇÃO”?“1px solid var(–border)”:“none”,
+border:node.tipo===“CAPÍTULO”||node.tipo===“SEÇÃO”?“1px solid var(--border)”:“none”,
 userSelect:“none”,lineHeight:1.3}}>
 {hasChildren&&<span style={{fontSize:9,opacity:.7,flexShrink:0,transition:“transform .12s”,
 transform:isOpen?“rotate(90deg)”:“rotate(0deg)”}}>▶</span>}
@@ -1756,7 +1756,7 @@ setTraced(true); setLoading(false);
 const countNodes = nd => !nd ? 0 : 1 + (nd.children||[]).reduce((s,c)=>s+countNodes(c),0);
 const totalNodes = tree ? countNodes(tree) : 0;
 
-return <div style={{display:“flex”,gap:0,height:“75vh”,borderRadius:10,overflow:“hidden”,border:“1px solid var(–border)”}}>
+return <div style={{display:“flex”,gap:0,height:“75vh”,borderRadius:10,overflow:“hidden”,border:“1px solid var(--border)”}}>
 
 ```
 {/* ── Painel esquerdo: seletor + lista de nós ── */}
@@ -2039,7 +2039,7 @@ return result;
 };
 return <div>
 <div style={{marginBottom:12, display:“flex”, flexDirection:“column”, gap:10}}>
-<input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}} placeholder=“Buscar palavra (mín. 3 letras) · Use + para AND: lucro presumido + faturamento” style={{width:“100%”,maxWidth:“100%”,background:“var(–bg-hover)”,border:“1px solid var(–border)”,borderRadius:6,padding:“10px 14px”,fontSize:14,boxSizing:“border-box”}}/>
+<input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}} placeholder=“Buscar palavra (mín. 3 letras) · Use + para AND: lucro presumido + faturamento” style={{width:“100%”,maxWidth:“100%”,background:“var(--bg-hover)”,border:“1px solid var(--border)”,borderRadius:6,padding:“10px 14px”,fontSize:14,boxSizing:“border-box”}}/>
 
 ```
   <div style={{display:"flex", gap:15, alignItems:"center", flexWrap:"wrap", background:"var(--bg-card)", padding:10, borderRadius:8, border:"1px solid var(--border)"}}>
@@ -2118,7 +2118,7 @@ for(let i=idx+1;i<levels.length;i++)stack[levels[i]]=null;
 };
 const getParent=(tipo)=>{
 const idx=levels.indexOf(tipo);
-for(let i=idx-1;i>=0;i–){if(stack[levels[i]])return stack[levels[i]];}
+for(let i=idx-1;i>=0;i--){if(stack[levels[i]])return stack[levels[i]];}
 return null;
 };
 for(const d of ds){
@@ -2131,7 +2131,7 @@ if(parent){parent.children.push(node);}
 else{mapa.push(node);}
 }else if(d.tipo===“ARTIGO”){
 let target=null;
-for(let i=levels.length-1;i>=0;i–){if(stack[levels[i]]){target=stack[levels[i]];break;}}
+for(let i=levels.length-1;i>=0;i--){if(stack[levels[i]]){target=stack[levels[i]];break;}}
 const artEntry={id:d.id,status:d.status||“vigente”};
 if(target){target.artigos.push(artEntry);}
 else{
@@ -2217,7 +2217,7 @@ return <div style={{display:“flex”,flexWrap:“wrap”,gap:3,marginTop:4,mar
 const isRev=a.status===“revogado”;const isVet=a.status===“vetado”;const isInativo=isRev||isVet;const isSel=selArt===a.id;
 return <span key={pathKey+”-”+i}
 onClick={(e)=>{e.stopPropagation();setSelArt(a.id);}}
-style={{background:isSel?“var(–gold)”:isInativo?“rgba(231,76,60,0.15)”:“var(–gold-subtle)”,color:isSel?”#fff”:isInativo?”#e74c3c”:“var(–gold)”,padding:“2px 7px”,borderRadius:4,fontSize:11,cursor:“pointer”,textDecoration:isInativo?“line-through”:“none”,fontWeight:isSel?700:400,transition:“all .12s”,border:isSel?“1px solid var(–gold)”:“1px solid transparent”}}
+style={{background:isSel?“var(--gold)”:isInativo?“rgba(231,76,60,0.15)”:“var(--gold-subtle)”,color:isSel?”#fff”:isInativo?”#e74c3c”:“var(--gold)”,padding:“2px 7px”,borderRadius:4,fontSize:11,cursor:“pointer”,textDecoration:isInativo?“line-through”:“none”,fontWeight:isSel?700:400,transition:“all .12s”,border:isSel?“1px solid var(--gold)”:“1px solid transparent”}}
 title={isRev?“Revogado”:isVet?“Vetado”:“Vigente”}
 >{a.id}</span>;
 })}
@@ -2229,8 +2229,8 @@ const renderNode=(node,depth,pathKey)=>{
 if(node.__virtual){
 const ementa=ds.find(d=>d.tipo===“EMENTA”);
 return <div key={pathKey+”-virtual”} style={{marginTop:4}}>
-{ementa&&<div style={{fontSize:13,color:“var(–text)”,marginBottom:12,padding:“12px 16px”,background:“var(–bg-card)”,border:“1px solid var(–border)”,borderRadius:8,lineHeight:1.6,fontStyle:“italic”}}>{ementa.txt}</div>}
-<div style={{fontSize:11,color:“var(–text-sec)”,marginBottom:6,fontStyle:“italic”}}>Lei sem divisões hierárquicas — artigos listados diretamente:</div>
+{ementa&&<div style={{fontSize:13,color:“var(--text)”,marginBottom:12,padding:“12px 16px”,background:“var(--bg-card)”,border:“1px solid var(--border)”,borderRadius:8,lineHeight:1.6,fontStyle:“italic”}}>{ementa.txt}</div>}
+<div style={{fontSize:11,color:“var(--text-sec)”,marginBottom:6,fontStyle:“italic”}}>Lei sem divisões hierárquicas — artigos listados diretamente:</div>
 {renderArtigos(node.artigos,pathKey+”-virtual”)}
 </div>;
 }
@@ -2238,18 +2238,18 @@ const key=pathKey+”-”+node.id;
 const isOpen=collapsed[key]===false; // undefined → closed by default
 const hasContent=(node.children&&node.children.length>0)||(node.artigos&&node.artigos.length>0);
 const levelStyle={
-“PARTE”:{bg:“var(–grad)”,color:”#fff”,fontWeight:700,fontSize:14,borderRadius:8,padding:“10px 14px”},
-“LIVRO”:{bg:“var(–gold)”,color:”#fff”,fontWeight:700,fontSize:13,borderRadius:7,padding:“8px 12px”},
-“TÍTULO”:{bg:“var(–gold-subtle)”,color:“var(–gold)”,fontWeight:600,fontSize:13,borderRadius:6,padding:“7px 12px”},
-“CAPÍTULO”:{bg:“var(–bg-hover)”,color:“var(–text)”,fontWeight:600,fontSize:12,borderRadius:6,padding:“6px 10px”},
-“SEÇÃO”:{bg:“transparent”,color:“var(–text-sec)”,fontWeight:500,fontSize:12,borderRadius:4,padding:“4px 10px”},
-“SUBSEÇÃO”:{bg:“transparent”,color:“var(–text-mute)”,fontWeight:400,fontSize:11,borderRadius:4,padding:“4px 10px”}
+“PARTE”:{bg:“var(--grad)”,color:”#fff”,fontWeight:700,fontSize:14,borderRadius:8,padding:“10px 14px”},
+“LIVRO”:{bg:“var(--gold)”,color:”#fff”,fontWeight:700,fontSize:13,borderRadius:7,padding:“8px 12px”},
+“TÍTULO”:{bg:“var(--gold-subtle)”,color:“var(--gold)”,fontWeight:600,fontSize:13,borderRadius:6,padding:“7px 12px”},
+“CAPÍTULO”:{bg:“var(--bg-hover)”,color:“var(--text)”,fontWeight:600,fontSize:12,borderRadius:6,padding:“6px 10px”},
+“SEÇÃO”:{bg:“transparent”,color:“var(--text-sec)”,fontWeight:500,fontSize:12,borderRadius:4,padding:“4px 10px”},
+“SUBSEÇÃO”:{bg:“transparent”,color:“var(--text-mute)”,fontWeight:400,fontSize:11,borderRadius:4,padding:“4px 10px”}
 };
 const st=levelStyle[node.tipo]||levelStyle[“SEÇÃO”];
 const indent=depth*12;
 return <div key={key} style={{marginLeft:indent,marginTop:depth===0?8:4}}>
 <div onClick={()=>{if(hasContent)toggle(key);}}
-style={{background:st.bg,color:st.color,fontWeight:st.fontWeight,fontSize:st.fontSize,borderRadius:st.borderRadius,padding:st.padding,cursor:hasContent?“pointer”:“default”,display:“flex”,alignItems:“center”,gap:6,border:node.tipo===“CAPÍTULO”||node.tipo===“SEÇÃO”?“1px solid var(–border)”:“none”,transition:“opacity .12s”,userSelect:“none”}}>
+style={{background:st.bg,color:st.color,fontWeight:st.fontWeight,fontSize:st.fontSize,borderRadius:st.borderRadius,padding:st.padding,cursor:hasContent?“pointer”:“default”,display:“flex”,alignItems:“center”,gap:6,border:node.tipo===“CAPÍTULO”||node.tipo===“SEÇÃO”?“1px solid var(--border)”:“none”,transition:“opacity .12s”,userSelect:“none”}}>
 {hasContent&&<span style={{fontSize:10,opacity:.7,flexShrink:0,transition:“transform .15s”,transform:isOpen?“rotate(90deg)”:“rotate(0deg)”}}>▶</span>}
 <span style={{fontFamily:”‘Segoe UI’,sans-serif”}}>{node.tipo} — </span>
 <b>{node.id}</b>
@@ -2266,9 +2266,9 @@ style={{background:st.bg,color:st.color,fontWeight:st.fontWeight,fontSize:st.fon
 return <div style={{display:“flex”,gap:16,height:“70vh”}}>
 <div style={{flex:“1 1 55%”,overflow:“auto”,paddingRight:8}}>
 <div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:8}}>
-<div style={{fontSize:13,fontWeight:700,color:“var(–gold)”}}>ESTRUTURA HIERÁRQUICA</div>
+<div style={{fontSize:13,fontWeight:700,color:“var(--gold)”}}>ESTRUTURA HIERÁRQUICA</div>
 <div style={{display:“flex”,gap:6}}>
-<button onClick={()=>{const all={};Object.keys(allKeysRef.current).forEach(k=>{all[k]=false;});setCollapsed(all);}} style={{fontSize:11,padding:“3px 8px”,background:“var(–bg-hover)”,border:“1px solid var(–border)”,borderRadius:4,cursor:“pointer”,color:“var(–text-sec)”}}>Expandir tudo</button>
+<button onClick={()=>{const all={};Object.keys(allKeysRef.current).forEach(k=>{all[k]=false;});setCollapsed(all);}} style={{fontSize:11,padding:“3px 8px”,background:“var(--bg-hover)”,border:“1px solid var(--border)”,borderRadius:4,cursor:“pointer”,color:“var(--text-sec)”}}>Expandir tudo</button>
 <button onClick={()=>{
 const all={};
 const markAll=(nodes,prefix)=>{
@@ -2281,31 +2281,31 @@ if(n.children)markAll(n.children,k+”-”+i);
 };
 markAll(estrutura,“root”);
 setCollapsed(all);
-}} style={{fontSize:11,padding:“3px 8px”,background:“var(–bg-hover)”,border:“1px solid var(–border)”,borderRadius:4,cursor:“pointer”,color:“var(–text-sec)”}}>Colapsar tudo</button>
+}} style={{fontSize:11,padding:“3px 8px”,background:“var(--bg-hover)”,border:“1px solid var(--border)”,borderRadius:4,cursor:“pointer”,color:“var(--text-sec)”}}>Colapsar tudo</button>
 </div>
 </div>
-<div style={{fontSize:11,color:“var(–text-mute)”,marginBottom:6,display:“flex”,gap:12}}>
-<span>● <span style={{color:“var(–gold)”}}>Vigente</span></span>
+<div style={{fontSize:11,color:“var(--text-mute)”,marginBottom:6,display:“flex”,gap:12}}>
+<span>● <span style={{color:“var(--gold)”}}>Vigente</span></span>
 <span>● <span style={{color:”#e74c3c”}}>Revogado/Vetado</span></span>
 <span style={{marginLeft:“auto”,fontStyle:“italic”}}>Clique no artigo para ver o conteúdo →</span>
 </div>
-{estrutura.length===0?<div style={{textAlign:“center”,padding:40,color:“var(–text-sec)”}}>Nenhuma estrutura hierárquica encontrada</div>
+{estrutura.length===0?<div style={{textAlign:“center”,padding:40,color:“var(--text-sec)”}}>Nenhuma estrutura hierárquica encontrada</div>
 :estrutura.map((node,i)=>renderNode(node,0,“root”))}
 </div>
-<div style={{flex:“0 0 40%”,minWidth:300,overflow:“auto”,background:“var(–bg-hover)”,borderRadius:12,border:“1px solid var(–border)”,padding:16}}>
-{!selArt?<div style={{textAlign:“center”,paddingTop:80,color:“var(–text-sec)”}}><div style={{fontSize:28,marginBottom:12}}>📑</div><div style={{fontSize:14}}>Selecione um artigo no mapa para visualizar seu conteúdo.</div></div>
-:!artDetail?<div style={{textAlign:“center”,paddingTop:80,color:“var(–text-sec)”}}>Artigo não encontrado nos dispositivos.</div>
+<div style={{flex:“0 0 40%”,minWidth:300,overflow:“auto”,background:“var(--bg-hover)”,borderRadius:12,border:“1px solid var(--border)”,padding:16}}>
+{!selArt?<div style={{textAlign:“center”,paddingTop:80,color:“var(--text-sec)”}}><div style={{fontSize:28,marginBottom:12}}>📑</div><div style={{fontSize:14}}>Selecione um artigo no mapa para visualizar seu conteúdo.</div></div>
+:!artDetail?<div style={{textAlign:“center”,paddingTop:80,color:“var(--text-sec)”}}>Artigo não encontrado nos dispositivos.</div>
 :<div className="fade">
-{artPath&&<div style={{fontSize:11,color:“var(–text-sec)”,marginBottom:8,fontStyle:“italic”,lineHeight:1.5}}>{artPath}</div>}
+{artPath&&<div style={{fontSize:11,color:“var(--text-sec)”,marginBottom:8,fontStyle:“italic”,lineHeight:1.5}}>{artPath}</div>}
 {artDetail.map((d,i)=>{
 const isArt=d.tipo===“ARTIGO”;const isRev=d.status===“revogado”;const isVet=d.status===“vetado”;const isInativo=isRev||isVet;
 return <div key={i} style={{marginBottom:isArt?8:2,paddingLeft:isArt?0:16,opacity:isInativo?0.6:1}}>
 <div style={{display:“flex”,alignItems:“center”,gap:6,marginBottom:2}}>
-<span style={{color:isInativo?”#e74c3c”:“var(–gold)”,fontWeight:700,fontSize:isArt?14:12}}>{d.id}</span>
+<span style={{color:isInativo?”#e74c3c”:“var(--gold)”,fontWeight:700,fontSize:isArt?14:12}}>{d.id}</span>
 {isArt&&<span className={isInativo?“badge badge-revogado”:“badge badge-vigente”}>{isVet?“VETADO”:isRev?“REVOGADO”:“VIGENTE”}</span>}
 {!isArt&&isInativo&&<span className="badge badge-revogado" style={{fontSize:9}}>{isVet?“VETADO”:“REVOGADO”}</span>}
 </div>
-<div style={{fontSize:isArt?13:12,lineHeight:1.6,textDecoration:isInativo?“line-through”:“none”,color:“var(–text)”}}>{d.rub&&<i style={{color:“var(–text-sec)”}}>{d.rub} </i>}{d.txt}</div>
+<div style={{fontSize:isArt?13:12,lineHeight:1.6,textDecoration:isInativo?“line-through”:“none”,color:“var(--text)”}}>{d.rub&&<i style={{color:“var(--text-sec)”}}>{d.rub} </i>}{d.txt}</div>
 {d.alteracao&&<div style={{marginTop:2,padding:“2px 8px”,background:“rgba(52,152,219,0.08)”,borderLeft:“2px solid #3498db”,borderRadius:3,fontSize:11,color:”#3498db”,textDecoration:“none”}}>↳ {d.alteracao}</div>}
 </div>;
 })}
@@ -2320,21 +2320,21 @@ const upAnx=async e=>{const files=e.target.files;if(!files||!files.length)return
 const anexos=lei.anexos||[];
 return <div>
 <div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:14}}>
-<div style={{fontSize:14,color:“var(–text-sec)”}}>{anexos.length} anexo(s) vinculado(s)</div>
-<label style={{display:“inline-flex”,alignItems:“center”,gap:5,padding:“7px 16px”,background:“var(–grad)”,color:”#fff”,borderRadius:6,cursor:“pointer”,fontSize:14,fontWeight:600}}>
+<div style={{fontSize:14,color:“var(--text-sec)”}}>{anexos.length} anexo(s) vinculado(s)</div>
+<label style={{display:“inline-flex”,alignItems:“center”,gap:5,padding:“7px 16px”,background:“var(--grad)”,color:”#fff”,borderRadius:6,cursor:“pointer”,fontSize:14,fontWeight:600}}>
 {uping?<><Sp/> Processando…</>:<><Ic d={IC.up} s={13} c="#fff"/> Adicionar Anexo(s)</>}
 <input ref={fRef} type=“file” accept=”.pdf” multiple onChange={upAnx} style={{display:“none”}}/>
 </label>
 </div>
-{anexos.length===0?<div style={{textAlign:“center”,padding:40,color:“var(–text-sec)”}}>Nenhum anexo vinculado</div>
+{anexos.length===0?<div style={{textAlign:“center”,padding:40,color:“var(--text-sec)”}}>Nenhum anexo vinculado</div>
 :<div style={{display:“flex”,gap:16}}>
 <div style={{minWidth:220,display:“flex”,flexDirection:“column”,gap:4}}>
 {anexos.map((a,i)=><div key={i} className=“cd” style={{padding:“10px 12px”,cursor:“pointer”,borderColor:selAnx===i?”#B8965A”:”#E8DFD0”,background:selAnx===i?”#F5EDDF”:”#fff”}} onClick={()=>setSelAnx(i)}>
 <div style={{fontWeight:600,fontSize:13}}>{a.nome}</div>
-<div style={{fontSize:11,color:“var(–text-sec)”,marginTop:2}}>{a.nD} itens</div>
+<div style={{fontSize:11,color:“var(--text-sec)”,marginTop:2}}>{a.nD} itens</div>
 </div>)}
 </div>
-{selAnx!==null&&anexos[selAnx]&&<div style={{flex:1,maxHeight:“65vh”,overflow:“auto”,border:“1px solid var(–border)”,borderRadius:8}}>
+{selAnx!==null&&anexos[selAnx]&&<div style={{flex:1,maxHeight:“65vh”,overflow:“auto”,border:“1px solid var(--border)”,borderRadius:8}}>
 <table className="dt"><thead><tr><th>#</th><th>Tipo</th><th>Id</th><th>Texto</th></tr></thead><tbody>{anexos[selAnx].ds.map((d,i)=>
 <tr key={i}><td>{i+1}</td><td>{d.tipo}</td><td>{d.id}</td><td>{d.txt}</td></tr>
 )}</tbody></table>
@@ -2448,7 +2448,7 @@ return result;
 
 return <div className="fade">
 <h2 style={{fontSize:20,fontWeight:700,marginBottom:12}}>Busca Geral</h2>
-<p style={{fontSize:13,color:“var(–text-sec)”,marginBottom:14}}>Pesquise em todas as leis da biblioteca ou selecione quais incluir na busca.</p>
+<p style={{fontSize:13,color:“var(--text-sec)”,marginBottom:14}}>Pesquise em todas as leis da biblioteca ou selecione quais incluir na busca.</p>
 
 ```
 {lib.length===0?(
@@ -2665,7 +2665,7 @@ const [sub,setSub]=useState(“anotacoes”);
 const subs=[{id:“anotacoes”,lb:“Anotações”},{id:“econsulta”,lb:“E-Consulta”}];
 return <div className="fade">
 <h2 style={{fontSize:20,fontWeight:700,marginBottom:12}}>E-Consultor</h2>
-<div style={{display:“flex”,gap:0,borderBottom:“1px solid var(–border)”,marginBottom:14}}>{subs.map(s=><button key={s.id} className={`stab ${sub===s.id?"on":""}`} onClick={()=>setSub(s.id)}>{s.lb}</button>)}</div>
+<div style={{display:“flex”,gap:0,borderBottom:“1px solid var(--border)”,marginBottom:14}}>{subs.map(s=><button key={s.id} className={`stab ${sub===s.id?"on":""}`} onClick={()=>setSub(s.id)}>{s.lb}</button>)}</div>
 {sub===“anotacoes”&&<EConsultorAnotacoes lib={lib}/>}
 {sub===“econsulta”&&<EConsultorBusca lib={lib}/>}
 
@@ -2738,23 +2738,23 @@ const notasDoTema=temaView?notas.filter(n=>n.tema===temaView):[];
 
 return <div style={{display:“flex”,gap:16,height:“68vh”}}>
 {/* PAINEL ESQUERDO: TEMAS */}
-{sidebarOpen&&<div style={{width:240,flexShrink:0,display:“flex”,flexDirection:“column”,border:“2px solid var(–gold)”,borderRadius:12,padding:12,overflow:“hidden”,minHeight:0}}>
-<div style={{fontSize:14,fontWeight:700,marginBottom:10,color:“var(–gold)”}}>TEMAS</div>
+{sidebarOpen&&<div style={{width:240,flexShrink:0,display:“flex”,flexDirection:“column”,border:“2px solid var(--gold)”,borderRadius:12,padding:12,overflow:“hidden”,minHeight:0}}>
+<div style={{fontSize:14,fontWeight:700,marginBottom:10,color:“var(--gold)”}}>TEMAS</div>
 <div style={{flex:1,overflow:“auto”,display:“flex”,flexDirection:“column”,gap:4,marginBottom:10,minHeight:0}}>
-{temas.length===0?<div style={{fontSize:12,color:“var(–text-mute)”,textAlign:“center”,padding:20}}>Nenhum tema cadastrado</div>
+{temas.length===0?<div style={{fontSize:12,color:“var(--text-mute)”,textAlign:“center”,padding:20}}>Nenhum tema cadastrado</div>
 :temas.map((t,i)=><div key={i}
 onClick={()=>{setTemaView(t);setViewMode(“list”);}}
-style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,padding:“8px 10px”,borderRadius:6,cursor:“pointer”,background:temaView===t?“var(–gold-subtle)”:“var(–bg-hover)”,border:temaView===t?“1px solid var(–gold)”:“1px solid transparent”,transition:“all .12s”}}>
-<span style={{fontSize:13,fontWeight:temaView===t?600:400,color:temaView===t?“var(–gold)”:“var(–text)”}}>{t}</span>
+style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,padding:“8px 10px”,borderRadius:6,cursor:“pointer”,background:temaView===t?“var(--gold-subtle)”:“var(--bg-hover)”,border:temaView===t?“1px solid var(--gold)”:“1px solid transparent”,transition:“all .12s”}}>
+<span style={{fontSize:13,fontWeight:temaView===t?600:400,color:temaView===t?“var(--gold)”:“var(--text)”}}>{t}</span>
 <div style={{display:“flex”,gap:4,alignItems:“center”}}>
-<span style={{fontSize:10,color:“var(–text-mute)”}}>{notas.filter(n=>n.tema===t).length}</span>
+<span style={{fontSize:10,color:“var(--text-mute)”}}>{notas.filter(n=>n.tema===t).length}</span>
 <button onClick={e=>{e.stopPropagation();delTema(t);}} style={{background:“none”,border:“none”,cursor:“pointer”,padding:2,lineHeight:1}} title=“Excluir tema”><Ic d={IC.tr} s={11} c="var(--text-mute)"/></button>
 </div>
 </div>)}
 </div>
 <div style={{display:“flex”,gap:4,flexShrink:0}}>
 <input value={novoTema} onChange={e=>setNovoTema(e.target.value)} onKeyDown={e=>{if(e.key===“Enter”)addTema();}} placeholder=“Novo tema…” style={{flex:1,padding:“7px 10px”,borderRadius:6,fontSize:12}}/>
-<button onClick={addTema} style={{padding:“7px 12px”,background:“var(–grad)”,color:”#fff”,border:“none”,borderRadius:6,fontSize:12,fontWeight:600,cursor:“pointer”,whiteSpace:“nowrap”}}>Incluir</button>
+<button onClick={addTema} style={{padding:“7px 12px”,background:“var(--grad)”,color:”#fff”,border:“none”,borderRadius:6,fontSize:12,fontWeight:600,cursor:“pointer”,whiteSpace:“nowrap”}}>Incluir</button>
 </div>
 </div>
 
@@ -2894,16 +2894,16 @@ return <div>
 <option value="">Busca por Legislação</option>
 {lib.map(l=><option key={l.id} value={l.id}>{l.nome}</option>)}
 </select>
-<input value={filtroTexto} onChange={e=>setFiltroTexto(e.target.value)} placeholder=“Palavra Chave (mín. 3 letras)…” style={{flex:“1 1 200px”,padding:“10px”,borderRadius:6,fontSize:13,background:“var(–input-bg)”,border:“1px solid var(–border)”}}/>
+<input value={filtroTexto} onChange={e=>setFiltroTexto(e.target.value)} placeholder=“Palavra Chave (mín. 3 letras)…” style={{flex:“1 1 200px”,padding:“10px”,borderRadius:6,fontSize:13,background:“var(--input-bg)”,border:“1px solid var(--border)”}}/>
 </div>
-<div style={{fontSize:12,color:“var(–text-sec)”,marginBottom:12}}>{resultados.length} anotação(ões) encontrada(s){filtroTexto.length>=3?” para "”+filtroTexto+”"”:””}</div>
+<div style={{fontSize:12,color:“var(--text-sec)”,marginBottom:12}}>{resultados.length} anotação(ões) encontrada(s){filtroTexto.length>=3?” para "”+filtroTexto+”"”:””}</div>
 <div style={{maxHeight:“58vh”,overflow:“auto”,display:“flex”,flexDirection:“column”,gap:10}}>
-{resultados.length===0?<div style={{textAlign:“center”,padding:40,color:“var(–text-sec)”}}>{notas.length===0?“Nenhuma anotação cadastrada. Use a aba Anotações para incluir.”:“Nenhuma anotação encontrada com os filtros aplicados.”}</div>
+{resultados.length===0?<div style={{textAlign:“center”,padding:40,color:“var(--text-sec)”}}>{notas.length===0?“Nenhuma anotação cadastrada. Use a aba Anotações para incluir.”:“Nenhuma anotação encontrada com os filtros aplicados.”}</div>
 :resultados.map(n=><div key={n.id} className="cd" style={{padding:14}}>
 <div style={{display:“flex”,gap:8,marginBottom:8,flexWrap:“wrap”,alignItems:“center”}}>
-<span className=“badge” style={{background:“var(–gold-subtle)”,color:“var(–gold)”,fontSize:11,padding:“3px 10px”}}>{n.tema}</span>
+<span className=“badge” style={{background:“var(--gold-subtle)”,color:“var(--gold)”,fontSize:11,padding:“3px 10px”}}>{n.tema}</span>
 {n.leiNome&&<span className=“badge” style={{background:“rgba(52,152,219,0.1)”,color:”#3498db”,fontSize:11,padding:“3px 10px”}}>{n.leiNome}</span>}
-<span style={{fontSize:10,color:“var(–text-mute)”,marginLeft:“auto”}}>{n.data}</span>
+<span style={{fontSize:10,color:“var(--text-mute)”,marginLeft:“auto”}}>{n.data}</span>
 </div>
 <div style={{fontSize:13,lineHeight:1.7,whiteSpace:“pre-wrap”}}>{filtroTexto.length>=3?highlightText(n.texto,filtroTexto):n.texto}</div>
 </div>)}
@@ -2974,12 +2974,12 @@ return <div className="fade">
 <div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:16,flexWrap:“wrap”,gap:8}}>
 <div>
 <h2 style={{margin:0,fontSize:22,fontWeight:800}}>Reforma em Dia</h2>
-<div style={{fontSize:11,color:“var(–text-sec)”,marginTop:2}}>Cronologia completa da Reforma Tributária do Consumo (EC 132/2023 · LC 214/2025)</div>
-{ultimaAtt&&<div style={{fontSize:10,color:“var(–text-mute)”,marginTop:1}}>Última atualização: {new Date(ultimaAtt).toLocaleString(“pt-BR”)}</div>}
+<div style={{fontSize:11,color:“var(--text-sec)”,marginTop:2}}>Cronologia completa da Reforma Tributária do Consumo (EC 132/2023 · LC 214/2025)</div>
+{ultimaAtt&&<div style={{fontSize:10,color:“var(--text-mute)”,marginTop:1}}>Última atualização: {new Date(ultimaAtt).toLocaleString(“pt-BR”)}</div>}
 </div>
 <div style={{display:“flex”,gap:6}}>
 <button onClick={buscar} className=“btn-primary” disabled={loading} style={{fontSize:12,padding:“8px 16px”}}>{loading?“Carregando…”:“Atualizar”}</button>
-<button onClick={()=>setSortOrder(s=>s===“desc”?“asc”:“desc”)} style={{fontSize:11,padding:“6px 12px”,border:“1px solid var(–border)”,borderRadius:6,background:“var(–bg-hover)”,cursor:“pointer”,color:“var(–text-sec)”}}>{sortOrder===“desc”?“📅 Mais recente”:“📅 Mais antiga”}</button>
+<button onClick={()=>setSortOrder(s=>s===“desc”?“asc”:“desc”)} style={{fontSize:11,padding:“6px 12px”,border:“1px solid var(--border)”,borderRadius:6,background:“var(--bg-hover)”,cursor:“pointer”,color:“var(--text-sec)”}}>{sortOrder===“desc”?“📅 Mais recente”:“📅 Mais antiga”}</button>
 </div>
 </div>
 {erro&&<div style={{background:“rgba(231,76,60,0.1)”,border:“1px solid #e74c3c”,borderRadius:8,padding:10,marginBottom:10,fontSize:12,color:”#e74c3c”}}>{erro}</div>}
@@ -3119,24 +3119,24 @@ return f;
 },[itens,filtroPortal,filtroData,filtro]);
 
 const datasUnicas=useMemo(()=>[…new Set(itens.map(i=>i.data))].sort().reverse(),[itens]);
-const portalCor=(portal)=>PORTAIS.find(p=>p.nome===portal||p.id===portal)?.cor||“var(–text-sec)”;
+const portalCor=(portal)=>PORTAIS.find(p=>p.nome===portal||p.id===portal)?.cor||“var(--text-sec)”;
 
 return <div className="fade">
 <div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:10,flexWrap:“wrap”,gap:8}}>
 <div><h2 style={{margin:0}}>Atualizações</h2>
-{ultimaAtt&&<div style={{fontSize:11,color:“var(–text-sec)”,marginTop:2}}>Última atualização do servidor: {new Date(ultimaAtt).toLocaleString(“pt-BR”)}</div>}
-<div style={{fontSize:11,color:“var(–text-mute)”,marginTop:1}}>Atualização automática: diariamente às 09:00 (GitHub Actions)</div>
+{ultimaAtt&&<div style={{fontSize:11,color:“var(--text-sec)”,marginTop:2}}>Última atualização do servidor: {new Date(ultimaAtt).toLocaleString(“pt-BR”)}</div>}
+<div style={{fontSize:11,color:“var(--text-mute)”,marginTop:1}}>Atualização automática: diariamente às 09:00 (GitHub Actions)</div>
 </div>
 <div style={{display:“flex”,gap:6,flexWrap:“wrap”}}>
 <button onClick={buscar} className="btn-primary" disabled={ld}>{ld?<><Sp/> Buscando…</>:“Buscar Agora”}</button>
 {itens.length>0&&<><button onClick={exportar} className=“btn-secondary” style={{fontSize:12,padding:“8px 12px”}}>Exportar</button>
-<button onClick={limpar} className=“btn-secondary” style={{fontSize:12,padding:“8px 12px”,color:“var(–err)”}}>Limpar Histórico</button></>}
+<button onClick={limpar} className=“btn-secondary” style={{fontSize:12,padding:“8px 12px”,color:“var(--err)”}}>Limpar Histórico</button></>}
 </div>
 </div>
 {erro&&<div style={{background:“rgba(231,76,60,0.1)”,border:“1px solid #e74c3c”,borderRadius:8,padding:“10px 14px”,marginBottom:10,fontSize:13,color:”#e74c3c”}}>{erro}</div>}
 {sucesso&&<div style={{background:“rgba(46,204,113,0.1)”,border:“1px solid #2ecc71”,borderRadius:8,padding:“10px 14px”,marginBottom:10,fontSize:13,color:”#2ecc71”}}>{sucesso}</div>}
 {itens.length>0&&<div style={{display:“flex”,gap:8,marginBottom:12,flexWrap:“wrap”,alignItems:“center”}}>
-<input value={filtro} onChange={e=>setFiltro(e.target.value)} placeholder=“Filtrar por nome ou texto…” style={{flex:“1 1 200px”,padding:“8px 12px”,borderRadius:6,fontSize:13,background:“var(–bg-hover)”,border:“1px solid var(–border)”}}/>
+<input value={filtro} onChange={e=>setFiltro(e.target.value)} placeholder=“Filtrar por nome ou texto…” style={{flex:“1 1 200px”,padding:“8px 12px”,borderRadius:6,fontSize:13,background:“var(--bg-hover)”,border:“1px solid var(--border)”}}/>
 <select value={filtroPortal} onChange={e=>setFiltroPortal(e.target.value)} style={{padding:“8px”,borderRadius:6,fontSize:12}}>
 <option value="">Todos os portais</option>
 {PORTAIS.map(p=><option key={p.id} value={p.nome}>{p.nome}</option>)}
@@ -3145,21 +3145,21 @@ return <div className="fade">
 <option value="">Todas as datas</option>
 {datasUnicas.map(d=><option key={d} value={d}>{d}</option>)}
 </select>
-<span style={{fontSize:12,color:“var(–text-sec)”}}>{itensFiltrados.length} de {itens.length}</span>
+<span style={{fontSize:12,color:“var(--text-sec)”}}>{itensFiltrados.length} de {itens.length}</span>
 </div>}
-{itens.length===0?<div style={{textAlign:“center”,padding:40,color:“var(–text-sec)”}}><div style={{fontSize:16,marginBottom:8}}>Nenhuma atualização carregada</div><div style={{fontSize:13,lineHeight:1.6}}>Clique em “Buscar Agora” para carregar as atualizações do servidor.<br/>As atualizações são coletadas diariamente às 09:00 por um script Python no GitHub Actions.</div></div>
+{itens.length===0?<div style={{textAlign:“center”,padding:40,color:“var(--text-sec)”}}><div style={{fontSize:16,marginBottom:8}}>Nenhuma atualização carregada</div><div style={{fontSize:13,lineHeight:1.6}}>Clique em “Buscar Agora” para carregar as atualizações do servidor.<br/>As atualizações são coletadas diariamente às 09:00 por um script Python no GitHub Actions.</div></div>
 :<div style={{display:“flex”,flexDirection:“column”,gap:8,maxHeight:“65vh”,overflow:“auto”}}>{itensFiltrados.map((item,i)=>
 <div key={i} className="cd" style={{padding:14}}>
 <div style={{display:“flex”,justifyContent:“space-between”,alignItems:“flex-start”,marginBottom:6}}>
 <div>
 <span className=“badge” style={{background:portalCor(item.portal)+“22”,color:portalCor(item.portal),marginRight:8}}>{item.portal}</span>
 {item.premium&&<span className=“badge” style={{background:“rgba(230,126,34,0.15)”,color:”#e67e22”,marginRight:8}}>PREMIUM</span>}
-<span style={{fontSize:11,color:“var(–text-sec)”}}>{item.data}</span>
+<span style={{fontSize:11,color:“var(--text-sec)”}}>{item.data}</span>
 </div>
-{item.link&&<a href={item.link} target=”_blank” onClick={e=>e.stopPropagation()} style={{fontSize:11,color:“var(–gold)”,display:“flex”,alignItems:“center”,gap:3,whiteSpace:“nowrap”}}><Ic d={IC.lk} s={10} c="var(--gold)"/>Abrir</a>}
+{item.link&&<a href={item.link} target=”_blank” onClick={e=>e.stopPropagation()} style={{fontSize:11,color:“var(--gold)”,display:“flex”,alignItems:“center”,gap:3,whiteSpace:“nowrap”}}><Ic d={IC.lk} s={10} c="var(--gold)"/>Abrir</a>}
 </div>
 <div style={{fontWeight:600,fontSize:14,marginBottom:4}}>{item.titulo}</div>
-{item.resumo&&<div style={{fontSize:12,color:“var(–text-sec)”,lineHeight:1.5}}>{item.resumo}</div>}
+{item.resumo&&<div style={{fontSize:12,color:“var(--text-sec)”,lineHeight:1.5}}>{item.resumo}</div>}
 </div>
 )}</div>}
 
@@ -3192,29 +3192,29 @@ onLogin(d.token,d.username,d.userId);
 setLoading(false);
 };
 
-return <div style={{minHeight:“100vh”,display:“flex”,flexDirection:“column”,alignItems:“center”,justifyContent:“center”,background:“var(–bg)”,padding:20}}>
+return <div style={{minHeight:“100vh”,display:“flex”,flexDirection:“column”,alignItems:“center”,justifyContent:“center”,background:“var(--bg)”,padding:20}}>
 <div style={{position:“absolute”,top:16,right:16}}><ThemeBtn theme={theme} toggle={toggleTheme}/></div>
 <div style={{marginBottom:32,textAlign:“center”}}>
 <Logo/>
 <div style={{marginTop:12,fontSize:22,fontWeight:800,letterSpacing:2}}>TERA</div>
-<div style={{fontSize:13,color:“var(–text-sec)”,marginTop:4}}>CADERNO ELETRÔNICO</div>
+<div style={{fontSize:13,color:“var(--text-sec)”,marginTop:4}}>CADERNO ELETRÔNICO</div>
 </div>
 <div className=“cd” style={{width:“100%”,maxWidth:380,padding:28}}>
 <div style={{display:“flex”,gap:8,marginBottom:24}}>
-<button onClick={()=>{setMode(“login”);setErr(””);}} style={{flex:1,padding:“8px 0”,borderRadius:6,border:“none”,cursor:“pointer”,fontWeight:mode===“login”?700:400,background:mode===“login”?“var(–gold-subtle)”:“transparent”,color:mode===“login”?“var(–gold)”:“var(–text-sec)”,fontSize:13,fontFamily:“inherit”}}>Entrar</button>
-<button onClick={()=>{setMode(“register”);setErr(””);}} style={{flex:1,padding:“8px 0”,borderRadius:6,border:“none”,cursor:“pointer”,fontWeight:mode===“register”?700:400,background:mode===“register”?“var(–gold-subtle)”:“transparent”,color:mode===“register”?“var(–gold)”:“var(–text-sec)”,fontSize:13,fontFamily:“inherit”}}>Criar Conta</button>
+<button onClick={()=>{setMode(“login”);setErr(””);}} style={{flex:1,padding:“8px 0”,borderRadius:6,border:“none”,cursor:“pointer”,fontWeight:mode===“login”?700:400,background:mode===“login”?“var(--gold-subtle)”:“transparent”,color:mode===“login”?“var(--gold)”:“var(--text-sec)”,fontSize:13,fontFamily:“inherit”}}>Entrar</button>
+<button onClick={()=>{setMode(“register”);setErr(””);}} style={{flex:1,padding:“8px 0”,borderRadius:6,border:“none”,cursor:“pointer”,fontWeight:mode===“register”?700:400,background:mode===“register”?“var(--gold-subtle)”:“transparent”,color:mode===“register”?“var(--gold)”:“var(--text-sec)”,fontSize:13,fontFamily:“inherit”}}>Criar Conta</button>
 </div>
 <div style={{display:“flex”,flexDirection:“column”,gap:12}}>
 <input value={username} onChange={e=>setUsername(e.target.value)} onKeyDown={e=>e.key===“Enter”&&submit()} placeholder=“Usuário” style={{padding:“10px 12px”,borderRadius:7,fontSize:14,outline:“none”}}/>
 <input value={password} onChange={e=>setPassword(e.target.value)} onKeyDown={e=>e.key===“Enter”&&submit()} type=“password” placeholder=“Senha” style={{padding:“10px 12px”,borderRadius:7,fontSize:14,outline:“none”}}/>
 {mode===“register”&&<input value={inviteCode} onChange={e=>setInviteCode(e.target.value.toUpperCase())} onKeyDown={e=>e.key===“Enter”&&submit()} placeholder=“Código de convite (ex: A3F2B1C4)” style={{padding:“10px 12px”,borderRadius:7,fontSize:14,outline:“none”,letterSpacing:2}}/>}
-{err&&<div style={{color:“var(–err)”,fontSize:12,padding:“6px 10px”,background:“rgba(231,76,60,.1)”,borderRadius:5}}>{err}</div>}
+{err&&<div style={{color:“var(--err)”,fontSize:12,padding:“6px 10px”,background:“rgba(231,76,60,.1)”,borderRadius:5}}>{err}</div>}
 <button onClick={submit} disabled={loading} className=“btn-primary” style={{marginTop:4,display:“flex”,alignItems:“center”,justifyContent:“center”,gap:8}}>
 {loading&&<Sp/>}{mode===“login”?“Entrar”:“Criar Conta”}
 </button>
 </div>
 </div>
-<div style={{marginTop:16,fontSize:11,color:“var(–text-mute)”}}>Acesso restrito</div>
+<div style={{marginTop:16,fontSize:11,color:“var(--text-mute)”}}>Acesso restrito</div>
 
   </div>;
 }
@@ -3244,17 +3244,17 @@ return <div style={{position:“fixed”,inset:0,background:“rgba(0,0,0,.6)”
 <div className=“cd” style={{width:“100%”,maxWidth:420,padding:24}}>
 <div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:16}}>
 <div style={{fontWeight:700,fontSize:15}}>⚙ Minha API Key Anthropic</div>
-<button onClick={onClose} style={{background:“none”,border:“none”,cursor:“pointer”,color:“var(–text-sec)”,fontSize:18}}>✕</button>
+<button onClick={onClose} style={{background:“none”,border:“none”,cursor:“pointer”,color:“var(--text-sec)”,fontSize:18}}>✕</button>
 </div>
-{status?.configured&&<div style={{marginBottom:12,padding:“8px 12px”,background:“rgba(46,204,113,.1)”,borderRadius:6,fontSize:12,color:“var(–ok)”}}>✓ Chave configurada: <code>{status.masked}</code></div>}
-<div style={{fontSize:12,color:“var(–text-sec)”,marginBottom:10}}>Sua chave fica armazenada no servidor de forma segura e nunca é exposta ao navegador.</div>
+{status?.configured&&<div style={{marginBottom:12,padding:“8px 12px”,background:“rgba(46,204,113,.1)”,borderRadius:6,fontSize:12,color:“var(--ok)”}}>✓ Chave configurada: <code>{status.masked}</code></div>}
+<div style={{fontSize:12,color:“var(--text-sec)”,marginBottom:10}}>Sua chave fica armazenada no servidor de forma segura e nunca é exposta ao navegador.</div>
 <input value={key} onChange={e=>setKey(e.target.value)} placeholder=“sk-ant-api03-…” style={{width:“100%”,padding:“10px 12px”,borderRadius:7,fontSize:13,outline:“none”,marginBottom:10,fontFamily:“monospace”}}/>
-{err&&<div style={{color:“var(–err)”,fontSize:12,marginBottom:8}}>{err}</div>}
+{err&&<div style={{color:“var(--err)”,fontSize:12,marginBottom:8}}>{err}</div>}
 <div style={{display:“flex”,gap:8}}>
 <button onClick={save} disabled={loading} className=“btn-primary” style={{flex:1,display:“flex”,alignItems:“center”,justifyContent:“center”,gap:6}}>
 {loading&&<Sp/>}Salvar
 </button>
-{status?.configured&&<button onClick={remove} disabled={loading} className=“btn-secondary” style={{color:“var(–err)”,borderColor:“var(–err)”}}>Remover</button>}
+{status?.configured&&<button onClick={remove} disabled={loading} className=“btn-secondary” style={{color:“var(--err)”,borderColor:“var(--err)”}}>Remover</button>}
 </div>
 </div>
 
