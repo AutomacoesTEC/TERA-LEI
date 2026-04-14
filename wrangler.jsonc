@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tera-proxy",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-01-01",
+  "kv_namespaces": [
+    {
+      "binding": "TERA_USERS",
+      "id": "SUBSTITUIR_PELO_ID_DO_NAMESPACE_KV"
+    },
+    {
+      "binding": "TERA_DATA",
+      "id": "SUBSTITUIR_PELO_ID_DO_NAMESPACE_KV"
+    },
+    {
+      "binding": "TERA_INVITES",
+      "id": "SUBSTITUIR_PELO_ID_DO_NAMESPACE_KV"
+    }
+  ]
+}

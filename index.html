@@ -86,35 +86,35 @@ function getCS(v){return getComputedStyle(document.body).getPropertyValue(v).tri
 const AREAS={tributario:{nome:"Tributário",palavras:["microempresa","empresa de pequeno porte","simples nacional","receita bruta","alíquota","base de cálculo","fato gerador","contribuinte","sujeito passivo","obrigação tributária","crédito tributário","lançamento","isenção","imunidade","prescrição","decadência","compensação","multa","juros","mora","ICMS","ISS","IPI","PIS","COFINS","IRPJ","CSLL","INSS","nota fiscal","escrituração","declaração","MEI","parcelamento","certidão negativa","substituição tributária","dívida ativa","execução fiscal","IBS","CBS","imposto seletivo","IVA","não cumulatividade","cashback","split payment","comitê gestor"]},civil:{nome:"Civil",palavras:["capacidade civil","casamento","divórcio","propriedade","posse","usucapião","contrato","obrigação","dano moral","indenização","sucessão","herança","testamento","inventário"]},penal:{nome:"Penal",palavras:["crime","dolo","culpa","pena","reclusão","legítima defesa","tentativa","reincidência","homicídio","furto","roubo","habeas corpus"]},trabalhista:{nome:"Trabalhista",palavras:["empregado","empregador","CLT","salário","horas extras","férias","FGTS","aviso prévio","rescisão","justa causa","terceirização","convenção coletiva"]},constitucional:{nome:"Constitucional",palavras:["direitos fundamentais","liberdade","igualdade","contraditório","ampla defesa","mandado de segurança","dignidade","cláusula pétrea","STF","medida provisória"]},administrativo:{nome:"Administrativo",palavras:["administração pública","servidor público","licitação","pregão","contrato administrativo","concessão","poder de polícia","improbidade","PAD"]}};
 
 // Parser
-const PATS=[{t:“PARTE”,r:/^\s*PARTE\s+(?:GERAL|ESPECIAL|[IVXLCDM]+|PRELIMINAR)\s*$/i},{t:“LIVRO”,r:/^\s*LIVRO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:“TÍTULO”,r:/^\s*T[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:“CAPÍTULO”,r:/^\s*CAP[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:“SEÇÃO”,r:/^\s*SE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:“SUBSEÇÃO”,r:/^\s*SUBSE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:“ARTIGO”,r:/^\s*Art.?\s*\d+[ºo°]?[\s-.]+/},{t:“PARÁGRAFO”,r:/^\s*(?:§\s*\d+[ºo°]?.?\s|Par[áa]grafo\s+[úu]nico.?\s)/i},{t:“INCISO”,r:/^\s*[IVXLCDM]+\s*[-–—]\s+/},{t:“ALÍNEA”,r:/^\s*[a-z])\s+/},{t:“ITEM”,r:/^\s*\d+.\s+/}];
-const DIV=new Set([“PARTE”,“LIVRO”,“TÍTULO”,“CAPÍTULO”,“SEÇÃO”,“SUBSEÇÃO”]);
+const PATS=[{t:"PARTE",r:/^\s*PARTE\s+(?:GERAL|ESPECIAL|[IVXLCDM]+|PRELIMINAR)\s*$/i},{t:"LIVRO",r:/^\s*LIVRO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"TÍTULO",r:/^\s*T[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"CAPÍTULO",r:/^\s*CAP[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"SEÇÃO",r:/^\s*SE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:"SUBSEÇÃO",r:/^\s*SUBSE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:"ARTIGO",r:/^\s*Art.?\s*\d+[ºo°]?[\s-.]+/},{t:"PARÁGRAFO",r:/^\s*(?:§\s*\d+[ºo°]?.?\s|Par[áa]grafo\s+[úu]nico.?\s)/i},{t:"INCISO",r:/^\s*[IVXLCDM]+\s*[-–—]\s+/},{t:"ALÍNEA",r:/^\s*[a-z])\s+/},{t:"ITEM",r:/^\s*\d+.\s+/}];
+const DIV=new Set(["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"]);
 const CT={get PARTE(){return getCS("--gold")},get LIVRO(){return getCS("--gold")},get TÍTULO(){return getCS("--gold")},get CAPÍTULO(){return getCS("--gold-bright")},get SEÇÃO(){return getCS("--border")},get SUBSEÇÃO(){return getCS("--bg-hover")}};
 
 // ═══ TEIA WEB WORKER — script autocontido executado fora da main thread ═══
 // String.raw preserva barras invertidas dos regex sem double-escape.
 // Criado via Blob URL em runtime (SPA monolítica, sem arquivos externos).
 const TEIA_WORKER_SCRIPT = String.raw`
-“use strict”;
-const _DIV = new Set([“PARTE”,“LIVRO”,“TÍTULO”,“CAPÍTULO”,“SEÇÃO”,“SUBSEÇÃO”]);
+"use strict";
+const _DIV = new Set(["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"]);
 
 // Constrói artIndex (Map<numId,{v,r,l}>) e subDevIndex (Map<artId,dispositivos[]>)
 function _buildIndices(ds) {
 const ai = new Map();
 const si = new Map();
 for (const d of ds) {
-if (d.tipo !== “ARTIGO”) continue;
-const k = d.id.replace(/[^0-9]/g, “”);
+if (d.tipo !== "ARTIGO") continue;
+const k = d.id.replace(/[^0-9]/g, "");
 if (!ai.has(k)) ai.set(k, { v: null, r: null, l: null });
 const e = ai.get(k);
-if (d.status === “vigente”) e.v = d;
-else if (d.status === “revogado”) e.r = d;
+if (d.status === "vigente") e.v = d;
+else if (d.status === "revogado") e.r = d;
 e.l = d;
 }
 let curArt = null;
 for (const d of ds) {
-if (d.tipo === “ARTIGO”) { curArt = d.id; continue; }
+if (d.tipo === "ARTIGO") { curArt = d.id; continue; }
 if (_DIV.has(d.tipo)) { curArt = null; continue; }
-if (curArt && d.status !== “vetado”) {
+if (curArt && d.status !== "vetado") {
 if (!si.has(curArt)) si.set(curArt, []);
 si.get(curArt).push(d);
 }
@@ -124,7 +124,7 @@ return { ai, si };
 
 // Localiza dispositivo pelo ID do artigo — O(1) via Map
 function _findDevice(artId, ai) {
-const k = artId.replace(/^Art.?\s*/i, “”).replace(/[^0-9]/g, “”).trim();
+const k = artId.replace(/^Art.?\s*/i, "").replace(/[^0-9]/g, "").trim();
 const e = ai.get(k);
 return e ? (e.v || e.r || e.l) : null;
 }
@@ -150,20 +150,20 @@ if (!external.includes(name)) external.push(name);
 }
 const isCitationSyntaxOnly = (between) => {
 let c = between;
-c = c.replace(/,?\s*de\s+\d{1,2}\s+de\s+\w+\s+de\s+\d{4}/g, “”);
-c = c.replace(/,?\s*de\s+\d{4}/g, “”);
-c = c.replace(/\s*arts?.\s*\d+[ºo°]?/g, “”);
-c = c.replace(/\s*§+\s*\d*[ºo°]?.?/g, “”);
-c = c.replace(/\s*incisos?\s+[IVXLCDM]+/gi, “”);
-c = c.replace(/\s*al[íi]neas?\s+[a-z])?/gi, “”);
-c = c.replace(/\s*itens?\s+\d+/gi, “”);
-c = c.replace(/(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.]+)/gi, “”);
-c = c.replace(/[,;.\s-–—ºo°:()]+/g, “ “);
-c = c.replace(/\b(?:e|a|de|do|da|dos|das|no|na|nos|nas|ao|caput)\b/gi, “”);
+c = c.replace(/,?\s*de\s+\d{1,2}\s+de\s+\w+\s+de\s+\d{4}/g, "");
+c = c.replace(/,?\s*de\s+\d{4}/g, "");
+c = c.replace(/\s*arts?.\s*\d+[ºo°]?/g, "");
+c = c.replace(/\s*§+\s*\d*[ºo°]?.?/g, "");
+c = c.replace(/\s*incisos?\s+[IVXLCDM]+/gi, "");
+c = c.replace(/\s*al[íi]neas?\s+[a-z])?/gi, "");
+c = c.replace(/\s*itens?\s+\d+/gi, "");
+c = c.replace(/(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.]+)/gi, "");
+c = c.replace(/[,;.\s-–—ºo°:()]+/g, " ");
+c = c.replace(/\b(?:e|a|de|do|da|dos|das|no|na|nos|nas|ao|caput)\b/gi, "");
 return c.trim().length === 0;
 };
 // Regex para detectar nome de lei logo APÓS a referência ao artigo
-// Cobre: “art. 15 da Lei nº 6.404”, “art. 3º do Decreto nº 1.598”, etc.
+// Cobre: "art. 15 da Lei nº 6.404", "art. 3º do Decreto nº 1.598", etc.
 const reLeiDirectlyAfter = /^\s*(?:[,;]\s*)?(?:d[aoe]s?\s+)?(?:Lei(?:\s+Complementar)?|Decreto(?:-Lei)?|Medida\s+Provis[óo]ria|Instru[çc][ãa]o\s+Normativa(?:\s+(?:RFB|SRF|[A-Z]{2,}))?|C[óo]digo\s+\w+|Constitui[çc][ãa]o)\s+[Nn][ºo°]?\s*[\d.]/i;
 
 let m;
@@ -171,7 +171,7 @@ while ((m = reArt.exec(text)) !== null) {
 const pos = m.index;
 // Guarda-1: artigo cai dentro de parêntese que contém nome de lei
 if (externalRanges.some(([s, e]) => pos >= s && pos <= e)) continue;
-// Guarda-2: nome de lei aparece logo APÓS o artigo — ex: “art. 15 da Lei nº 6.404”
+// Guarda-2: nome de lei aparece logo APÓS o artigo — ex: "art. 15 da Lei nº 6.404"
 const textAfterMatch = text.slice(m.index + m[0].length, m.index + m[0].length + 130);
 if (reLeiDirectlyAfter.test(textAfterMatch)) continue;
 // Guarda-3: nome de lei aparece logo ANTES do artigo (lógica original)
@@ -182,7 +182,7 @@ while ((lm = reLeiInline.exec(before)) !== null) lastLaw = { end: lm.index + lm[
 if (lastLaw && isCitationSyntaxOnly(before.slice(lastLaw.end))) continue;
 const nums = m[1].match(/\d+[ºo°]?/g) || [];
 for (const n of nums) {
-const artId = “Art. “ + n;
+const artId = "Art. " + n;
 if (!internal.includes(artId)) internal.push(artId);
 }
 }
@@ -200,12 +200,12 @@ if (visited.has(startId)) return null;
 visited.add(startId);
 const dev = _findDevice(startId, ai);
 if (!dev) return null;
-const isRevogado = dev.status === “revogado”;
+const isRevogado = dev.status === "revogado";
 const subs = si.get(dev.id) || [];
-const fullText = [dev.txt || “”, …subs.map(s => (s.id || “”) + “ “ + (s.txt || “”))].join(” “);
+const fullText = [dev.txt || "", …subs.map(s => (s.id || "") + " " + (s.txt || ""))].join(" ");
 const allRefs = isRevogado ? { internal: [], external: [] } : _extractRefs(fullText);
-const selfNum = dev.id.replace(/[^0-9]/g, “”);
-const filteredRefs = allRefs.internal.filter(r => r.replace(/[^0-9]/g, “”) !== selfNum);
+const selfNum = dev.id.replace(/[^0-9]/g, "");
+const filteredRefs = allRefs.internal.filter(r => r.replace(/[^0-9]/g, "") !== selfNum);
 const children = [];
 for (const ref of filteredRefs) {
 const child = _buildTree(ref, ai, si, visited, depth + 1);
@@ -213,12 +213,12 @@ if (child) children.push(child);
 }
 return {
 id: dev.id,
-text: (dev.txt || “”).trim(),
-status: dev.status || “vigente”,
-alteracao: dev.alteracao || “”,
+text: (dev.txt || "").trim(),
+status: dev.status || "vigente",
+alteracao: dev.alteracao || "",
 subs: subs.map(function(s) {
 try {
-var sr = *extractRefs((s.id || “”) + “ “ + (s.txt || “”));
+var sr = *extractRefs((s.id || "") + " " + (s.txt || ""));
 return Object.assign({}, s, { externalRefs: sr.external });
 } catch (*) {
 return Object.assign({}, s, { externalRefs: [] });
@@ -245,17 +245,17 @@ self.postMessage({ ok: false, error: err.message });
 
 function idT(s){for(const p of PATS)if(p.r.test(s.trim()))return p.t;return null;}
 function exId(t,s){s=s.trim();if(DIV.has(t))return s;const R={ARTIGO:/^(Art.?\s*\d+[ºo°]?[-.]?)/,PARÁGRAFO:/^(§\s*\d+[ºo°]?.?|Par[áa]grafo\s+[úu]nico.?)/i,INCISO:/^([IVXLCDM]+)\s*[-–—]/,ALÍNEA:/^([a-z]))/,ITEM:/^(\d+.)/};const m=R[t]?.exec(s);return m?m[1].trim():s.slice(0,30);}
-function exTx(t,s){s=s.trim();if(DIV.has(t))return””;const R={ARTIGO:/^Art.?\s*\d+[ºo°]?[\s-.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?.?\s+|Par[áa]grafo\s+[úu]nico.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[-–—]\s+(.+)/,ALÍNEA:/^[a-z])\s+(.+)/,ITEM:/^\d+.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
+function exTx(t,s){s=s.trim();if(DIV.has(t))return"";const R={ARTIGO:/^Art.?\s*\d+[ºo°]?[\s-.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?.?\s+|Par[áa]grafo\s+[úu]nico.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[-–—]\s+(.+)/,ALÍNEA:/^[a-z])\s+(.+)/,ITEM:/^\d+.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
 function parse(txt){const ds=[];let a=null,ag=false;const pre=[];const reAltera=/[?\s*(Reda[çc][ãa]o dada pel[oa](a)[^]]*|Inclu[ií]d[oa](a) pel[oa](a)[^]]*|Revogad[oa](a) pel[oa](a)[^]]*)]?/gi;const reVetado=/(\s*(?:VETADO|Vetado|vetado)\s*)/;const reRevogado=/(\s*(?:REVOGADO|Revogado|revogado)\s*)/;
-for(const l of txt.split(”\n”)){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao=””;let status=“vigente”;const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^[|]$/g,””).trim()).join(”; “);const cleanTxt=s.replace(reAltera,””).trim();if(reVetado.test(cleanTxt))status=“vetado”;else if(reRevogado.test(cleanTxt))status=“revogado”;if(/revogad/i.test(alteracao))status=“revogado”;a={tipo:t,id:exId(t,cleanTxt),rub:””,txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+”; “+altM.map(m=>m.replace(/^[|]$/g,””).trim()).join(”; “)):altM.map(m=>m.replace(/^[|]$/g,””).trim()).join(”; “);const cleaned=s.replace(reAltera,””).trim();if(cleaned)a.txt=a.txt?a.txt+” “+cleaned:cleaned;}else{a.txt=a.txt?a.txt+” “+s:s;}}if(reVetado.test(a.txt))a.status=“vetado”;if(reRevogado.test(a.txt))a.status=“revogado”;if(a.alteracao&&/revogad/i.test(a.alteracao))a.status=“revogado”;}else if(!a){pre.push(s);}}if(pre.length>0){const eTxt=pre.join(” “).trim();if(eTxt)ds.unshift({tipo:“EMENTA”,id:””,rub:””,txt:eTxt,status:“vigente”,alteracao:””});}return detectVetados(ds);}
+for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^[|]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^[|]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^[|]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}else if(!a){pre.push(s);}}if(pre.length>0){const eTxt=pre.join(" ").trim();if(eTxt)ds.unshift({tipo:"EMENTA",id:"",rub:"",txt:eTxt,status:"vigente",alteracao:""});}return detectVetados(ds);}
 
 function detectVetados(ds){
-const normId=id=>(id||””).replace(/[^a-zA-Z0-9ºo°§úÚ]/g,””).toLowerCase();
+const normId=id=>(id||"").replace(/[^a-zA-Z0-9ºo°§úÚ]/g,"").toLowerCase();
 for(let i=0;i<ds.length;i++){
-if(DIV.has(ds[i].tipo)||ds[i].status!==“vigente”)continue;
+if(DIV.has(ds[i].tipo)||ds[i].status!=="vigente")continue;
 const myNorm=normId(ds[i].id);if(!myNorm)continue;
 let j=i+1;
-const nivHier={“ARTIGO”:0,“PARÁGRAFO”:1,“INCISO”:2,“ALÍNEA”:3,“ITEM”:4};
+const nivHier={"ARTIGO":0,"PARÁGRAFO":1,"INCISO":2,"ALÍNEA":3,"ITEM":4};
 const meuNiv=nivHier[ds[i].tipo];
 if(meuNiv===undefined)continue;
 while(j<ds.length){
@@ -263,7 +263,7 @@ if(DIV.has(ds[j].tipo)){j++;continue;}
 const outroNiv=nivHier[ds[j].tipo];
 if(outroNiv===undefined){j++;continue;}
 if(ds[j].tipo===ds[i].tipo&&normId(ds[j].id)===myNorm){
-ds[i].status=“vetado”;break;
+ds[i].status="vetado";break;
 }
 if(outroNiv<=meuNiv&&normId(ds[j].id)!==myNorm)break;
 j++;
@@ -273,32 +273,32 @@ return ds;
 }
 
 // Analysis functions
-function extrairRemissoes(ds){const re=/(?:§\s*\d+[ºo°]?\s+d[oe]\s+)?(?:arts?.\s*)(\d+[ºo°]?(?:\s*(?:,|e|a)\s*\d+[ºo°]?)*)/gi;const res=[];let art=””;
-for(const d of ds){if(d.tipo===“ARTIGO”)art=d.id;const full=d.txt+” “+d.rub;let m;re.lastIndex=0;while((m=re.exec(full))!==null){const refs=m[1].match(/\d+[ºo°]?/g)||[];for(const r of refs){const dest=“Art. “+r;if(dest!==art&&art)res.push({origem:art,disp:d.id,destino:dest,ctx:full.trim(),tipo:d.tipo});}}}return res;}
+function extrairRemissoes(ds){const re=/(?:§\s*\d+[ºo°]?\s+d[oe]\s+)?(?:arts?.\s*)(\d+[ºo°]?(?:\s*(?:,|e|a)\s*\d+[ºo°]?)*)/gi;const res=[];let art="";
+for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;const full=d.txt+" "+d.rub;let m;re.lastIndex=0;while((m=re.exec(full))!==null){const refs=m[1].match(/\d+[ºo°]?/g)||[];for(const r of refs){const dest="Art. "+r;if(dest!==art&&art)res.push({origem:art,disp:d.id,destino:dest,ctx:full.trim(),tipo:d.tipo});}}}return res;}
 
 function extrairPrazosValores(ds){const reVal=/R$\s*[\d.]+,\d{2}/g;const rePct=/\d+(?:[,.]\d+)?\s*%/g;const rePrazo=/(?:\d+\s*(?:dias?|meses?|anos?|horas?))|(?:at[ée]\s+\d{1,2}\s+de\s+\w+)/gi;
-const res=[];let art=””,cap=””;for(const d of ds){if(d.tipo===“CAPÍTULO”)cap=d.rub||d.id;if(d.tipo===“ARTIGO”)art=d.id;if(!d.txt)continue;
-for(const rx of[[reVal,“VALOR (R$)”],[rePct,“PERCENTUAL (%)”],[rePrazo,“PRAZO”]]){rx[0].lastIndex=0;let m;while((m=rx[0].exec(d.txt))!==null)res.push({art,cap,disp:d.id,tipo:rx[1],val:m[0],ctx:d.txt});}}return res;}
+const res=[];let art="",cap="";for(const d of ds){if(d.tipo==="CAPÍTULO")cap=d.rub||d.id;if(d.tipo==="ARTIGO")art=d.id;if(!d.txt)continue;
+for(const rx of[[reVal,"VALOR (R$)"],[rePct,"PERCENTUAL (%)"],[rePrazo,"PRAZO"]]){rx[0].lastIndex=0;let m;while((m=rx[0].exec(d.txt))!==null)res.push({art,cap,disp:d.id,tipo:rx[1],val:m[0],ctx:d.txt});}}return res;}
 
-function buildIdx(ds,area){const ws=AREAS[area]?.palavras||[];const idx={};let art=””;for(const d of ds){if(d.tipo===“ARTIGO”)art=d.id;const t=(d.txt+” “+d.rub).toLowerCase();for(const w of ws)if(t.includes(w.toLowerCase())&&art){if(!idx[w])idx[w]=[];if(!idx[w].includes(art))idx[w].push(art);}}return Object.fromEntries(Object.entries(idx).sort((a,b)=>a[0].localeCompare(b[0],“pt”)));}
+function buildIdx(ds,area){const ws=AREAS[area]?.palavras||[];const idx={};let art="";for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;const t=(d.txt+" "+d.rub).toLowerCase();for(const w of ws)if(t.includes(w.toLowerCase())&&art){if(!idx[w])idx[w]=[];if(!idx[w].includes(art))idx[w].push(art);}}return Object.fromEntries(Object.entries(idx).sort((a,b)=>a[0].localeCompare(b[0],"pt")));}
 
 function fullTextSearch(ds,termo,leiId=null,study=null,tagsConfig=[],scope={legis:true,notas:true}){
 const hasTerm = termo && termo.trim().length >= 3;
-if(!hasTerm && !termo.includes(”#”)) return []; // Se não tem termo nem tag (#), retorna vazio
-// Operador AND via ‘+’: “lucro presumido + faturamento” exige ambos no dispositivo.
-// Sem ‘+’, comportamento idêntico ao original (retrocompatível).
-const termos=termo.split(”+”)
-.map(t=>t.trim().toLowerCase().normalize(“NFD”).replace(/[\u0300-\u036f]/g,””))
+if(!hasTerm && !termo.includes("#")) return []; // Se não tem termo nem tag (#), retorna vazio
+// Operador AND via '+': "lucro presumido + faturamento" exige ambos no dispositivo.
+// Sem '+', comportamento idêntico ao original (retrocompatível).
+const termos=termo.split("+")
+.map(t=>t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""))
 .filter(t=>t.length>=3); // descarta fragmentos < 3 chars
 if(termos.length===0)return[];
-const resultados=[];let artAtual=””;
+const resultados=[];let artAtual="";
 for(let i=0;i<ds.length;i++){
 try{
 const d=ds[i];
-if(DIV.has(d.tipo))artAtual=””;
-else if(d.tipo===“ARTIGO”)artAtual=d.id;
-let textoLegis = “”;
-if(scope.legis) textoLegis = ((d.id||””)+” “+(d.rub||””)+” “+(d.txt||””));
+if(DIV.has(d.tipo))artAtual="";
+else if(d.tipo==="ARTIGO")artAtual=d.id;
+let textoLegis = "";
+if(scope.legis) textoLegis = ((d.id||"")+" "+(d.rub||"")+" "+(d.txt||""));
 
 ```
   let textoNotas = "";
@@ -326,35 +326,35 @@ if(scope.legis) textoLegis = ((d.id||””)+” “+(d.rub||””)+” “+(d.
 return resultados;
 }
 
-function hierarquia(ds){const ctx={};const trilha={PARTE:””,LIVRO:””,TÍTULO:””,CAPÍTULO:””,SEÇÃO:””,SUBSEÇÃO:””};const niv=[“PARTE”,“LIVRO”,“TÍTULO”,“CAPÍTULO”,“SEÇÃO”,“SUBSEÇÃO”];
-for(const d of ds){if(DIV.has(d.tipo)){trilha[d.tipo]=d.rub||d.id;const i=niv.indexOf(d.tipo);for(let j=i+1;j<niv.length;j++)trilha[niv[j]]=””;}
-if(d.tipo===“ARTIGO”)ctx[d.id]=Object.values(trilha).filter(Boolean).join(” > “);}return ctx;}
+function hierarquia(ds){const ctx={};const trilha={PARTE:"",LIVRO:"",TÍTULO:"",CAPÍTULO:"",SEÇÃO:"",SUBSEÇÃO:""};const niv=["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"];
+for(const d of ds){if(DIV.has(d.tipo)){trilha[d.tipo]=d.rub||d.id;const i=niv.indexOf(d.tipo);for(let j=i+1;j<niv.length;j++)trilha[niv[j]]="";}
+if(d.tipo==="ARTIGO")ctx[d.id]=Object.values(trilha).filter(Boolean).join(" > ");}return ctx;}
 
-async function pdfToText(f){const ab=await f.arrayBuffer();const pdf=await pdfjsLib.getDocument({data:ab}).promise;let fullText=””;
+async function pdfToText(f){const ab=await f.arrayBuffer();const pdf=await pdfjsLib.getDocument({data:ab}).promise;let fullText="";
 for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const c=await pg.getTextContent();
 const items=c.items.filter(x=>x.str.trim()).sort((a,b)=>{const dy=b.transform[5]-a.transform[5];return Math.abs(dy)>3?dy:a.transform[4]-b.transform[4];});
-let lastY=null;let line=””;
+let lastY=null;let line="";
 for(const item of items){const y=Math.round(item.transform[5]);
-if(lastY!==null&&Math.abs(y-lastY)>3){fullText+=line.trim()+”\n”;line=””;}
-line+=(line?” “:””)+item.str;lastY=y;}
-if(line.trim())fullText+=line.trim()+”\n”;}
-fullText=fullText.replace(/([.;:)]]) *(§\s*\d)/g,”$1\n$2”);
-fullText=fullText.replace(/([.;:)]]) *(Parágrafo único)/gi,”$1\n$2”);
-fullText=fullText.replace(/ (TÍTULO\s+[IVXLCDM])/g,”\n$1”);
-fullText=fullText.replace(/ (CAPÍTULO\s+[IVXLCDM])/g,”\n$1”);
-fullText=fullText.replace(/ (Seção\s+[IVXLCDM])/gi,”\n$1”);
-fullText=fullText.replace(/ (Subseção\s+[IVXLCDM])/gi,”\n$1”);
-fullText=fullText.replace(/ (PARTE\s+(?:GERAL|ESPECIAL|[IVXLCDM]))/g,”\n$1”);
-fullText=fullText.replace(/ (LIVRO\s+[IVXLCDM])/g,”\n$1”);
-fullText=fullText.replace(/\s*(?:\u0000|\ufffd)?\s*ANEXO\s+[IVXLCDM]+.pdf/gi,””);
-fullText=fullText.replace(/ANEXO\s+[IVXLCDM]+.pdf/gi,””);
-fullText=fullText.replace(/* Este texto não substitui o publicado oficialmente./gi,””);
-fullText=fullText.replace(/[\u25A1\uFFFD]/g,””);
-fullText=fullText.replace(/(\b[a-záéíóúàâêôãõüçA-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ]+)\s+\d{1,4}/\d{1,4}\s+([a-záéíóúàâêôãõüçA-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ]+\b)/gi,”$1 $2”);
-fullText=fullText.replace(/  +/g,” “);
+if(lastY!==null&&Math.abs(y-lastY)>3){fullText+=line.trim()+"\n";line="";}
+line+=(line?" ":"")+item.str;lastY=y;}
+if(line.trim())fullText+=line.trim()+"\n";}
+fullText=fullText.replace(/([.;:)]]) *(§\s*\d)/g,"$1\n$2");
+fullText=fullText.replace(/([.;:)]]) *(Parágrafo único)/gi,"$1\n$2");
+fullText=fullText.replace(/ (TÍTULO\s+[IVXLCDM])/g,"\n$1");
+fullText=fullText.replace(/ (CAPÍTULO\s+[IVXLCDM])/g,"\n$1");
+fullText=fullText.replace(/ (Seção\s+[IVXLCDM])/gi,"\n$1");
+fullText=fullText.replace(/ (Subseção\s+[IVXLCDM])/gi,"\n$1");
+fullText=fullText.replace(/ (PARTE\s+(?:GERAL|ESPECIAL|[IVXLCDM]))/g,"\n$1");
+fullText=fullText.replace(/ (LIVRO\s+[IVXLCDM])/g,"\n$1");
+fullText=fullText.replace(/\s*(?:\u0000|\ufffd)?\s*ANEXO\s+[IVXLCDM]+.pdf/gi,"");
+fullText=fullText.replace(/ANEXO\s+[IVXLCDM]+.pdf/gi,"");
+fullText=fullText.replace(/* Este texto não substitui o publicado oficialmente./gi,"");
+fullText=fullText.replace(/[\u25A1\uFFFD]/g,"");
+fullText=fullText.replace(/(\b[a-záéíóúàâêôãõüçA-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ]+)\s+\d{1,4}/\d{1,4}\s+([a-záéíóúàâêôãõüçA-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ]+\b)/gi,"$1 $2");
+fullText=fullText.replace(/  +/g," ");
 return fullText;}
 // ─── Storage Module — KV cache + async sync ───────────────────────────────────
-const PROXY=“https://tera-proxy.naytributos.workers.dev”;
+const PROXY="https://tera-proxy.naytributos.workers.dev";
 let _authToken=null;
 const _cache={};
 
@@ -362,16 +362,16 @@ function LS(k,v){
 if(v===undefined){return _cache[k]!==undefined?_cache[k]:null;}
 if(v===null){
 delete _cache[k];
-if(_authToken)fetch(`${PROXY}/kv/${encodeURIComponent(k)}`,{method:“DELETE”,headers:{Authorization:`Bearer ${_authToken}`}}).catch(()=>{});
+if(_authToken)fetch(`${PROXY}/kv/${encodeURIComponent(k)}`,{method:"DELETE",headers:{Authorization:`Bearer ${_authToken}`}}).catch(()=>{});
 return;
 }
 _cache[k]=v;
-if(_authToken)fetch(`${PROXY}/kv/${encodeURIComponent(k)}`,{method:“PUT”,headers:{Authorization:`Bearer ${_authToken}`,“Content-Type”:“application/json”},body:JSON.stringify({value:JSON.stringify(v)})}).catch(()=>{});
+if(_authToken)fetch(`${PROXY}/kv/${encodeURIComponent(k)}`,{method:"PUT",headers:{Authorization:`Bearer ${_authToken}`,"Content-Type":"application/json"},body:JSON.stringify({value:JSON.stringify(v)})}).catch(()=>{});
 }
 
 async function storageInit(token){
 _authToken=token;
-sessionStorage.setItem(“t3-token”,token);
+sessionStorage.setItem("t3-token",token);
 try{
 const r=await fetch(`${PROXY}/kv-list`,{headers:{Authorization:`Bearer ${token}`}});
 if(!r.ok)return;
@@ -383,18 +383,18 @@ const d=await r2.json();
 if(d.value!==null&&d.value!==undefined){try{_cache[key]=JSON.parse(d.value);}catch{_cache[key]=d.value;}}
 }catch{}
 }));
-}catch(e){console.warn(“storageInit:”,e);}
+}catch(e){console.warn("storageInit:",e);}
 }
 
 async function saveUserApiKey(key){
-if(!_authToken)return{ok:false,error:“Não autenticado”};
-const r=await fetch(`${PROXY}/user/apikey`,{method:“PUT”,headers:{Authorization:`Bearer ${_authToken}`,“Content-Type”:“application/json”},body:JSON.stringify({apiKey:key})});
+if(!_authToken)return{ok:false,error:"Não autenticado"};
+const r=await fetch(`${PROXY}/user/apikey`,{method:"PUT",headers:{Authorization:`Bearer ${_authToken}`,"Content-Type":"application/json"},body:JSON.stringify({apiKey:key})});
 return r.json();
 }
 
 async function deleteUserApiKey(){
 if(!_authToken)return{ok:false};
-const r=await fetch(`${PROXY}/user/apikey`,{method:“DELETE”,headers:{Authorization:`Bearer ${_authToken}`}});
+const r=await fetch(`${PROXY}/user/apikey`,{method:"DELETE",headers:{Authorization:`Bearer ${_authToken}`}});
 return r.json();
 }
 
@@ -405,56 +405,56 @@ try{const r=await fetch(`${PROXY}/user/apikey`,{headers:{Authorization:`Bearer $
 
 function storageLogout(){
 _authToken=null;
-sessionStorage.removeItem(“t3-token”);
+sessionStorage.removeItem("t3-token");
 Object.keys(_cache).forEach(k=>delete _cache[k]);
 }
 
 async function callAI(body){
-return fetch(`${PROXY}/api/anthropic`,{method:“POST”,headers:{Authorization:`Bearer ${_authToken}`,“Content-Type”:“application/json”},body:JSON.stringify(body)});
+return fetch(`${PROXY}/api/anthropic`,{method:"POST",headers:{Authorization:`Bearer ${_authToken}`,"Content-Type":"application/json"},body:JSON.stringify(body)});
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
-const Ic=({d,s=16,c=“currentColor”})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
-const IC={up:“M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12”,bk:“M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z”,tg:“M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z”,sd:“M22 2L11 13M22 2l-7 20-4-9-9-4z”,tr:“M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2”,br:“M9.5 2a3.5 3.5 0 0 0-3.19 4.94A3.5 3.5 0 0 0 4 10.5a3.5 3.5 0 0 0 1.98 3.15A3.5 3.5 0 0 0 8.5 18h1a.5.5 0 0 0 .5-.5V2.5a.5.5 0 0 0-.5-.5z”,bl:“M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0”,lk:“M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71”,sc:“M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01”,ls:“M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01”,rf:“M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15”,sr:“M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z”};
-const Sp=()=><svg width={14} height={14} viewBox=“0 0 24 24” fill=“none” stroke=“var(--gold)” strokeWidth=“2” style={{animation:“spin 1s linear infinite”}}><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>;
+const Ic=({d,s=16,c="currentColor"})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
+const IC={up:"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12",bk:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z",tg:"M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z",sd:"M22 2L11 13M22 2l-7 20-4-9-9-4z",tr:"M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2",br:"M9.5 2a3.5 3.5 0 0 0-3.19 4.94A3.5 3.5 0 0 0 4 10.5a3.5 3.5 0 0 0 1.98 3.15A3.5 3.5 0 0 0 8.5 18h1a.5.5 0 0 0 .5-.5V2.5a.5.5 0 0 0-.5-.5z",bl:"M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",lk:"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71",sc:"M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",ls:"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",rf:"M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15",sr:"M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"};
+const Sp=()=><svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2" style={{animation:"spin 1s linear infinite"}}><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>;
 
 // ═══ ERROR BOUNDARY ═══
 class ErrorBoundary extends React.Component{constructor(props){super(props);this.state={hasError:false,error:null};}
 static getDerivedStateFromError(error){return{hasError:true,error};}
-componentDidCatch(error,errorInfo){console.error(“Erro capturado:”,error,errorInfo);}
-render(){if(this.state.hasError){return <div style={{minHeight:“100vh”,display:“flex”,alignItems:“center”,justifyContent:“center”,background:“var(--bg)”,padding:20}}><div style={{maxWidth:500,textAlign:“center”}}><div style={{fontSize:32,marginBottom:16}}>⚠️</div><h1 style={{fontSize:24,fontWeight:700,marginBottom:12,color:“var(--text)”}}>Erro na Renderização</h1><p style={{fontSize:14,color:“var(--text-sec)”,marginBottom:16,lineHeight:1.6}}>Ocorreu um erro ao carregar a aplicação. Por favor, recarregue a página.</p><details style={{marginTop:16,padding:12,background:“var(--bg-hover)”,borderRadius:8,textAlign:“left”,fontSize:12}}><summary style={{cursor:“pointer”,fontWeight:600,marginBottom:8}}>Detalhes do Erro</summary><pre style={{overflow:“auto”,padding:8,background:“var(--bg-card)”,borderRadius:4,fontSize:11}}>{this.state.error?.toString()}</pre></details><button onClick={()=>window.location.reload()} style={{marginTop:16,padding:“10px 20px”,background:“var(--grad)”,color:”#fff”,border:“none”,borderRadius:8,cursor:“pointer”,fontSize:14,fontWeight:600}}>Recarregar Página</button></div></div>;}return this.props.children;}}
+componentDidCatch(error,errorInfo){console.error("Erro capturado:",error,errorInfo);}
+render(){if(this.state.hasError){return <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"var(--bg)",padding:20}}><div style={{maxWidth:500,textAlign:"center"}}><div style={{fontSize:32,marginBottom:16}}>⚠️</div><h1 style={{fontSize:24,fontWeight:700,marginBottom:12,color:"var(--text)"}}>Erro na Renderização</h1><p style={{fontSize:14,color:"var(--text-sec)",marginBottom:16,lineHeight:1.6}}>Ocorreu um erro ao carregar a aplicação. Por favor, recarregue a página.</p><details style={{marginTop:16,padding:12,background:"var(--bg-hover)",borderRadius:8,textAlign:"left",fontSize:12}}><summary style={{cursor:"pointer",fontWeight:600,marginBottom:8}}>Detalhes do Erro</summary><pre style={{overflow:"auto",padding:8,background:"var(--bg-card)",borderRadius:4,fontSize:11}}>{this.state.error?.toString()}</pre></details><button onClick={()=>window.location.reload()} style={{marginTop:16,padding:"10px 20px",background:"var(--grad)",color:"#fff",border:"none",borderRadius:8,cursor:"pointer",fontSize:14,fontWeight:600}}>Recarregar Página</button></div></div>;}return this.props.children;}}
 
 // ═══ APP ═══
 function App(){
 // ── Todos os hooks PRIMEIRO (regra do React) ────────────────────────────────
-const [theme,setTheme]=useState(()=>{try{return localStorage.getItem(“t3-theme”)||“dark”}catch{return”dark”}});
+const [theme,setTheme]=useState(()=>{try{return localStorage.getItem("t3-theme")||"dark"}catch{return"dark"}});
 const [auth,setAuth]=useState(null);
 const [authLoading,setAuthLoading]=useState(true);
 const [lib,setLib]=useState([]);
 const [sel,setSel]=useState(null);
-const [vw,setVw]=useState(“library”);
+const [vw,setVw]=useState("library");
 const [uping,setUp]=useState(false);
-const [area,setArea]=useState(“tributario”);
+const [area,setArea]=useState("tributario");
 const [study,setStudy]=useState({});
-const [tagsConfig,setTagsConfig]=useState(()=>LS(“t3-tags-config”)||[]);
+const [tagsConfig,setTagsConfig]=useState(()=>LS("t3-tags-config")||[]);
 const [showApiKeyModal,setShowApiKeyModal]=useState(false);
 const [apiKeyStatus,setApiKeyStatus]=useState(null);
 const fRef=useRef(null);
 
 // ── Effects ─────────────────────────────────────────────────────────────────
-useEffect(()=>{document.body.setAttribute(“data-theme”,theme);try{localStorage.setItem(“t3-theme”,theme)}catch{}},[theme]);
+useEffect(()=>{document.body.setAttribute("data-theme",theme);try{localStorage.setItem("t3-theme",theme)}catch{}},[theme]);
 
 useEffect(()=>{
-const token=sessionStorage.getItem(“t3-token”);
+const token=sessionStorage.getItem("t3-token");
 if(!token){setAuthLoading(false);return;}
 fetch(`${PROXY}/auth/me`,{headers:{Authorization:`Bearer ${token}`}})
 .then(r=>r.ok?r.json():null)
 .then(async d=>{
 if(d&&d.userId){
 await storageInit(token);
-setLib(LS(“t3-lib”)||[]);
-setStudy(LS(“t3-st”)||{});
-setTagsConfig(LS(“t3-tags-config”)||[]);
+setLib(LS("t3-lib")||[]);
+setStudy(LS("t3-st")||{});
+setTagsConfig(LS("t3-tags-config")||[]);
 setAuth({token,username:d.username,userId:d.userId});
 }
 setAuthLoading(false);
@@ -468,70 +468,70 @@ getUserApiKeyStatus().then(s=>setApiKeyStatus(s));
 },[auth]);
 
 // ── Handlers ────────────────────────────────────────────────────────────────
-const toggleTheme=()=>setTheme(t=>t===“dark”?“light”:“dark”);
+const toggleTheme=()=>setTheme(t=>t==="dark"?"light":"dark");
 
 const handleLogin=async(token,username,userId)=>{
 await storageInit(token);
-setLib(LS(“t3-lib”)||[]);
-setStudy(LS(“t3-st”)||{});
-setTagsConfig(LS(“t3-tags-config”)||[]);
+setLib(LS("t3-lib")||[]);
+setStudy(LS("t3-st")||{});
+setTagsConfig(LS("t3-tags-config")||[]);
 setAuth({token,username,userId});
 };
 
 const handleLogout=async()=>{
-try{await fetch(`${PROXY}/auth/logout`,{method:“POST”,headers:{Authorization:`Bearer ${auth.token}`}});}catch{}
+try{await fetch(`${PROXY}/auth/logout`,{method:"POST",headers:{Authorization:`Bearer ${auth.token}`}});}catch{}
 storageLogout();
-setLib([]);setStudy({});setTagsConfig([]);setSel(null);setVw(“library”);
+setLib([]);setStudy({});setTagsConfig([]);setSel(null);setVw("library");
 setAuth(null);
 };
 
 // ── Returns condicionais (APÓS todos os hooks) ───────────────────────────────
-if(authLoading)return <div style={{minHeight:“100vh”,display:“flex”,alignItems:“center”,justifyContent:“center”,background:“var(--bg)”}}><Sp/><span style={{marginLeft:10,color:“var(--text-sec)”}}>Carregando…</span></div>;
+if(authLoading)return <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"var(--bg)"}}><Sp/><span style={{marginLeft:10,color:"var(--text-sec)"}}>Carregando…</span></div>;
 if(!auth)return <LoginScreen onLogin={handleLogin} theme={theme} toggleTheme={toggleTheme}/>;
 
-const upF=async e=>{const f=e.target.files?.[0];if(!f)return;setUp(true);try{const t=await pdfToText(f);const ds=parse(t);const l={id:Date.now()+””,nome:f.name.replace(/.pdf$/i,””),data:new Date().toLocaleDateString(“pt-BR”),ds,nA:ds.filter(d=>d.tipo===“ARTIGO”).length,nD:ds.length,area,anexos:[]};const nl=[l,…lib];setLib(nl);LS(“t3-lib”,nl);setSel(l);setVw(“reader”);}catch(e){alert(“Erro: “+e.message);}setUp(false);if(fRef.current)fRef.current.value=””;};
-const del=id=>{const nl=lib.filter(l=>l.id!==id);setLib(nl);LS(“t3-lib”,nl);if(sel?.id===id){setSel(null);setVw(“library”);}};
+const upF=async e=>{const f=e.target.files?.[0];if(!f)return;setUp(true);try{const t=await pdfToText(f);const ds=parse(t);const l={id:Date.now()+"",nome:f.name.replace(/.pdf$/i,""),data:new Date().toLocaleDateString("pt-BR"),ds,nA:ds.filter(d=>d.tipo==="ARTIGO").length,nD:ds.length,area,anexos:[]};const nl=[l,…lib];setLib(nl);LS("t3-lib",nl);setSel(l);setVw("reader");}catch(e){alert("Erro: "+e.message);}setUp(false);if(fRef.current)fRef.current.value="";};
+const del=id=>{const nl=lib.filter(l=>l.id!==id);setLib(nl);LS("t3-lib",nl);if(sel?.id===id){setSel(null);setVw("library");}};
 const addAnexo=async(leiId,file)=>{try{const t=await pdfToText(file);let ds=parse(t);
-if(ds.length<3){const lines=t.split(”\n”).map(l=>l.trim()).filter(Boolean);ds=lines.map(l=>({tipo:“TEXTO”,id:””,rub:””,txt:l}));}
-const anx={nome:file.name.replace(/.pdf$/i,””),data:new Date().toLocaleDateString(“pt-BR”),ds,nD:ds.length};
-const nl=lib.map(l=>l.id===leiId?{…l,anexos:[…(l.anexos||[]),anx]}:l);setLib(nl);LS(“t3-lib”,nl);if(sel?.id===leiId)setSel(nl.find(l=>l.id===leiId));return true;}catch(e){alert(“Erro no anexo: “+e.message);return false;}};
-const delAnexo=(leiId,idx)=>{const nl=lib.map(l=>l.id===leiId?{…l,anexos:(l.anexos||[]).filter((*,i)=>i!==idx)}:l);setLib(nl);LS(“t3-lib”,nl);if(sel?.id===leiId)setSel(nl.find(l=>l.id===leiId));};
-const uSt=(lid,di,f,v)=>{const k=`${lid}-${di}`;const n={…study,[k]:{…study[k],[f]:v}};setStudy(n);LS(“t3-st”,n);};
-const gSt=(lid,di,f)=>study[`${lid}-${di}`]?.[f]||””;
-const exportBackup=()=>{try{const data={lib,study,area,tagsConfig,notas:LS(“t3-notas”),temas:LS(“t3-temas”),exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:“application/json”});const url=URL.createObjectURL(blob);const a=document.createElement(“a”);a.href=url;a.download=“TERA_backup*”+new Date().toISOString().slice(0,10)+”.json”;a.click();URL.revokeObjectURL(url);}catch(e){alert(“Erro ao exportar: “+e.message);}};
-const importBackup=()=>{const inp=document.createElement(“input”);inp.type=“file”;inp.accept=”.json”;inp.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const txt=await f.text();const data=JSON.parse(txt);if(data.lib){setLib(data.lib);LS(“t3-lib”,data.lib);}if(data.study){setStudy(data.study);LS(“t3-st”,data.study);}if(data.tagsConfig){setTagsConfig(data.tagsConfig);LS(“t3-tags-config”,data.tagsConfig);}if(data.notas)LS(“t3-notas”,data.notas);if(data.temas)LS(“t3-temas”,data.temas);alert(“Backup restaurado com sucesso! “+((data.lib||[]).length)+” leis, “+(Object.keys(data.study||{}).length)+” anotações de estudo e “+((data.notas||[]).length)+” anotações do E-Consultor importadas.”);}catch(e){alert(“Erro ao importar: “+e.message);}};inp.click();};
-const nav=[{id:“library”,ic:IC.bk,lb:“Biblioteca”},…(sel?[{id:“reader”,ic:IC.ls,lb:sel.nome.slice(0,20)}]:[]),{id:“econsultor”,ic:IC.br,lb:“E-Consultor”},{id:“buscageral”,ic:IC.sr,lb:“Busca Geral”},{id:“reforma”,ic:IC.sc,lb:“Reforma em Dia”},{id:“atualizacoes”,ic:IC.bl,lb:“Atualizações”}];
+if(ds.length<3){const lines=t.split("\n").map(l=>l.trim()).filter(Boolean);ds=lines.map(l=>({tipo:"TEXTO",id:"",rub:"",txt:l}));}
+const anx={nome:file.name.replace(/.pdf$/i,""),data:new Date().toLocaleDateString("pt-BR"),ds,nD:ds.length};
+const nl=lib.map(l=>l.id===leiId?{…l,anexos:[…(l.anexos||[]),anx]}:l);setLib(nl);LS("t3-lib",nl);if(sel?.id===leiId)setSel(nl.find(l=>l.id===leiId));return true;}catch(e){alert("Erro no anexo: "+e.message);return false;}};
+const delAnexo=(leiId,idx)=>{const nl=lib.map(l=>l.id===leiId?{…l,anexos:(l.anexos||[]).filter((*,i)=>i!==idx)}:l);setLib(nl);LS("t3-lib",nl);if(sel?.id===leiId)setSel(nl.find(l=>l.id===leiId));};
+const uSt=(lid,di,f,v)=>{const k=`${lid}-${di}`;const n={…study,[k]:{…study[k],[f]:v}};setStudy(n);LS("t3-st",n);};
+const gSt=(lid,di,f)=>study[`${lid}-${di}`]?.[f]||"";
+const exportBackup=()=>{try{const data={lib,study,area,tagsConfig,notas:LS("t3-notas"),temas:LS("t3-temas"),exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="TERA_backup*"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);}catch(e){alert("Erro ao exportar: "+e.message);}};
+const importBackup=()=>{const inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const txt=await f.text();const data=JSON.parse(txt);if(data.lib){setLib(data.lib);LS("t3-lib",data.lib);}if(data.study){setStudy(data.study);LS("t3-st",data.study);}if(data.tagsConfig){setTagsConfig(data.tagsConfig);LS("t3-tags-config",data.tagsConfig);}if(data.notas)LS("t3-notas",data.notas);if(data.temas)LS("t3-temas",data.temas);alert("Backup restaurado com sucesso! "+((data.lib||[]).length)+" leis, "+(Object.keys(data.study||{}).length)+" anotações de estudo e "+((data.notas||[]).length)+" anotações do E-Consultor importadas.");}catch(e){alert("Erro ao importar: "+e.message);}};inp.click();};
+const nav=[{id:"library",ic:IC.bk,lb:"Biblioteca"},…(sel?[{id:"reader",ic:IC.ls,lb:sel.nome.slice(0,20)}]:[]),{id:"econsultor",ic:IC.br,lb:"E-Consultor"},{id:"buscageral",ic:IC.sr,lb:"Busca Geral"},{id:"reforma",ic:IC.sc,lb:"Reforma em Dia"},{id:"atualizacoes",ic:IC.bl,lb:"Atualizações"}];
 
-return <div style={{minHeight:“100vh”}}>
-<header style={{background:“var(--bg-card)”,borderBottom:“1px solid var(--border)”,padding:“8px 20px”,display:“flex”,alignItems:“center”,justifyContent:“space-between”,position:“sticky”,top:0,zIndex:100,boxShadow:“var(--shadow)”}}>
-<div style={{display:“flex”,alignItems:“center”,gap:10}}>
+return <div style={{minHeight:"100vh"}}>
+<header style={{background:"var(--bg-card)",borderBottom:"1px solid var(--border)",padding:"8px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100,boxShadow:"var(--shadow)"}}>
+<div style={{display:"flex",alignItems:"center",gap:10}}>
 <Logo/>
-<div><div style={{fontSize:15,fontWeight:700,letterSpacing:“1px”}}>TERA</div><div style={{fontSize:11,color:“var(--text-sec)”}}>CADERNO ELETRÔNICO</div></div>
+<div><div style={{fontSize:15,fontWeight:700,letterSpacing:"1px"}}>TERA</div><div style={{fontSize:11,color:"var(--text-sec)"}}>CADERNO ELETRÔNICO</div></div>
 </div>
-<nav style={{display:“flex”,gap:2,overflowX:“auto”}}>{nav.map(n=><button key={n.id} className={`nb ${vw===n.id?"on":""}`} onClick={()=>setVw(n.id)}><Ic d={n.ic} s={14} c={vw===n.id?“var(--gold)”:“var(--text-sec)”}/>{n.lb}</button>)}</nav>
-<div style={{display:“flex”,gap:6,alignItems:“center”}}>
+<nav style={{display:"flex",gap:2,overflowX:"auto"}}>{nav.map(n=><button key={n.id} className={`nb ${vw===n.id?"on":""}`} onClick={()=>setVw(n.id)}><Ic d={n.ic} s={14} c={vw===n.id?"var(--gold)":"var(--text-sec)"}/>{n.lb}</button>)}</nav>
+<div style={{display:"flex",gap:6,alignItems:"center"}}>
 <ThemeBtn theme={theme} toggle={toggleTheme}/>
-<button onClick={exportBackup} title=“Exportar Backup (Leis + Anotações)” style={{fontSize:11,color:“var(--text-sec)”,padding:“5px 8px”,border:“1px solid var(--border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" s={11} c="var(--text-sec)"/>Backup</button>
-<button onClick={importBackup} title=“Importar Backup” style={{fontSize:11,color:“var(--text-sec)”,padding:“5px 8px”,border:“1px solid var(--border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d={IC.up} s={11} c="var(--text-sec)"/>Restaurar</button>
-<button onClick={()=>setShowApiKeyModal(true)} title=“Configurar API Key Anthropic” style={{fontSize:11,color:apiKeyStatus?.configured?“var(--ok)”:“var(--err)”,padding:“5px 8px”,border:“1px solid var(--border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d=“M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm0 14.2a7.2 7.2 0 0 1-6-3.22c.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08a7.2 7.2 0 0 1-6 3.22z” s={11} c={apiKeyStatus?.configured?“var(--ok)”:“var(--err)”}/>API Key</button>
-<button onClick={handleLogout} title=“Sair” style={{fontSize:11,color:“var(--text-sec)”,padding:“5px 8px”,border:“1px solid var(--border)”,borderRadius:5,background:“none”,cursor:“pointer”,display:“flex”,alignItems:“center”,gap:3}}><Ic d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" s={11} c="var(--text-sec)"/>{auth.username}</button>
-<select value={area} onChange={e=>setArea(e.target.value)} style={{background:“var(--input-bg)”,border:“1px solid var(--border)”,borderRadius:5,color:“var(--text)”,padding:“5px 8px”,fontSize:11}}>{Object.entries(AREAS).map(([k,v])=><option key={k} value={k}>{v.nome}</option>)}</select>
+<button onClick={exportBackup} title="Exportar Backup (Leis + Anotações)" style={{fontSize:11,color:"var(--text-sec)",padding:"5px 8px",border:"1px solid var(--border)",borderRadius:5,background:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:3}}><Ic d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" s={11} c="var(--text-sec)"/>Backup</button>
+<button onClick={importBackup} title="Importar Backup" style={{fontSize:11,color:"var(--text-sec)",padding:"5px 8px",border:"1px solid var(--border)",borderRadius:5,background:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:3}}><Ic d={IC.up} s={11} c="var(--text-sec)"/>Restaurar</button>
+<button onClick={()=>setShowApiKeyModal(true)} title="Configurar API Key Anthropic" style={{fontSize:11,color:apiKeyStatus?.configured?"var(--ok)":"var(--err)",padding:"5px 8px",border:"1px solid var(--border)",borderRadius:5,background:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:3}}><Ic d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm0 14.2a7.2 7.2 0 0 1-6-3.22c.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08a7.2 7.2 0 0 1-6 3.22z" s={11} c={apiKeyStatus?.configured?"var(--ok)":"var(--err)"}/>API Key</button>
+<button onClick={handleLogout} title="Sair" style={{fontSize:11,color:"var(--text-sec)",padding:"5px 8px",border:"1px solid var(--border)",borderRadius:5,background:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:3}}><Ic d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" s={11} c="var(--text-sec)"/>{auth.username}</button>
+<select value={area} onChange={e=>setArea(e.target.value)} style={{background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:5,color:"var(--text)",padding:"5px 8px",fontSize:11}}>{Object.entries(AREAS).map(([k,v])=><option key={k} value={k}>{v.nome}</option>)}</select>
 </div>
 </header>
-<main style={{width:“100%”,padding:“20px”}}>
-{vw===“library”&&<Lib lib={lib} sel={sel} onSel={l=>{setSel(l);setVw(“reader”);}} onDel={del} onUp={upF} uping={uping} fRef={fRef}/>}
-{vw===“reader”&&sel&&<Reader lei={sel} area={area} gSt={gSt} uSt={uSt} addAnexo={addAnexo} delAnexo={delAnexo} study={study} tagsConfig={tagsConfig} setTagsConfig={(t)=>{setTagsConfig(t);LS(“t3-tags-config”,t);}}/>}
-{vw===“econsultor”&&<EConsultor lib={lib}/>}
-{vw===“buscageral”&&<BuscaGeral lib={lib} study={study} tagsConfig={tagsConfig}/>}
-{vw===“reforma”&&<ReformaEmDia/>}
-{vw===“atualizacoes”&&<Atl/>}
+<main style={{width:"100%",padding:"20px"}}>
+{vw==="library"&&<Lib lib={lib} sel={sel} onSel={l=>{setSel(l);setVw("reader");}} onDel={del} onUp={upF} uping={uping} fRef={fRef}/>}
+{vw==="reader"&&sel&&<Reader lei={sel} area={area} gSt={gSt} uSt={uSt} addAnexo={addAnexo} delAnexo={delAnexo} study={study} tagsConfig={tagsConfig} setTagsConfig={(t)=>{setTagsConfig(t);LS("t3-tags-config",t);}}/>}
+{vw==="econsultor"&&<EConsultor lib={lib}/>}
+{vw==="buscageral"&&<BuscaGeral lib={lib} study={study} tagsConfig={tagsConfig}/>}
+{vw==="reforma"&&<ReformaEmDia/>}
+{vw==="atualizacoes"&&<Atl/>}
 </main>
 {showApiKeyModal&&<ApiKeyModal
 status={apiKeyStatus}
 onSave={async(k)=>{
 const r=await saveUserApiKey(k);
 if(r.ok){setApiKeyStatus({configured:true,masked:r.masked});setShowApiKeyModal(false);}
-else alert(r.error||“Erro ao salvar chave”);
+else alert(r.error||"Erro ao salvar chave");
 }}
 onDelete={async()=>{
 await deleteUserApiKey();
@@ -545,13 +545,13 @@ onClose={()=>setShowApiKeyModal(false)}
 }
 
 function Logo(){return <svg width={36} height={36} viewBox="0 0 36 36"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#d4a853"/><stop offset="100%" stopColor="#f5d98a"/></linearGradient></defs><rect width={36} height={36} rx={10} fill="url(#lg)"/><text x={18} y={25} textAnchor="middle" fill="#0c0e12" fontWeight={800} fontSize={20} fontFamily="'Segoe UI',sans-serif">T</text></svg>;}
-function ThemeBtn({theme,toggle}){return <button className=“theme-toggle” onClick={toggle} title={theme===“dark”?“Modo Claro”:“Modo Escuro”}><svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{theme===“dark”?<><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></>:<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>}</svg></button>;}
+function ThemeBtn({theme,toggle}){return <button className="theme-toggle" onClick={toggle} title={theme==="dark"?"Modo Claro":"Modo Escuro"}><svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{theme==="dark"?<><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></>:<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>}</svg></button>;}
 
 // ═══ LIBRARY ═══
 function Lib({lib,sel,onSel,onDel,onUp,uping,fRef}){
-const [search, setSearch] = useState(””);
-const [filterType, setFilterType] = useState(“all”);
-const [sortOrder, setSortOrder] = useState(“new”); // “new”, “az”, “za”, “size”
+const [search, setSearch] = useState("");
+const [filterType, setFilterType] = useState("all");
+const [sortOrder, setSortOrder] = useState("new"); // "new", "az", "za", "size"
 
 // Tipos de leis para classificação (extraídos dinamicamente dos nomes)
 const types = useMemo(() => {
@@ -559,16 +559,16 @@ const t = new Set();
 lib.forEach(l => {
 const match = l.nome.match(/^(Lcp|Lei|IN|Decreto|Resol|Portaria|AD|ADE|ADI)/i);
 if(match) t.add(match[0].toUpperCase());
-else t.add(“OUTROS”);
+else t.add("OUTROS");
 });
-return [“all”, …Array.from(t).sort()];
+return ["all", …Array.from(t).sort()];
 }, [lib]);
 
 const filteredLib = useMemo(() => {
 let list = lib.filter(l => {
 const matchesSearch = l.nome.toLowerCase().includes(search.toLowerCase());
-const matchesType = filterType === “all” || (
-filterType === “OUTROS”
+const matchesType = filterType === "all" || (
+filterType === "OUTROS"
 ? !l.nome.match(/^(Lcp|Lei|IN|Decreto|Resol|Portaria|AD|ADE|ADI)/i)
 : l.nome.toUpperCase().startsWith(filterType)
 );
@@ -590,7 +590,7 @@ return list.sort((a, b) => {
 const corridors = useMemo(() => {
 const groups = {};
 filteredLib.forEach(l => {
-const areaName = AREAS[l.area]?.nome || “Geral”;
+const areaName = AREAS[l.area]?.nome || "Geral";
 if(!groups[areaName]) groups[areaName] = [];
 groups[areaName].push(l);
 });
@@ -599,13 +599,13 @@ return Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0]));
 
 return <div className="fade">
 {/* Cabeçalho da Biblioteca - Busca e Filtros */}
-<div style={{display:“flex”, flexDirection:“column”, gap:15, marginBottom:25}}>
-<div style={{display:“flex”, gap:10, flexWrap:“wrap”}}>
-<div style={{flex:1, minWidth:300, position:“relative”}}>
+<div style={{display:"flex", flexDirection:"column", gap:15, marginBottom:25}}>
+<div style={{display:"flex", gap:10, flexWrap:"wrap"}}>
+<div style={{flex:1, minWidth:300, position:"relative"}}>
 <input value={search} onChange={e=>setSearch(e.target.value)}
-placeholder=“Pesquisar lei por nome ou número…”
-style={{width:“100%”, padding:“12px 16px 12px 40px”, borderRadius:10, border:“1px solid var(--border)”, background:“var(--bg-card)”, fontSize:15, boxShadow:“var(--shadow)”}} />
-<div style={{position:“absolute”, left:14, top:13, opacity:0.5}}><Ic d={IC.sc} s={16} c="var(--text)"/></div>
+placeholder="Pesquisar lei por nome ou número…"
+style={{width:"100%", padding:"12px 16px 12px 40px", borderRadius:10, border:"1px solid var(--border)", background:"var(--bg-card)", fontSize:15, boxShadow:"var(--shadow)"}} />
+<div style={{position:"absolute", left:14, top:13, opacity:0.5}}><Ic d={IC.sc} s={16} c="var(--text)"/></div>
 </div>
 
 ```
@@ -698,14 +698,14 @@ style={{width:“100%”, padding:“12px 16px 12px 40px”, borderRadius:10, bo
 
 // ═══ READER ═══
 // ALTERAÇÕES ENTREGA 2:
-// - Removida aba “remissoes” e “tutor” do array tabs
-// - Renomeada “sabatina” → “Perguntas e Respostas”
-// - Renomeada “indice” → “Busca”
-// - Removidas as renderizações condicionais de tab===“remissoes” e tab===“tutor”
-// - Export Excel: removida aba “Remissões”
+// - Removida aba "remissoes" e "tutor" do array tabs
+// - Renomeada "sabatina" → "Perguntas e Respostas"
+// - Renomeada "indice" → "Busca"
+// - Removidas as renderizações condicionais de tab==="remissoes" e tab==="tutor"
+// - Export Excel: removida aba "Remissões"
 function Reader({lei,area,gSt,uSt,addAnexo,delAnexo,study,tagsConfig,setTagsConfig}){
-const [tab,setTab]=useState(“mapa”);const [saved,setSaved]=useState(false);const [goSearch,setGoSearch]=useState(””);
-const tabs=[{id:“mapa”,lb:“Mapa”},{id:“teia”,lb:“🕸 Teia”},{id:“busca”,lb:“Busca”},{id:“estudo”,lb:“Estudo Guiado”},{id:“anexos”,lb:`Anexos (${(lei.anexos||[]).length})`}];
+const [tab,setTab]=useState("mapa");const [saved,setSaved]=useState(false);const [goSearch,setGoSearch]=useState("");
+const tabs=[{id:"mapa",lb:"Mapa"},{id:"teia",lb:"🕸 Teia"},{id:"busca",lb:"Busca"},{id:"estudo",lb:"Estudo Guiado"},{id:"anexos",lb:`Anexos (${(lei.anexos||[]).length})`}];
 const ds=lei.ds;
 const showSaved=()=>{setSaved(true);setTimeout(()=>setSaved(false),1500);};
 const wrappedUSt=(a,b,c,d)=>{uSt(a,b,c,d);showSaved();};
@@ -715,12 +715,12 @@ const wrappedUSt=(a,b,c,d)=>{uSt(a,b,c,d);showSaved();};
 const artIndex = useMemo(() => {
 const idx = new Map(); // Map<numericId, {vigente, revogado, last}>
 for (const d of ds) {
-if (d.tipo !== “ARTIGO”) continue;
-const numId = d.id.replace(/[^0-9]/g, “”);
+if (d.tipo !== "ARTIGO") continue;
+const numId = d.id.replace(/[^0-9]/g, "");
 if (!idx.has(numId)) idx.set(numId, { vigente: null, revogado: null, last: null });
 const entry = idx.get(numId);
-if (d.status === “vigente”) entry.vigente = d;
-else if (d.status === “revogado”) entry.revogado = d;
+if (d.status === "vigente") entry.vigente = d;
+else if (d.status === "revogado") entry.revogado = d;
 entry.last = d;
 }
 return idx;
@@ -730,9 +730,9 @@ const subDevIndex = useMemo(() => {
 const idx = new Map(); // Map<artId, dispositivo[]>
 let currentArt = null;
 for (const d of ds) {
-if (d.tipo === “ARTIGO”) { currentArt = d.id; continue; }
+if (d.tipo === "ARTIGO") { currentArt = d.id; continue; }
 if (DIV.has(d.tipo)) { currentArt = null; continue; }
-if (currentArt && d.status !== “vetado”) {
+if (currentArt && d.status !== "vetado") {
 if (!idx.has(currentArt)) idx.set(currentArt, []);
 idx.get(currentArt).push(d);
 }
@@ -756,7 +756,7 @@ externalRanges.push([pm.index, pm.index + pm[0].length]);
 }
 const reLeiInline = /(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.]+|Medida\s+Provis[óo]ria\s+n[ºo°]?\s*[\d.]+|Instru[çc][ãa]o\s+Normativa\s+(?:RFB\s+|SRF\s+|[A-Z]{2,}\s+)?n[ºo°]?\s*[\d.]+)/gi;
 // Guarda-2: regex para detectar nome de lei logo APÓS a referência ao artigo
-// Cobre: “art. 15 da Lei nº 6.404”, “art. 3º do Decreto nº 1.598”, etc.
+// Cobre: "art. 15 da Lei nº 6.404", "art. 3º do Decreto nº 1.598", etc.
 const reLeiDirectlyAfter = /^\s*(?:[,;]\s*)?(?:d[aoe]s?\s+)?(?:Lei(?:\s+Complementar)?|Decreto(?:-Lei)?|Medida\s+Provis[óo]ria|Instru[çc][ãa]o\s+Normativa(?:\s+(?:RFB|SRF|[A-Z]{2,}))?|C[óo]digo\s+\w+|Constitui[çc][ãa]o)\s+[Nn][ºo°]?\s*[\d.]/i;
 
 ```
@@ -822,7 +822,7 @@ const extractInternalRefs = (text) => extractRefsWithMetadata(text).internal;
 
 // ENTREGA 3: findDevice agora usa artIndex — O(1) em vez de O(n)
 const findDevice = (artId) => {
-const cleanId = artId.replace(/^Art.?\s*/i, “”).replace(/[^0-9]/g, “”).trim();
+const cleanId = artId.replace(/^Art.?\s*/i, "").replace(/[^0-9]/g, "").trim();
 const entry = artIndex.get(cleanId);
 if (!entry) return null;
 return entry.vigente || entry.revogado || entry.last;
@@ -842,12 +842,12 @@ if (visited.has(startId)) return null;
 visited.add(startId);
 const device = findDevice(startId);
 if (!device) return null;
-const isRevogado = device.status === “revogado”;
+const isRevogado = device.status === "revogado";
 const subs = getSubDevices(device.id);
-const fullText = [device.txt || “”, …subs.map(s => (s.id || “”) + “ “ + (s.txt || “”))].join(” “);
+const fullText = [device.txt || "", …subs.map(s => (s.id || "") + " " + (s.txt || ""))].join(" ");
 const allRefs = isRevogado ? { internal: [], external: [] } : extractRefsWithMetadata(fullText);
-const selfNum = device.id.replace(/[^0-9]/g, “”);
-const filteredRefs = allRefs.internal.filter(r => r.replace(/[^0-9]/g, “”) !== selfNum);
+const selfNum = device.id.replace(/[^0-9]/g, "");
+const filteredRefs = allRefs.internal.filter(r => r.replace(/[^0-9]/g, "") !== selfNum);
 const children = [];
 for (const ref of filteredRefs) {
 const child = buildRecursiveTree(ref, visited, depth + 1);
@@ -855,12 +855,12 @@ if (child) children.push(child);
 }
 return {
 id: device.id,
-text: (device.txt || “”).trim(),
-status: device.status || “vigente”,
-alteracao: device.alteracao || “”,
+text: (device.txt || "").trim(),
+status: device.status || "vigente",
+alteracao: device.alteracao || "",
 subs: subs.map(s => {
 try {
-const sr = extractRefsWithMetadata((s.id || “”) + “ “ + (s.txt || “”));
+const sr = extractRefsWithMetadata((s.id || "") + " " + (s.txt || ""));
 return { …s, externalRefs: sr.external };
 } catch (*) {
 return { …s, externalRefs: [] };
@@ -880,63 +880,63 @@ while (currentId && !visited.has(currentId)) {
 visited.add(currentId);
 const device = findDevice(currentId);
 if (!device) break;
-const fullText = (device.rub || “”) + “ “ + (device.txt || “”);
+const fullText = (device.rub || "") + " " + (device.txt || "");
 const refs = extractInternalRefs(fullText);
-const selfNum = device.id.replace(/[^0-9]/g, “”);
-const filteredRefs = refs.filter(r => r.replace(/[^0-9]/g, “”) !== selfNum);
+const selfNum = device.id.replace(/[^0-9]/g, "");
+const filteredRefs = refs.filter(r => r.replace(/[^0-9]/g, "") !== selfNum);
 chain.push({ id: device.id, text: fullText.trim(), refs: filteredRefs });
 currentId = filteredRefs.length > 0 ? filteredRefs[0] : null;
 }
 return chain;
 };
 
-// ALTERAÇÃO ENTREGA 2: removida aba “Remissões” do export Excel
+// ALTERAÇÃO ENTREGA 2: removida aba "Remissões" do export Excel
 const exportXlsx=()=>{try{const wb=XLSX.utils.book_new();
-const txData=[[”#”,“Tipo”,“Identificador”,“Rubrica”,“Texto”,“Status Legal”,“Alteração”],…ds.map((d,i)=>[i+1,d.tipo,d.id,d.rub,d.txt,d.status||“vigente”,d.alteracao||””])];
+const txData=[["#","Tipo","Identificador","Rubrica","Texto","Status Legal","Alteração"],…ds.map((d,i)=>[i+1,d.tipo,d.id,d.rub,d.txt,d.status||"vigente",d.alteracao||""])];
 const wsTx=XLSX.utils.aoa_to_sheet(txData);
-wsTx[”!cols”]=[{wch:6},{wch:14},{wch:18},{wch:40},{wch:80},{wch:12},{wch:50}];
-XLSX.utils.book_append_sheet(wb,wsTx,“Texto Integral”);
-const ctx=hierarquia(ds);let art=””;const estData=[[“Localização”,“Artigo”,“Dispositivo”,“Texto”,“Status Estudo”,“Dificuldade”,“Anotação”,“Status Legal”]];
-for(let i=0;i<ds.length;i++){const d=ds[i];if(d.tipo===“ARTIGO”)art=d.id;if(!DIV.has(d.tipo))estData.push([ctx[art]||””,art,d.id,d.txt,gSt(lei.id,i,“status”),gSt(lei.id,i,“dif”),gSt(lei.id,i,“note”),d.status||“vigente”]);}
+wsTx["!cols"]=[{wch:6},{wch:14},{wch:18},{wch:40},{wch:80},{wch:12},{wch:50}];
+XLSX.utils.book_append_sheet(wb,wsTx,"Texto Integral");
+const ctx=hierarquia(ds);let art="";const estData=[["Localização","Artigo","Dispositivo","Texto","Status Estudo","Dificuldade","Anotação","Status Legal"]];
+for(let i=0;i<ds.length;i++){const d=ds[i];if(d.tipo==="ARTIGO")art=d.id;if(!DIV.has(d.tipo))estData.push([ctx[art]||"",art,d.id,d.txt,gSt(lei.id,i,"status"),gSt(lei.id,i,"dif"),gSt(lei.id,i,"note"),d.status||"vigente"]);}
 const wsEst=XLSX.utils.aoa_to_sheet(estData);
-wsEst[”!cols”]=[{wch:40},{wch:12},{wch:18},{wch:70},{wch:14},{wch:14},{wch:40},{wch:12}];
-XLSX.utils.book_append_sheet(wb,wsEst,“Estudo Guiado”);
-const teiaData = [[“Artigo Origem”, “Caminho da Teia (Texto Integral)”]];
-const artigos = ds.filter(d => d.tipo === “ARTIGO”);
+wsEst["!cols"]=[{wch:40},{wch:12},{wch:18},{wch:70},{wch:14},{wch:14},{wch:40},{wch:12}];
+XLSX.utils.book_append_sheet(wb,wsEst,"Estudo Guiado");
+const teiaData = [["Artigo Origem", "Caminho da Teia (Texto Integral)"]];
+const artigos = ds.filter(d => d.tipo === "ARTIGO");
 artigos.forEach(a => {
 const chain = buildRecursiveChain(a.id);
 if (chain.length > 1) {
-const pathText = chain.map(c => `[${c.id}]\n${c.text}`).join(”\n\n↓\n\n”);
+const pathText = chain.map(c => `[${c.id}]\n${c.text}`).join("\n\n↓\n\n");
 teiaData.push([a.id, pathText]);
 }
 });
 const wsTeia=XLSX.utils.aoa_to_sheet(teiaData);
-wsTeia[”!cols”]=[{wch:16},{wch:100}];
-XLSX.utils.book_append_sheet(wb,wsTeia,“Teia de Remissões”);
-const pv=extrairPrazosValores(ds);const pvData=[[”#”,“Tipo”,“Conteúdo”,“Artigo”,“Capítulo”,“Contexto”],…pv.map((r,i)=>[i+1,r.tipo,r.val,r.art,r.cap,r.ctx])];
+wsTeia["!cols"]=[{wch:16},{wch:100}];
+XLSX.utils.book_append_sheet(wb,wsTeia,"Teia de Remissões");
+const pv=extrairPrazosValores(ds);const pvData=[["#","Tipo","Conteúdo","Artigo","Capítulo","Contexto"],…pv.map((r,i)=>[i+1,r.tipo,r.val,r.art,r.cap,r.ctx])];
 const wsPv=XLSX.utils.aoa_to_sheet(pvData);
-wsPv[”!cols”]=[{wch:6},{wch:18},{wch:22},{wch:12},{wch:35},{wch:80}];
-XLSX.utils.book_append_sheet(wb,wsPv,“Prazos e Valores”);
-const idx=buildIdx(ds,area);const idxData=[[“Palavra-chave”,“Artigos”,“Qtd”],…Object.entries(idx).map(([p,a])=>[p,a.join(”, “),a.length])];
+wsPv["!cols"]=[{wch:6},{wch:18},{wch:22},{wch:12},{wch:35},{wch:80}];
+XLSX.utils.book_append_sheet(wb,wsPv,"Prazos e Valores");
+const idx=buildIdx(ds,area);const idxData=[["Palavra-chave","Artigos","Qtd"],…Object.entries(idx).map(([p,a])=>[p,a.join(", "),a.length])];
 const wsIdx=XLSX.utils.aoa_to_sheet(idxData);
-wsIdx[”!cols”]=[{wch:25},{wch:80},{wch:8}];
-XLSX.utils.book_append_sheet(wb,wsIdx,“Índice Remissivo”);
-XLSX.writeFile(wb,lei.nome+”_TERA.xlsx”);}catch(e){alert(“Erro ao exportar: “+e.message);}};
+wsIdx["!cols"]=[{wch:25},{wch:80},{wch:8}];
+XLSX.utils.book_append_sheet(wb,wsIdx,"Índice Remissivo");
+XLSX.writeFile(wb,lei.nome+"_TERA.xlsx");}catch(e){alert("Erro ao exportar: "+e.message);}};
 
 return <div className="fade">
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“flex-start”,marginBottom:4}}>
-<div><h2 style={{fontSize:17,fontWeight:700}}>{lei.nome}</h2><div style={{fontSize:12,color:“var(--text-sec)”,fontFamily:”‘Segoe UI’,sans-serif”}}>{lei.nD} dispositivos · {lei.nA} artigos · {(lei.anexos||[]).length} anexos · {AREAS[area]?.nome}</div></div>
-<div style={{display:“flex”,gap:6,alignItems:“center”}}>
-{saved&&<span style={{fontSize:12,color:“var(--ok)”,fontWeight:600,animation:“fadeIn .2s”}}>Salvo!</span>}
-<button onClick={exportXlsx} style={{display:“flex”,alignItems:“center”,gap:4,padding:“6px 14px”,background:“var(--grad)”,color:”#fff”,border:“none”,borderRadius:6,fontSize:12,fontWeight:600,cursor:“pointer”}}>Exportar Excel</button>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:4}}>
+<div><h2 style={{fontSize:17,fontWeight:700}}>{lei.nome}</h2><div style={{fontSize:12,color:"var(--text-sec)",fontFamily:"'Segoe UI',sans-serif"}}>{lei.nD} dispositivos · {lei.nA} artigos · {(lei.anexos||[]).length} anexos · {AREAS[area]?.nome}</div></div>
+<div style={{display:"flex",gap:6,alignItems:"center"}}>
+{saved&&<span style={{fontSize:12,color:"var(--ok)",fontWeight:600,animation:"fadeIn .2s"}}>Salvo!</span>}
+<button onClick={exportXlsx} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 14px",background:"var(--grad)",color:"#fff",border:"none",borderRadius:6,fontSize:12,fontWeight:600,cursor:"pointer"}}>Exportar Excel</button>
 </div>
 </div>
-<div style={{display:“flex”,gap:0,borderBottom:“1px solid var(--border)”,marginBottom:14,overflowX:“auto”}}>{tabs.map(t=><button key={t.id} className={`stab ${tab===t.id?"on":""}`} onClick={()=>setTab(t.id)}>{t.lb}</button>)}</div>
-{tab===“estudo”&&<TabEstudo ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt} tagsConfig={tagsConfig} setTagsConfig={setTagsConfig}/>}
-{tab===“busca”&&<TabIndice ds={ds} lei={lei} area={area} onGoToArt={a=>{setGoSearch(a);setTab(“texto”);}} study={study} tagsConfig={tagsConfig}/>}
-{tab===“mapa”&&<TabMapa ds={ds}/>}
-{tab===“anexos”&&<TabAnexos lei={lei} addAnexo={addAnexo} delAnexo={delAnexo}/>}
-{tab===“teia”&&<TabTeia ds={ds} buildRecursiveTree={buildRecursiveTree} buildRecursiveChain={buildRecursiveChain}/>}
+<div style={{display:"flex",gap:0,borderBottom:"1px solid var(--border)",marginBottom:14,overflowX:"auto"}}>{tabs.map(t=><button key={t.id} className={`stab ${tab===t.id?"on":""}`} onClick={()=>setTab(t.id)}>{t.lb}</button>)}</div>
+{tab==="estudo"&&<TabEstudo ds={ds} lei={lei} gSt={gSt} uSt={wrappedUSt} tagsConfig={tagsConfig} setTagsConfig={setTagsConfig}/>}
+{tab==="busca"&&<TabIndice ds={ds} lei={lei} area={area} onGoToArt={a=>{setGoSearch(a);setTab("texto");}} study={study} tagsConfig={tagsConfig}/>}
+{tab==="mapa"&&<TabMapa ds={ds}/>}
+{tab==="anexos"&&<TabAnexos lei={lei} addAnexo={addAnexo} delAnexo={delAnexo}/>}
+{tab==="teia"&&<TabTeia ds={ds} buildRecursiveTree={buildRecursiveTree} buildRecursiveChain={buildRecursiveChain}/>}
 
   </div>;
 }
@@ -944,31 +944,31 @@ return <div className="fade">
 // ALTERAÇÃO ENTREGA 2: removida barra de busca do Texto Integral
 function TabTexto({ds,lei,gSt,uSt}){
 const ind={PARTE:0,LIVRO:0,TÍTULO:0,CAPÍTULO:12,SEÇÃO:24,SUBSEÇÃO:36,ARTIGO:0,PARÁGRAFO:20,INCISO:36,ALÍNEA:52,ITEM:68,EMENTA:0};
-const sts=[””,“Não lido”,“Lido”,“Revisando”,“Dominado”,“Dúvida”];const sC={Dominado:”#27AE60”,Dúvida:”#C0392B”,Revisando:”#D4A017”,Lido:”#2E86AB”};
+const sts=["","Não lido","Lido","Revisando","Dominado","Dúvida"];const sC={Dominado:"#27AE60",Dúvida:"#C0392B",Revisando:"#D4A017",Lido:"#2E86AB"};
 return <div>
-<div style={{maxHeight:“68vh”,overflow:“auto”,border:“1px solid var(--border)”,borderRadius:8}}>{ds.map((d,i)=>{const ri=i;const isD=DIV.has(d.tipo);const st=gSt(lei.id,ri,“status”);const nt=gSt(lei.id,ri,“note”);const isVetado=d.status===“vetado”;const isRevogado=d.status===“revogado”;
-return <div key={ri} style={{display:“flex”,borderBottom:“1px solid var(--border)”,background:isVetado?“rgba(231,76,60,0.06)”:isRevogado?“rgba(231,76,60,0.04)”:isD?CT[d.tipo]||“var(--bg-hover)”:ri%2===0?“var(--bg-card)”:“var(--bg-hover)”,paddingLeft:ind[d.tipo]||0}}>
-<div style={{minWidth:70,padding:“6px 4px”,textAlign:“center”}}>
-<span className=“badge” style={{background:isD?“rgba(0,0,0,.1)”:“var(--bg-hover)”,color:isD?(d.tipo===“PARTE”||d.tipo===“LIVRO”||d.tipo===“TÍTULO”||d.tipo===“CAPÍTULO”?”#fff”:“var(--text-sec)”):“var(--text-mute)”}}>{d.tipo}</span>
-{isVetado&&<div><span className=“badge badge-revogado” style={{marginTop:3,display:“inline-block”}}>VETADO</span></div>}
-{isRevogado&&<div><span className=“badge badge-revogado” style={{marginTop:3,display:“inline-block”}}>REVOGADO</span></div>}
+<div style={{maxHeight:"68vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>{ds.map((d,i)=>{const ri=i;const isD=DIV.has(d.tipo);const st=gSt(lei.id,ri,"status");const nt=gSt(lei.id,ri,"note");const isVetado=d.status==="vetado";const isRevogado=d.status==="revogado";
+return <div key={ri} style={{display:"flex",borderBottom:"1px solid var(--border)",background:isVetado?"rgba(231,76,60,0.06)":isRevogado?"rgba(231,76,60,0.04)":isD?CT[d.tipo]||"var(--bg-hover)":ri%2===0?"var(--bg-card)":"var(--bg-hover)",paddingLeft:ind[d.tipo]||0}}>
+<div style={{minWidth:70,padding:"6px 4px",textAlign:"center"}}>
+<span className="badge" style={{background:isD?"rgba(0,0,0,.1)":"var(--bg-hover)",color:isD?(d.tipo==="PARTE"||d.tipo==="LIVRO"||d.tipo==="TÍTULO"||d.tipo==="CAPÍTULO"?"#fff":"var(--text-sec)"):"var(--text-mute)"}}>{d.tipo}</span>
+{isVetado&&<div><span className="badge badge-revogado" style={{marginTop:3,display:"inline-block"}}>VETADO</span></div>}
+{isRevogado&&<div><span className="badge badge-revogado" style={{marginTop:3,display:"inline-block"}}>REVOGADO</span></div>}
 </div>
-<div style={{flex:1,padding:“6px 8px”,fontSize:12.5,lineHeight:1.6,color:isD?(d.tipo===“PARTE”||d.tipo===“LIVRO”||d.tipo===“TÍTULO”?”#fff”:“var(--text)”):“var(--text)”,fontWeight:isD||d.tipo===“ARTIGO”?600:400,textDecoration:(isVetado||isRevogado)?“line-through”:“none”,opacity:(isVetado||isRevogado)?0.6:1}}>
-<span style={{color:isD?“inherit”:“var(--gold)”,fontFamily:”‘Segoe UI’,sans-serif”,fontSize:12,marginRight:4,textDecoration:“none”}}>{d.id}</span>
+<div style={{flex:1,padding:"6px 8px",fontSize:12.5,lineHeight:1.6,color:isD?(d.tipo==="PARTE"||d.tipo==="LIVRO"||d.tipo==="TÍTULO"?"#fff":"var(--text)"):"var(--text)",fontWeight:isD||d.tipo==="ARTIGO"?600:400,textDecoration:(isVetado||isRevogado)?"line-through":"none",opacity:(isVetado||isRevogado)?0.6:1}}>
+<span style={{color:isD?"inherit":"var(--gold)",fontFamily:"'Segoe UI',sans-serif",fontSize:12,marginRight:4,textDecoration:"none"}}>{d.id}</span>
 {d.rub&&<i style={{opacity:.7}}>{d.rub} </i>}{d.txt}
-{d.alteracao&&<div style={{marginTop:3,padding:“2px 8px”,background:“rgba(52,152,219,0.08)”,borderLeft:“2px solid #3498db”,borderRadius:3,fontSize:11,color:”#3498db”,textDecoration:“none”,fontWeight:400,opacity:1}}>↳ {d.alteracao}</div>}
-{nt&&<div style={{marginTop:3,padding:“2px 6px”,background:“var(--gold-subtle)”,borderLeft:“2px solid #B8965A”,borderRadius:3,fontSize:11,color:“var(--gold)”,textDecoration:“none”,fontWeight:400,opacity:1}} dangerouslySetInnerHTML={{__html:nt}}/>}
+{d.alteracao&&<div style={{marginTop:3,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db",textDecoration:"none",fontWeight:400,opacity:1}}>↳ {d.alteracao}</div>}
+{nt&&<div style={{marginTop:3,padding:"2px 6px",background:"var(--gold-subtle)",borderLeft:"2px solid #B8965A",borderRadius:3,fontSize:11,color:"var(--gold)",textDecoration:"none",fontWeight:400,opacity:1}} dangerouslySetInnerHTML={{__html:nt}}/>}
 </div>
-{!isD&&<div style={{minWidth:100,padding:“5px 4px”,display:“flex”,flexDirection:“column”,gap:3}}>
-<select value={st} onChange={e=>uSt(lei.id,ri,“status”,e.target.value)} style={{background:“var(--bg-hover)”,border:“1px solid var(--border)”,borderRadius:3,color:sC[st]||”#8A8279”,padding:“2px”,fontSize:11,cursor:“pointer”}}>{sts.map(s=><option key={s} value={s}>{s||“Status”}</option>)}</select>
-<textarea placeholder=“Anotação…” defaultValue={nt} onBlur={e=>uSt(lei.id,ri,“note”,e.target.value)} style={{background:“var(--input-bg)”,border:“1px solid var(--border)”,borderRadius:4,padding:“4px 6px”,fontSize:12,width:“100%”,minHeight:50,maxHeight:150,resize:“vertical”,fontFamily:“inherit”}}/>
+{!isD&&<div style={{minWidth:100,padding:"5px 4px",display:"flex",flexDirection:"column",gap:3}}>
+<select value={st} onChange={e=>uSt(lei.id,ri,"status",e.target.value)} style={{background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:3,color:sC[st]||"#8A8279",padding:"2px",fontSize:11,cursor:"pointer"}}>{sts.map(s=><option key={s} value={s}>{s||"Status"}</option>)}</select>
+<textarea placeholder="Anotação…" defaultValue={nt} onBlur={e=>uSt(lei.id,ri,"note",e.target.value)} style={{background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:4,padding:"4px 6px",fontSize:12,width:"100%",minHeight:50,maxHeight:150,resize:"vertical",fontFamily:"inherit"}}/>
 </div>}
 </div>;})}</div></div>;
 }
 
-function TabArtigos({ds}){let art=””;const rows=[];const tipos=new Set([“ARTIGO”,“PARÁGRAFO”,“INCISO”,“ALÍNEA”,“ITEM”]);
-for(const d of ds){if(d.tipo===“ARTIGO”)art=d.id;if(tipos.has(d.tipo))rows.push({art,tipo:d.tipo,id:d.id,rub:d.rub,txt:d.txt,status:d.status||“vigente”,alteracao:d.alteracao||””});}
-return <div style={{maxHeight:“70vh”,overflow:“auto”}}><table className="dt"><thead><tr><th>Artigo</th><th>Tipo</th><th>Identificador</th><th>Status</th><th>Texto</th><th>Alteração</th></tr></thead><tbody>{rows.map((r,i)=><tr key={i} style={{opacity:r.status===“vetado”||r.status===“revogado”?0.5:1}}><td style={{fontWeight:700,color:“var(--gold)”}}>{r.art}</td><td><span className=“badge” style={{background:“var(--gold-subtle)”,color:“var(--gold)”}}>{r.tipo}</span></td><td style={{fontSize:12}}>{r.id}</td><td>{r.status===“vetado”?<span className="badge badge-revogado">VETADO</span>:r.status===“revogado”?<span className="badge badge-revogado">REVOGADO</span>:<span className="badge badge-vigente">VIGENTE</span>}</td><td style={{fontSize:12,textDecoration:r.status!==“vigente”?“line-through”:“none”}}>{r.txt}</td><td style={{fontSize:11,color:“var(--text-sec)”}}>{r.alteracao}</td></tr>)}</tbody></table></div>;}
+function TabArtigos({ds}){let art="";const rows=[];const tipos=new Set(["ARTIGO","PARÁGRAFO","INCISO","ALÍNEA","ITEM"]);
+for(const d of ds){if(d.tipo==="ARTIGO")art=d.id;if(tipos.has(d.tipo))rows.push({art,tipo:d.tipo,id:d.id,rub:d.rub,txt:d.txt,status:d.status||"vigente",alteracao:d.alteracao||""});}
+return <div style={{maxHeight:"70vh",overflow:"auto"}}><table className="dt"><thead><tr><th>Artigo</th><th>Tipo</th><th>Identificador</th><th>Status</th><th>Texto</th><th>Alteração</th></tr></thead><tbody>{rows.map((r,i)=><tr key={i} style={{opacity:r.status==="vetado"||r.status==="revogado"?0.5:1}}><td style={{fontWeight:700,color:"var(--gold)"}}>{r.art}</td><td><span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)"}}>{r.tipo}</span></td><td style={{fontSize:12}}>{r.id}</td><td>{r.status==="vetado"?<span className="badge badge-revogado">VETADO</span>:r.status==="revogado"?<span className="badge badge-revogado">REVOGADO</span>:<span className="badge badge-vigente">VIGENTE</span>}</td><td style={{fontSize:12,textDecoration:r.status!=="vigente"?"line-through":"none"}}>{r.txt}</td><td style={{fontSize:11,color:"var(--text-sec)"}}>{r.alteracao}</td></tr>)}</tbody></table></div>;}
 
 // ─── RichTextEditor ────────────────────────────────────────────────────────────
 // Caixa de anotação com toolbar de formatação. Usa contentEditable para garantir
@@ -977,7 +977,7 @@ return <div style={{maxHeight:“70vh”,overflow:“auto”}}><table className=
 // Toolbar: Negrito | Itálico | Sublinhado | Tachado | Lista • | Lista 1. | Limpar
 function RichTextEditor({value, onBlur, placeholder}){
 const edRef=useRef(null);
-const lastSaved=useRef(value||””);
+const lastSaved=useRef(value||"");
 
 // Sincroniza conteúdo externo na montagem ou quando value muda vindo de fora
 // sem sobrescrever o que o usuário está digitando (focado)
@@ -985,8 +985,8 @@ useEffect(()=>{
 if(!edRef.current)return;
 if(document.activeElement===edRef.current)return;
 // Só reinjeta se o conteúdo realmente mudou para evitar perder cursor
-if(edRef.current.innerHTML!==(value||””)){
-edRef.current.innerHTML=value||””;
+if(edRef.current.innerHTML!==(value||"")){
+edRef.current.innerHTML=value||"";
 }
 },[value]);
 
@@ -994,24 +994,24 @@ const cmd=(command,val=null)=>{
 try{
 edRef.current && edRef.current.focus();
 document.execCommand(command,false,val);
-}catch(e){console.warn(“execCommand falhou:”,command,e);}
+}catch(e){console.warn("execCommand falhou:",command,e);}
 };
 
 const clearFmt=()=>{
 try{
 edRef.current && edRef.current.focus();
-document.execCommand(“removeFormat”,false,null);
+document.execCommand("removeFormat",false,null);
 // Remove listas também
-document.execCommand(“insertOrderedList”,false,null);
-document.execCommand(“insertOrderedList”,false,null);
-document.execCommand(“insertUnorderedList”,false,null);
-document.execCommand(“insertUnorderedList”,false,null);
-}catch(e){console.warn(“clearFmt:”,e);}
+document.execCommand("insertOrderedList",false,null);
+document.execCommand("insertOrderedList",false,null);
+document.execCommand("insertUnorderedList",false,null);
+document.execCommand("insertUnorderedList",false,null);
+}catch(e){console.warn("clearFmt:",e);}
 };
 
 const handleBlur=()=>{
 if(!edRef.current)return;
-const html=edRef.current.innerHTML||””;
+const html=edRef.current.innerHTML||"";
 if(html!==lastSaved.current){
 lastSaved.current=html;
 onBlur&&onBlur(html);
@@ -1020,35 +1020,35 @@ onBlur&&onBlur(html);
 
 // Evita que Enter no editor propague para o formulário pai
 const handleKeyDown=(e)=>{
-if(e.key===“Enter”)e.stopPropagation();
+if(e.key==="Enter")e.stopPropagation();
 };
 
 const btnStyle=(active)=>({
-background:“none”,
-border:“1px solid var(--border)”,
+background:"none",
+border:"1px solid var(--border)",
 borderRadius:4,
-cursor:“pointer”,
-padding:“2px 6px”,
+cursor:"pointer",
+padding:"2px 6px",
 fontSize:12,
-color:active?“var(--gold)”:“var(--text-sec)”,
-fontFamily:“inherit”,
-lineHeight:“18px”,
-transition:“color .1s,border-color .1s”,
+color:active?"var(--gold)":"var(--text-sec)",
+fontFamily:"inherit",
+lineHeight:"18px",
+transition:"color .1s,border-color .1s",
 flexShrink:0,
 });
 
-return <div style={{display:“flex”,flexDirection:“column”,width:“100%”,border:“1px solid var(--border)”,borderRadius:6,overflow:“hidden”,background:“var(--input-bg)”}}>
+return <div style={{display:"flex",flexDirection:"column",width:"100%",border:"1px solid var(--border)",borderRadius:6,overflow:"hidden",background:"var(--input-bg)"}}>
 {/* Toolbar */}
-<div style={{display:“flex”,gap:3,padding:“4px 6px”,borderBottom:“1px solid var(--border)”,background:“var(--bg-hover)”,flexWrap:“wrap”}}>
-<button onMouseDown={e=>{e.preventDefault();cmd(“bold”);}} style={btnStyle(false)} title=“Negrito”><b>N</b></button>
-<button onMouseDown={e=>{e.preventDefault();cmd(“italic”);}} style={btnStyle(false)} title=“Itálico”><i>I</i></button>
-<button onMouseDown={e=>{e.preventDefault();cmd(“underline”);}} style={btnStyle(false)} title=“Sublinhado”><u>S</u></button>
-<button onMouseDown={e=>{e.preventDefault();cmd(“strikeThrough”);}} style={btnStyle(false)} title=“Tachado”><s>T</s></button>
-<span style={{width:1,background:“var(--border)”,margin:“2px 2px”,flexShrink:0}}/>
-<button onMouseDown={e=>{e.preventDefault();cmd(“insertUnorderedList”);}} style={btnStyle(false)} title=“Lista com marcadores”>•≡</button>
-<button onMouseDown={e=>{e.preventDefault();cmd(“insertOrderedList”);}} style={btnStyle(false)} title=“Lista numerada”>1≡</button>
-<span style={{width:1,background:“var(--border)”,margin:“2px 2px”,flexShrink:0}}/>
-<button onMouseDown={e=>{e.preventDefault();clearFmt();}} style={btnStyle(false)} title=“Remover formatação”>✕<sub style={{fontSize:9}}>fmt</sub></button>
+<div style={{display:"flex",gap:3,padding:"4px 6px",borderBottom:"1px solid var(--border)",background:"var(--bg-hover)",flexWrap:"wrap"}}>
+<button onMouseDown={e=>{e.preventDefault();cmd("bold");}} style={btnStyle(false)} title="Negrito"><b>N</b></button>
+<button onMouseDown={e=>{e.preventDefault();cmd("italic");}} style={btnStyle(false)} title="Itálico"><i>I</i></button>
+<button onMouseDown={e=>{e.preventDefault();cmd("underline");}} style={btnStyle(false)} title="Sublinhado"><u>S</u></button>
+<button onMouseDown={e=>{e.preventDefault();cmd("strikeThrough");}} style={btnStyle(false)} title="Tachado"><s>T</s></button>
+<span style={{width:1,background:"var(--border)",margin:"2px 2px",flexShrink:0}}/>
+<button onMouseDown={e=>{e.preventDefault();cmd("insertUnorderedList");}} style={btnStyle(false)} title="Lista com marcadores">•≡</button>
+<button onMouseDown={e=>{e.preventDefault();cmd("insertOrderedList");}} style={btnStyle(false)} title="Lista numerada">1≡</button>
+<span style={{width:1,background:"var(--border)",margin:"2px 2px",flexShrink:0}}/>
+<button onMouseDown={e=>{e.preventDefault();clearFmt();}} style={btnStyle(false)} title="Remover formatação">✕<sub style={{fontSize:9}}>fmt</sub></button>
 </div>
 {/* Área editável */}
 <div
@@ -1057,19 +1057,19 @@ contentEditable={true}
 suppressContentEditableWarning={true}
 onBlur={handleBlur}
 onKeyDown={handleKeyDown}
-data-placeholder={placeholder||“Expandir anotação…”}
+data-placeholder={placeholder||"Expandir anotação…"}
 style={{
-minHeight:“120px”,
-maxHeight:“280px”,
-overflowY:“auto”,
-padding:“8px 10px”,
+minHeight:"120px",
+maxHeight:"280px",
+overflowY:"auto",
+padding:"8px 10px",
 fontSize:12,
 lineHeight:1.6,
-fontFamily:“inherit”,
-color:“var(--text)”,
-outline:“none”,
-resize:“vertical”,
-wordBreak:“break-word”,
+fontFamily:"inherit",
+color:"var(--text)",
+outline:"none",
+resize:"vertical",
+wordBreak:"break-word",
 // Placeholder via CSS — compatível com todos os browsers modernos
 }}
 />
@@ -1081,21 +1081,21 @@ wordBreak:“break-word”,
 
 function TagSelector({selectedTags, onToggle, tagsConfig, setTagsConfig}){
 const [showAdd, setShowAdd] = useState(false);
-const [newName, setNewName] = useState(””);
-const [newColor, setNewColor] = useState(”#d4a853”);
+const [newName, setNewName] = useState("");
+const [newColor, setNewColor] = useState("#d4a853");
 const [editingId, setEditingId] = useState(null);
-const [tagFilter, setTagFilter] = useState(””);
-const [sortOrder, setSortOrder] = useState(“asc”); // “asc” ou “desc”
+const [tagFilter, setTagFilter] = useState("");
+const [sortOrder, setSortOrder] = useState("asc"); // "asc" ou "desc"
 const containerRef = useRef(null);
 
 // Função para determinar cor do texto baseada no contraste (Luminância)
 const getContrastColor = (hex) => {
-if(!hex || hex.length < 6) return “#fff”;
+if(!hex || hex.length < 6) return "#fff";
 const r = parseInt(hex.slice(1,3), 16);
 const g = parseInt(hex.slice(3,5), 16);
 const b = parseInt(hex.slice(5,7), 16);
 const yiq = ((r*299)+(g*587)+(b*114))/1000;
-return (yiq >= 128) ? “#000” : “#fff”;
+return (yiq >= 128) ? "#000" : "#fff";
 };
 
 // Fecha o modal ao clicar fora
@@ -1106,14 +1106,14 @@ setShowAdd(false);
 }
 };
 if (showAdd) {
-document.addEventListener(“mousedown”, handleClickOutside);
+document.addEventListener("mousedown", handleClickOutside);
 }
-return () => document.removeEventListener(“mousedown”, handleClickOutside);
+return () => document.removeEventListener("mousedown", handleClickOutside);
 }, [showAdd]);
 
 const addTag = () => {
 if(!newName.trim()) return;
-const name = newName.trim().replace(/^#/, “”);
+const name = newName.trim().replace(/^#/, "");
 
 ```
 if(editingId) {
@@ -1143,11 +1143,11 @@ setNewColor(t.color);
 };
 
 const removeTag = (id) => {
-if(confirm(“Excluir esta tag permanentemente? Todas as marcações serão removidas.”)){
+if(confirm("Excluir esta tag permanentemente? Todas as marcações serão removidas.")){
 setTagsConfig(tagsConfig.filter(t => t.id !== id));
 if(editingId === id) {
 setEditingId(null);
-setNewName(””);
+setNewName("");
 }
 }
 };
@@ -1167,18 +1167,18 @@ const filteredTags = useMemo(() => {
 let list = tagsConfig.filter(t => t.name.toLowerCase().includes(tagFilter.toLowerCase()));
 return list.sort((a, b) => {
 const res = a.name.localeCompare(b.name);
-return sortOrder === “asc” ? res : -res;
+return sortOrder === "asc" ? res : -res;
 });
 }, [tagsConfig, tagFilter, sortOrder]);
 
-return <div ref={containerRef} style={{display:“flex”, flexWrap:“wrap”, gap:4, alignItems:“center”, position:“relative”}}>
+return <div ref={containerRef} style={{display:"flex", flexWrap:"wrap", gap:4, alignItems:"center", position:"relative"}}>
 {/* Tags Aplicadas - Sempre Visíveis */}
-<div style={{display:“flex”, flexWrap:“wrap”, gap:4}}>
+<div style={{display:"flex", flexWrap:"wrap", gap:4}}>
 {selectedTags.map(tagId => {
 const t = tagsConfig.find(x => x.id === tagId);
 if(!t) return null;
 return <span key={t.id} onClick={() => handleToggle(t.id, true)}
-style={{background:t.color, color:getContrastColor(t.color), fontSize:10, fontWeight:700, padding:“2px 8px”, borderRadius:4, cursor:“pointer”, display:“flex”, alignItems:“center”, gap:3, boxShadow:“0 1px 2px rgba(0,0,0,0.1)”}}>
+style={{background:t.color, color:getContrastColor(t.color), fontSize:10, fontWeight:700, padding:"2px 8px", borderRadius:4, cursor:"pointer", display:"flex", alignItems:"center", gap:3, boxShadow:"0 1px 2px rgba(0,0,0,0.1)"}}>
 #{t.name} <span style={{fontSize:8, opacity:0.8}}>✕</span>
 </span>
 })}
@@ -1249,11 +1249,11 @@ style={{background:t.color, color:getContrastColor(t.color), fontSize:10, fontWe
 
 function TabEstudo({ds,lei,gSt,uSt,tagsConfig,setTagsConfig}){
 const [sidebarOpen,setSidebarOpen]=useState(true);
-const [filtroStatus,setFiltroStatus]=useState(””);
+const [filtroStatus,setFiltroStatus]=useState("");
 const [selSection,setSelSection]=useState(null); // nó hierárquico selecionado para filtrar
 const [collNav,setCollNav]=useState({});         // estado colapso da nav hierárquica
-const sts=[“Não lido”,“Lido”,“Revisando”,“Dominado”,“Dúvida”];
-const sC={Dominado:”#27AE60”,Dúvida:”#C0392B”,Revisando:”#D4A017”,Lido:”#2E86AB”};
+const sts=["Não lido","Lido","Revisando","Dominado","Dúvida"];
+const sC={Dominado:"#27AE60",Dúvida:"#C0392B",Revisando:"#D4A017",Lido:"#2E86AB"};
 // ── Redimensionamento de colunas ──────────────────────────────────────────
 const [colWidths,setColWidths]=useState([100,360,120,120,220]);
 const dragRef=useRef(null);
@@ -1267,25 +1267,25 @@ setColWidths(p=>{const n=[…p];n[colIdx]=newW;return n;});
 const onUp=()=>{
 if(!dragRef.current)return;
 dragRef.current=null;
-document.body.style.cursor=””;
-document.body.style.userSelect=””;
+document.body.style.cursor="";
+document.body.style.userSelect="";
 };
-window.addEventListener(“mousemove”,onMove);
-window.addEventListener(“mouseup”,onUp);
-return()=>{window.removeEventListener(“mousemove”,onMove);window.removeEventListener(“mouseup”,onUp);};
+window.addEventListener("mousemove",onMove);
+window.addEventListener("mouseup",onUp);
+return()=>{window.removeEventListener("mousemove",onMove);window.removeEventListener("mouseup",onUp);};
 },[]);
 const handleColResizeMouseDown=(e,colIdx)=>{
 e.preventDefault();
 dragRef.current={colIdx,startX:e.clientX,startW:colWidths[colIdx]};
-document.body.style.cursor=“col-resize”;
-document.body.style.userSelect=“none”;
+document.body.style.cursor="col-resize";
+document.body.style.userSelect="none";
 };
 
 // ── Estrutura hierárquica (igual ao TabMapa, sem artigos) ──────────────────
 const estrutura = useMemo(()=>{
 const mapa=[];
-const stack={PARTE:null,LIVRO:null,“TÍTULO”:null,“CAPÍTULO”:null,“SEÇÃO”:null,“SUBSEÇÃO”:null};
-const levels=[“PARTE”,“LIVRO”,“TÍTULO”,“CAPÍTULO”,“SEÇÃO”,“SUBSEÇÃO”];
+const stack={PARTE:null,LIVRO:null,"TÍTULO":null,"CAPÍTULO":null,"SEÇÃO":null,"SUBSEÇÃO":null};
+const levels=["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"];
 const clearBelow=(tipo)=>{const idx=levels.indexOf(tipo);for(let i=idx+1;i<levels.length;i++)stack[levels[i]]=null;};
 const getParent=(tipo)=>{const idx=levels.indexOf(tipo);for(let i=idx-1;i>=0;i--){if(stack[levels[i]])return stack[levels[i]];}return null;};
 for(let dsIdx=0;dsIdx<ds.length;dsIdx++){
@@ -1293,7 +1293,7 @@ const d=ds[dsIdx];
 if(DIV.has(d.tipo)){
 // dsStart gravado diretamente com o índice real de ds,
 // evitando o findIndex posterior que devolvia sempre a PRIMEIRA
-// ocorrência de “CAPÍTULO I”, “SEÇÃO I” etc. em toda a lei.
+// ocorrência de "CAPÍTULO I", "SEÇÃO I" etc. em toda a lei.
 const node={tipo:d.tipo,id:d.id,rub:d.rub,dsStart:dsIdx,dsEnd:null,children:[]};
 clearBelow(d.tipo);stack[d.tipo]=node;
 const parent=getParent(d.tipo);
@@ -1321,8 +1321,8 @@ const navRef=useRef(null);
 if(estrutura!==navRef.current){
 navRef.current=estrutura;
 const allK={};
-const mark=(ns,prefix)=>ns.forEach((n,i)=>{const k=prefix+”-”+n.id;if(n.children?.length>0)allK[k]=true;mark(n.children,k+”-”+i);});
-mark(estrutura,“enav”);
+const mark=(ns,prefix)=>ns.forEach((n,i)=>{const k=prefix+"-"+n.id;if(n.children?.length>0)allK[k]=true;mark(n.children,k+"-"+i);});
+mark(estrutura,"enav");
 // Sem setTimeout — undefined=fechado por padrão
 }
 
@@ -1331,8 +1331,8 @@ const estNavRef=useRef(null);
 if(estrutura!==estNavRef.current){
 estNavRef.current=estrutura;
 const allK={};
-const mark=(ns,prefix)=>ns.forEach((n,i)=>{const k=prefix+”-”+n.id;if(n.children?.length>0)allK[k]=true;mark(n.children,k+”-”+i);});
-mark(estrutura,“enav”);
+const mark=(ns,prefix)=>ns.forEach((n,i)=>{const k=prefix+"-"+n.id;if(n.children?.length>0)allK[k]=true;mark(n.children,k+"-"+i);});
+mark(estrutura,"enav");
 allNavKeysRef.current=allK;
 }
 
@@ -1340,7 +1340,7 @@ const toggleNav=(key)=>{
 setCollNav(p=>{
 const isCurrentlyOpen=p[key]===false;
 const ns={…p,[key]:isCurrentlyOpen?true:false};
-Object.keys(allNavKeysRef.current).forEach(k=>{if(k.startsWith(key+”-”))ns[k]=true;});
+Object.keys(allNavKeysRef.current).forEach(k=>{if(k.startsWith(key+"-"))ns[k]=true;});
 return ns;
 });
 };
@@ -1354,45 +1354,45 @@ if(selSection){
 base=ds.slice(selSection.dsStart,selSection.dsEnd).filter(d=>!DIV.has(d.tipo));
 }
 if(!filtroStatus)return base;
-return base.filter(d=>{const ri=ds.indexOf(d);return gSt(lei.id,ri,“status”)===filtroStatus;});
+return base.filter(d=>{const ri=ds.indexOf(d);return gSt(lei.id,ri,"status")===filtroStatus;});
 },[items,selSection,filtroStatus,lei.id,gSt,ds]);
 
 // ── Render de nó da nav hierárquica ───────────────────────────────────────
 const levelStyle={
-“PARTE”:{bg:“var(--grad)”,color:”#fff”,fw:700,fs:13,pad:“8px 10px”},
-“LIVRO”:{bg:“var(--gold)”,color:”#fff”,fw:700,fs:12,pad:“7px 10px”},
-“TÍTULO”:{bg:“var(--gold-subtle)”,color:“var(--gold)”,fw:600,fs:12,pad:“6px 10px”},
-“CAPÍTULO”:{bg:“var(--bg-hover)”,color:“var(--text)”,fw:600,fs:11,pad:“5px 8px”},
-“SEÇÃO”:{bg:“transparent”,color:“var(--text-sec)”,fw:500,fs:11,pad:“4px 8px”},
-“SUBSEÇÃO”:{bg:“transparent”,color:“var(--text-mute)”,fw:400,fs:10,pad:“3px 8px”},
+"PARTE":{bg:"var(--grad)",color:"#fff",fw:700,fs:13,pad:"8px 10px"},
+"LIVRO":{bg:"var(--gold)",color:"#fff",fw:700,fs:12,pad:"7px 10px"},
+"TÍTULO":{bg:"var(--gold-subtle)",color:"var(--gold)",fw:600,fs:12,pad:"6px 10px"},
+"CAPÍTULO":{bg:"var(--bg-hover)",color:"var(--text)",fw:600,fs:11,pad:"5px 8px"},
+"SEÇÃO":{bg:"transparent",color:"var(--text-sec)",fw:500,fs:11,pad:"4px 8px"},
+"SUBSEÇÃO":{bg:"transparent",color:"var(--text-mute)",fw:400,fs:10,pad:"3px 8px"},
 };
 const renderNavNode=(node,depth,pathKey)=>{
-const key=pathKey+”-”+node.id;
+const key=pathKey+"-"+node.id;
 const isOpen=collNav[key]===false; // undefined → closed by default
 const hasChildren=node.children&&node.children.length>0;
 const isSel=selSection===node;
-const st=levelStyle[node.tipo]||levelStyle[“SEÇÃO”];
+const st=levelStyle[node.tipo]||levelStyle["SEÇÃO"];
 const indent=depth*10;
 return <div key={key} style={{marginLeft:indent,marginTop:2}}>
 <div
 onClick={()=>{setSelSection(isSel?null:node);if(hasChildren)toggleNav(key);}}
-style={{background:isSel?“var(--gold)”:st.bg,color:isSel?”#fff”:st.color,
+style={{background:isSel?"var(--gold)":st.bg,color:isSel?"#fff":st.color,
 fontWeight:st.fw,fontSize:st.fs,padding:st.pad,borderRadius:5,
-cursor:“pointer”,display:“flex”,alignItems:“center”,gap:5,
-border:node.tipo===“CAPÍTULO”||node.tipo===“SEÇÃO”?“1px solid var(--border)”:“none”,
-userSelect:“none”,lineHeight:1.3}}>
-{hasChildren&&<span style={{fontSize:9,opacity:.7,flexShrink:0,transition:“transform .12s”,
-transform:isOpen?“rotate(90deg)”:“rotate(0deg)”}}>▶</span>}
-<span style={{fontFamily:”‘Segoe UI’,sans-serif”,whiteSpace:“normal”,wordBreak:“break-word”,
+cursor:"pointer",display:"flex",alignItems:"center",gap:5,
+border:node.tipo==="CAPÍTULO"||node.tipo==="SEÇÃO"?"1px solid var(--border)":"none",
+userSelect:"none",lineHeight:1.3}}>
+{hasChildren&&<span style={{fontSize:9,opacity:.7,flexShrink:0,transition:"transform .12s",
+transform:isOpen?"rotate(90deg)":"rotate(0deg)"}}>▶</span>}
+<span style={{fontFamily:"'Segoe UI',sans-serif",whiteSpace:"normal",wordBreak:"break-word",
 lineHeight:1.35}}>{node.tipo} — <b>{node.id}</b>
 {node.rub&&<span style={{opacity:.75,fontWeight:400}}> — {node.rub}</span>}
 </span>
 </div>
-{isOpen&&hasChildren&&<div>{node.children.map((ch,i)=>renderNavNode(ch,depth+1,key+”-”+i))}</div>}
+{isOpen&&hasChildren&&<div>{node.children.map((ch,i)=>renderNavNode(ch,depth+1,key+"-"+i))}</div>}
 </div>;
 };
 
-return <div style={{display:“flex”,gap:10,height:“72vh”}}>
+return <div style={{display:"flex",gap:10,height:"72vh"}}>
 
 ```
 {/* ── Sidebar hierárquica ── */}
@@ -1549,28 +1549,28 @@ function renderD3Tree(data, svgEl, onSelect) {
   const W = svgEl.clientWidth  || 900;
   const H = svgEl.clientHeight || 500;
 
-d3.select(svgEl).selectAll(”*”).remove();
+d3.select(svgEl).selectAll("*").remove();
 const svg = d3.select(svgEl);
 
 // Defs: arrowhead
-const defs = svg.append(“defs”);
-defs.append(“marker”)
-.attr(“id”,“teia-arrow”)
-.attr(“viewBox”,“0 -5 10 10”)
-.attr(“refX”,26).attr(“refY”,0)
-.attr(“markerWidth”,6).attr(“markerHeight”,6)
-.attr(“orient”,“auto”)
-.append(“path”).attr(“d”,“M0,-5L10,0L0,5”).attr(“fill”,C.border);
+const defs = svg.append("defs");
+defs.append("marker")
+.attr("id","teia-arrow")
+.attr("viewBox","0 -5 10 10")
+.attr("refX",26).attr("refY",0)
+.attr("markerWidth",6).attr("markerHeight",6)
+.attr("orient","auto")
+.append("path").attr("d","M0,-5L10,0L0,5").attr("fill",C.border);
 
 // Drop-shadow filter
-const filt = defs.append(“filter”).attr(“id”,“teia-shadow”).attr(“x”,”-20%”).attr(“y”,”-20%”).attr(“width”,“140%”).attr(“height”,“140%”);
-filt.append(“feDropShadow”).attr(“dx”,0).attr(“dy”,2).attr(“stdDeviation”,3).attr(“flood-color”,“rgba(0,0,0,0.25)”);
+const filt = defs.append("filter").attr("id","teia-shadow").attr("x","-20%").attr("y","-20%").attr("width","140%").attr("height","140%");
+filt.append("feDropShadow").attr("dx",0).attr("dy",2).attr("stdDeviation",3).attr("flood-color","rgba(0,0,0,0.25)");
 
-const g = svg.append(“g”);
+const g = svg.append("g");
 
 const zoom = d3.zoom().scaleExtent([0.08, 4])
-.on(“zoom”, e => g.attr(“transform”, e.transform));
-svg.call(zoom).on(“dblclick.zoom”, null);
+.on("zoom", e => g.attr("transform", e.transform));
+svg.call(zoom).on("dblclick.zoom", null);
 
 // Build hierarchy; collapse depth >= 2 on first render
 const root = d3.hierarchy(data);
@@ -1580,8 +1580,8 @@ if (d.depth >= 2 && d.children) { d._children = d.children; d.children = null; }
 
 const layout = d3.tree().nodeSize([56, 300]);
 
-const nodeLabel = d => d.data.id.replace(/^Art.?\s*/i,””).replace(/[ºo°]/g,””).trim().slice(0,6);
-const isRev     = d => d.data.status === “revogado”;
+const nodeLabel = d => d.data.id.replace(/^Art.?\s*/i,"").replace(/[ºo°]/g,"").trim().slice(0,6);
+const isRev     = d => d.data.status === "revogado";
 const hasHidden = d => !!(d._children && d._children.length);
 const nodeColor = d => isRev(d) ? C.err : hasHidden(d) ? C.goldB : C.gold;
 
@@ -1677,8 +1677,8 @@ draw();
 // ─────────────────────────────────────────────────────────────────────────────
 
 function TabTeia({ds, buildRecursiveTree, buildRecursiveChain}){
-const [artFilter, setArtFilter] = useState(””);
-const [startArt,  setStartArt]  = useState(””);
+const [artFilter, setArtFilter] = useState("");
+const [startArt,  setStartArt]  = useState("");
 const [tree,      setTree]      = useState(null);
 const [traced,    setTraced]    = useState(false);
 const [loading,   setLoading]   = useState(false);
@@ -1686,15 +1686,15 @@ const [selNode,   setSelNode]   = useState(null);
 const workerRef = useRef(null);
 
 const arts = useMemo(
-() => ds.filter(d => d.tipo === “ARTIGO” && d.status !== “vetado”).map(d => d.id),
+() => ds.filter(d => d.tipo === "ARTIGO" && d.status !== "vetado").map(d => d.id),
 [ds]
 );
 
 // Filtra artigos pelo texto digitado no input
 const filteredArts = useMemo(() => {
 if (!artFilter.trim()) return arts;
-const f = artFilter.toLowerCase().replace(/\s/g, “”);
-return arts.filter(a => a.toLowerCase().replace(/\s/g, “”).includes(f));
+const f = artFilter.toLowerCase().replace(/\s/g, "");
+return arts.filter(a => a.toLowerCase().replace(/\s/g, "").includes(f));
 }, [arts, artFilter]);
 
 // Achata a árvore recursiva em linhas com profundidade para exibição vertical
@@ -1721,7 +1721,7 @@ if (!startArt) return;
 if (workerRef.current) { workerRef.current.terminate(); workerRef.current = null; }
 setLoading(true); setTree(null); setTraced(false); setSelNode(null);
 try {
-const blob    = new Blob([TEIA_WORKER_SCRIPT], { type: “application/javascript” });
+const blob    = new Blob([TEIA_WORKER_SCRIPT], { type: "application/javascript" });
 const blobUrl = URL.createObjectURL(blob);
 const worker  = new Worker(blobUrl);
 workerRef.current = worker;
@@ -1729,19 +1729,19 @@ worker.onmessage = e => {
 URL.revokeObjectURL(blobUrl); workerRef.current = null;
 const newTree = e.data.ok ? e.data.tree : null;
 setTree(newTree);
-if (!e.data.ok) console.error(“Teia worker erro:”, e.data.error);
+if (!e.data.ok) console.error("Teia worker erro:", e.data.error);
 setTraced(true); setLoading(false);
 // Auto-seleciona a raiz para o painel direito já aparecer preenchido
 if (newTree) setSelNode(newTree);
 };
 worker.onerror = err => {
 URL.revokeObjectURL(blobUrl); workerRef.current = null;
-console.error(“Teia worker falhou:”, err);
+console.error("Teia worker falhou:", err);
 setTree(null); setTraced(true); setLoading(false);
 };
 worker.postMessage({ ds, startId: startArt });
 } catch (e) {
-console.warn(“Web Worker indisponível, usando main thread:”, e);
+console.warn("Web Worker indisponível, usando main thread:", e);
 setTimeout(() => {
 try {
 const newTree = buildRecursiveTree(startArt);
@@ -1756,7 +1756,7 @@ setTraced(true); setLoading(false);
 const countNodes = nd => !nd ? 0 : 1 + (nd.children||[]).reduce((s,c)=>s+countNodes(c),0);
 const totalNodes = tree ? countNodes(tree) : 0;
 
-return <div style={{display:“flex”,gap:0,height:“75vh”,borderRadius:10,overflow:“hidden”,border:“1px solid var(--border)”}}>
+return <div style={{display:"flex",gap:0,height:"75vh",borderRadius:10,overflow:"hidden",border:"1px solid var(--border)"}}>
 
 ```
 {/* ── Painel esquerdo: seletor + lista de nós ── */}
@@ -2007,10 +2007,10 @@ return <div style={{display:“flex”,gap:0,height:“75vh”,borderRadius:10,o
 }
 
 function TabIndice({ds,lei,area,onGoToArt,study,tagsConfig}){
-const [filtro,setFiltro]=useState(””);
+const [filtro,setFiltro]=useState("");
 const [expandedIdx,setExpandedIdx]=useState(null);
 const [scope,setScope]=useState({legis:true,notas:true});
-const [selTag,setSelTag]=useState(””);
+const [selTag,setSelTag]=useState("");
 const idxPredefinido=useMemo(()=>buildIdx(ds,area),[ds,area]);
 const resultadosBusca=useMemo(()=>fullTextSearch(ds,filtro,lei.id,study,tagsConfig,scope),[ds,filtro,lei.id,study,tagsConfig,scope]);
 const totalOcorrencias=useMemo(()=>resultadosBusca.reduce((s,r)=>s+r.ocorrencias,0),[resultadosBusca]);
@@ -2020,26 +2020,26 @@ const ctx=useMemo(()=>hierarquia(ds),[ds]);
 const highlightText=(text,term)=>{
 if(!term||term.length<3||!text)return text;
 try{
-// Suporta AND via ‘+’: marca cada termo com highlight separado
-const termos=term.split(”+”).map(t=>t.trim()).filter(t=>t.length>=3 || t.startsWith(”#”));
+// Suporta AND via '+': marca cada termo com highlight separado
+const termos=term.split("+").map(t=>t.trim()).filter(t=>t.length>=3 || t.startsWith("#"));
 if(termos.length===0)return text;
-const escaped=termos.map(t=>t.replace(/[.*+?^${}()|[]\]/g,”\$&”)).join(”|”);
-const re=new RegExp(`(${escaped})`,“gi”);
+const escaped=termos.map(t=>t.replace(/[.*+?^${}()|[]\]/g,"\$&")).join("|");
+const re=new RegExp(`(${escaped})`,"gi");
 const parts=text.split(re);
-return parts.map((p,i)=>re.test(p)?React.createElement(“mark”,{key:i,style:{background:“rgba(212,168,83,0.35)”,padding:“0 1px”,borderRadius:2,fontWeight:p.startsWith(”#”)?700:400}},p):p);
+return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2,fontWeight:p.startsWith("#")?700:400}},p):p);
 }catch(e){return text;}
 };
 const getArtigoDisps=(artId)=>{
 const result=[];let inside=false;
 for(const d of ds){
-if(d.tipo===“ARTIGO”&&d.id===artId){inside=true;result.push(d);continue;}
-if(inside){if(d.tipo===“ARTIGO”||DIV.has(d.tipo))break;result.push(d);}
+if(d.tipo==="ARTIGO"&&d.id===artId){inside=true;result.push(d);continue;}
+if(inside){if(d.tipo==="ARTIGO"||DIV.has(d.tipo))break;result.push(d);}
 }
 return result;
 };
 return <div>
-<div style={{marginBottom:12, display:“flex”, flexDirection:“column”, gap:10}}>
-<input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}} placeholder=“Buscar palavra (mín. 3 letras) · Use + para AND: lucro presumido + faturamento” style={{width:“100%”,maxWidth:“100%”,background:“var(--bg-hover)”,border:“1px solid var(--border)”,borderRadius:6,padding:“10px 14px”,fontSize:14,boxSizing:“border-box”}}/>
+<div style={{marginBottom:12, display:"flex", flexDirection:"column", gap:10}}>
+<input value={filtro} onChange={e=>{setFiltro(e.target.value);setExpandedIdx(null);}} placeholder="Buscar palavra (mín. 3 letras) · Use + para AND: lucro presumido + faturamento" style={{width:"100%",maxWidth:"100%",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:6,padding:"10px 14px",fontSize:14,boxSizing:"border-box"}}/>
 
 ```
   <div style={{display:"flex", gap:15, alignItems:"center", flexWrap:"wrap", background:"var(--bg-card)", padding:10, borderRadius:8, border:"1px solid var(--border)"}}>
@@ -2110,8 +2110,8 @@ const [selArt,setSelArt]=useState(null);
 // ESTRUTURA: construída ANTES do collapsed para inicialização correta
 const estrutura=useMemo(()=>{
 const mapa=[];
-const stack={PARTE:null,LIVRO:null,“TÍTULO”:null,“CAPÍTULO”:null,“SEÇÃO”:null,“SUBSEÇÃO”:null};
-const levels=[“PARTE”,“LIVRO”,“TÍTULO”,“CAPÍTULO”,“SEÇÃO”,“SUBSEÇÃO”];
+const stack={PARTE:null,LIVRO:null,"TÍTULO":null,"CAPÍTULO":null,"SEÇÃO":null,"SUBSEÇÃO":null};
+const levels=["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"];
 const clearBelow=(tipo)=>{
 const idx=levels.indexOf(tipo);
 for(let i=idx+1;i<levels.length;i++)stack[levels[i]]=null;
@@ -2129,15 +2129,15 @@ stack[d.tipo]=node;
 const parent=getParent(d.tipo);
 if(parent){parent.children.push(node);}
 else{mapa.push(node);}
-}else if(d.tipo===“ARTIGO”){
+}else if(d.tipo==="ARTIGO"){
 let target=null;
 for(let i=levels.length-1;i>=0;i--){if(stack[levels[i]]){target=stack[levels[i]];break;}}
-const artEntry={id:d.id,status:d.status||“vigente”};
+const artEntry={id:d.id,status:d.status||"vigente"};
 if(target){target.artigos.push(artEntry);}
 else{
 // Lei sem divisões hierárquicas: criar nó raiz virtual se ainda não existir
 if(mapa.length===0||mapa[0].__virtual!==true){
-const virtualNode={tipo:”**RAIZ**”,id:“Artigos”,rub:””,children:[],artigos:[],__virtual:true};
+const virtualNode={tipo:"**RAIZ**",id:"Artigos",rub:"",children:[],artigos:[],__virtual:true};
 mapa.unshift(virtualNode);
 }
 mapa[0].artigos.push(artEntry);
@@ -2152,13 +2152,13 @@ const buildAllCollapsedKeys = useCallback((nodes) => {
 const all={};
 const mark=(ns,prefix)=>{
 ns.forEach((n,i)=>{
-const k=prefix+”-”+n.id;
+const k=prefix+"-"+n.id;
 const hasContent=(n.children&&n.children.length>0)||(n.artigos&&n.artigos.length>0);
 if(hasContent)all[k]=true;
-if(n.children)mark(n.children,k+”-”+i);
+if(n.children)mark(n.children,k+"-"+i);
 });
 };
-mark(nodes,“root”);
+mark(nodes,"root");
 return all;
 }, []);
 
@@ -2183,7 +2183,7 @@ const newState={…p,[key]:isCurrentlyOpen?true:false};
 // Ao abrir OU fechar: sempre recolhe todos os descendants
 // (allKeysRef cobre chaves ainda não presentes no state)
 Object.keys(allKeysRef.current).forEach(k=>{
-if(k.startsWith(key+”-”)) newState[k]=true;
+if(k.startsWith(key+"-")) newState[k]=true;
 });
 return newState;
 });
@@ -2191,7 +2191,7 @@ return newState;
 
 const artStatusMap=useMemo(()=>{
 const m={};
-for(const d of ds){if(d.tipo===“ARTIGO”)m[d.id]=d.status||“vigente”;}
+for(const d of ds){if(d.tipo==="ARTIGO")m[d.id]=d.status||"vigente";}
 return m;
 },[ds]);
 
@@ -2199,26 +2199,26 @@ const artDetail=useMemo(()=>{
 if(!selArt)return null;
 const result=[];let inside=false;
 for(const d of ds){
-if(d.tipo===“ARTIGO”&&d.id===selArt){inside=true;result.push(d);continue;}
-if(inside){if(d.tipo===“ARTIGO”||DIV.has(d.tipo))break;result.push(d);}
+if(d.tipo==="ARTIGO"&&d.id===selArt){inside=true;result.push(d);continue;}
+if(inside){if(d.tipo==="ARTIGO"||DIV.has(d.tipo))break;result.push(d);}
 }
 return result.length>0?result:null;
 },[ds,selArt]);
 const artPath=useMemo(()=>{
-if(!selArt)return””;
+if(!selArt)return"";
 const ctx=hierarquia(ds);
-return ctx[selArt]||””;
+return ctx[selArt]||"";
 },[ds,selArt]);
 
 const renderArtigos=(artigos,pathKey)=>{
 if(!artigos||artigos.length===0)return null;
-return <div style={{display:“flex”,flexWrap:“wrap”,gap:3,marginTop:4,marginLeft:4}}>
+return <div style={{display:"flex",flexWrap:"wrap",gap:3,marginTop:4,marginLeft:4}}>
 {artigos.map((a,i)=>{
-const isRev=a.status===“revogado”;const isVet=a.status===“vetado”;const isInativo=isRev||isVet;const isSel=selArt===a.id;
-return <span key={pathKey+”-”+i}
+const isRev=a.status==="revogado";const isVet=a.status==="vetado";const isInativo=isRev||isVet;const isSel=selArt===a.id;
+return <span key={pathKey+"-"+i}
 onClick={(e)=>{e.stopPropagation();setSelArt(a.id);}}
-style={{background:isSel?“var(--gold)”:isInativo?“rgba(231,76,60,0.15)”:“var(--gold-subtle)”,color:isSel?”#fff”:isInativo?”#e74c3c”:“var(--gold)”,padding:“2px 7px”,borderRadius:4,fontSize:11,cursor:“pointer”,textDecoration:isInativo?“line-through”:“none”,fontWeight:isSel?700:400,transition:“all .12s”,border:isSel?“1px solid var(--gold)”:“1px solid transparent”}}
-title={isRev?“Revogado”:isVet?“Vetado”:“Vigente”}
+style={{background:isSel?"var(--gold)":isInativo?"rgba(231,76,60,0.15)":"var(--gold-subtle)",color:isSel?"#fff":isInativo?"#e74c3c":"var(--gold)",padding:"2px 7px",borderRadius:4,fontSize:11,cursor:"pointer",textDecoration:isInativo?"line-through":"none",fontWeight:isSel?700:400,transition:"all .12s",border:isSel?"1px solid var(--gold)":"1px solid transparent"}}
+title={isRev?"Revogado":isVet?"Vetado":"Vigente"}
 >{a.id}</span>;
 })}
 </div>;
@@ -2227,86 +2227,86 @@ title={isRev?“Revogado”:isVet?“Vetado”:“Vigente”}
 const renderNode=(node,depth,pathKey)=>{
 // Nó virtual para leis sem divisões hierárquicas
 if(node.__virtual){
-const ementa=ds.find(d=>d.tipo===“EMENTA”);
-return <div key={pathKey+”-virtual”} style={{marginTop:4}}>
-{ementa&&<div style={{fontSize:13,color:“var(--text)”,marginBottom:12,padding:“12px 16px”,background:“var(--bg-card)”,border:“1px solid var(--border)”,borderRadius:8,lineHeight:1.6,fontStyle:“italic”}}>{ementa.txt}</div>}
-<div style={{fontSize:11,color:“var(--text-sec)”,marginBottom:6,fontStyle:“italic”}}>Lei sem divisões hierárquicas — artigos listados diretamente:</div>
-{renderArtigos(node.artigos,pathKey+”-virtual”)}
+const ementa=ds.find(d=>d.tipo==="EMENTA");
+return <div key={pathKey+"-virtual"} style={{marginTop:4}}>
+{ementa&&<div style={{fontSize:13,color:"var(--text)",marginBottom:12,padding:"12px 16px",background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:8,lineHeight:1.6,fontStyle:"italic"}}>{ementa.txt}</div>}
+<div style={{fontSize:11,color:"var(--text-sec)",marginBottom:6,fontStyle:"italic"}}>Lei sem divisões hierárquicas — artigos listados diretamente:</div>
+{renderArtigos(node.artigos,pathKey+"-virtual")}
 </div>;
 }
-const key=pathKey+”-”+node.id;
+const key=pathKey+"-"+node.id;
 const isOpen=collapsed[key]===false; // undefined → closed by default
 const hasContent=(node.children&&node.children.length>0)||(node.artigos&&node.artigos.length>0);
 const levelStyle={
-“PARTE”:{bg:“var(--grad)”,color:”#fff”,fontWeight:700,fontSize:14,borderRadius:8,padding:“10px 14px”},
-“LIVRO”:{bg:“var(--gold)”,color:”#fff”,fontWeight:700,fontSize:13,borderRadius:7,padding:“8px 12px”},
-“TÍTULO”:{bg:“var(--gold-subtle)”,color:“var(--gold)”,fontWeight:600,fontSize:13,borderRadius:6,padding:“7px 12px”},
-“CAPÍTULO”:{bg:“var(--bg-hover)”,color:“var(--text)”,fontWeight:600,fontSize:12,borderRadius:6,padding:“6px 10px”},
-“SEÇÃO”:{bg:“transparent”,color:“var(--text-sec)”,fontWeight:500,fontSize:12,borderRadius:4,padding:“4px 10px”},
-“SUBSEÇÃO”:{bg:“transparent”,color:“var(--text-mute)”,fontWeight:400,fontSize:11,borderRadius:4,padding:“4px 10px”}
+"PARTE":{bg:"var(--grad)",color:"#fff",fontWeight:700,fontSize:14,borderRadius:8,padding:"10px 14px"},
+"LIVRO":{bg:"var(--gold)",color:"#fff",fontWeight:700,fontSize:13,borderRadius:7,padding:"8px 12px"},
+"TÍTULO":{bg:"var(--gold-subtle)",color:"var(--gold)",fontWeight:600,fontSize:13,borderRadius:6,padding:"7px 12px"},
+"CAPÍTULO":{bg:"var(--bg-hover)",color:"var(--text)",fontWeight:600,fontSize:12,borderRadius:6,padding:"6px 10px"},
+"SEÇÃO":{bg:"transparent",color:"var(--text-sec)",fontWeight:500,fontSize:12,borderRadius:4,padding:"4px 10px"},
+"SUBSEÇÃO":{bg:"transparent",color:"var(--text-mute)",fontWeight:400,fontSize:11,borderRadius:4,padding:"4px 10px"}
 };
-const st=levelStyle[node.tipo]||levelStyle[“SEÇÃO”];
+const st=levelStyle[node.tipo]||levelStyle["SEÇÃO"];
 const indent=depth*12;
 return <div key={key} style={{marginLeft:indent,marginTop:depth===0?8:4}}>
 <div onClick={()=>{if(hasContent)toggle(key);}}
-style={{background:st.bg,color:st.color,fontWeight:st.fontWeight,fontSize:st.fontSize,borderRadius:st.borderRadius,padding:st.padding,cursor:hasContent?“pointer”:“default”,display:“flex”,alignItems:“center”,gap:6,border:node.tipo===“CAPÍTULO”||node.tipo===“SEÇÃO”?“1px solid var(--border)”:“none”,transition:“opacity .12s”,userSelect:“none”}}>
-{hasContent&&<span style={{fontSize:10,opacity:.7,flexShrink:0,transition:“transform .15s”,transform:isOpen?“rotate(90deg)”:“rotate(0deg)”}}>▶</span>}
-<span style={{fontFamily:”‘Segoe UI’,sans-serif”}}>{node.tipo} — </span>
+style={{background:st.bg,color:st.color,fontWeight:st.fontWeight,fontSize:st.fontSize,borderRadius:st.borderRadius,padding:st.padding,cursor:hasContent?"pointer":"default",display:"flex",alignItems:"center",gap:6,border:node.tipo==="CAPÍTULO"||node.tipo==="SEÇÃO"?"1px solid var(--border)":"none",transition:"opacity .12s",userSelect:"none"}}>
+{hasContent&&<span style={{fontSize:10,opacity:.7,flexShrink:0,transition:"transform .15s",transform:isOpen?"rotate(90deg)":"rotate(0deg)"}}>▶</span>}
+<span style={{fontFamily:"'Segoe UI',sans-serif"}}>{node.tipo} — </span>
 <b>{node.id}</b>
 {node.rub&&<span style={{opacity:.8,marginLeft:4}}>— {node.rub}</span>}
-{node.artigos&&node.artigos.length>0&&<span style={{marginLeft:“auto”,fontSize:10,opacity:.6,flexShrink:0}}>{node.artigos.length} art.</span>}
+{node.artigos&&node.artigos.length>0&&<span style={{marginLeft:"auto",fontSize:10,opacity:.6,flexShrink:0}}>{node.artigos.length} art.</span>}
 </div>
 {isOpen&&<div>
 {renderArtigos(node.artigos,key)}
-{node.children&&node.children.map((child,i)=>renderNode(child,depth+1,key+”-”+i))}
+{node.children&&node.children.map((child,i)=>renderNode(child,depth+1,key+"-"+i))}
 </div>}
 </div>;
 };
 
-return <div style={{display:“flex”,gap:16,height:“70vh”}}>
-<div style={{flex:“1 1 55%”,overflow:“auto”,paddingRight:8}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:8}}>
-<div style={{fontSize:13,fontWeight:700,color:“var(--gold)”}}>ESTRUTURA HIERÁRQUICA</div>
-<div style={{display:“flex”,gap:6}}>
-<button onClick={()=>{const all={};Object.keys(allKeysRef.current).forEach(k=>{all[k]=false;});setCollapsed(all);}} style={{fontSize:11,padding:“3px 8px”,background:“var(--bg-hover)”,border:“1px solid var(--border)”,borderRadius:4,cursor:“pointer”,color:“var(--text-sec)”}}>Expandir tudo</button>
+return <div style={{display:"flex",gap:16,height:"70vh"}}>
+<div style={{flex:"1 1 55%",overflow:"auto",paddingRight:8}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+<div style={{fontSize:13,fontWeight:700,color:"var(--gold)"}}>ESTRUTURA HIERÁRQUICA</div>
+<div style={{display:"flex",gap:6}}>
+<button onClick={()=>{const all={};Object.keys(allKeysRef.current).forEach(k=>{all[k]=false;});setCollapsed(all);}} style={{fontSize:11,padding:"3px 8px",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:4,cursor:"pointer",color:"var(--text-sec)"}}>Expandir tudo</button>
 <button onClick={()=>{
 const all={};
 const markAll=(nodes,prefix)=>{
 nodes.forEach((n,i)=>{
-const k=prefix+”-”+n.id;
+const k=prefix+"-"+n.id;
 const hasContent=(n.children&&n.children.length>0)||(n.artigos&&n.artigos.length>0);
 if(hasContent)all[k]=true;
-if(n.children)markAll(n.children,k+”-”+i);
+if(n.children)markAll(n.children,k+"-"+i);
 });
 };
-markAll(estrutura,“root”);
+markAll(estrutura,"root");
 setCollapsed(all);
-}} style={{fontSize:11,padding:“3px 8px”,background:“var(--bg-hover)”,border:“1px solid var(--border)”,borderRadius:4,cursor:“pointer”,color:“var(--text-sec)”}}>Colapsar tudo</button>
+}} style={{fontSize:11,padding:"3px 8px",background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:4,cursor:"pointer",color:"var(--text-sec)"}}>Colapsar tudo</button>
 </div>
 </div>
-<div style={{fontSize:11,color:“var(--text-mute)”,marginBottom:6,display:“flex”,gap:12}}>
-<span>● <span style={{color:“var(--gold)”}}>Vigente</span></span>
-<span>● <span style={{color:”#e74c3c”}}>Revogado/Vetado</span></span>
-<span style={{marginLeft:“auto”,fontStyle:“italic”}}>Clique no artigo para ver o conteúdo →</span>
+<div style={{fontSize:11,color:"var(--text-mute)",marginBottom:6,display:"flex",gap:12}}>
+<span>● <span style={{color:"var(--gold)"}}>Vigente</span></span>
+<span>● <span style={{color:"#e74c3c"}}>Revogado/Vetado</span></span>
+<span style={{marginLeft:"auto",fontStyle:"italic"}}>Clique no artigo para ver o conteúdo →</span>
 </div>
-{estrutura.length===0?<div style={{textAlign:“center”,padding:40,color:“var(--text-sec)”}}>Nenhuma estrutura hierárquica encontrada</div>
-:estrutura.map((node,i)=>renderNode(node,0,“root”))}
+{estrutura.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhuma estrutura hierárquica encontrada</div>
+:estrutura.map((node,i)=>renderNode(node,0,"root"))}
 </div>
-<div style={{flex:“0 0 40%”,minWidth:300,overflow:“auto”,background:“var(--bg-hover)”,borderRadius:12,border:“1px solid var(--border)”,padding:16}}>
-{!selArt?<div style={{textAlign:“center”,paddingTop:80,color:“var(--text-sec)”}}><div style={{fontSize:28,marginBottom:12}}>📑</div><div style={{fontSize:14}}>Selecione um artigo no mapa para visualizar seu conteúdo.</div></div>
-:!artDetail?<div style={{textAlign:“center”,paddingTop:80,color:“var(--text-sec)”}}>Artigo não encontrado nos dispositivos.</div>
+<div style={{flex:"0 0 40%",minWidth:300,overflow:"auto",background:"var(--bg-hover)",borderRadius:12,border:"1px solid var(--border)",padding:16}}>
+{!selArt?<div style={{textAlign:"center",paddingTop:80,color:"var(--text-sec)"}}><div style={{fontSize:28,marginBottom:12}}>📑</div><div style={{fontSize:14}}>Selecione um artigo no mapa para visualizar seu conteúdo.</div></div>
+:!artDetail?<div style={{textAlign:"center",paddingTop:80,color:"var(--text-sec)"}}>Artigo não encontrado nos dispositivos.</div>
 :<div className="fade">
-{artPath&&<div style={{fontSize:11,color:“var(--text-sec)”,marginBottom:8,fontStyle:“italic”,lineHeight:1.5}}>{artPath}</div>}
+{artPath&&<div style={{fontSize:11,color:"var(--text-sec)",marginBottom:8,fontStyle:"italic",lineHeight:1.5}}>{artPath}</div>}
 {artDetail.map((d,i)=>{
-const isArt=d.tipo===“ARTIGO”;const isRev=d.status===“revogado”;const isVet=d.status===“vetado”;const isInativo=isRev||isVet;
+const isArt=d.tipo==="ARTIGO";const isRev=d.status==="revogado";const isVet=d.status==="vetado";const isInativo=isRev||isVet;
 return <div key={i} style={{marginBottom:isArt?8:2,paddingLeft:isArt?0:16,opacity:isInativo?0.6:1}}>
-<div style={{display:“flex”,alignItems:“center”,gap:6,marginBottom:2}}>
-<span style={{color:isInativo?”#e74c3c”:“var(--gold)”,fontWeight:700,fontSize:isArt?14:12}}>{d.id}</span>
-{isArt&&<span className={isInativo?“badge badge-revogado”:“badge badge-vigente”}>{isVet?“VETADO”:isRev?“REVOGADO”:“VIGENTE”}</span>}
-{!isArt&&isInativo&&<span className="badge badge-revogado" style={{fontSize:9}}>{isVet?“VETADO”:“REVOGADO”}</span>}
+<div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
+<span style={{color:isInativo?"#e74c3c":"var(--gold)",fontWeight:700,fontSize:isArt?14:12}}>{d.id}</span>
+{isArt&&<span className={isInativo?"badge badge-revogado":"badge badge-vigente"}>{isVet?"VETADO":isRev?"REVOGADO":"VIGENTE"}</span>}
+{!isArt&&isInativo&&<span className="badge badge-revogado" style={{fontSize:9}}>{isVet?"VETADO":"REVOGADO"}</span>}
 </div>
-<div style={{fontSize:isArt?13:12,lineHeight:1.6,textDecoration:isInativo?“line-through”:“none”,color:“var(--text)”}}>{d.rub&&<i style={{color:“var(--text-sec)”}}>{d.rub} </i>}{d.txt}</div>
-{d.alteracao&&<div style={{marginTop:2,padding:“2px 8px”,background:“rgba(52,152,219,0.08)”,borderLeft:“2px solid #3498db”,borderRadius:3,fontSize:11,color:”#3498db”,textDecoration:“none”}}>↳ {d.alteracao}</div>}
+<div style={{fontSize:isArt?13:12,lineHeight:1.6,textDecoration:isInativo?"line-through":"none",color:"var(--text)"}}>{d.rub&&<i style={{color:"var(--text-sec)"}}>{d.rub} </i>}{d.txt}</div>
+{d.alteracao&&<div style={{marginTop:2,padding:"2px 8px",background:"rgba(52,152,219,0.08)",borderLeft:"2px solid #3498db",borderRadius:3,fontSize:11,color:"#3498db",textDecoration:"none"}}>↳ {d.alteracao}</div>}
 </div>;
 })}
 </div>}
@@ -2316,25 +2316,25 @@ return <div key={i} style={{marginBottom:isArt?8:2,paddingLeft:isArt?0:16,opacit
 }
 
 function TabAnexos({lei,addAnexo,delAnexo}){const [uping,setUp]=useState(false);const [selAnx,setSelAnx]=useState(null);const fRef=useRef(null);
-const upAnx=async e=>{const files=e.target.files;if(!files||!files.length)return;setUp(true);for(let i=0;i<files.length;i++){await addAnexo(lei.id,files[i]);}setUp(false);if(fRef.current)fRef.current.value=””;};
+const upAnx=async e=>{const files=e.target.files;if(!files||!files.length)return;setUp(true);for(let i=0;i<files.length;i++){await addAnexo(lei.id,files[i]);}setUp(false);if(fRef.current)fRef.current.value="";};
 const anexos=lei.anexos||[];
 return <div>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:14}}>
-<div style={{fontSize:14,color:“var(--text-sec)”}}>{anexos.length} anexo(s) vinculado(s)</div>
-<label style={{display:“inline-flex”,alignItems:“center”,gap:5,padding:“7px 16px”,background:“var(--grad)”,color:”#fff”,borderRadius:6,cursor:“pointer”,fontSize:14,fontWeight:600}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+<div style={{fontSize:14,color:"var(--text-sec)"}}>{anexos.length} anexo(s) vinculado(s)</div>
+<label style={{display:"inline-flex",alignItems:"center",gap:5,padding:"7px 16px",background:"var(--grad)",color:"#fff",borderRadius:6,cursor:"pointer",fontSize:14,fontWeight:600}}>
 {uping?<><Sp/> Processando…</>:<><Ic d={IC.up} s={13} c="#fff"/> Adicionar Anexo(s)</>}
-<input ref={fRef} type=“file” accept=”.pdf” multiple onChange={upAnx} style={{display:“none”}}/>
+<input ref={fRef} type="file" accept=".pdf" multiple onChange={upAnx} style={{display:"none"}}/>
 </label>
 </div>
-{anexos.length===0?<div style={{textAlign:“center”,padding:40,color:“var(--text-sec)”}}>Nenhum anexo vinculado</div>
-:<div style={{display:“flex”,gap:16}}>
-<div style={{minWidth:220,display:“flex”,flexDirection:“column”,gap:4}}>
-{anexos.map((a,i)=><div key={i} className=“cd” style={{padding:“10px 12px”,cursor:“pointer”,borderColor:selAnx===i?”#B8965A”:”#E8DFD0”,background:selAnx===i?”#F5EDDF”:”#fff”}} onClick={()=>setSelAnx(i)}>
+{anexos.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>Nenhum anexo vinculado</div>
+:<div style={{display:"flex",gap:16}}>
+<div style={{minWidth:220,display:"flex",flexDirection:"column",gap:4}}>
+{anexos.map((a,i)=><div key={i} className="cd" style={{padding:"10px 12px",cursor:"pointer",borderColor:selAnx===i?"#B8965A":"#E8DFD0",background:selAnx===i?"#F5EDDF":"#fff"}} onClick={()=>setSelAnx(i)}>
 <div style={{fontWeight:600,fontSize:13}}>{a.nome}</div>
-<div style={{fontSize:11,color:“var(--text-sec)”,marginTop:2}}>{a.nD} itens</div>
+<div style={{fontSize:11,color:"var(--text-sec)",marginTop:2}}>{a.nD} itens</div>
 </div>)}
 </div>
-{selAnx!==null&&anexos[selAnx]&&<div style={{flex:1,maxHeight:“65vh”,overflow:“auto”,border:“1px solid var(--border)”,borderRadius:8}}>
+{selAnx!==null&&anexos[selAnx]&&<div style={{flex:1,maxHeight:"65vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:8}}>
 <table className="dt"><thead><tr><th>#</th><th>Tipo</th><th>Id</th><th>Texto</th></tr></thead><tbody>{anexos[selAnx].ds.map((d,i)=>
 <tr key={i}><td>{i+1}</td><td>{d.tipo}</td><td>{d.id}</td><td>{d.txt}</td></tr>
 )}</tbody></table>
@@ -2346,15 +2346,15 @@ return <div>
 
 // ═══ BUSCA GERAL ═══
 function BuscaGeral({lib,study,tagsConfig}){
-const [filtro,setFiltro]=useState(””);
+const [filtro,setFiltro]=useState("");
 const [selTags,setSelTags]=useState([]);
 const [scope,setScope]=useState({legis:true,notas:true});
 const [expandedIdx,setExpandedIdx]=useState(null);
 const [selLeis,setSelLeis]=useState(()=>new Set(lib.map(l=>l.id)));
 const [showSelector,setShowSelector]=useState(false);
-const [leiFilter,setLeiFilter]=useState(””);
+const [leiFilter,setLeiFilter]=useState("");
 const [showTagSelector,setShowTagSelector]=useState(false);
-const [tagSearch,setTagSearch]=useState(””);
+const [tagSearch,setTagSearch]=useState("");
 
 const toggleTag = (tid) => {
 setSelTags(prev => prev.includes(tid) ? prev.filter(x => x !== tid) : […prev, tid]);
@@ -2386,8 +2386,8 @@ setExpandedIdx(null);
 
 // Busca cross-lei: roda fullTextSearch em cada lei selecionada
 const resultados=useMemo(()=>{
-const termoBusca = (filtro || “”).trim();
-const tagsFiltro = selTags.map(tid => “#” + tagsConfig.find(t=>t.id===tid)?.name).filter(Boolean);
+const termoBusca = (filtro || "").trim();
+const tagsFiltro = selTags.map(tid => "#" + tagsConfig.find(t=>t.id===tid)?.name).filter(Boolean);
 
 ```
 // Se não tem termo nem tag, não busca
@@ -2427,28 +2427,28 @@ return m;
 const highlightText=(text,term)=>{
 if(!term||term.length<3||!text)return text;
 try{
-// Suporta AND via ‘+’: marca cada termo com highlight separado
-const termos=term.split(”+”).map(t=>t.trim()).filter(t=>t.length>=3 || t.startsWith(”#”));
+// Suporta AND via '+': marca cada termo com highlight separado
+const termos=term.split("+").map(t=>t.trim()).filter(t=>t.length>=3 || t.startsWith("#"));
 if(termos.length===0)return text;
-const escaped=termos.map(t=>t.replace(/[.*+?^${}()|[]\]/g,”\$&”)).join(”|”);
-const re=new RegExp(`(${escaped})`,“gi”);
+const escaped=termos.map(t=>t.replace(/[.*+?^${}()|[]\]/g,"\$&")).join("|");
+const re=new RegExp(`(${escaped})`,"gi");
 const parts=text.split(re);
-return parts.map((p,i)=>re.test(p)?React.createElement(“mark”,{key:i,style:{background:“rgba(212,168,83,0.35)”,padding:“0 1px”,borderRadius:2,fontWeight:p.startsWith(”#”)?700:400}},p):p);
+return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.35)",padding:"0 1px",borderRadius:2,fontWeight:p.startsWith("#")?700:400}},p):p);
 }catch(_){return text;}
 };
 
 const getArtigoDisps=(ds,artId)=>{
 const result=[];let inside=false;
 for(const d of ds){
-if(d.tipo===“ARTIGO”&&d.id===artId){inside=true;result.push(d);continue;}
-if(inside){if(d.tipo===“ARTIGO”||DIV.has(d.tipo))break;result.push(d);}
+if(d.tipo==="ARTIGO"&&d.id===artId){inside=true;result.push(d);continue;}
+if(inside){if(d.tipo==="ARTIGO"||DIV.has(d.tipo))break;result.push(d);}
 }
 return result;
 };
 
 return <div className="fade">
 <h2 style={{fontSize:20,fontWeight:700,marginBottom:12}}>Busca Geral</h2>
-<p style={{fontSize:13,color:“var(--text-sec)”,marginBottom:14}}>Pesquise em todas as leis da biblioteca ou selecione quais incluir na busca.</p>
+<p style={{fontSize:13,color:"var(--text-sec)",marginBottom:14}}>Pesquise em todas as leis da biblioteca ou selecione quais incluir na busca.</p>
 
 ```
 {lib.length===0?(
@@ -2661,38 +2661,38 @@ return <div className="fade">
 
 // ═══ E-CONSULTOR ═══
 function EConsultor({lib}){
-const [sub,setSub]=useState(“anotacoes”);
-const subs=[{id:“anotacoes”,lb:“Anotações”},{id:“econsulta”,lb:“E-Consulta”}];
+const [sub,setSub]=useState("anotacoes");
+const subs=[{id:"anotacoes",lb:"Anotações"},{id:"econsulta",lb:"E-Consulta"}];
 return <div className="fade">
 <h2 style={{fontSize:20,fontWeight:700,marginBottom:12}}>E-Consultor</h2>
-<div style={{display:“flex”,gap:0,borderBottom:“1px solid var(--border)”,marginBottom:14}}>{subs.map(s=><button key={s.id} className={`stab ${sub===s.id?"on":""}`} onClick={()=>setSub(s.id)}>{s.lb}</button>)}</div>
-{sub===“anotacoes”&&<EConsultorAnotacoes lib={lib}/>}
-{sub===“econsulta”&&<EConsultorBusca lib={lib}/>}
+<div style={{display:"flex",gap:0,borderBottom:"1px solid var(--border)",marginBottom:14}}>{subs.map(s=><button key={s.id} className={`stab ${sub===s.id?"on":""}`} onClick={()=>setSub(s.id)}>{s.lb}</button>)}</div>
+{sub==="anotacoes"&&<EConsultorAnotacoes lib={lib}/>}
+{sub==="econsulta"&&<EConsultorBusca lib={lib}/>}
 
   </div>;
 }
 
 function EConsultorAnotacoes({lib}){
 const [sidebarOpen,setSidebarOpen]=useState(true);
-const [temas,setTemas]=useState(()=>LS(“t3-temas”)||[]);
-const [notas,setNotas]=useState(()=>LS(“t3-notas”)||[]);
-const [temaSel,setTemaSel]=useState(””);
-const [leiSel,setLeiSel]=useState(””);
-const [texto,setTexto]=useState(””);
-const [viewMode,setViewMode]=useState(“form”); // “form” | “list”
+const [temas,setTemas]=useState(()=>LS("t3-temas")||[]);
+const [notas,setNotas]=useState(()=>LS("t3-notas")||[]);
+const [temaSel,setTemaSel]=useState("");
+const [leiSel,setLeiSel]=useState("");
+const [texto,setTexto]=useState("");
+const [viewMode,setViewMode]=useState("form"); // "form" | "list"
 const [temaView,setTemaView]=useState(null); // tema selecionado para visualizar notas
 const [editNota,setEditNota]=useState(null); // nota em edição
-const [novoTema,setNovoTema]=useState(””);
+const [novoTema,setNovoTema]=useState("");
 
-const salvarTemas=(t)=>{setTemas(t);LS(“t3-temas”,t);};
-const salvarNotas=(n)=>{setNotas(n);LS(“t3-notas”,n);};
+const salvarTemas=(t)=>{setTemas(t);LS("t3-temas",t);};
+const salvarNotas=(n)=>{setNotas(n);LS("t3-notas",n);};
 
 const addTema=()=>{
 const nome=novoTema.trim();
-if(!nome){alert(“Digite o nome do tema.”);return;}
-if(temas.includes(nome)){alert(“Esse tema já existe.”);return;}
+if(!nome){alert("Digite o nome do tema.");return;}
+if(temas.includes(nome)){alert("Esse tema já existe.");return;}
 salvarTemas([…temas,nome]);
-setNovoTema(””);
+setNovoTema("");
 };
 
 const delTema=(tema)=>{
@@ -2702,59 +2702,59 @@ if(!confirm(`O tema "${tema}" possui ${notasTema.length} anotação(ões). Desej
 salvarNotas(notas.filter(n=>n.tema!==tema));
 }
 salvarTemas(temas.filter(t=>t!==tema));
-if(temaView===tema){setTemaView(null);setViewMode(“form”);}
+if(temaView===tema){setTemaView(null);setViewMode("form");}
 };
 
 const addNota=()=>{
-if(!temaSel){alert(“Selecione um tema.”);return;}
-if(!texto.trim()){alert(“Escreva a anotação.”);return;}
+if(!temaSel){alert("Selecione um tema.");return;}
+if(!texto.trim()){alert("Escreva a anotação.");return;}
 const nova={
-id:Date.now()+”-”+Math.random().toString(36).slice(2,8),
+id:Date.now()+"-"+Math.random().toString(36).slice(2,8),
 tema:temaSel,
-lei:leiSel||””,
-leiNome:leiSel?lib.find(l=>l.id===leiSel)?.nome||””:””,
+lei:leiSel||"",
+leiNome:leiSel?lib.find(l=>l.id===leiSel)?.nome||"":"",
 texto:texto.trim(),
-data:new Date().toLocaleDateString(“pt-BR”),
+data:new Date().toLocaleDateString("pt-BR"),
 dataISO:new Date().toISOString()
 };
 salvarNotas([nova,…notas]);
-setTexto(””);
+setTexto("");
 };
 
 const updateNota=(id,novoTexto)=>{
-salvarNotas(notas.map(n=>n.id===id?{…n,texto:novoTexto,dataEdit:new Date().toLocaleDateString(“pt-BR”)}:n));
+salvarNotas(notas.map(n=>n.id===id?{…n,texto:novoTexto,dataEdit:new Date().toLocaleDateString("pt-BR")}:n));
 setEditNota(null);
 };
 
 const deleteNota=(id)=>{
-if(!confirm(“Excluir esta anotação?”))return;
+if(!confirm("Excluir esta anotação?"))return;
 salvarNotas(notas.filter(n=>n.id!==id));
 setEditNota(null);
 };
 
-const limparForm=()=>{setTemaSel(””);setLeiSel(””);setTexto(””);};
+const limparForm=()=>{setTemaSel("");setLeiSel("");setTexto("");};
 
 const notasDoTema=temaView?notas.filter(n=>n.tema===temaView):[];
 
-return <div style={{display:“flex”,gap:16,height:“68vh”}}>
+return <div style={{display:"flex",gap:16,height:"68vh"}}>
 {/* PAINEL ESQUERDO: TEMAS */}
-{sidebarOpen&&<div style={{width:240,flexShrink:0,display:“flex”,flexDirection:“column”,border:“2px solid var(--gold)”,borderRadius:12,padding:12,overflow:“hidden”,minHeight:0}}>
-<div style={{fontSize:14,fontWeight:700,marginBottom:10,color:“var(--gold)”}}>TEMAS</div>
-<div style={{flex:1,overflow:“auto”,display:“flex”,flexDirection:“column”,gap:4,marginBottom:10,minHeight:0}}>
-{temas.length===0?<div style={{fontSize:12,color:“var(--text-mute)”,textAlign:“center”,padding:20}}>Nenhum tema cadastrado</div>
+{sidebarOpen&&<div style={{width:240,flexShrink:0,display:"flex",flexDirection:"column",border:"2px solid var(--gold)",borderRadius:12,padding:12,overflow:"hidden",minHeight:0}}>
+<div style={{fontSize:14,fontWeight:700,marginBottom:10,color:"var(--gold)"}}>TEMAS</div>
+<div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:4,marginBottom:10,minHeight:0}}>
+{temas.length===0?<div style={{fontSize:12,color:"var(--text-mute)",textAlign:"center",padding:20}}>Nenhum tema cadastrado</div>
 :temas.map((t,i)=><div key={i}
-onClick={()=>{setTemaView(t);setViewMode(“list”);}}
-style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,padding:“8px 10px”,borderRadius:6,cursor:“pointer”,background:temaView===t?“var(--gold-subtle)”:“var(--bg-hover)”,border:temaView===t?“1px solid var(--gold)”:“1px solid transparent”,transition:“all .12s”}}>
-<span style={{fontSize:13,fontWeight:temaView===t?600:400,color:temaView===t?“var(--gold)”:“var(--text)”}}>{t}</span>
-<div style={{display:“flex”,gap:4,alignItems:“center”}}>
-<span style={{fontSize:10,color:“var(--text-mute)”}}>{notas.filter(n=>n.tema===t).length}</span>
-<button onClick={e=>{e.stopPropagation();delTema(t);}} style={{background:“none”,border:“none”,cursor:“pointer”,padding:2,lineHeight:1}} title=“Excluir tema”><Ic d={IC.tr} s={11} c="var(--text-mute)"/></button>
+onClick={()=>{setTemaView(t);setViewMode("list");}}
+style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 10px",borderRadius:6,cursor:"pointer",background:temaView===t?"var(--gold-subtle)":"var(--bg-hover)",border:temaView===t?"1px solid var(--gold)":"1px solid transparent",transition:"all .12s"}}>
+<span style={{fontSize:13,fontWeight:temaView===t?600:400,color:temaView===t?"var(--gold)":"var(--text)"}}>{t}</span>
+<div style={{display:"flex",gap:4,alignItems:"center"}}>
+<span style={{fontSize:10,color:"var(--text-mute)"}}>{notas.filter(n=>n.tema===t).length}</span>
+<button onClick={e=>{e.stopPropagation();delTema(t);}} style={{background:"none",border:"none",cursor:"pointer",padding:2,lineHeight:1}} title="Excluir tema"><Ic d={IC.tr} s={11} c="var(--text-mute)"/></button>
 </div>
 </div>)}
 </div>
-<div style={{display:“flex”,gap:4,flexShrink:0}}>
-<input value={novoTema} onChange={e=>setNovoTema(e.target.value)} onKeyDown={e=>{if(e.key===“Enter”)addTema();}} placeholder=“Novo tema…” style={{flex:1,padding:“7px 10px”,borderRadius:6,fontSize:12}}/>
-<button onClick={addTema} style={{padding:“7px 12px”,background:“var(--grad)”,color:”#fff”,border:“none”,borderRadius:6,fontSize:12,fontWeight:600,cursor:“pointer”,whiteSpace:“nowrap”}}>Incluir</button>
+<div style={{display:"flex",gap:4,flexShrink:0}}>
+<input value={novoTema} onChange={e=>setNovoTema(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")addTema();}} placeholder="Novo tema…" style={{flex:1,padding:"7px 10px",borderRadius:6,fontSize:12}}/>
+<button onClick={addTema} style={{padding:"7px 12px",background:"var(--grad)",color:"#fff",border:"none",borderRadius:6,fontSize:12,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap"}}>Incluir</button>
 </div>
 </div>
 
@@ -2815,17 +2815,17 @@ style={{display:“flex”,justifyContent:“space-between”,alignItems:“cent
 }
 
 function EConsultorBusca({lib}){
-const [notas]=useState(()=>LS(“t3-notas”)||[]);
-const [temas]=useState(()=>LS(“t3-temas”)||[]);
-const [filtroTema,setFiltroTema]=useState(””);
-const [filtroLei,setFiltroLei]=useState(””);
-const [filtroTexto,setFiltroTexto]=useState(””);
+const [notas]=useState(()=>LS("t3-notas")||[]);
+const [temas]=useState(()=>LS("t3-temas")||[]);
+const [filtroTema,setFiltroTema]=useState("");
+const [filtroLei,setFiltroLei]=useState("");
+const [filtroTexto,setFiltroTexto]=useState("");
 
 // Índice invertido pré-construído para busca otimizada
 const indiceInvertido = useMemo(()=>{
 const idx = new Map(); // Map<trigrama, Set<notaId>>
 for(const n of notas){
-const texto = ((n.tema||””)+” “+(n.leiNome||””)+” “+(n.texto||””)).toLowerCase().normalize(“NFD”).replace(/[\u0300-\u036f]/g,””);
+const texto = ((n.tema||"")+" "+(n.leiNome||"")+" "+(n.texto||"")).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 // Extrair tokens de 3+ caracteres
 const tokens = texto.match(/\w{3,}/g)||[];
 for(const token of tokens){
@@ -2877,35 +2877,35 @@ return filtered;
 const highlightText=(text,term)=>{
 if(!term||term.length<3||!text)return text;
 try{
-const re=new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,“gi”);
+const re=new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");
 const parts=text.split(re);
-return parts.map((p,i)=>re.test(p)?React.createElement(“mark”,{key:i,style:{background:“rgba(212,168,83,0.4)”,padding:“0 2px”,borderRadius:2}},p):p);
+return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.4)",padding:"0 2px",borderRadius:2}},p):p);
 }catch(e){return text;}
 };
 
 return <div>
 <div style={{fontSize:16,fontWeight:700,marginBottom:14}}>E-CONSULTA</div>
-<div style={{display:“flex”,gap:10,marginBottom:10,flexWrap:“wrap”}}>
-<select value={filtroTema} onChange={e=>setFiltroTema(e.target.value)} style={{flex:“1 1 180px”,padding:“10px”,borderRadius:6,fontSize:13}}>
+<div style={{display:"flex",gap:10,marginBottom:10,flexWrap:"wrap"}}>
+<select value={filtroTema} onChange={e=>setFiltroTema(e.target.value)} style={{flex:"1 1 180px",padding:"10px",borderRadius:6,fontSize:13}}>
 <option value="">Busca por Tema</option>
 {temas.map(t=><option key={t} value={t}>{t}</option>)}
 </select>
-<select value={filtroLei} onChange={e=>setFiltroLei(e.target.value)} style={{flex:“1 1 180px”,padding:“10px”,borderRadius:6,fontSize:13}}>
+<select value={filtroLei} onChange={e=>setFiltroLei(e.target.value)} style={{flex:"1 1 180px",padding:"10px",borderRadius:6,fontSize:13}}>
 <option value="">Busca por Legislação</option>
 {lib.map(l=><option key={l.id} value={l.id}>{l.nome}</option>)}
 </select>
-<input value={filtroTexto} onChange={e=>setFiltroTexto(e.target.value)} placeholder=“Palavra Chave (mín. 3 letras)…” style={{flex:“1 1 200px”,padding:“10px”,borderRadius:6,fontSize:13,background:“var(--input-bg)”,border:“1px solid var(--border)”}}/>
+<input value={filtroTexto} onChange={e=>setFiltroTexto(e.target.value)} placeholder="Palavra Chave (mín. 3 letras)…" style={{flex:"1 1 200px",padding:"10px",borderRadius:6,fontSize:13,background:"var(--input-bg)",border:"1px solid var(--border)"}}/>
 </div>
-<div style={{fontSize:12,color:“var(--text-sec)”,marginBottom:12}}>{resultados.length} anotação(ões) encontrada(s){filtroTexto.length>=3?” para "”+filtroTexto+”"”:””}</div>
-<div style={{maxHeight:“58vh”,overflow:“auto”,display:“flex”,flexDirection:“column”,gap:10}}>
-{resultados.length===0?<div style={{textAlign:“center”,padding:40,color:“var(--text-sec)”}}>{notas.length===0?“Nenhuma anotação cadastrada. Use a aba Anotações para incluir.”:“Nenhuma anotação encontrada com os filtros aplicados.”}</div>
+<div style={{fontSize:12,color:"var(--text-sec)",marginBottom:12}}>{resultados.length} anotação(ões) encontrada(s){filtroTexto.length>=3?" para ""+filtroTexto+""":""}</div>
+<div style={{maxHeight:"58vh",overflow:"auto",display:"flex",flexDirection:"column",gap:10}}>
+{resultados.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}>{notas.length===0?"Nenhuma anotação cadastrada. Use a aba Anotações para incluir.":"Nenhuma anotação encontrada com os filtros aplicados."}</div>
 :resultados.map(n=><div key={n.id} className="cd" style={{padding:14}}>
-<div style={{display:“flex”,gap:8,marginBottom:8,flexWrap:“wrap”,alignItems:“center”}}>
-<span className=“badge” style={{background:“var(--gold-subtle)”,color:“var(--gold)”,fontSize:11,padding:“3px 10px”}}>{n.tema}</span>
-{n.leiNome&&<span className=“badge” style={{background:“rgba(52,152,219,0.1)”,color:”#3498db”,fontSize:11,padding:“3px 10px”}}>{n.leiNome}</span>}
-<span style={{fontSize:10,color:“var(--text-mute)”,marginLeft:“auto”}}>{n.data}</span>
+<div style={{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap",alignItems:"center"}}>
+<span className="badge" style={{background:"var(--gold-subtle)",color:"var(--gold)",fontSize:11,padding:"3px 10px"}}>{n.tema}</span>
+{n.leiNome&&<span className="badge" style={{background:"rgba(52,152,219,0.1)",color:"#3498db",fontSize:11,padding:"3px 10px"}}>{n.leiNome}</span>}
+<span style={{fontSize:10,color:"var(--text-mute)",marginLeft:"auto"}}>{n.data}</span>
 </div>
-<div style={{fontSize:13,lineHeight:1.7,whiteSpace:“pre-wrap”}}>{filtroTexto.length>=3?highlightText(n.texto,filtroTexto):n.texto}</div>
+<div style={{fontSize:13,lineHeight:1.7,whiteSpace:"pre-wrap"}}>{filtroTexto.length>=3?highlightText(n.texto,filtroTexto):n.texto}</div>
 </div>)}
 </div>
 
@@ -2913,31 +2913,31 @@ return <div>
 }
 
 // ═══ REFORMA EM DIA ═══
-const REFORMA_DATA_URL=“data/reforma_em_dia.json”;
-const TAG_COLORS={“IBS”:”#2e86ab”,“CBS”:”#27ae60”,“IS”:”#e67e22”,“NT”:”#8e44ad”,“RTC”:”#c0392b”,“NF-e”:”#2980b9”,“CT-e”:”#16a085”,“NFS-e”:”#d35400”,“MDF-e”:”#7f8c8d”,“BP-e”:”#f39c12”,“DeRE”:”#1abc9c”,“Schema”:”#34495e”,“SPED”:”#e74c3c”,“Split Payment”:”#9b59b6”,“Cashback”:”#27ae60”,“Simples”:”#3498db”,“EC”:”#d4a017”,“LC”:”#d4a017”,“PLP”:”#8e44ad”,“Marco”:”#c0392b”,“Legislação”:”#a17c2f”,“Regulamentação”:”#2e86ab”,“Comitê Gestor”:”#16a085”,“CGIBS”:”#16a085”,“RFB”:”#e67e22”};
+const REFORMA_DATA_URL="data/reforma_em_dia.json";
+const TAG_COLORS={"IBS":"#2e86ab","CBS":"#27ae60","IS":"#e67e22","NT":"#8e44ad","RTC":"#c0392b","NF-e":"#2980b9","CT-e":"#16a085","NFS-e":"#d35400","MDF-e":"#7f8c8d","BP-e":"#f39c12","DeRE":"#1abc9c","Schema":"#34495e","SPED":"#e74c3c","Split Payment":"#9b59b6","Cashback":"#27ae60","Simples":"#3498db","EC":"#d4a017","LC":"#d4a017","PLP":"#8e44ad","Marco":"#c0392b","Legislação":"#a17c2f","Regulamentação":"#2e86ab","Comitê Gestor":"#16a085","CGIBS":"#16a085","RFB":"#e67e22"};
 function ReformaEmDia(){
 const [itens,setItens]=useState([]);
 const [loading,setLoading]=useState(false);
-const [filtro,setFiltro]=useState(””);
-const [filtroTag,setFiltroTag]=useState(””);
-const [filtroCat,setFiltroCat]=useState(””);
-const [filtroFonte,setFiltroFonte]=useState(””);
-const [filtroDataDe,setFiltroDataDe]=useState(””);
-const [filtroDataAte,setFiltroDataAte]=useState(””);
-const [sortOrder,setSortOrder]=useState(“desc”);
+const [filtro,setFiltro]=useState("");
+const [filtroTag,setFiltroTag]=useState("");
+const [filtroCat,setFiltroCat]=useState("");
+const [filtroFonte,setFiltroFonte]=useState("");
+const [filtroDataDe,setFiltroDataDe]=useState("");
+const [filtroDataAte,setFiltroDataAte]=useState("");
+const [sortOrder,setSortOrder]=useState("desc");
 const [expandedId,setExpandedId]=useState(null);
-const [erro,setErro]=useState(””);
-const [ultimaAtt,setUltimaAtt]=useState(””);
+const [erro,setErro]=useState("");
+const [ultimaAtt,setUltimaAtt]=useState("");
 
 useEffect(()=>{buscar();},[]);
 
 const buscar=async()=>{
-setLoading(true);setErro(””);
+setLoading(true);setErro("");
 try{
-const r=await fetch(REFORMA_DATA_URL+”?t=”+Date.now());
-if(!r.ok)throw new Error(“Arquivo reforma_em_dia.json não encontrado (”+r.status+”)”);
+const r=await fetch(REFORMA_DATA_URL+"?t="+Date.now());
+if(!r.ok)throw new Error("Arquivo reforma_em_dia.json não encontrado ("+r.status+")");
 const data=await r.json();
-if(data.itens){setItens(data.itens);setUltimaAtt(data.ultima_atualizacao||””);}
+if(data.itens){setItens(data.itens);setUltimaAtt(data.ultima_atualizacao||"");}
 }catch(e){setErro(e.message);}
 setLoading(false);
 };
@@ -2949,40 +2949,40 @@ const allFontes=useMemo(()=>[…new Set(itens.map(i=>i.fonte).filter(Boolean))].
 const filtered=useMemo(()=>{
 let f=[…itens];
 if(filtro.trim().length>=3){
-const termos=filtro.toLowerCase().normalize(“NFD”).replace(/[\u0300-\u036f]/g,””).split(”+”).map(t=>t.trim()).filter(t=>t.length>=3);
-f=f.filter(i=>{const tx=((i.titulo||””)+” “+(i.resumo||””)+” “+(i.tags||[]).join(” “)+” “+(i.fonte||””)).toLowerCase().normalize(“NFD”).replace(/[\u0300-\u036f]/g,””);return termos.every(t=>tx.includes(t));});
+const termos=filtro.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").split("+").map(t=>t.trim()).filter(t=>t.length>=3);
+f=f.filter(i=>{const tx=((i.titulo||"")+" "+(i.resumo||"")+" "+(i.tags||[]).join(" ")+" "+(i.fonte||"")).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");return termos.every(t=>tx.includes(t));});
 }
 if(filtroTag)f=f.filter(i=>(i.tags||[]).includes(filtroTag));
 if(filtroCat)f=f.filter(i=>i.categoria===filtroCat);
 if(filtroFonte)f=f.filter(i=>i.fonte===filtroFonte);
 if(filtroDataDe)f=f.filter(i=>i.data>=filtroDataDe);
 if(filtroDataAte)f=f.filter(i=>i.data<=filtroDataAte);
-f.sort((a,b)=>sortOrder===“desc”?b.data.localeCompare(a.data):a.data.localeCompare(b.data));
+f.sort((a,b)=>sortOrder==="desc"?b.data.localeCompare(a.data):a.data.localeCompare(b.data));
 return f;
 },[itens,filtro,filtroTag,filtroCat,filtroFonte,filtroDataDe,filtroDataAte,sortOrder]);
 
 const highlightText=(text,term)=>{
 if(!term||term.length<3||!text)return text;
-try{const termos=term.split(”+”).map(t=>t.trim()).filter(t=>t.length>=3);if(!termos.length)return text;const escaped=termos.map(t=>t.replace(/[.*+?^${}()|[]\]/g,”\$&”)).join(”|”);const re=new RegExp(`(${escaped})`,“gi”);const parts=text.split(re);return parts.map((p,i)=>re.test(p)?React.createElement(“mark”,{key:i,style:{background:“rgba(212,168,83,0.4)”,padding:“0 2px”,borderRadius:2}},p):p);}catch(_){return text;}
+try{const termos=term.split("+").map(t=>t.trim()).filter(t=>t.length>=3);if(!termos.length)return text;const escaped=termos.map(t=>t.replace(/[.*+?^${}()|[]\]/g,"\$&")).join("|");const re=new RegExp(`(${escaped})`,"gi");const parts=text.split(re);return parts.map((p,i)=>re.test(p)?React.createElement("mark",{key:i,style:{background:"rgba(212,168,83,0.4)",padding:"0 2px",borderRadius:2}},p):p);}catch(_){return text;}
 };
 
-const formatDate=(d)=>{if(!d)return””;const p=d.split(”-”);return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d;};
+const formatDate=(d)=>{if(!d)return"";const p=d.split("-");return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d;};
 
-const limparFiltros=()=>{setFiltro(””);setFiltroTag(””);setFiltroCat(””);setFiltroFonte(””);setFiltroDataDe(””);setFiltroDataAte(””);};
+const limparFiltros=()=>{setFiltro("");setFiltroTag("");setFiltroCat("");setFiltroFonte("");setFiltroDataDe("");setFiltroDataAte("");};
 
 return <div className="fade">
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:16,flexWrap:“wrap”,gap:8}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}>
 <div>
 <h2 style={{margin:0,fontSize:22,fontWeight:800}}>Reforma em Dia</h2>
-<div style={{fontSize:11,color:“var(--text-sec)”,marginTop:2}}>Cronologia completa da Reforma Tributária do Consumo (EC 132/2023 · LC 214/2025)</div>
-{ultimaAtt&&<div style={{fontSize:10,color:“var(--text-mute)”,marginTop:1}}>Última atualização: {new Date(ultimaAtt).toLocaleString(“pt-BR”)}</div>}
+<div style={{fontSize:11,color:"var(--text-sec)",marginTop:2}}>Cronologia completa da Reforma Tributária do Consumo (EC 132/2023 · LC 214/2025)</div>
+{ultimaAtt&&<div style={{fontSize:10,color:"var(--text-mute)",marginTop:1}}>Última atualização: {new Date(ultimaAtt).toLocaleString("pt-BR")}</div>}
 </div>
-<div style={{display:“flex”,gap:6}}>
-<button onClick={buscar} className=“btn-primary” disabled={loading} style={{fontSize:12,padding:“8px 16px”}}>{loading?“Carregando…”:“Atualizar”}</button>
-<button onClick={()=>setSortOrder(s=>s===“desc”?“asc”:“desc”)} style={{fontSize:11,padding:“6px 12px”,border:“1px solid var(--border)”,borderRadius:6,background:“var(--bg-hover)”,cursor:“pointer”,color:“var(--text-sec)”}}>{sortOrder===“desc”?“📅 Mais recente”:“📅 Mais antiga”}</button>
+<div style={{display:"flex",gap:6}}>
+<button onClick={buscar} className="btn-primary" disabled={loading} style={{fontSize:12,padding:"8px 16px"}}>{loading?"Carregando…":"Atualizar"}</button>
+<button onClick={()=>setSortOrder(s=>s==="desc"?"asc":"desc")} style={{fontSize:11,padding:"6px 12px",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg-hover)",cursor:"pointer",color:"var(--text-sec)"}}>{sortOrder==="desc"?"📅 Mais recente":"📅 Mais antiga"}</button>
 </div>
 </div>
-{erro&&<div style={{background:“rgba(231,76,60,0.1)”,border:“1px solid #e74c3c”,borderRadius:8,padding:10,marginBottom:10,fontSize:12,color:”#e74c3c”}}>{erro}</div>}
+{erro&&<div style={{background:"rgba(231,76,60,0.1)",border:"1px solid #e74c3c",borderRadius:8,padding:10,marginBottom:10,fontSize:12,color:"#e74c3c"}}>{erro}</div>}
 
 ```
 {/* FILTROS */}
@@ -3054,112 +3054,112 @@ return <div className="fade">
 
 // ═══ ATUALIZAÇÕES ═══
 const PORTAIS=[
-{id:“agencia_rf”,nome:“AgênciaGov — Receita Federal”,cor:”#2e86ab”},
-{id:“agencia_pl”,nome:“AgênciaGov — Planalto”,cor:”#8e44ad”},
-{id:“agencia_ju”,nome:“AgênciaGov — Justiça”,cor:”#c0392b”},
-{id:“agencia_ec”,nome:“AgênciaGov — Economia”,cor:”#27ae60”},
-{id:“agencia_co”,nome:“AgênciaGov — Comunicações”,cor:”#e67e22”},
-{id:“cfc”,nome:“CFC”,cor:”#2980b9”},
-{id:“jota”,nome:“Jota Info”,cor:”#1a1a2e”},
-{id:“fazenda”,nome:“Min. Fazenda”,cor:”#16a085”},
-{id:“rfb”,nome:“RFB Reforma”,cor:”#d4a017”},
-{id:“rfb_not”,nome:“RFB Notícias”,cor:”#e67e22”},
-{id:“nfe”,nome:“NFe/NFCe”,cor:”#7f8c8d”},
+{id:"agencia_rf",nome:"AgênciaGov — Receita Federal",cor:"#2e86ab"},
+{id:"agencia_pl",nome:"AgênciaGov — Planalto",cor:"#8e44ad"},
+{id:"agencia_ju",nome:"AgênciaGov — Justiça",cor:"#c0392b"},
+{id:"agencia_ec",nome:"AgênciaGov — Economia",cor:"#27ae60"},
+{id:"agencia_co",nome:"AgênciaGov — Comunicações",cor:"#e67e22"},
+{id:"cfc",nome:"CFC",cor:"#2980b9"},
+{id:"jota",nome:"Jota Info",cor:"#1a1a2e"},
+{id:"fazenda",nome:"Min. Fazenda",cor:"#16a085"},
+{id:"rfb",nome:"RFB Reforma",cor:"#d4a017"},
+{id:"rfb_not",nome:"RFB Notícias",cor:"#e67e22"},
+{id:"nfe",nome:"NFe/NFCe",cor:"#7f8c8d"},
 ];
-const DATA_URL=“data/atualizacoes.json”;
+const DATA_URL="data/atualizacoes.json";
 
 function Atl(){
-const [itens,setItens]=useState(()=>LS(“t3-upd-v2”)||[]);
-const [ultimaAtt,setUltimaAtt]=useState(()=>LS(“t3-upd-dt”)||””);
+const [itens,setItens]=useState(()=>LS("t3-upd-v2")||[]);
+const [ultimaAtt,setUltimaAtt]=useState(()=>LS("t3-upd-dt")||"");
 const [ld,setLd]=useState(false);
-const [filtro,setFiltro]=useState(””);
-const [filtroPortal,setFiltroPortal]=useState(””);
-const [filtroData,setFiltroData]=useState(””);
-const [erro,setErro]=useState(””);
-const [sucesso,setSucesso]=useState(””);
+const [filtro,setFiltro]=useState("");
+const [filtroPortal,setFiltroPortal]=useState("");
+const [filtroData,setFiltroData]=useState("");
+const [erro,setErro]=useState("");
+const [sucesso,setSucesso]=useState("");
 
-const buscar=async()=>{setLd(true);setErro(””);setSucesso(””);
+const buscar=async()=>{setLd(true);setErro("");setSucesso("");
 try{
-const r=await fetch(DATA_URL+”?t=”+Date.now());
-if(!r.ok)throw new Error(“Arquivo de atualizações não encontrado (”+r.status+”). Verifique se o workflow do GitHub Actions foi executado e se o arquivo data/atualizacoes.json existe no repositório.”);
+const r=await fetch(DATA_URL+"?t="+Date.now());
+if(!r.ok)throw new Error("Arquivo de atualizações não encontrado ("+r.status+"). Verifique se o workflow do GitHub Actions foi executado e se o arquivo data/atualizacoes.json existe no repositório.");
 const data=await r.json();
 if(data.itens&&Array.isArray(data.itens)){
 if(data.itens.length===0&&itens.length===0){
-setSucesso(“Busca concluída — o servidor retornou 0 itens. O script Python pode não estar encontrando publicações nas fontes. Verifique os logs do GitHub Actions.”);
+setSucesso("Busca concluída — o servidor retornou 0 itens. O script Python pode não estar encontrando publicações nas fontes. Verifique os logs do GitHub Actions.");
 setUltimaAtt(data.ultima_atualizacao||new Date().toISOString());
-LS(“t3-upd-dt”,data.ultima_atualizacao||new Date().toISOString());
+LS("t3-upd-dt",data.ultima_atualizacao||new Date().toISOString());
 }else{
 const linksExist=new Set(itens.map(i=>i.link));
 const novos=data.itens.filter(i=>!linksExist.has(i.link));
 const merged=[…novos,…itens].sort((a,b)=>b.data.localeCompare(a.data));
-setItens(merged);LS(“t3-upd-v2”,merged);
+setItens(merged);LS("t3-upd-v2",merged);
 setUltimaAtt(data.ultima_atualizacao||new Date().toISOString());
-LS(“t3-upd-dt”,data.ultima_atualizacao||new Date().toISOString());
-setSucesso(“Busca concluída — “+novos.length+” novo(s) item(ns) adicionado(s). Total: “+merged.length+” itens.”);
+LS("t3-upd-dt",data.ultima_atualizacao||new Date().toISOString());
+setSucesso("Busca concluída — "+novos.length+" novo(s) item(ns) adicionado(s). Total: "+merged.length+" itens.");
 }
-}else{setErro(“Formato de dados inesperado no arquivo JSON.”);}
+}else{setErro("Formato de dados inesperado no arquivo JSON.");}
 }catch(e){setErro(e.message);}setLd(false);};
 
 const exportar=()=>{try{
 const data={ultima_atualizacao:ultimaAtt,itens:itensFiltrados,exportDate:new Date().toISOString()};
-const blob=new Blob([JSON.stringify(data,null,2)],{type:“application/json”});
-const url=URL.createObjectURL(blob);const a=document.createElement(“a”);
-a.href=url;a.download=“TERA_atualizacoes_”+new Date().toISOString().slice(0,10)+”.json”;
+const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+const url=URL.createObjectURL(blob);const a=document.createElement("a");
+a.href=url;a.download="TERA_atualizacoes_"+new Date().toISOString().slice(0,10)+".json";
 a.click();URL.revokeObjectURL(url);
-}catch(e){alert(“Erro ao exportar: “+e.message);}};
+}catch(e){alert("Erro ao exportar: "+e.message);}};
 
-const limpar=()=>{if(confirm(“Tem certeza que deseja limpar todo o histórico de atualizações?”)){setItens([]);setUltimaAtt(””);setSucesso(””);setErro(””);LS(“t3-upd-v2”,null);LS(“t3-upd-dt”,null);}};
+const limpar=()=>{if(confirm("Tem certeza que deseja limpar todo o histórico de atualizações?")){setItens([]);setUltimaAtt("");setSucesso("");setErro("");LS("t3-upd-v2",null);LS("t3-upd-dt",null);}};
 
 const itensFiltrados=useMemo(()=>{
 let f=itens;
 if(filtroPortal)f=f.filter(i=>i.portal===filtroPortal);
 if(filtroData)f=f.filter(i=>i.data===filtroData);
-if(filtro.trim()){const term=filtro.toLowerCase();f=f.filter(i=>(i.titulo||””).toLowerCase().includes(term)||(i.resumo||””).toLowerCase().includes(term)||(i.portal||””).toLowerCase().includes(term));}
+if(filtro.trim()){const term=filtro.toLowerCase();f=f.filter(i=>(i.titulo||"").toLowerCase().includes(term)||(i.resumo||"").toLowerCase().includes(term)||(i.portal||"").toLowerCase().includes(term));}
 return f;
 },[itens,filtroPortal,filtroData,filtro]);
 
 const datasUnicas=useMemo(()=>[…new Set(itens.map(i=>i.data))].sort().reverse(),[itens]);
-const portalCor=(portal)=>PORTAIS.find(p=>p.nome===portal||p.id===portal)?.cor||“var(--text-sec)”;
+const portalCor=(portal)=>PORTAIS.find(p=>p.nome===portal||p.id===portal)?.cor||"var(--text-sec)";
 
 return <div className="fade">
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:10,flexWrap:“wrap”,gap:8}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10,flexWrap:"wrap",gap:8}}>
 <div><h2 style={{margin:0}}>Atualizações</h2>
-{ultimaAtt&&<div style={{fontSize:11,color:“var(--text-sec)”,marginTop:2}}>Última atualização do servidor: {new Date(ultimaAtt).toLocaleString(“pt-BR”)}</div>}
-<div style={{fontSize:11,color:“var(--text-mute)”,marginTop:1}}>Atualização automática: diariamente às 09:00 (GitHub Actions)</div>
+{ultimaAtt&&<div style={{fontSize:11,color:"var(--text-sec)",marginTop:2}}>Última atualização do servidor: {new Date(ultimaAtt).toLocaleString("pt-BR")}</div>}
+<div style={{fontSize:11,color:"var(--text-mute)",marginTop:1}}>Atualização automática: diariamente às 09:00 (GitHub Actions)</div>
 </div>
-<div style={{display:“flex”,gap:6,flexWrap:“wrap”}}>
-<button onClick={buscar} className="btn-primary" disabled={ld}>{ld?<><Sp/> Buscando…</>:“Buscar Agora”}</button>
-{itens.length>0&&<><button onClick={exportar} className=“btn-secondary” style={{fontSize:12,padding:“8px 12px”}}>Exportar</button>
-<button onClick={limpar} className=“btn-secondary” style={{fontSize:12,padding:“8px 12px”,color:“var(--err)”}}>Limpar Histórico</button></>}
+<div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+<button onClick={buscar} className="btn-primary" disabled={ld}>{ld?<><Sp/> Buscando…</>:"Buscar Agora"}</button>
+{itens.length>0&&<><button onClick={exportar} className="btn-secondary" style={{fontSize:12,padding:"8px 12px"}}>Exportar</button>
+<button onClick={limpar} className="btn-secondary" style={{fontSize:12,padding:"8px 12px",color:"var(--err)"}}>Limpar Histórico</button></>}
 </div>
 </div>
-{erro&&<div style={{background:“rgba(231,76,60,0.1)”,border:“1px solid #e74c3c”,borderRadius:8,padding:“10px 14px”,marginBottom:10,fontSize:13,color:”#e74c3c”}}>{erro}</div>}
-{sucesso&&<div style={{background:“rgba(46,204,113,0.1)”,border:“1px solid #2ecc71”,borderRadius:8,padding:“10px 14px”,marginBottom:10,fontSize:13,color:”#2ecc71”}}>{sucesso}</div>}
-{itens.length>0&&<div style={{display:“flex”,gap:8,marginBottom:12,flexWrap:“wrap”,alignItems:“center”}}>
-<input value={filtro} onChange={e=>setFiltro(e.target.value)} placeholder=“Filtrar por nome ou texto…” style={{flex:“1 1 200px”,padding:“8px 12px”,borderRadius:6,fontSize:13,background:“var(--bg-hover)”,border:“1px solid var(--border)”}}/>
-<select value={filtroPortal} onChange={e=>setFiltroPortal(e.target.value)} style={{padding:“8px”,borderRadius:6,fontSize:12}}>
+{erro&&<div style={{background:"rgba(231,76,60,0.1)",border:"1px solid #e74c3c",borderRadius:8,padding:"10px 14px",marginBottom:10,fontSize:13,color:"#e74c3c"}}>{erro}</div>}
+{sucesso&&<div style={{background:"rgba(46,204,113,0.1)",border:"1px solid #2ecc71",borderRadius:8,padding:"10px 14px",marginBottom:10,fontSize:13,color:"#2ecc71"}}>{sucesso}</div>}
+{itens.length>0&&<div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
+<input value={filtro} onChange={e=>setFiltro(e.target.value)} placeholder="Filtrar por nome ou texto…" style={{flex:"1 1 200px",padding:"8px 12px",borderRadius:6,fontSize:13,background:"var(--bg-hover)",border:"1px solid var(--border)"}}/>
+<select value={filtroPortal} onChange={e=>setFiltroPortal(e.target.value)} style={{padding:"8px",borderRadius:6,fontSize:12}}>
 <option value="">Todos os portais</option>
 {PORTAIS.map(p=><option key={p.id} value={p.nome}>{p.nome}</option>)}
 </select>
-<select value={filtroData} onChange={e=>setFiltroData(e.target.value)} style={{padding:“8px”,borderRadius:6,fontSize:12}}>
+<select value={filtroData} onChange={e=>setFiltroData(e.target.value)} style={{padding:"8px",borderRadius:6,fontSize:12}}>
 <option value="">Todas as datas</option>
 {datasUnicas.map(d=><option key={d} value={d}>{d}</option>)}
 </select>
-<span style={{fontSize:12,color:“var(--text-sec)”}}>{itensFiltrados.length} de {itens.length}</span>
+<span style={{fontSize:12,color:"var(--text-sec)"}}>{itensFiltrados.length} de {itens.length}</span>
 </div>}
-{itens.length===0?<div style={{textAlign:“center”,padding:40,color:“var(--text-sec)”}}><div style={{fontSize:16,marginBottom:8}}>Nenhuma atualização carregada</div><div style={{fontSize:13,lineHeight:1.6}}>Clique em “Buscar Agora” para carregar as atualizações do servidor.<br/>As atualizações são coletadas diariamente às 09:00 por um script Python no GitHub Actions.</div></div>
-:<div style={{display:“flex”,flexDirection:“column”,gap:8,maxHeight:“65vh”,overflow:“auto”}}>{itensFiltrados.map((item,i)=>
+{itens.length===0?<div style={{textAlign:"center",padding:40,color:"var(--text-sec)"}}><div style={{fontSize:16,marginBottom:8}}>Nenhuma atualização carregada</div><div style={{fontSize:13,lineHeight:1.6}}>Clique em "Buscar Agora" para carregar as atualizações do servidor.<br/>As atualizações são coletadas diariamente às 09:00 por um script Python no GitHub Actions.</div></div>
+:<div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:"65vh",overflow:"auto"}}>{itensFiltrados.map((item,i)=>
 <div key={i} className="cd" style={{padding:14}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“flex-start”,marginBottom:6}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
 <div>
-<span className=“badge” style={{background:portalCor(item.portal)+“22”,color:portalCor(item.portal),marginRight:8}}>{item.portal}</span>
-{item.premium&&<span className=“badge” style={{background:“rgba(230,126,34,0.15)”,color:”#e67e22”,marginRight:8}}>PREMIUM</span>}
-<span style={{fontSize:11,color:“var(--text-sec)”}}>{item.data}</span>
+<span className="badge" style={{background:portalCor(item.portal)+"22",color:portalCor(item.portal),marginRight:8}}>{item.portal}</span>
+{item.premium&&<span className="badge" style={{background:"rgba(230,126,34,0.15)",color:"#e67e22",marginRight:8}}>PREMIUM</span>}
+<span style={{fontSize:11,color:"var(--text-sec)"}}>{item.data}</span>
 </div>
-{item.link&&<a href={item.link} target=”_blank” onClick={e=>e.stopPropagation()} style={{fontSize:11,color:“var(--gold)”,display:“flex”,alignItems:“center”,gap:3,whiteSpace:“nowrap”}}><Ic d={IC.lk} s={10} c="var(--gold)"/>Abrir</a>}
+{item.link&&<a href={item.link} target="_blank" onClick={e=>e.stopPropagation()} style={{fontSize:11,color:"var(--gold)",display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}><Ic d={IC.lk} s={10} c="var(--gold)"/>Abrir</a>}
 </div>
 <div style={{fontWeight:600,fontSize:14,marginBottom:4}}>{item.titulo}</div>
-{item.resumo&&<div style={{fontSize:12,color:“var(--text-sec)”,lineHeight:1.5}}>{item.resumo}</div>}
+{item.resumo&&<div style={{fontSize:12,color:"var(--text-sec)",lineHeight:1.5}}>{item.resumo}</div>}
 </div>
 )}</div>}
 
@@ -3168,100 +3168,100 @@ return <div className="fade">
 
 // ─── LoginScreen ─────────────────────────────────────────────────────────────
 function LoginScreen({onLogin,theme,toggleTheme}){
-const [mode,setMode]=useState(“login”); // “login” | “register”
-const [username,setUsername]=useState(””);
-const [password,setPassword]=useState(””);
-const [inviteCode,setInviteCode]=useState(””);
+const [mode,setMode]=useState("login"); // "login" | "register"
+const [username,setUsername]=useState("");
+const [password,setPassword]=useState("");
+const [inviteCode,setInviteCode]=useState("");
 const [loading,setLoading]=useState(false);
-const [err,setErr]=useState(””);
+const [err,setErr]=useState("");
 
 const submit=async()=>{
-setErr(””);
-if(!username.trim()||!password.trim()){setErr(“Preencha usuário e senha.”);return;}
-if(mode===“register”&&!inviteCode.trim()){setErr(“Informe o código de convite.”);return;}
+setErr("");
+if(!username.trim()||!password.trim()){setErr("Preencha usuário e senha.");return;}
+if(mode==="register"&&!inviteCode.trim()){setErr("Informe o código de convite.");return;}
 setLoading(true);
 try{
-const body=mode===“login”
+const body=mode==="login"
 ?{username:username.trim(),password}
 :{username:username.trim(),password,inviteCode:inviteCode.trim()};
-const r=await fetch(`${PROXY}/auth/${mode}`,{method:“POST”,headers:{“Content-Type”:“application/json”},body:JSON.stringify(body)});
+const r=await fetch(`${PROXY}/auth/${mode}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
 const d=await r.json();
-if(!r.ok){setErr(d.error||“Erro desconhecido”);setLoading(false);return;}
+if(!r.ok){setErr(d.error||"Erro desconhecido");setLoading(false);return;}
 onLogin(d.token,d.username,d.userId);
-}catch(e){setErr(“Erro de conexão: “+e.message);}
+}catch(e){setErr("Erro de conexão: "+e.message);}
 setLoading(false);
 };
 
-return <div style={{minHeight:“100vh”,display:“flex”,flexDirection:“column”,alignItems:“center”,justifyContent:“center”,background:“var(--bg)”,padding:20}}>
-<div style={{position:“absolute”,top:16,right:16}}><ThemeBtn theme={theme} toggle={toggleTheme}/></div>
-<div style={{marginBottom:32,textAlign:“center”}}>
+return <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"var(--bg)",padding:20}}>
+<div style={{position:"absolute",top:16,right:16}}><ThemeBtn theme={theme} toggle={toggleTheme}/></div>
+<div style={{marginBottom:32,textAlign:"center"}}>
 <Logo/>
 <div style={{marginTop:12,fontSize:22,fontWeight:800,letterSpacing:2}}>TERA</div>
-<div style={{fontSize:13,color:“var(--text-sec)”,marginTop:4}}>CADERNO ELETRÔNICO</div>
+<div style={{fontSize:13,color:"var(--text-sec)",marginTop:4}}>CADERNO ELETRÔNICO</div>
 </div>
-<div className=“cd” style={{width:“100%”,maxWidth:380,padding:28}}>
-<div style={{display:“flex”,gap:8,marginBottom:24}}>
-<button onClick={()=>{setMode(“login”);setErr(””);}} style={{flex:1,padding:“8px 0”,borderRadius:6,border:“none”,cursor:“pointer”,fontWeight:mode===“login”?700:400,background:mode===“login”?“var(--gold-subtle)”:“transparent”,color:mode===“login”?“var(--gold)”:“var(--text-sec)”,fontSize:13,fontFamily:“inherit”}}>Entrar</button>
-<button onClick={()=>{setMode(“register”);setErr(””);}} style={{flex:1,padding:“8px 0”,borderRadius:6,border:“none”,cursor:“pointer”,fontWeight:mode===“register”?700:400,background:mode===“register”?“var(--gold-subtle)”:“transparent”,color:mode===“register”?“var(--gold)”:“var(--text-sec)”,fontSize:13,fontFamily:“inherit”}}>Criar Conta</button>
+<div className="cd" style={{width:"100%",maxWidth:380,padding:28}}>
+<div style={{display:"flex",gap:8,marginBottom:24}}>
+<button onClick={()=>{setMode("login");setErr("");}} style={{flex:1,padding:"8px 0",borderRadius:6,border:"none",cursor:"pointer",fontWeight:mode==="login"?700:400,background:mode==="login"?"var(--gold-subtle)":"transparent",color:mode==="login"?"var(--gold)":"var(--text-sec)",fontSize:13,fontFamily:"inherit"}}>Entrar</button>
+<button onClick={()=>{setMode("register");setErr("");}} style={{flex:1,padding:"8px 0",borderRadius:6,border:"none",cursor:"pointer",fontWeight:mode==="register"?700:400,background:mode==="register"?"var(--gold-subtle)":"transparent",color:mode==="register"?"var(--gold)":"var(--text-sec)",fontSize:13,fontFamily:"inherit"}}>Criar Conta</button>
 </div>
-<div style={{display:“flex”,flexDirection:“column”,gap:12}}>
-<input value={username} onChange={e=>setUsername(e.target.value)} onKeyDown={e=>e.key===“Enter”&&submit()} placeholder=“Usuário” style={{padding:“10px 12px”,borderRadius:7,fontSize:14,outline:“none”}}/>
-<input value={password} onChange={e=>setPassword(e.target.value)} onKeyDown={e=>e.key===“Enter”&&submit()} type=“password” placeholder=“Senha” style={{padding:“10px 12px”,borderRadius:7,fontSize:14,outline:“none”}}/>
-{mode===“register”&&<input value={inviteCode} onChange={e=>setInviteCode(e.target.value.toUpperCase())} onKeyDown={e=>e.key===“Enter”&&submit()} placeholder=“Código de convite (ex: A3F2B1C4)” style={{padding:“10px 12px”,borderRadius:7,fontSize:14,outline:“none”,letterSpacing:2}}/>}
-{err&&<div style={{color:“var(--err)”,fontSize:12,padding:“6px 10px”,background:“rgba(231,76,60,.1)”,borderRadius:5}}>{err}</div>}
-<button onClick={submit} disabled={loading} className=“btn-primary” style={{marginTop:4,display:“flex”,alignItems:“center”,justifyContent:“center”,gap:8}}>
-{loading&&<Sp/>}{mode===“login”?“Entrar”:“Criar Conta”}
+<div style={{display:"flex",flexDirection:"column",gap:12}}>
+<input value={username} onChange={e=>setUsername(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} placeholder="Usuário" style={{padding:"10px 12px",borderRadius:7,fontSize:14,outline:"none"}}/>
+<input value={password} onChange={e=>setPassword(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} type="password" placeholder="Senha" style={{padding:"10px 12px",borderRadius:7,fontSize:14,outline:"none"}}/>
+{mode==="register"&&<input value={inviteCode} onChange={e=>setInviteCode(e.target.value.toUpperCase())} onKeyDown={e=>e.key==="Enter"&&submit()} placeholder="Código de convite (ex: A3F2B1C4)" style={{padding:"10px 12px",borderRadius:7,fontSize:14,outline:"none",letterSpacing:2}}/>}
+{err&&<div style={{color:"var(--err)",fontSize:12,padding:"6px 10px",background:"rgba(231,76,60,.1)",borderRadius:5}}>{err}</div>}
+<button onClick={submit} disabled={loading} className="btn-primary" style={{marginTop:4,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+{loading&&<Sp/>}{mode==="login"?"Entrar":"Criar Conta"}
 </button>
 </div>
 </div>
-<div style={{marginTop:16,fontSize:11,color:“var(--text-mute)”}}>Acesso restrito</div>
+<div style={{marginTop:16,fontSize:11,color:"var(--text-mute)"}}>Acesso restrito</div>
 
   </div>;
 }
 
 // ─── ApiKeyModal ──────────────────────────────────────────────────────────────
 function ApiKeyModal({status,onSave,onDelete,onClose}){
-const [key,setKey]=useState(””);
+const [key,setKey]=useState("");
 const [loading,setLoading]=useState(false);
-const [err,setErr]=useState(””);
+const [err,setErr]=useState("");
 
 const save=async()=>{
-if(!key.trim()){setErr(“Digite a chave.”);return;}
-if(!key.trim().startsWith(“sk-ant-”)){setErr(“Chave inválida — deve começar com sk-ant-”);return;}
-setLoading(true);setErr(””);
+if(!key.trim()){setErr("Digite a chave.");return;}
+if(!key.trim().startsWith("sk-ant-")){setErr("Chave inválida — deve começar com sk-ant-");return;}
+setLoading(true);setErr("");
 try{await onSave(key.trim());}catch(e){setErr(e.message);}
 setLoading(false);
 };
 
 const remove=async()=>{
-if(!confirm(“Remover sua API Key? Sem ela as funções de IA ficarão indisponíveis.”))return;
+if(!confirm("Remover sua API Key? Sem ela as funções de IA ficarão indisponíveis."))return;
 setLoading(true);
 try{await onDelete();}catch{}
 setLoading(false);
 };
 
-return <div style={{position:“fixed”,inset:0,background:“rgba(0,0,0,.6)”,zIndex:1000,display:“flex”,alignItems:“center”,justifyContent:“center”,padding:20}} onClick={e=>e.target===e.currentTarget&&onClose()}>
-<div className=“cd” style={{width:“100%”,maxWidth:420,padding:24}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:16}}>
+return <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.6)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20}} onClick={e=>e.target===e.currentTarget&&onClose()}>
+<div className="cd" style={{width:"100%",maxWidth:420,padding:24}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
 <div style={{fontWeight:700,fontSize:15}}>⚙ Minha API Key Anthropic</div>
-<button onClick={onClose} style={{background:“none”,border:“none”,cursor:“pointer”,color:“var(--text-sec)”,fontSize:18}}>✕</button>
+<button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",color:"var(--text-sec)",fontSize:18}}>✕</button>
 </div>
-{status?.configured&&<div style={{marginBottom:12,padding:“8px 12px”,background:“rgba(46,204,113,.1)”,borderRadius:6,fontSize:12,color:“var(--ok)”}}>✓ Chave configurada: <code>{status.masked}</code></div>}
-<div style={{fontSize:12,color:“var(--text-sec)”,marginBottom:10}}>Sua chave fica armazenada no servidor de forma segura e nunca é exposta ao navegador.</div>
-<input value={key} onChange={e=>setKey(e.target.value)} placeholder=“sk-ant-api03-…” style={{width:“100%”,padding:“10px 12px”,borderRadius:7,fontSize:13,outline:“none”,marginBottom:10,fontFamily:“monospace”}}/>
-{err&&<div style={{color:“var(--err)”,fontSize:12,marginBottom:8}}>{err}</div>}
-<div style={{display:“flex”,gap:8}}>
-<button onClick={save} disabled={loading} className=“btn-primary” style={{flex:1,display:“flex”,alignItems:“center”,justifyContent:“center”,gap:6}}>
+{status?.configured&&<div style={{marginBottom:12,padding:"8px 12px",background:"rgba(46,204,113,.1)",borderRadius:6,fontSize:12,color:"var(--ok)"}}>✓ Chave configurada: <code>{status.masked}</code></div>}
+<div style={{fontSize:12,color:"var(--text-sec)",marginBottom:10}}>Sua chave fica armazenada no servidor de forma segura e nunca é exposta ao navegador.</div>
+<input value={key} onChange={e=>setKey(e.target.value)} placeholder="sk-ant-api03-…" style={{width:"100%",padding:"10px 12px",borderRadius:7,fontSize:13,outline:"none",marginBottom:10,fontFamily:"monospace"}}/>
+{err&&<div style={{color:"var(--err)",fontSize:12,marginBottom:8}}>{err}</div>}
+<div style={{display:"flex",gap:8}}>
+<button onClick={save} disabled={loading} className="btn-primary" style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
 {loading&&<Sp/>}Salvar
 </button>
-{status?.configured&&<button onClick={remove} disabled={loading} className=“btn-secondary” style={{color:“var(--err)”,borderColor:“var(--err)”}}>Remover</button>}
+{status?.configured&&<button onClick={remove} disabled={loading} className="btn-secondary" style={{color:"var(--err)",borderColor:"var(--err)"}}>Remover</button>}
 </div>
 </div>
 
   </div>;
 }
 
-ReactDOM.render(<ErrorBoundary><App/></ErrorBoundary>,document.getElementById(“root”));
+ReactDOM.render(<ErrorBoundary><App/></ErrorBoundary>,document.getElementById("root"));
 </script>
 
 </body>

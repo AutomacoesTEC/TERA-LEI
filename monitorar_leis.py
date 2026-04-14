@@ -151,7 +151,7 @@ def detectar_alteracoes(texto_antigo, texto_novo):
 
     # Filtrar linhas significativas (artigos, parágrafos, etc.)
     re_dispositivo = re.compile(
-        r"^(?:Art\.\s*\d+|§\s*\d+|Parágrafo único|[IVXLCDM]+\s*[\-–—]|[a-z]\))",
+        r"^(?:Art\.\s*\d+|§\s*\d+|Parágrafo único|[IVXLCDM]+\s*[\--—]|[a-z]\))",
         re.IGNORECASE
     )
 
