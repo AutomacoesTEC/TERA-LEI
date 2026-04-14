@@ -65,11 +65,12 @@ npm start
 
 | Variável | Descrição | Exemplo |
 |----------|-----------|---------|
-| `EMAIL_USER` | Conta Gmail remetente | `curador@gmail.com` |
-| `EMAIL_PASS` | App Password Gmail (não a senha normal) | `xxxx xxxx xxxx xxxx` |
-| `EMAIL_TO` | Destinatário do resumo | `tectributos.federal11@gmail.com` |
+| `TELEGRAM_BOT_TOKEN` | Token do bot (via @BotFather) | `123456789:AABBcc...` |
+| `TELEGRAM_CHAT_ID` | ID do chat/canal de destino | `-1001234567890` |
 | `TIMEZONE` | Fuso horário | `America/Sao_Paulo` |
 | `PUPPETEER_ARGS` | Flags do Chromium | `--no-sandbox` |
+
+No GitHub Actions, configure `TELEGRAM_BOT_TOKEN` e `TELEGRAM_CHAT_ID` como **Secrets** do repositório.
 
 ---
 

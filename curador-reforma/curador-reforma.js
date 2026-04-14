@@ -3,18 +3,18 @@
 /**
  * TERA Curador Reforma v2 — Orquestrador Principal
  *
- * Coleta publicações da Reforma Tributária do Consumo (IBS/CBS) em 7 portais
- * fiscais, grava JSON estruturado e envia e-mail de resumo.
+ * Coleta publicações da Reforma Tributária do Consumo (IBS/CBS) em 7 portais,
+ * resolve links diretos dos documentos, adiciona campo status, grava JSON
+ * e envia notificação via Telegram.
  *
  * Uso:  node curador-reforma.js
  * CI:   configurado via secrets no workflow curadoria_reforma_v2.yml
  *
  * Variáveis de ambiente:
- *   EMAIL_USER       Gmail remetente
- *   EMAIL_PASS       App Password Gmail
- *   EMAIL_TO         Destinatário (default: tectributos.federal11@gmail.com)
- *   TIMEZONE         Fuso (default: America/Sao_Paulo)
- *   PUPPETEER_ARGS   Flags Chromium (CI: --no-sandbox)
+ *   TELEGRAM_BOT_TOKEN  — token do bot Telegram
+ *   TELEGRAM_CHAT_ID    — ID do chat/canal de destino
+ *   TIMEZONE            — fuso (default: America/Sao_Paulo)
+ *   PUPPETEER_ARGS      — flags Chromium para CI (--no-sandbox)
  */
 
 const path = require('path');
@@ -22,8 +22,7 @@ const fs   = require('fs');
 
 // ── Carrega .env local se existir (não obrigatório em CI) ────────────────────
 try {
-  const envPath = path.join(__dirname, '.env');
-  fs.readFileSync(envPath, 'utf8')
+  fs.readFileSync(path.join(__dirname, '.env'), 'utf8')
     .split('\n')
     .filter(l => l.trim() && !l.startsWith('#'))
     .forEach(l => {
@@ -33,18 +32,19 @@ try {
       const v = l.slice(idx + 1).trim();
       if (k && !process.env[k]) process.env[k] = v;
     });
-} catch (_) { /* .env é opcional */ }
+} catch (_) {}
 
-const { parseCte }     = require('./src/parsers/cte');
-const { parseNfe }     = require('./src/parsers/nfe');
-const { parseCgibs }   = require('./src/parsers/cgibs');
-const { parseMdfe }    = require('./src/parsers/mdfe');
-const { parseNfabi }   = require('./src/parsers/nfabi');
-const { parseBpe }     = require('./src/parsers/bpe');
-const { parseNfseRtc } = require('./src/parsers/nfseRtc');
-const { enviarResumo } = require('./src/utils/email');
-const logger           = require('./src/utils/logger');
-const { hoje, agora }  = require('./src/utils/date');
+const { parseCte }          = require('./src/parsers/cte');
+const { parseNfe }          = require('./src/parsers/nfe');
+const { parseCgibs }        = require('./src/parsers/cgibs');
+const { parseMdfe }         = require('./src/parsers/mdfe');
+const { parseNfabi }        = require('./src/parsers/nfabi');
+const { parseBpe }          = require('./src/parsers/bpe');
+const { parseNfseRtc }      = require('./src/parsers/nfseRtc');
+const { enviarTelegram }    = require('./src/utils/telegram');
+const { resolverLinkDireto, isListaUrl } = require('./src/utils/linkResolver');
+const logger                = require('./src/utils/logger');
+const { hoje, agora }       = require('./src/utils/date');
 
 const DATA_DIR     = path.join(__dirname, 'data');
 const PENDENTE_DIR = path.join(__dirname, 'pendente-publicacao');
@@ -64,13 +64,54 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 function garantirDirs() {
   for (const dir of [DATA_DIR, PENDENTE_DIR]) {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-      logger.info(`Diretório criado: ${dir}`);
+    if (!fs.existsSync(dir)) { fs.mkdirSync(dir, { recursive: true }); }
+  }
+}
+
+// ── Resolução de links diretos ─────────────────────────────────────────────
+// Roda APÓS a coleta de todos os portais.
+// Para cada item cujo url ainda aponta para a página de lista, tenta
+// extrair o link direto do documento (exibirArquivo, /arquivo/show, PDF, etc.)
+async function resolverLinks(portais) {
+  let resolvidos = 0;
+  let fallbacks  = 0;
+
+  for (const portal of portais) {
+    for (const item of portal.itens || []) {
+      // Salva referência à lista antes de qualquer substituição
+      item.linkLista = portal.url;
+
+      const precisaResolver = !item.url || isListaUrl(item.url) || item.url === portal.url;
+
+      if (precisaResolver) {
+        const { link, linkResolvido } = await resolverLinkDireto(portal.url, item.titulo);
+        item.url           = link;
+        item.linkResolvido = linkResolvido;
+        linkResolvido ? resolvidos++ : fallbacks++;
+      } else {
+        // Parser já encontrou link direto
+        item.linkResolvido = true;
+        resolvidos++;
+      }
+    }
+  }
+
+  logger.info(`[linkResolver] ${resolvidos} resolvidos · ${fallbacks} fallback(s) para lista`);
+}
+
+// ── Campo status ─────────────────────────────────────────────────────────────
+// Adiciona status:"vigente" em todos os itens novos.
+// (Detecção de versões superadas acontece no Python de integração,
+//  que tem acesso ao histórico completo do reforma_em_dia.json)
+function adicionarStatus(portais) {
+  for (const portal of portais) {
+    for (const item of portal.itens || []) {
+      if (!item.status) item.status = 'vigente';
     }
   }
 }
 
+// ── Execução principal ────────────────────────────────────────────────────
 async function executar() {
   logger.info('══════════════════════════════════════════════════');
   logger.info('  TERA Curador Reforma v2  —  Início de execução ');
@@ -87,45 +128,47 @@ async function executar() {
   const erros    = [];
   let totalItens = 0;
 
+  // ── 1. Coleta ──────────────────────────────────────────────────────────
   for (let i = 0; i < PARSERS.length; i++) {
     const { fn } = PARSERS[i];
 
     try {
       const resultado = await fn();
       portais.push(resultado);
-
       const qtd = (resultado.itens || []).length;
       totalItens += qtd;
 
       if (resultado.erro) {
         erros.push(`${resultado.nome}: ${resultado.erro}`);
-        logger.warn(`[${i + 1}/${PARSERS.length}] ${resultado.nome} — ERRO: ${resultado.erro}`);
+        logger.warn(`[${i+1}/${PARSERS.length}] ${resultado.nome} — ERRO: ${resultado.erro}`);
       } else {
-        logger.info(`[${i + 1}/${PARSERS.length}] ${resultado.nome} — ${qtd} item(ns)`);
+        logger.info(`[${i+1}/${PARSERS.length}] ${resultado.nome} — ${qtd} item(ns)`);
       }
     } catch (err) {
-      // Um portal falhando NÃO impede os demais
-      const nomeErr = fn.name.replace(/^parse/, '');
-      logger.error(`[${i + 1}/${PARSERS.length}] ${nomeErr} — erro inesperado: ${err.message}`);
-      erros.push(`${nomeErr}: ${err.message}`);
-      portais.push({
-        nome: nomeErr, url: '', consultadoEm: agora(),
-        encontrouItensHoje: false, itens: [],
-        erro: err.message,
-      });
+      const nome = fn.name.replace(/^parse/, '');
+      logger.error(`[${i+1}/${PARSERS.length}] ${nome} — erro inesperado: ${err.message}`);
+      erros.push(`${nome}: ${err.message}`);
+      portais.push({ nome, url: '', consultadoEm: agora(), encontrouItensHoje: false, itens: [], erro: err.message });
     }
 
     if (i < PARSERS.length - 1) {
-      logger.info(`   ⏳ ${DELAY_MS}ms antes do próximo portal...`);
+      logger.info(`   ⏳ ${DELAY_MS}ms...`);
       await sleep(DELAY_MS);
     }
   }
 
+  // ── 2. Pós-processamento: links diretos e status ───────────────────────
+  if (totalItens > 0) {
+    logger.info('Resolvendo links diretos dos documentos...');
+    await resolverLinks(portais);
+    adicionarStatus(portais);
+  }
+
+  // ── 3. Monta payload JSON ─────────────────────────────────────────────
   const totalPortaisVerificados = portais.length;
   const totalPortaisComItens    = portais.filter(p => p.encontrouItensHoje).length;
   const totalPortaisSemItens    = totalPortaisVerificados - totalPortaisComItens;
 
-  // ── Monta payload JSON ────────────────────────────────────────────────────
   const resultado = {
     dataVerificacao,
     dataExecucao,
@@ -137,25 +180,24 @@ async function executar() {
     erros,
   };
 
-  // ── Grava reforma_curadoria.json ──────────────────────────────────────────
+  // ── 4. Grava JSON ─────────────────────────────────────────────────────
   const outputPath = path.join(DATA_DIR, 'reforma_curadoria.json');
   fs.writeFileSync(outputPath, JSON.stringify(resultado, null, 2), 'utf8');
   logger.info(`JSON salvo: ${outputPath}`);
 
-  // ── Grava pendente-publicacao se houver itens ─────────────────────────────
   if (totalItens > 0) {
-    const slug     = dataVerificacao.replace(/\//g, '-');
-    const pPath    = path.join(PENDENTE_DIR, `curadoria_${slug}.json`);
+    const slug  = dataVerificacao.replace(/\//g, '-');
+    const pPath = path.join(PENDENTE_DIR, `curadoria_${slug}.json`);
     fs.writeFileSync(pPath, JSON.stringify(resultado, null, 2), 'utf8');
     logger.info(`${totalItens} item(ns) → pendente-publicacao/curadoria_${slug}.json`);
   }
 
-  // ── E-mail — SEMPRE enviado ───────────────────────────────────────────────
-  logger.info('Enviando e-mail de resumo...');
-  await enviarResumo(resultado);
+  // ── 5. Notificação Telegram ───────────────────────────────────────────
+  logger.info('Enviando notificação Telegram...');
+  await enviarTelegram(resultado);
 
   logger.info('══════════════════════════════════════════════════');
-  logger.info(`  Concluído: ${totalItens} item(ns) · ${totalPortaisComItens}/${totalPortaisVerificados} portais com itens · ${erros.length} erro(s)`);
+  logger.info(`  Concluído: ${totalItens} item(ns) · ${totalPortaisComItens}/${totalPortaisVerificados} portais · ${erros.length} erro(s)`);
   logger.info('══════════════════════════════════════════════════');
 }
 

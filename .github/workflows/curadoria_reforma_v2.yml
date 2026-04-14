@@ -37,9 +37,8 @@ jobs:
       - name: Executar curadoria
         working-directory: ./curador-reforma
         env:
-          EMAIL_USER: ${{ secrets.GMAIL_USER }}
-          EMAIL_PASS: ${{ secrets.GMAIL_APP_PASSWORD }}
-          EMAIL_TO: tectributos.federal11@gmail.com
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TIMEZONE: America/Sao_Paulo
           PUPPETEER_ARGS: --no-sandbox
         run: node curador-reforma.js
@@ -49,60 +48,108 @@ jobs:
           # Se o curador encontrou itens, mesclar com data/reforma_em_dia.json
           if [ -f curador-reforma/data/reforma_curadoria.json ]; then
             python3 << 'PYEOF'
-          import json, os
+          import json, os, re, hashlib
           from datetime import datetime
 
           curadoria_path = "curador-reforma/data/reforma_curadoria.json"
           reforma_path = "data/reforma_em_dia.json"
 
-          # Carregar curadoria do dia
+          # ── Detecta série + versão de uma nota técnica ──────────────────────
+          # Ex.: "Nota Técnica 2025.001 v.1.07" → ("2025.001", (1, 7))
+          RE_NT = re.compile(
+              r'(?:nota\s+t[eé]cnica|nt)[\s_]*(\d{4}\.\d{3,4})'
+              r'.*?v[\.\s]*(\d+)[\.\s]+(\d+)',
+              re.IGNORECASE
+          )
+
+          def extrair_nt(titulo):
+              m = RE_NT.search(titulo or "")
+              if not m:
+                  return None, None
+              serie = m.group(1)
+              versao = (int(m.group(2)), int(m.group(3)))
+              return serie, versao
+
+          # ── Formata data DD/MM/YYYY → YYYY-MM-DD ────────────────────────────
+          def fmt_data(d):
+              if not d:
+                  return ""
+              if "/" in d:
+                  parts = d.split("/")
+                  if len(parts) == 3:
+                      return f"{parts[2]}-{parts[1]}-{parts[0]}"
+              return d[:10]
+
+          # ── Carrega curadoria do dia ─────────────────────────────────────────
           with open(curadoria_path, "r", encoding="utf-8") as f:
               curadoria = json.load(f)
 
-          # Carregar histórico
+          # ── Carrega histórico ────────────────────────────────────────────────
           if os.path.exists(reforma_path):
               with open(reforma_path, "r", encoding="utf-8") as f:
                   historico = json.load(f)
           else:
               historico = {"itens": []}
 
-          # Mesclar itens novos (sem duplicar por id)
+          # ── Migração: garantir status em itens existentes ────────────────────
+          migrados = 0
+          for item in historico.get("itens", []):
+              if "status" not in item:
+                  item["status"] = "vigente"
+                  migrados += 1
+          if migrados:
+              print(f"Migração: {migrados} item(ns) receberam status='vigente'")
+
+          # ── Índice de ids existentes ─────────────────────────────────────────
           ids_existentes = {item.get("id", "") for item in historico.get("itens", [])}
           novos = 0
+          superados = 0
 
           for portal in curadoria.get("portais", []):
               for item in portal.get("itens", []):
-                  # Criar id compatível
-                  import hashlib
                   raw = (item.get("url", "") + "|" + item.get("titulo", "")).strip()
                   item_id = hashlib.sha256(raw.encode()).hexdigest()[:16]
 
                   if item_id in ids_existentes:
                       continue
 
-                  # Converter para formato reforma_em_dia.json
                   novo = {
-                      "id": item_id,
-                      "data": item.get("dataPublicacao", "").replace("/", "-")[:10] if "/" not in item.get("dataPublicacao", "") else (lambda d: f"{d.split('/')[2]}-{d.split('/')[1]}-{d.split('/')[0]}")(item["dataPublicacao"]),
-                      "titulo": item.get("titulo", ""),
-                      "categoria": item.get("tipoConteudo", "Orientação").title(),
-                      "tags": item.get("tags", []),
-                      "resumo": item.get("resumoCurto", ""),
-                      "fonte": item.get("portalOrigem", ""),
-                      "link": item.get("url", ""),
+                      "id":         item_id,
+                      "data":       fmt_data(item.get("dataPublicacao", "")),
+                      "titulo":     item.get("titulo", ""),
+                      "categoria":  item.get("tipoConteudo", "Orientação").title(),
+                      "tags":       item.get("tags", []),
+                      "resumo":     item.get("resumoCurto", ""),
+                      "fonte":      item.get("portalOrigem", ""),
+                      "link":       item.get("url", ""),
+                      "linkLista":  item.get("linkLista", ""),
+                      "linkResolvido": item.get("linkResolvido", False),
+                      "status":     item.get("status", "vigente"),
                   }
+
+                  # ── Detecção de versões superadas ────────────────────────────
+                  serie_nova, versao_nova = extrair_nt(novo["titulo"])
+                  if serie_nova and versao_nova:
+                      for existente in historico["itens"]:
+                          if existente.get("status") == "superada":
+                              continue
+                          serie_ex, versao_ex = extrair_nt(existente.get("titulo", ""))
+                          if serie_ex == serie_nova and versao_ex and versao_ex < versao_nova:
+                              existente["status"] = "superada"
+                              superados += 1
+
                   historico["itens"].append(novo)
                   ids_existentes.add(item_id)
                   novos += 1
 
-          # Ordenar por data (mais recente primeiro)
+          # ── Ordenar por data (mais recente primeiro) ─────────────────────────
           historico["itens"].sort(key=lambda x: x.get("data", ""), reverse=True)
           historico["ultima_atualizacao"] = datetime.now().isoformat()
 
           with open(reforma_path, "w", encoding="utf-8") as f:
               json.dump(historico, f, ensure_ascii=False, indent=2)
 
-          print(f"Integração: {novos} novo(s) item(ns) adicionado(s) ao reforma_em_dia.json")
+          print(f"Integração: {novos} novo(s) · {superados} superado(s) · reforma_em_dia.json atualizado")
           PYEOF
           fi
 
