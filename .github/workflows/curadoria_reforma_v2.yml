@@ -1,0 +1,115 @@
+name: TERA — Curadoria Reforma v2 (Node.js)
+
+on:
+  schedule:
+    # 19:00 BRT = 22:00 UTC
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  curadoria:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependências
+        working-directory: ./curador-reforma
+        run: npm ci || npm install
+
+      - name: Instalar dependências do Puppeteer (Chrome)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 \
+            libgbm1 libasound2 libpangocairo-1.0-0 libatk1.0-0 libcups2 \
+            libnspr4 libnss3 libxss1 fonts-liberation xdg-utils
+
+      - name: Executar curadoria
+        working-directory: ./curador-reforma
+        env:
+          EMAIL_USER: ${{ secrets.GMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.GMAIL_APP_PASSWORD }}
+          EMAIL_TO: tectributos.federal11@gmail.com
+          TIMEZONE: America/Sao_Paulo
+          PUPPETEER_ARGS: --no-sandbox
+        run: node curador-reforma.js
+
+      - name: Integrar com reforma_em_dia.json
+        run: |
+          # Se o curador encontrou itens, mesclar com data/reforma_em_dia.json
+          if [ -f curador-reforma/data/reforma_curadoria.json ]; then
+            python3 << 'PYEOF'
+          import json, os
+          from datetime import datetime
+
+          curadoria_path = "curador-reforma/data/reforma_curadoria.json"
+          reforma_path = "data/reforma_em_dia.json"
+
+          # Carregar curadoria do dia
+          with open(curadoria_path, "r", encoding="utf-8") as f:
+              curadoria = json.load(f)
+
+          # Carregar histórico
+          if os.path.exists(reforma_path):
+              with open(reforma_path, "r", encoding="utf-8") as f:
+                  historico = json.load(f)
+          else:
+              historico = {"itens": []}
+
+          # Mesclar itens novos (sem duplicar por id)
+          ids_existentes = {item.get("id", "") for item in historico.get("itens", [])}
+          novos = 0
+
+          for portal in curadoria.get("portais", []):
+              for item in portal.get("itens", []):
+                  # Criar id compatível
+                  import hashlib
+                  raw = (item.get("url", "") + "|" + item.get("titulo", "")).strip()
+                  item_id = hashlib.sha256(raw.encode()).hexdigest()[:16]
+
+                  if item_id in ids_existentes:
+                      continue
+
+                  # Converter para formato reforma_em_dia.json
+                  novo = {
+                      "id": item_id,
+                      "data": item.get("dataPublicacao", "").replace("/", "-")[:10] if "/" not in item.get("dataPublicacao", "") else (lambda d: f"{d.split('/')[2]}-{d.split('/')[1]}-{d.split('/')[0]}")(item["dataPublicacao"]),
+                      "titulo": item.get("titulo", ""),
+                      "categoria": item.get("tipoConteudo", "Orientação").title(),
+                      "tags": item.get("tags", []),
+                      "resumo": item.get("resumoCurto", ""),
+                      "fonte": item.get("portalOrigem", ""),
+                      "link": item.get("url", ""),
+                  }
+                  historico["itens"].append(novo)
+                  ids_existentes.add(item_id)
+                  novos += 1
+
+          # Ordenar por data (mais recente primeiro)
+          historico["itens"].sort(key=lambda x: x.get("data", ""), reverse=True)
+          historico["ultima_atualizacao"] = datetime.now().isoformat()
+
+          with open(reforma_path, "w", encoding="utf-8") as f:
+              json.dump(historico, f, ensure_ascii=False, indent=2)
+
+          print(f"Integração: {novos} novo(s) item(ns) adicionado(s) ao reforma_em_dia.json")
+          PYEOF
+          fi
+
+      - name: Commit e push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "TERA Bot"
+          git add data/reforma_em_dia.json curador-reforma/pendente-publicacao/ curador-reforma/logs/ curador-reforma/data/
+          git diff --cached --quiet || git commit -m "⚖️ Curadoria Reforma v2 $(date +'%d/%m/%Y %H:%M') BRT"
+          git push
