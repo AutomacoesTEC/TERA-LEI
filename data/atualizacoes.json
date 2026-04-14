@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-13T10:20:58.895481-03:00",
-  "data_busca": "2026-04-13",
-  "total": 277,
-  "novos_nesta_execucao": 3,
+  "ultima_atualizacao": "2026-04-14T10:19:51.108372-03:00",
+  "data_busca": "2026-04-14",
+  "total": 286,
+  "novos_nesta_execucao": 9,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,78 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "15f3e7b634fc558f",
+      "data": "2026-04-14",
+      "titulo": "13/04/2026 18:50Na quarta (15)Quinta live da Receita sobre o Imposto de Renda é sobre a calculadora Revar",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/quinta-live-da-receita-sobre-imposto-de-renda-calculadora-revar",
+      "resumo": ""
+    },
+    {
+      "id": "ac81b07ff47c1ed6",
+      "data": "2026-04-14",
+      "titulo": "13/04/2026 18:55Serviços Públicos'Vocês não são invisíveis', diz Lula ao ampliar direitos de terceirizados na Administração Pública Federal",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/201cvoces-nao-sao-invisiveis201d-diz-lula-ao-ampliar-direitos-de-terceirizados-na-administracao-publica-federal",
+      "resumo": ""
+    },
+    {
+      "id": "c18a4356f8c1308c",
+      "data": "2026-04-14",
+      "titulo": "13/04/2026 15:41Em OrlandoForagido da Justiça brasileira é preso nos EUA com apoio da Polícia Federal",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/foragido-da-justica-brasileira-e-preso-nos-eua-com-apoio-da-pf",
+      "resumo": ""
+    },
+    {
+      "id": "7dc334bcd3b3abfd",
+      "data": "2026-04-14",
+      "titulo": "13/04/2026 17:51TrabalhoOperação do Governo do Brasil garante aos paulistas crédito para conclusão do túnel Santos-Guarujá",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/governo-assina-emprestimo-do-banco-do-brasil-para-conclusao-das-obras-do-tunel-santos-guaruja",
+      "resumo": ""
+    },
+    {
+      "id": "6685a8f9cc2c9349",
+      "data": "2026-04-14",
+      "titulo": "14/04/2026 08:48Brasil DigitalAmazonas será o primeiro estado com universalização da rede de comunicação pública",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/amazonas-sera-o-primeiro-estado-com-universalizacao-da-comunicacao-publica",
+      "resumo": ""
+    },
+    {
+      "id": "fd5be25dfe31a8d4",
+      "data": "2026-04-14",
+      "titulo": "Em ato de diálogo e respeito, prefeito de Goiânia se retrata com a classe contábil durante posse no CRCGO",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/em-ato-de-dialogo-e-respeito-prefeito-de-goiania-se-retrata-com-a-classe-contabil-durante-posse-no-crcgo/",
+      "resumo": "Presidente do CFC, Joaquim Bezerra Filho, reforçou a importância técnica da profissão e a necessidade de união entre o poder público e os profissionais da contabilidade O prefeito de Goiânia, Sandro Mabel, publicamente, pediu desculpas aos profissionais da contabilidade após repercussão negativa de declarações em que criticou a atuação de escritórios contábeis. O pedido ocorreu durante a cerimônia de posseContinuar Lendo...Leia Mais"
+    },
+    {
+      "id": "5d048a25b51094cc",
+      "data": "2026-04-14",
+      "titulo": "Cursos sobre gestão da qualidade em auditoria oferecem até 40% de desconto para profissionais com registro ativo",
+      "portal": "CFC",
+      "link": "https://cfc.org.br/noticias/cursos-sobre-gestao-da-qualidade-em-auditoria-oferecem-ate-40-de-desconto-para-profissionais-com-registro-ativo/",
+      "resumo": "Profissionais da contabilidade interessados em aprimorar conhecimentos em auditoria independente passam a contar com novas oportunidades de capacitação voltadas à gestão da qualidade. Estão abertas as inscrições para os cursos ISQM 01 – Casos Reais e Teoria Aplicada e ISQM 02 – Formação de Revisores da Qualidade, promovidos pelo Ibracon – Instituto de Auditoria Independente do Brasil. As iniciativas integramContinuar Lendo...Leia Mais"
+    },
+    {
+      "id": "e26dab644206fca2",
+      "data": "2026-04-14",
+      "titulo": "EDUCAÇÃO FISCAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=EDUCA%C3%87%C3%83O%20FISCAL",
+      "resumo": ""
+    },
+    {
+      "id": "bbb1a3500872435b",
+      "data": "2026-04-14",
+      "titulo": "CURRÍCULOS ESCOLARES",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=CURR%C3%8DCULOS%20ESCOLARES",
+      "resumo": ""
+    },
     {
       "id": "d4b0c33145c9f6b4",
       "data": "2026-04-13",
