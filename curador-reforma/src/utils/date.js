@@ -11,27 +11,31 @@ dayjs.extend(customParseFormat);
 
 const TZ = process.env.TIMEZONE || 'America/Sao_Paulo';
 
-/** Retorna a data de hoje em BRT no formato DD/MM/YYYY */
+/** Data de hoje em BRT: DD/MM/YYYY */
 function hoje() {
   return dayjs().tz(TZ).format('DD/MM/YYYY');
 }
 
-/** Retorna a data de hoje em BRT no formato YYYY-MM-DD */
+/** Data de hoje em BRT: YYYY-MM-DD */
 function hojeISO() {
   return dayjs().tz(TZ).format('YYYY-MM-DD');
 }
 
+/** Data+hora atual em BRT: DD/MM/YYYY HH:mm:ss */
+function agora() {
+  return dayjs().tz(TZ).format('DD/MM/YYYY HH:mm:ss');
+}
+
 /**
- * Verifica se uma string de data contém a data de hoje (BRT).
- * Aceita formatos comuns: DD/MM/YYYY, DD/MM/YY, DD-MM-YYYY, etc.
+ * Verifica se uma string de texto contém a data de hoje (BRT).
+ * Reconhece DD/MM/YYYY, DD/MM/YY, DD-MM-YYYY, DD.MM.YYYY
  */
-function isHoje(dateStr) {
-  if (!dateStr) return false;
-  const hj = hoje(); // "DD/MM/YYYY"
+function isHoje(texto) {
+  if (!texto) return false;
+  const hj = hoje(); // DD/MM/YYYY
   const [hd, hm, hy] = hj.split('/');
 
-  // Tenta extrair DD/MM/YYYY ou DD-MM-YYYY
-  const match = dateStr.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
+  const match = texto.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
   if (!match) return false;
   const [, d, m, y] = match;
   const ano = y.length === 2 ? `20${y}` : y;
@@ -41,13 +45,24 @@ function isHoje(dateStr) {
 }
 
 /**
- * Trunca um texto para no máximo N palavras.
+ * Extrai a primeira ocorrência de DD/MM/YYYY (ou DD/MM/YY) de uma string.
+ * Retorna string no formato DD/MM/YYYY ou null.
  */
+function extrairData(texto) {
+  if (!texto) return null;
+  const m = texto.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
+  if (!m) return null;
+  const [, d, mo, y] = m;
+  const ano = y.length === 2 ? `20${y}` : y;
+  return `${d.padStart(2, '0')}/${mo.padStart(2, '0')}/${ano}`;
+}
+
+/** Trunca texto para no máximo N palavras, adicionando '…' se necessário. */
 function truncarPalavras(texto, max = 50) {
   if (!texto) return '';
-  const palavras = texto.trim().split(/\s+/);
-  if (palavras.length <= max) return texto.trim();
+  const palavras = texto.trim().replace(/\s+/g, ' ').split(' ');
+  if (palavras.length <= max) return palavras.join(' ');
   return palavras.slice(0, max).join(' ') + '…';
 }
 
-module.exports = { hoje, hojeISO, isHoje, truncarPalavras, TZ };
+module.exports = { hoje, hojeISO, agora, isHoje, extrairData, truncarPalavras, TZ };

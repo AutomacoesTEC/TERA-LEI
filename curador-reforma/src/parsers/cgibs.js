@@ -3,33 +3,50 @@
 /**
  * Parser: CGIBS — Notícias
  * URL: https://www.cgibs.gov.br/noticias
- * Método: Puppeteer (SPA — React/Next.js)
+ *
+ * Estrutura observada: SPA (React/Next.js).
+ * Pode exibir "Exibindo 0 a 0 de 0 itens" (página vazia) ou cards com
+ * comunicados, eventos, documentos. Editorias: Comunicados, Eventos,
+ * Institucional, Transparência.
+ *
+ * Lógica: Puppeteer headless; detecta página vazia; coleta cards com data;
+ * faz fetch secundário em links internos para extrair título/data completa.
  */
 
-const { hoje, isHoje, truncarPalavras } = require('../utils/date');
+const { hoje, isHoje, extrairData, truncarPalavras, agora } = require('../utils/date');
 const logger = require('../utils/logger');
 
-const PORTAL = {
-  nome: 'CGIBS',
-  url:  'https://www.cgibs.gov.br/noticias',
-};
+const NOME    = 'CGIBS';
+const URL     = 'https://www.cgibs.gov.br/noticias';
 const UA      = 'Auditec-Curador/1.0 (Fiscal Compliance)';
 const TIMEOUT = 30_000;
 const RETRIES = 2;
 
+// Regex página vazia
+const RE_VAZIO = /Exibindo\s+0\s+a\s+0\s+de\s+0\s+itens/i;
+
 function gerarTags(texto) {
   const t = (texto || '').toUpperCase();
   const tags = ['IBS', 'CGIBS'];
-  if (t.match(/\bCBS\b/))                    tags.push('CBS');
-  if (t.match(/\bIS\b|SELETIVO/))            tags.push('IS');
-  if (t.match(/NOTA.T[EÉ]CNICA|NT\s*\d/))   tags.push('NT');
-  if (t.match(/REFORMA|RTC/))                tags.push('RTC');
-  if (t.match(/REGULAMENTO|REGULA/))         tags.push('Regulamentação');
-  if (t.match(/COMIT[EÊ]\s*GESTOR/))        tags.push('Comitê Gestor');
+  if (/\bCBS\b/.test(t))              tags.push('CBS');
+  if (/\bIS\b|SELETIVO/.test(t))     tags.push('IS');
+  if (/NOTA.T[EÉ]CNICA|NT\s*\d/.test(t)) tags.push('NT');
+  if (/RTC|REFORMA/.test(t))          tags.push('RTC');
+  if (/COMUNICADO/.test(t))           tags.push('Comunicado');
+  if (/COMIT[EÊ]\s*GESTOR/.test(t))  tags.push('Comitê Gestor');
+  if (/REGULAMENTO/.test(t))          tags.push('Regulamentação');
+  if (/CARTILHA|MANUAL|GUIA/.test(t)) tags.push('Material');
   return [...new Set(tags)];
 }
 
+function truncar(texto, max) {
+  if (!texto) return '';
+  const p = texto.trim().replace(/\s+/g, ' ').split(' ');
+  return p.length <= max ? p.join(' ') : p.slice(0, max).join(' ') + '…';
+}
+
 async function parseCgibs() {
+  const consultadoEm = agora();
   logger.info(`[CGIBS] Iniciando coleta via Puppeteer`);
   const hj = hoje();
 
@@ -38,28 +55,20 @@ async function parseCgibs() {
     puppeteer = require('puppeteer');
   } catch (e) {
     logger.error('[CGIBS] puppeteer não instalado: ' + e.message);
-    return { ...PORTAL, itens: [], erro: 'puppeteer não instalado' };
+    return { nome: NOME, url: URL, consultadoEm, encontrouItensHoje: false, itens: [], erro: 'puppeteer não instalado' };
   }
 
-  const puppeteerArgs = (process.env.PUPPETEER_ARGS || '--no-sandbox')
-    .split(' ')
-    .filter(Boolean);
+  const puppeteerArgs = (process.env.PUPPETEER_ARGS || '--no-sandbox').split(' ').filter(Boolean);
 
   let browser;
-  for (let tentativa = 1; tentativa <= RETRIES; tentativa++) {
+  for (let t = 1; t <= RETRIES; t++) {
     try {
-      browser = await puppeteer.launch({
-        headless: 'new',
-        args: puppeteerArgs,
-        timeout: TIMEOUT,
-      });
+      browser = await puppeteer.launch({ headless: 'new', args: puppeteerArgs, timeout: TIMEOUT });
       break;
     } catch (err) {
-      logger.warn(`[CGIBS] Tentativa ${tentativa} de iniciar browser falhou: ${err.message}`);
-      if (tentativa === RETRIES) {
-        return { ...PORTAL, itens: [], erro: err.message };
-      }
-      await new Promise(r => setTimeout(r, 2000));
+      logger.warn(`[CGIBS] Browser launch tentativa ${t}: ${err.message}`);
+      if (t === RETRIES) return { nome: NOME, url: URL, consultadoEm, encontrouItensHoje: false, itens: [], erro: err.message };
+      await sleep(2000);
     }
   }
 
@@ -67,83 +76,100 @@ async function parseCgibs() {
     const page = await browser.newPage();
     await page.setUserAgent(UA);
     await page.setDefaultNavigationTimeout(TIMEOUT);
+    await page.goto(URL, { waitUntil: 'networkidle2' });
 
-    await page.goto(PORTAL.url, { waitUntil: 'networkidle2' });
+    // Aguarda renderização SPA
+    await page.waitForSelector('article, .card, h2, h3, [class*="noticia"], [class*="card"]', { timeout: 12_000 })
+              .catch(() => {});
+    await sleep(2000);
 
-    // Aguarda renderização do conteúdo SPA
-    await page.waitForSelector('article, .noticia, .card, h2, h3', { timeout: 15_000 }).catch(() => {});
-    await new Promise(r => setTimeout(r, 2000));
+    const pageText = await page.evaluate(() => document.body.innerText || document.body.textContent || '');
 
-    const itens = await page.evaluate((hjStr) => {
+    // Detecta página vazia
+    if (RE_VAZIO.test(pageText)) {
+      logger.info('[CGIBS] Página de notícias sem itens hoje (indicador "0 a 0 de 0")');
+      return {
+        nome: NOME, url: URL, consultadoEm,
+        encontrouItensHoje: false, itens: [],
+        observacoes: 'Página retornou "Exibindo 0 a 0 de 0 itens" — sem publicações hoje.',
+      };
+    }
+
+    // Coleta cards/itens com data de hoje
+    const candidatos = await page.evaluate((hjStr) => {
       const resultado = [];
+      const seletores = ['article', '.card', '[class*="noticia"]', '[class*="card"]', 'li', '.item'];
 
-      // Seletores típicos de portais gov.br SPA (React)
-      const seletores = [
-        'article',
-        '.noticia',
-        '.card-noticia',
-        '[class*="noticia"]',
-        '[class*="card"]',
-        'li',
-      ];
+      for (const sel of seletores) {
+        const els = document.querySelectorAll(sel);
+        if (!els.length) continue;
 
-      for (const seletor of seletores) {
-        const elementos = document.querySelectorAll(seletor);
-        if (elementos.length === 0) continue;
-
-        for (const el of elementos) {
+        for (const el of els) {
           const texto = el.innerText || el.textContent || '';
-          if (!texto.includes(hjStr.split('/')[0]) ||
-              !texto.includes(hjStr.split('/')[1]) ||
-              !texto.includes(hjStr.split('/')[2])) continue;
+          // Verifica se contém dia, mês e ano de hoje
+          const [d, m, y] = hjStr.split('/');
+          if (!texto.includes(d) || !texto.includes(m) || !texto.includes(y)) continue;
 
           const linkEl = el.querySelector('a');
-          const titulo = linkEl?.innerText?.trim() ||
-                         el.querySelector('h1,h2,h3,h4')?.innerText?.trim() ||
-                         texto.substring(0, 120).trim();
+          const titulo = (
+            el.querySelector('h1,h2,h3,h4,h5')?.innerText?.trim() ||
+            linkEl?.innerText?.trim() ||
+            texto.substring(0, 120)
+          ).replace(/\s+/g, ' ').trim();
 
           if (!titulo || titulo.length < 5) continue;
 
           const href = linkEl?.getAttribute('href') || '';
-          const url  = href.startsWith('http') ? href
-                     : href ? 'https://www.cgibs.gov.br' + href
-                     : 'https://www.cgibs.gov.br/noticias';
+          const urlCard = href.startsWith('http') ? href
+                        : href ? 'https://www.cgibs.gov.br' + href
+                        : 'https://www.cgibs.gov.br/noticias';
 
-          resultado.push({ titulo, href: url, resumoRaw: texto });
+          // Tenta capturar editoria
+          const editoria = (
+            el.querySelector('[class*="editoria"], [class*="categoria"], [class*="tag"]')?.innerText?.trim() || ''
+          );
+
+          resultado.push({ titulo, href: urlCard, textoCard: texto, editoria });
         }
 
         if (resultado.length > 0) break;
       }
-
       return resultado;
     }, hj);
 
-    const itensFinal = itens.map(item => ({
-      titulo:         item.titulo,
-      dataPublicacao: hj,
-      url:            item.href,
-      resumoCurto:    truncarPalavrasJS(item.resumoRaw || item.titulo, 50),
-      tags:           gerarTags(item.titulo + ' ' + item.resumoRaw),
-      tipoConteudo:   'Notícia',
-      portalOrigem:   PORTAL.nome,
-    }));
+    const itens = [];
+    for (const c of candidatos) {
+      const dataStr = extrairData(c.textoCard) || hj;
+      const resumo  = truncar(c.textoCard.replace(c.titulo, '').trim(), 50);
+      const textoTags = c.titulo + ' ' + c.editoria + ' ' + resumo;
 
-    logger.info(`[CGIBS] ${itensFinal.length} item(ns) do dia encontrado(s)`);
-    return { ...PORTAL, itens: itensFinal };
+      itens.push({
+        titulo: c.titulo,
+        dataPublicacao: dataStr,
+        url: c.href,
+        resumoCurto: resumo,
+        tags: gerarTags(textoTags),
+        portalOrigem: NOME,
+        tipoConteudo: c.editoria || 'notícia',
+        confianca: dataStr !== hj ? 'media' : 'alta',
+      });
+    }
+
+    const encontrouItensHoje = itens.length > 0;
+    logger.info(`[CGIBS] ${itens.length} item(ns) do dia`);
+    return {
+      nome: NOME, url: URL, consultadoEm,
+      encontrouItensHoje, itens,
+      observacoes: encontrouItensHoje ? '' : 'Portal acessado com sucesso. Nenhum card com a data de hoje encontrado.',
+    };
   } catch (err) {
     logger.error(`[CGIBS] Erro: ${err.message}`);
-    return { ...PORTAL, itens: [], erro: err.message };
+    return { nome: NOME, url: URL, consultadoEm, encontrouItensHoje: false, itens: [], erro: err.message };
   } finally {
     if (browser) await browser.close().catch(() => {});
   }
 }
 
-// Versão local (fora do contexto de browser) da truncarPalavras
-function truncarPalavrasJS(texto, max) {
-  if (!texto) return '';
-  const palavras = texto.trim().split(/\s+/);
-  if (palavras.length <= max) return texto.trim();
-  return palavras.slice(0, max).join(' ') + '…';
-}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 module.exports = { parseCgibs };
