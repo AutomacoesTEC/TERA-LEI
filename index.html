@@ -86,7 +86,7 @@ function getCS(v){return getComputedStyle(document.body).getPropertyValue(v).tri
 const AREAS={tributario:{nome:"Tributário",palavras:["microempresa","empresa de pequeno porte","simples nacional","receita bruta","alíquota","base de cálculo","fato gerador","contribuinte","sujeito passivo","obrigação tributária","crédito tributário","lançamento","isenção","imunidade","prescrição","decadência","compensação","multa","juros","mora","ICMS","ISS","IPI","PIS","COFINS","IRPJ","CSLL","INSS","nota fiscal","escrituração","declaração","MEI","parcelamento","certidão negativa","substituição tributária","dívida ativa","execução fiscal","IBS","CBS","imposto seletivo","IVA","não cumulatividade","cashback","split payment","comitê gestor"]},civil:{nome:"Civil",palavras:["capacidade civil","casamento","divórcio","propriedade","posse","usucapião","contrato","obrigação","dano moral","indenização","sucessão","herança","testamento","inventário"]},penal:{nome:"Penal",palavras:["crime","dolo","culpa","pena","reclusão","legítima defesa","tentativa","reincidência","homicídio","furto","roubo","habeas corpus"]},trabalhista:{nome:"Trabalhista",palavras:["empregado","empregador","CLT","salário","horas extras","férias","FGTS","aviso prévio","rescisão","justa causa","terceirização","convenção coletiva"]},constitucional:{nome:"Constitucional",palavras:["direitos fundamentais","liberdade","igualdade","contraditório","ampla defesa","mandado de segurança","dignidade","cláusula pétrea","STF","medida provisória"]},administrativo:{nome:"Administrativo",palavras:["administração pública","servidor público","licitação","pregão","contrato administrativo","concessão","poder de polícia","improbidade","PAD"]}};
 
 // Parser
-const PATS=[{t:"PARTE",r:/^\s*PARTE\s+(?:GERAL|ESPECIAL|[IVXLCDM]+|PRELIMINAR)\s*$/i},{t:"LIVRO",r:/^\s*LIVRO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"TÍTULO",r:/^\s*T[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"CAPÍTULO",r:/^\s*CAP[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"SEÇÃO",r:/^\s*SE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:"SUBSEÇÃO",r:/^\s*SUBSE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:"ARTIGO",r:/^\s*Art.?\s*\d+[ºo°]?[\s-.]+/},{t:"PARÁGRAFO",r:/^\s*(?:§\s*\d+[ºo°]?.?\s|Par[áa]grafo\s+[úu]nico.?\s)/i},{t:"INCISO",r:/^\s*[IVXLCDM]+\s*[-–—]\s+/},{t:"ALÍNEA",r:/^\s*[a-z])\s+/},{t:"ITEM",r:/^\s*\d+.\s+/}];
+const PATS=[{t:"PARTE",r:/^\s*PARTE\s+(?:GERAL|ESPECIAL|[IVXLCDM]+|PRELIMINAR)\s*$/i},{t:"LIVRO",r:/^\s*LIVRO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"TÍTULO",r:/^\s*T[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"CAPÍTULO",r:/^\s*CAP[ÍI]TULO\s+(?:[IVXLCDM]+|ÚNICO)\s*$/i},{t:"SEÇÃO",r:/^\s*SE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:"SUBSEÇÃO",r:/^\s*SUBSE[ÇC][ÃA]O\s+(?:[IVXLCDM]+|ÚNICA)\s*$/i},{t:"ARTIGO",r:/^\s*Art.?\s*\d+[ºo°]?[\s-.]+/},{t:"PARÁGRAFO",r:/^\s*(?:§\s*\d+[ºo°]?.?\s|Par[áa]grafo\s+[úu]nico.?\s)/i},{t:"INCISO",r:/^\s*[IVXLCDM]+\s*[--—]\s+/},{t:"ALÍNEA",r:/^\s*[a-z])\s+/},{t:"ITEM",r:/^\s*\d+.\s+/}];
 const DIV=new Set(["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"]);
 const CT={get PARTE(){return getCS("--gold")},get LIVRO(){return getCS("--gold")},get TÍTULO(){return getCS("--gold")},get CAPÍTULO(){return getCS("--gold-bright")},get SEÇÃO(){return getCS("--border")},get SUBSEÇÃO(){return getCS("--bg-hover")}};
 
@@ -158,7 +158,7 @@ c = c.replace(/\s*incisos?\s+[IVXLCDM]+/gi, "");
 c = c.replace(/\s*al[íi]neas?\s+[a-z])?/gi, "");
 c = c.replace(/\s*itens?\s+\d+/gi, "");
 c = c.replace(/(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.]+)/gi, "");
-c = c.replace(/[,;.\s-–—ºo°:()]+/g, " ");
+c = c.replace(/[,;.\s--—ºo°:()]+/g, " ");
 c = c.replace(/\b(?:e|a|de|do|da|dos|das|no|na|nos|nas|ao|caput)\b/gi, "");
 return c.trim().length === 0;
 };
@@ -244,8 +244,8 @@ self.postMessage({ ok: false, error: err.message });
 // ═════════════════════════════════════════════════════════════════════════════
 
 function idT(s){for(const p of PATS)if(p.r.test(s.trim()))return p.t;return null;}
-function exId(t,s){s=s.trim();if(DIV.has(t))return s;const R={ARTIGO:/^(Art.?\s*\d+[ºo°]?[-.]?)/,PARÁGRAFO:/^(§\s*\d+[ºo°]?.?|Par[áa]grafo\s+[úu]nico.?)/i,INCISO:/^([IVXLCDM]+)\s*[-–—]/,ALÍNEA:/^([a-z]))/,ITEM:/^(\d+.)/};const m=R[t]?.exec(s);return m?m[1].trim():s.slice(0,30);}
-function exTx(t,s){s=s.trim();if(DIV.has(t))return"";const R={ARTIGO:/^Art.?\s*\d+[ºo°]?[\s-.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?.?\s+|Par[áa]grafo\s+[úu]nico.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[-–—]\s+(.+)/,ALÍNEA:/^[a-z])\s+(.+)/,ITEM:/^\d+.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
+function exId(t,s){s=s.trim();if(DIV.has(t))return s;const R={ARTIGO:/^(Art.?\s*\d+[ºo°]?[-.]?)/,PARÁGRAFO:/^(§\s*\d+[ºo°]?.?|Par[áa]grafo\s+[úu]nico.?)/i,INCISO:/^([IVXLCDM]+)\s*[--—]/,ALÍNEA:/^([a-z]))/,ITEM:/^(\d+.)/};const m=R[t]?.exec(s);return m?m[1].trim():s.slice(0,30);}
+function exTx(t,s){s=s.trim();if(DIV.has(t))return"";const R={ARTIGO:/^Art.?\s*\d+[ºo°]?[\s-.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?.?\s+|Par[áa]grafo\s+[úu]nico.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[--—]\s+(.+)/,ALÍNEA:/^[a-z])\s+(.+)/,ITEM:/^\d+.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
 function parse(txt){const ds=[];let a=null,ag=false;const pre=[];const reAltera=/[?\s*(Reda[çc][ãa]o dada pel[oa](a)[^]]*|Inclu[ií]d[oa](a) pel[oa](a)[^]]*|Revogad[oa](a) pel[oa](a)[^]]*)]?/gi;const reVetado=/(\s*(?:VETADO|Vetado|vetado)\s*)/;const reRevogado=/(\s*(?:REVOGADO|Revogado|revogado)\s*)/;
 for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^[|]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^[|]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^[|]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}else if(!a){pre.push(s);}}if(pre.length>0){const eTxt=pre.join(" ").trim();if(eTxt)ds.unshift({tipo:"EMENTA",id:"",rub:"",txt:eTxt,status:"vigente",alteracao:""});}return detectVetados(ds);}
 
@@ -778,7 +778,7 @@ const isCitationSyntaxOnly = (between) => {
   cleaned = cleaned.replace(/\s*al[íi]neas?\s+[a-z]\)?/gi, "");
   cleaned = cleaned.replace(/\s*itens?\s+\d+/gi, "");
   cleaned = cleaned.replace(/(?:Lei(?:\s+Complementar)?\s+n[ºo°]?\s*[\d.]+|Decreto(?:-Lei)?\s+n[ºo°]?\s*[\d.]+)/gi, "");
-  cleaned = cleaned.replace(/[,;.\s\-–—ºo°:()]+/g, " ");
+  cleaned = cleaned.replace(/[,;.\s\--—ºo°:()]+/g, " ");
   cleaned = cleaned.replace(/\b(?:e|a|de|do|da|dos|das|no|na|nos|nas|ao|caput)\b/gi, "");
   cleaned = cleaned.trim();
   return cleaned.length === 0;
