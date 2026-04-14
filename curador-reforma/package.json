@@ -1,0 +1,19 @@
+{
+  "name": "curador-reforma",
+  "version": "2.0.0",
+  "description": "Curador automático de publicações da Reforma Tributária do Consumo (IBS/CBS)",
+  "main": "curador-reforma.js",
+  "scripts": {
+    "start": "node curador-reforma.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "dayjs": "^1.11.13",
+    "nodemailer": "^6.9.16",
+    "puppeteer": "^22.15.0"
+  }
+}

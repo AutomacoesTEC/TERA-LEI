@@ -46,7 +46,7 @@
       "tags": ["PLP", "Câmara", "IBS", "CBS"],
       "resumo": "Câmara aprova texto-base do projeto de regulamentação da Reforma Tributária com detalhamento de alíquotas, regimes especiais, cashback e split payment.",
       "fonte": "Planalto",
-      "link": ""
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2024/julho/projeto-de-lei-complementar-que-institui-a-CBS-e-o-IBS-e-aprovado-na-camara-dos-deputados"
     },
     {
       "id": "plp68-senado",
@@ -56,7 +56,7 @@
       "tags": ["PLP", "Senado", "IBS", "CBS"],
       "resumo": "Senado aprova o projeto de regulamentação da Reforma Tributária com alterações. Texto retorna à Câmara para análise das mudanças.",
       "fonte": "Planalto",
-      "link": ""
+      "link": "https://www12.senado.leg.br/noticias/materias/2024/12/12/reforma-tributaria-aprovado-o-texto-base-da-regulamentacao-sobre-consumo"
     },
     {
       "id": "lc214-2025",
@@ -96,7 +96,7 @@
       "tags": ["CBS", "IBS", "Teste", "Marco", "Transição", "2026"],
       "resumo": "Entrada em vigor jurídica dos novos tributos com alíquotas-teste (CBS 0,9% e IBS 0,1%). Ano de caráter essencialmente informativo — contribuintes dispensados do recolhimento efetivo mediante cumprimento das obrigações acessórias. PIS/COFINS/ICMS/ISS permanecem integralmente exigíveis.",
       "fonte": "Receita Federal",
-      "link": ""
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2025/dezembro/receita-federal-e-comite-gestor-do-ibs-definem-regras-relativas-a-obrigacoes-acessorias-da-reforma-tributaria-para-inicio-de-2026"
     },
     {
       "id": "lc227-2026",
@@ -124,9 +124,9 @@
       "titulo": "NT EFD-Reinf nº 01/2026 — Orientações atualizadas",
       "categoria": "Nota Técnica",
       "tags": ["NT", "EFD-Reinf", "RFB", "SPED"],
-      "resumo": "Receita Federal publica Nota Técnica com orientações atualizadas para a escrituração da EFD-Reinf no contexto da Reforma Tributária.",
+      "resumo": "Receita Federal publica Nota Técnica com orientações atualizadas para a escrituração da EFD-Reinf no contexto da Reforma Tributária. (verificar publicação específica no portal SPED)",
       "fonte": "Receita Federal",
-      "link": ""
+      "link": "http://sped.rfb.gov.br/pasta/show/1837"
     },
     {
       "id": "nt-efd-contrib-12-2026",
@@ -134,9 +134,9 @@
       "titulo": "NT nº 12/2026 — EFD-Contribuições atualizada para Reforma",
       "categoria": "Nota Técnica",
       "tags": ["NT", "EFD-Contribuições", "SPED", "CBS"],
-      "resumo": "Publicada no Portal SPED a Nota Técnica nº 12/2026, com orientações atualizadas para a escrituração da EFD-Contribuições no contexto da CBS.",
+      "resumo": "Publicada no Portal SPED a Nota Técnica nº 12/2026, com orientações atualizadas para a escrituração da EFD-Contribuições no contexto da CBS e da LC 224/2025 (redução linear de 10% de benefícios PIS/Cofins).",
       "fonte": "Receita Federal",
-      "link": ""
+      "link": "http://sped.rfb.gov.br/arquivo/show/8126"
     },
     {
       "id": "nt-2025002-v135",
