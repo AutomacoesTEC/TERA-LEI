@@ -2881,6 +2881,8 @@ function ReformaEmDia(){
   const [filtroDataAte,setFiltroDataAte]=useState("");
   const [sortOrder,setSortOrder]=useState("desc");
   const [expandedId,setExpandedId]=useState(null);
+  const [tagsExpandidas,setTagsExpandidas]=useState(false);
+  const TAGS_VISIVEIS=8;
   const [erro,setErro]=useState("");
   const [ultimaAtt,setUltimaAtt]=useState("");
 
@@ -2961,8 +2963,9 @@ function ReformaEmDia(){
         <span style={{marginLeft:"auto",fontSize:11,color:"var(--text-mute)"}}>{filtered.length} de {itens.length} publicações</span>
       </div>
       {/* TAG CHIPS */}
-      <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
-        {allTags.map(tag=>{const isSel=filtroTag===tag;return <button key={tag} onClick={()=>setFiltroTag(isSel?"":tag)} style={{fontSize:10,fontWeight:isSel?700:500,padding:"3px 10px",borderRadius:12,border:"1px solid "+(isSel?(TAG_COLORS[tag]||"var(--gold)"):"var(--border)"),background:isSel?(TAG_COLORS[tag]||"var(--gold)"):"transparent",color:isSel?"#fff":"var(--text-sec)",cursor:"pointer",transition:"all .12s"}}>{tag}</button>})}
+      <div style={{display:"flex",flexWrap:"wrap",gap:4,alignItems:"center"}}>
+        {(tagsExpandidas?allTags:allTags.slice(0,TAGS_VISIVEIS)).map(tag=>{const isSel=filtroTag===tag;return <button key={tag} onClick={()=>setFiltroTag(isSel?"":tag)} style={{fontSize:10,fontWeight:isSel?700:500,padding:"3px 10px",borderRadius:12,border:"1px solid "+(isSel?(TAG_COLORS[tag]||"var(--gold)"):"var(--border)"),background:isSel?(TAG_COLORS[tag]||"var(--gold)"):"transparent",color:isSel?"#fff":"var(--text-sec)",cursor:"pointer",transition:"all .12s"}}>{tag}</button>})}
+        {allTags.length>TAGS_VISIVEIS&&<button onClick={()=>setTagsExpandidas(v=>!v)} style={{fontSize:10,padding:"3px 10px",borderRadius:12,border:"1px dashed var(--border)",background:"none",color:"var(--text-mute)",cursor:"pointer",transition:"all .12s",flexShrink:0}}>{tagsExpandidas?"▲ Recolher":"▼ Ver todas ("+allTags.length+")"}</button>}
       </div>
     </div>
 
