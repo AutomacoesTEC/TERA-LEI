@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-04-14T16:51:15.155950",
+  "ultima_atualizacao": "2026-04-15T10:45:11.740454",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -39,7 +39,8 @@
       ],
       "resumo": "Receita Federal e AgênciaGov publicam nota esclarecendo que são falsas as informações sobre aplicação de multas antes de 90 dias após publicação do regulamento da CBS/IBS.",
       "fonte": "Receita Federal",
-      "link": "https://agenciagov.ebc.com.br/noticias/202604/nota-a-imprensa-reforma-tributaria-receita-federal-esclarece-que-nao-ha-aplicacao-de-multas-antes-de-90-dias-apos-a-publicacao-do-regulamento"
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/nota-a-imprensa-reforma-tributaria-receita-federal-esclarece-que-nao-ha-aplicacao-de-multas-antes-de-90-dias-apos-a-publicacao-do-regulamento",
+      "status": "vigente"
     },
     {
       "id": "nt-2025002-v135",
@@ -54,7 +55,10 @@
       ],
       "resumo": "Publicada no Portal NF-e a versão 1.35 da Nota Técnica 2025.002 — Reforma Tributária do Consumo, com ajustes no cronograma de implementação dos campos IBS/CBS na NF-e.",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=SA3Qh5Htywo=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "nt-efd-contrib-12-2026",
@@ -69,7 +73,8 @@
       ],
       "resumo": "Publicada no Portal SPED a Nota Técnica nº 12/2026, com orientações atualizadas para a escrituração da EFD-Contribuições no contexto da CBS e da LC 224/2025 (redução linear de 10% de benefícios PIS/Cofins).",
       "fonte": "Receita Federal",
-      "link": "http://sped.rfb.gov.br/arquivo/show/8126"
+      "link": "http://sped.rfb.gov.br/arquivo/show/8126",
+      "status": "vigente"
     },
     {
       "id": "nt-efd-reinf-01-2026",
@@ -84,7 +89,8 @@
       ],
       "resumo": "Receita Federal publica Nota Técnica com orientações atualizadas para a escrituração da EFD-Reinf no contexto da Reforma Tributária. (verificar publicação específica no portal SPED)",
       "fonte": "Receita Federal",
-      "link": "http://sped.rfb.gov.br/pasta/show/1837"
+      "link": "http://sped.rfb.gov.br/pasta/show/1837",
+      "status": "vigente"
     },
     {
       "id": "dere-material-2026",
@@ -98,7 +104,8 @@
       ],
       "resumo": "Disponibilizado material de apoio para preenchimento da DeRE, nova obrigação acessória prevista no Ato Conjunto RFB/CGIBS nº 1/2025.",
       "fonte": "Ministério da Fazenda",
-      "link": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/reforma-tributaria"
+      "link": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/reforma-tributaria",
+      "status": "vigente"
     },
     {
       "id": "atualizado-as-orienta-es-gerais-e-pergu2026-02-09",
@@ -111,7 +118,8 @@
       ],
       "resumo": "Foi disponibilizado a atualização das perguntas e respostas sobre a NFS-e, esclarecendo inclusive sobre a emissão da guia do ISS e a importação do XML da NFS-e recebidas para a DES.",
       "fonte": "Portal NFS-e",
-      "link": "https://www.nfse.gov.br/"
+      "link": "https://www.nfse.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-007-2026-para-nfs-e-padr-o-2026-02-07",
@@ -124,7 +132,8 @@
       ],
       "resumo": "1. Atualiza os campos relacionados a informação das retenções federais (PIS, COFINS, CSSL);  2. Esclarece sobre a possibilidade de quebra sequencial da numeração da NFS-e;  3. Esclarece que a NFS-e para novos fatos geradores como a \"locação\" ainda será implementada (em desenvolvimento).  4. Todas as pessoas, físicas ou jurídicas, estarão autorizadas a emitir esses documentos  na plataforma naciona",
       "fonte": "Portal NFS-e",
-      "link": "https://www.nfse.gov.br/"
+      "link": "https://www.nfse.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "publicada-v-rias-normas-sobre-bp-e-para-2026-02-05",
@@ -139,7 +148,8 @@
       ],
       "resumo": "1. Nota Técnica 2025.001 - RTC v1.12, v1.13, v1.13a adequação dos leiautes e regras de validação do BP-e e BP-e TM. 2. Nota Técnica 2026.001 - RTC v1.00 adequação dos leiautes e regras de validação do BP-e.  3. Nota Técnica 2025.002 - RTC v1.05 adequação dos leiautes e regras de validação do BP-e aéreo.",
       "fonte": "Portal BP-e",
-      "link": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias"
+      "link": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-para-cria-o-da-vincula-o-2026-02-05",
@@ -153,7 +163,10 @@
       ],
       "resumo": "Nota técnica detalha a forma, de vinculação por meio da inserção de dados da transação financeira em  campos do DF-e.  Ex: Emitiu um boleto antes da emissão do DF-e, logo o boleto não faz menção a chave de acesso do DF-e, então envia essa vinculação de transação financeira para conciliar o DF-e com o boleto e gerar o Split Payment correto.",
       "fonte": "Portal CT-e",
-      "link": "https://www.cte.fazenda.gov.br/portal/informe.aspx"
+      "link": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkResolvido": false,
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-011-2026-esclarece-sobre-2026-02-03",
@@ -167,7 +180,8 @@
       ],
       "resumo": ". EFD-Contribuições:  1. Ainda deve ser feita até 31/12/2026 (inclusive para composição dos saldos credores);  2. Será descontinuada para \"novos fatos geradores\" a partir de 01/01/2027;  3. Deve ser mantida no período de 5 anos (inclusive para eventuais retificações se precisar);  4. Foi descrito orientações para os novos documentos fiscais criados, sendo que o leiaute atual não será adaptado.",
       "fonte": "SPED",
-      "link": "http://sped.rfb.gov.br/"
+      "link": "http://sped.rfb.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "disponibilizado-o-assistente-para-class2026-02-01",
@@ -180,7 +194,8 @@
       ],
       "resumo": "O objetivo é auxiliar na definição da tributação do IBS e da CBS por meio da pesquisa da classificação fiscal. Deve ser utilizado com cautela visto a sua imprecisão inicial.",
       "fonte": "Portal CFF",
-      "link": "https://www.conformidadefacil.receita.fazenda.gov.br/"
+      "link": "https://www.conformidadefacil.receita.fazenda.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "publicado-informe-t-cnico-2025-002-v-1-42026-01-28",
@@ -196,7 +211,10 @@
       ],
       "resumo": ". Atualização da tabela cClassTrib (destaque de verde para o que mudou):  - 410035 - Fornecimento realizado por nanoempreendedor - 410032 - Tributos incidentes na operação que não integram a base de cálculo do IBS e da CBS  (NF comunicação, energia, agua, e gás).  . CST - Alterado a redação do código 820:  - 820 - Tributação em documento específico  (utilizado para indicar que a tributação do item",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=SA3Qh5Htywo=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
     },
     {
       "id": "comit-gestor-do-ibs-lan-a-cartilha-com-2026-01-26",
@@ -211,7 +229,8 @@
       ],
       "resumo": "Visando orientar as empresas participantes do projeto piloto, o CGIBS lança o volume 2 da cartilha orientativa contendo o Manual de Orientações do Contribuinte Usuário do Sistema de Apuração  Assistida do IBS (MOC-IBS). Cartilha contém imagens ilustrativas das telas da apuração assistida do IBS.",
       "fonte": "CGIBS",
-      "link": "https://www.cgibs.gov.br/noticias"
+      "link": "https://www.cgibs.gov.br/noticias",
+      "status": "vigente"
     },
     {
       "id": "atualizada-as-regras-de-valida-es-por-m2026-01-19",
@@ -226,7 +245,8 @@
       ],
       "resumo": ". Atualizada as regras de validação em relação as alíquotas do IBS e CBS",
       "fonte": "Portal NFAg",
-      "link": "https://dfe-portal.svrs.rs.gov.br/Nfag/Documentos"
+      "link": "https://dfe-portal.svrs.rs.gov.br/Nfag/Documentos",
+      "status": "vigente"
     },
     {
       "id": "lc227-2026",
@@ -243,7 +263,8 @@
       ],
       "resumo": "Sancionada a Lei Complementar que institui o Comitê Gestor do IBS de forma definitiva, dispõe sobre contencioso administrativo integrado (União + Estados + Municípios), distribuição da arrecadação do IBS e alterações pontuais à LC 214/2025 (incluindo período de 60 dias para correção de obrigações acessórias sem penalidade).",
       "fonte": "Ministério da Fazenda",
-      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/janeiro/nova-lei-de-regulamentacao-da-reforma-tributaria-aprofunda-o-federalismo-fiscal-cooperativo"
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/janeiro/nova-lei-de-regulamentacao-da-reforma-tributaria-aprofunda-o-federalismo-fiscal-cooperativo",
+      "status": "vigente"
     },
     {
       "id": "manual-rtc-vers-o-i2026-01-13",
@@ -256,7 +277,8 @@
       ],
       "resumo": ". Manual que esclarece conceitos e apresenta exemplos práticos para entendimento de forma geral sobre a RTC .  . Acesso pela página principal do Portal (canto direito superior)",
       "fonte": "Receita Federal",
-      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias"
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
+      "status": "vigente"
     },
     {
       "id": "institui-o-do-portal-de-servi-os-e-aten2026-01-12",
@@ -269,7 +291,8 @@
       ],
       "resumo": ". Institui uma plataforma com portal de serviços ao contribuinte do IBS.  . Objetivo: ser um canal para esclarecimentos de dúvidas, informações e agendamentos  . Alcance atual, somente empresas cadastradas no projeto piloto",
       "fonte": "CGIBS",
-      "link": "https://www.cgibs.gov.br/noticias"
+      "link": "https://www.cgibs.gov.br/noticias",
+      "status": "vigente"
     },
     {
       "id": "disponibiliza-o-para-visualiza-o-da-ap2026-01-12",
@@ -281,7 +304,8 @@
       ],
       "resumo": ". Já está disponível a visualização da apuração assistida com acesso por meio de Certificado Digital",
       "fonte": "Receita Federal",
-      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias"
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
+      "status": "vigente"
     },
     {
       "id": "inicio-testes-2026",
@@ -298,7 +322,8 @@
       ],
       "resumo": "Entrada em vigor jurídica dos novos tributos com alíquotas-teste (CBS 0,9% e IBS 0,1%). Ano de caráter essencialmente informativo — contribuintes dispensados do recolhimento efetivo mediante cumprimento das obrigações acessórias. PIS/COFINS/ICMS/ISS permanecem integralmente exigíveis.",
       "fonte": "Receita Federal",
-      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2025/dezembro/receita-federal-e-comite-gestor-do-ibs-definem-regras-relativas-a-obrigacoes-acessorias-da-reforma-tributaria-para-inicio-de-2026"
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2025/dezembro/receita-federal-e-comite-gestor-do-ibs-definem-regras-relativas-a-obrigacoes-acessorias-da-reforma-tributaria-para-inicio-de-2026",
+      "status": "vigente"
     },
     {
       "id": "portaria-rfb-n-635-de-31-de-dezembro-d2025-12-31",
@@ -311,7 +336,8 @@
       ],
       "resumo": ". Habilitação dos titulares de benefícios onerosos de ICMS para fins de compensação financeira decorrente da substituição do ICMS pelo IBS. . Alcance:  benefícios concedidos por prazo certo e sob condição (contrapartidas).  . Requerimento é feito pelo e-cac (prazo até 31/12/2028). . Prova da repercursão econômica com a redução do benefício.   . Base: Art. 385 da LC 214",
       "fonte": "DOU",
-      "link": "https://www.in.gov.br/"
+      "link": "https://www.in.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "comunicado-sobre-o-ambiente-de-produ-o-2025-12-26",
@@ -325,7 +351,8 @@
       ],
       "resumo": ". RFB disponibiliza versão de testes da CBS no \"Ambiente de Produção Beta da CBS\" a partir de 12/01/2026 para testes a partir dos DF-e's emitidos (apuração assistida: débitos, ressarcimento, cashback, outros)",
       "fonte": "Receita Federal",
-      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias"
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
+      "status": "vigente"
     },
     {
       "id": "publicado-o-manual-da-nfgas-v1-002025-12-24",
@@ -339,7 +366,8 @@
       ],
       "resumo": ". Publicado Manual de Orientação do Contribuinte da Nota Fiscal Eletrônica do Gás (NFGas) (Gás Canalizado) . Criação do Portal da Nota Fiscal Eletrônica do Gás . Obrigatoriedade a partir de 01/07/2026 - Ajuste Sinief 38/2025.",
       "fonte": "Portal NFGas",
-      "link": "https://dfe-portal.svrs.rs.gov.br/NFGas/Documentos"
+      "link": "https://dfe-portal.svrs.rs.gov.br/NFGas/Documentos",
+      "status": "vigente"
     },
     {
       "id": "definido-normas-para-emiss-o-da-nfs-e-vi2025-12-23",
@@ -352,7 +380,8 @@
       ],
       "resumo": "Definido as normas para emissão da Nota Fiscal de Serviço Eletrônica de Exploração de Via (Pedágios) Definido os manuais, passo a passo para credenciamento, regras de validação, leiaute, etc.  . Resolução CGNFS-e nº: 09/2025 - regras",
       "fonte": "Portal NFS-e",
-      "link": "https://www.nfse.gov.br/"
+      "link": "https://www.nfse.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "ato-conjunto-rfb-cgibs-01-2025",
@@ -369,7 +398,8 @@
       ],
       "resumo": "Disciplina obrigações acessórias de IBS e CBS para 2026. Define rol de documentos fiscais existentes recepcionados e novos a serem criados (DeRE, NF-ABI, NFAg, NF-e Gás, BP-e Aéreo). Garante 3 meses de adaptação sem penalidades após publicação dos regulamentos. Preserva competências do CGSN e CGNFS-e.",
       "fonte": "Receita Federal",
-      "link": "https://in.gov.br/en/web/dou/-/ato-conjunto-rfb/cgibs-n-1-de-22-de-dezembro-de-2025-602670467"
+      "link": "https://in.gov.br/en/web/dou/-/ato-conjunto-rfb/cgibs-n-1-de-22-de-dezembro-de-2025-602670467",
+      "status": "vigente"
     },
     {
       "id": "informe-t-cnico-2025-002-v-1-31-e-tabela2025-12-15",
@@ -381,7 +411,10 @@
       ],
       "resumo": "Atualiza as tabelas cClassTrib e crédito presumido",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=xxtjiU7xjnk=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "procedimentos-para-emiss-o-de-nf-e-em-si2025-12-09",
@@ -395,7 +428,8 @@
       ],
       "resumo": "Define procedimentos para emissão de NF-e nas operações:  . Venda para entrega futura, perda no estoque de mercadoria por extravio, perecimento, deterioração, furto ou roubo, redução de valores ou quantidades, quando não for possível realizar o cancelamento da Nota Fiscal eletrônica - NF-e - de saída, retorno por recusa, total ou parcial, na entrega ou por não localização do destinatário.",
       "fonte": "CONFAZ",
-      "link": "https://www.confaz.fazenda.gov.br/legislacao/ajustes/2025/"
+      "link": "https://www.confaz.fazenda.gov.br/legislacao/ajustes/2025/",
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-2025-002-v-1342025-12-04",
@@ -409,7 +443,10 @@
       ],
       "resumo": "Atualização das regras de validação. Regras de validação não serão aplicadas quando os campos não forem preenchidos (ou seja, NF-e será validada, todavia contribuinte terá descumprido a obrigação acessórias exigida pela LC 214 do destaque).",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=IwLPdZ67F5M=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "documenta-o-t-cnica-da-dere2025-12-04",
@@ -425,7 +462,8 @@
       ],
       "resumo": "Disponibilizado a documentação técnica da Declaração de Regimes Específicos - DeRE.  . Será considerada um documento fiscal  . Será gerada no formato XML  . Vai seguir planos de contas padronizados dos orgãos regulamentadores  . Constituirá as receitas a serem tributadas de CBS, IBS, IS;  . Informações será compartilhadas com o CGIBS  . Manual v 1.0.0 define obrigatoriedade e regras de geração (Se",
       "fonte": "Receita Federal",
-      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias"
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
+      "status": "vigente"
     },
     {
       "id": "comunicado-cgibs-rfb-01-2025",
@@ -442,7 +480,8 @@
       ],
       "resumo": "Primeiras orientações oficiais sobre a entrada em vigor da CBS e do IBS a partir de 01/01/2026. Define documentos fiscais com destaque CBS/IBS (NF-e, NFC-e, CT-e, NFS-e, NF3e, BP-e), dispensa de recolhimento em 2026 para quem cumprir obrigações acessórias, CNPJ para PF contribuintes a partir de jul/2026, e habilitação para compensação de benefícios onerosos de ICMS.",
       "fonte": "CGIBS",
-      "link": "https://www.cgibs.gov.br/comite-gestor-do-ibs-e-receita-federal-divulgam-orientacoes-sobre-a-entrada-em-vigor-da-cbs-e-do-ibs-em-1-de-janeiro-de-2026"
+      "link": "https://www.cgibs.gov.br/comite-gestor-do-ibs-e-receita-federal-divulgam-orientacoes-sobre-a-entrada-em-vigor-da-cbs-e-do-ibs-em-1-de-janeiro-de-2026",
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-2025-002-v-1332025-12-02",
@@ -458,7 +497,10 @@
       ],
       "resumo": "Atualização das regras de validação e menciona mensagem da validação do destaque do IBS e CBS em data futura ao invés de 01/2026.",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=AklZnck3o6I=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "nota-t-cnica-2025-002-v-1322025-11-25",
@@ -472,7 +514,10 @@
       ],
       "resumo": "Atualização das regras de validação",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=8H1QDj2ADhQ=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "manual-de-orienta-o-ao-contribuinte-da-2025-11-24",
@@ -485,7 +530,10 @@
       ],
       "resumo": "Define regras para emissão e preenchimento da Nota Fiscal eletrônica de Alienação de bens Imóveis - NF-e-ABI",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": false,
+      "status": "vigente"
     },
     {
       "id": "atualiza-o-das-tabelas-cclasstrib-e-cst2025-11-24",
@@ -497,7 +545,10 @@
       ],
       "resumo": "Atualização das tabelas cClassTrib e CST",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": false,
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-se-cgnfs-e-n-0052025-11-19",
@@ -513,7 +564,8 @@
       ],
       "resumo": "Adequação do leiaute da NFS-e, com criação de campos para que seja possível a emissão da NFS-e para \"locação de bens moveis\" com a incidência do IBS e CBS e sem incidência do ISS",
       "fonte": "Portal NFS-e",
-      "link": "https://www.nfse.gov.br/"
+      "link": "https://www.nfse.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "cgibs-disponibiliza-cartilha-para-orient2025-11-14",
@@ -526,7 +578,8 @@
       ],
       "resumo": "CGIBS cria cartilha para orientação aos novos campos da NF-e em virtude da RTC",
       "fonte": "CGIBS",
-      "link": "https://www.cgibs.gov.br/noticias"
+      "link": "https://www.cgibs.gov.br/noticias",
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-2025-002-v-1312025-11-11",
@@ -540,7 +593,10 @@
       ],
       "resumo": "Atualização das regras de validação",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=xxtjiU7xjnk=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "cria-o-de-plataforma-para-valida-o-da2025-11-05",
@@ -554,7 +610,8 @@
       ],
       "resumo": "Cria forma de teste de como deve ficar o XML preenchido em cada particularidade de emissão da NF-e e NFC-e",
       "fonte": "Portal CFF",
-      "link": "https://www.conformidadefacil.receita.fazenda.gov.br/"
+      "link": "https://www.conformidadefacil.receita.fazenda.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "cria-o-do-portal-do-cgibs2025-11-01",
@@ -566,7 +623,8 @@
       ],
       "resumo": "Comitê Gestor do IBS lança o portal oficial",
       "fonte": "CGIBS",
-      "link": "https://www.cgibs.gov.br/noticias"
+      "link": "https://www.cgibs.gov.br/noticias",
+      "status": "vigente"
     },
     {
       "id": "informe-t-cnico-2025-002-v1-212025-10-07",
@@ -578,7 +636,10 @@
       ],
       "resumo": "Nova tabela do CST e cClassTrib",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=SA3Qh5Htywo=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "nota-t-cnica-2025-001-v-1-102025-10-06",
@@ -591,7 +652,8 @@
       ],
       "resumo": "Define as regras de validação do Bilhete de Passagem Eletrônico",
       "fonte": "Portal BP-e",
-      "link": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias"
+      "link": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-2025-002-v-1302025-10-03",
@@ -605,7 +667,10 @@
       ],
       "resumo": "1. Novas regras de validação em vigor a partir de 10/11/2025 2. Criação do campo \"data da previsão de entrega\" (limite de 3 meses da data da saída)  - Pag 14 3. Nota de débito: acrescentado o desenquadramento do SN  4. Criação de campo para indicar a natureza da \"doação\" - Pag. 14 5. Criado campo para \"Ajuste de competência\" e para \"estorno de crédito\"  em NF-e de ajuste - Pag. 23 6. Criação de ca",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=6vT0rTNhFLY=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "perguntas-e-respostas-7-7-sped2025-10-01",
@@ -618,7 +683,8 @@
       ],
       "resumo": "Atualiza as perguntas e respostas no que tange a RTC - pag. 129",
       "fonte": "SPED",
-      "link": "http://sped.rfb.gov.br/"
+      "link": "http://sped.rfb.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "guia-emissor-da-nfs-e-v1-22025-10-01",
@@ -631,7 +697,8 @@
       ],
       "resumo": "Liberação de um novo Guia emissor e manuais",
       "fonte": "Portal NFS-e",
-      "link": "https://www.nfse.gov.br/"
+      "link": "https://www.nfse.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "correla-o-item-de-servi-os-x-nbs2025-10-01",
@@ -643,7 +710,8 @@
       ],
       "resumo": "Nova tabela de correlação do item de serviço da LC 116/2003 e a NBS",
       "fonte": "Portal NFS-e",
-      "link": "https://www.nfse.gov.br/"
+      "link": "https://www.nfse.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "altera-o-nas-normas-do-simples-nacional2025-10-01",
@@ -655,7 +723,8 @@
       ],
       "resumo": "1. Altera a Resolução CGSN 140/2018 - Destaque:  a). Vedação da opção: XXIII - que realize atividade de locação de imóveis próprios, exceto quando se referir a prestação de serviços tributados pelo ISS (retirado a parte de vermelho) Vigência:",
       "fonte": "Receita Federal",
-      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias"
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
+      "status": "vigente"
     },
     {
       "id": "manual-de-orienta-o-do-contribuinte-da-2025-09-16",
@@ -668,7 +737,10 @@
       ],
       "resumo": "Publicado o manual da Nota Fiscal de Água e Saneamento Eletrônica – NFAg.",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": false,
+      "status": "vigente"
     },
     {
       "id": "lan-amento-do-portal-da-nota-fiscal-da-2025-09-15",
@@ -680,7 +752,8 @@
       ],
       "resumo": "Criação do portal da NFAg",
       "fonte": "Portal NFAg",
-      "link": "https://dfe-portal.svrs.rs.gov.br/Nfag/Documentos"
+      "link": "https://dfe-portal.svrs.rs.gov.br/Nfag/Documentos",
+      "status": "vigente"
     },
     {
       "id": "lan-amento-do-portal-da-conformidade-f-c2025-09-02",
@@ -692,7 +765,8 @@
       ],
       "resumo": "Cria o Portal da Conformidade Fácil para fornecer mecanismos e ferramentas que auxiliam os contribuintes emissores de documentos fiscais.",
       "fonte": "Portal CFF",
-      "link": "https://www.conformidadefacil.receita.fazenda.gov.br/"
+      "link": "https://www.conformidadefacil.receita.fazenda.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "aperfei-oada-a-tabela-classifica-o-trib2025-09-02",
@@ -704,7 +778,8 @@
       ],
       "resumo": "Tabela de classificação tributária foi aperfeiçoada, com informações inclusive de NFS-e para Locação de imóveis e menção de nota fiscal especifica para atividade imobiliária - NFABI.",
       "fonte": "Portal CFF",
-      "link": "https://www.conformidadefacil.receita.fazenda.gov.br/"
+      "link": "https://www.conformidadefacil.receita.fazenda.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-2025-002-v1-202025-08-18",
@@ -717,7 +792,10 @@
       ],
       "resumo": "1. Adequações futuras para o SN e Tributação Monofásica  2. Eventos foram tratados como \"obrigações acessórias\" para fins do art. 348 §1º 3. Aperfeiçoada as regras de validação",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=YFz9is R6tw=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "lives-da-rfb-sobre-a-rtc2025-07-24",
@@ -731,7 +809,8 @@
       ],
       "resumo": ". Plataforma da RTC - Ambiente de informações  . Calculadora  . Apuração Assistida  . Ressarcimento",
       "fonte": "Receita Federal",
-      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias"
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
+      "status": "vigente"
     },
     {
       "id": "nfs-e-nacional2025-07-22",
@@ -747,7 +826,8 @@
       ],
       "resumo": ". Nota Técnica SE/CGNFS-e nº 003, de 04 de julho de 2025 - Atualiza o leiaute da NFS-e (valores do IBS e CBS não vão somar ao total da NFs-e em 2026).  . AnexoVII-IndOp_IBSCBS_V1.00.00 - Cria Tabela de códigos indicadores das operações de consumo (cIndOp), de acordo com o art. 11 da Lei Complementar Nº 214/2025",
       "fonte": "Portal NFS-e",
-      "link": "https://www.nfse.gov.br/"
+      "link": "https://www.nfse.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "manuais-apura-o-assistida-2025-07-07",
@@ -760,7 +840,8 @@
       ],
       "resumo": ". Disponibiliza manual para pré visualização das telas da apuração assistida (Módulos 1 e 2)",
       "fonte": "Receita Federal",
-      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias"
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
+      "status": "vigente"
     },
     {
       "id": "guia-pr-tico-da-efd2025-07-07",
@@ -774,7 +855,8 @@
       ],
       "resumo": "Publicada a versão 3.1.9 do Guia Prático da EFD ICMS IPI.  Inclusão da observação do registro C100 acerca da não escrituração dos documentos fiscais que carreguem informações exclusivamente acerca dos novos tributos criados na Reforma Tributária do Consumo e que não versem sobre fatos geradores do ICMS e do IPI.",
       "fonte": "SPED",
-      "link": "http://sped.rfb.gov.br/"
+      "link": "http://sped.rfb.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "tabela-do-cr-dito-presumido-ccredpres-p2025-07-04",
@@ -787,7 +869,10 @@
       ],
       "resumo": ". Foi feito a atualização da tabela. Importante lembrar do significado de \"0x1\": Legenda: 0 = Não é permitido 1 = Exige",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": false,
+      "status": "vigente"
     },
     {
       "id": "validador-rtc2025-07-04",
@@ -803,7 +888,8 @@
       ],
       "resumo": ". Criação de um \"validador\" do XML dos documentos eletrônicos (valida o XML x gera modelo de como seria o XML) em relação aos campos IBS e CBS.",
       "fonte": "Portal DFe-SVRS",
-      "link": "https://dfe-portal.svrs.rs.gov.br/"
+      "link": "https://dfe-portal.svrs.rs.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-2025-001-implementadas2025-07-01",
@@ -818,7 +904,8 @@
       ],
       "resumo": ". Notas Técnicas 2025.001, que implementam o leiaute e regras de validação da reforma tributária,  encontram-se IMPLANTADAS no ambiente de homologação da Sefaz virtual RS.",
       "fonte": "Portal DFe-SVRS",
-      "link": "https://dfe-portal.svrs.rs.gov.br/"
+      "link": "https://dfe-portal.svrs.rs.gov.br/",
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-2025-001-2025-07-01",
@@ -834,7 +921,10 @@
       ],
       "resumo": ". Adequações do leiaute do CT-e para informação do IBS e CBS (ajustes nas regras de validação)",
       "fonte": "Portal CT-e",
-      "link": "https://www.cte.fazenda.gov.br/portal/informe.aspx"
+      "link": "https://www.cte.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=xTWG5Hn3DJ8=",
+      "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "calculadora-rtc2025-07-01",
@@ -849,7 +939,8 @@
       ],
       "resumo": ". Permite a simulação do cálculo do IBS e CBS  . Valida a montagem da Base de Cálculo (o que integra e o que não integra)  . Aplica regras de interpretação da normativa da RTC",
       "fonte": "Receita Federal",
-      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias"
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
+      "status": "vigente"
     },
     {
       "id": "informe-t-cnico-2025-002-v1-112025-06-24",
@@ -862,7 +953,10 @@
       ],
       "resumo": "Correções no título de identificação das tabelas e disponibilização das tabelas de forma on line: cClassTrib - CST - Tabela de Classificação do Crédito Presumido.",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=SA3Qh5Htywo=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "projeto-piloto-rt2025-06-24",
@@ -875,7 +969,8 @@
       ],
       "resumo": ". RFB inicia o projeto piloto da RT com 500 empresas credenciadas.  Portaria RFB nº 549/2025 . RFB disponibiliza perguntas e respostas sobre projeto piloto",
       "fonte": "Receita Federal",
-      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias"
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias",
+      "status": "vigente"
     },
     {
       "id": "nota-t-cnica-2025-002-v1-012025-06-09",
@@ -892,7 +987,10 @@
       ],
       "resumo": "1. Homologação: 07/07/2025 - Produção: 06/10/2025  2. Utilização de Nota de \"Débito\" para perda e nota de \"Crédito\" para cred.presumido - Pag12  3. Dispensa de preenchimento do IBS e CBS para Simples Nacional em 2026 - Pag 26  4. Eventos criados para permitir controle do conta corrente - Pág. 61",
       "fonte": "Portal NF-e",
-      "link": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+      "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=wuVuolIzJLs=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "nota-t-cnica-2025-001-v1-05-v1-05a-2025-06-01",
@@ -909,7 +1007,10 @@
       ],
       "resumo": ". Adequações do leiaute do CT-e para informação do IBS e CBS   . Exceção de obrigatoriedade de informar o IBS e CBS para empresas do Simples Nacional em 2026 - Pag 7",
       "fonte": "Portal CT-e",
-      "link": "https://www.cte.fazenda.gov.br/portal/informe.aspx"
+      "link": "https://www.cte.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=yaGboY8 9HY=",
+      "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkResolvido": true,
+      "status": "superada"
     },
     {
       "id": "lc214-2025",
@@ -926,7 +1027,8 @@
       ],
       "resumo": "Sancionada com vetos a Lei Complementar nº 214/2025, que regulamenta o IBS, a CBS e o Imposto Seletivo. Detalha incidência, base de cálculo, alíquotas, créditos, regimes específicos, cashback e split payment. Transição gradual de 2026 a 2033.",
       "fonte": "Planalto",
-      "link": "https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp214.htm"
+      "link": "https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp214.htm",
+      "status": "vigente"
     },
     {
       "id": "plp68-senado",
@@ -941,7 +1043,8 @@
       ],
       "resumo": "Senado aprova o projeto de regulamentação da Reforma Tributária com alterações. Texto retorna à Câmara para análise das mudanças.",
       "fonte": "Planalto",
-      "link": "https://www12.senado.leg.br/noticias/materias/2024/12/12/reforma-tributaria-aprovado-o-texto-base-da-regulamentacao-sobre-consumo"
+      "link": "https://www12.senado.leg.br/noticias/materias/2024/12/12/reforma-tributaria-aprovado-o-texto-base-da-regulamentacao-sobre-consumo",
+      "status": "vigente"
     },
     {
       "id": "plp68-camara",
@@ -956,7 +1059,8 @@
       ],
       "resumo": "Câmara aprova texto-base do projeto de regulamentação da Reforma Tributária com detalhamento de alíquotas, regimes especiais, cashback e split payment.",
       "fonte": "Planalto",
-      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2024/julho/projeto-de-lei-complementar-que-institui-a-CBS-e-o-IBS-e-aprovado-na-camara-dos-deputados"
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2024/julho/projeto-de-lei-complementar-que-institui-a-CBS-e-o-IBS-e-aprovado-na-camara-dos-deputados",
+      "status": "vigente"
     },
     {
       "id": "plp108-envio",
@@ -971,7 +1075,8 @@
       ],
       "resumo": "Segundo projeto complementar da Reforma Tributária, trata da criação e regulamentação do Comitê Gestor do IBS, contencioso administrativo e distribuição da arrecadação.",
       "fonte": "Ministério da Fazenda",
-      "link": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/reforma-tributaria"
+      "link": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/reforma-tributaria",
+      "status": "vigente"
     },
     {
       "id": "plp68-envio",
@@ -987,7 +1092,8 @@
       ],
       "resumo": "Poder Executivo envia ao Congresso o primeiro projeto de lei complementar para regulamentar o IBS, a CBS e o Imposto Seletivo, conforme previsto na EC 132/2023.",
       "fonte": "Ministério da Fazenda",
-      "link": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/reforma-tributaria"
+      "link": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/reforma-tributaria",
+      "status": "vigente"
     },
     {
       "id": "ec132-2023",
@@ -1003,7 +1109,8 @@
       ],
       "resumo": "Promulgada pelo Congresso Nacional a Emenda Constitucional que institui o IBS, a CBS e o Imposto Seletivo em substituição a PIS, COFINS, IPI, ICMS e ISS. Período de transição de 2026 a 2033.",
       "fonte": "Planalto",
-      "link": "https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc/emc132.htm"
+      "link": "https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc/emc132.htm",
+      "status": "vigente"
     }
   ]
 }
