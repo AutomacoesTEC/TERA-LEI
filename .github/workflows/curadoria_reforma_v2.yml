@@ -40,7 +40,7 @@ jobs:
           if [ -f curador-reforma/data/reforma_curadoria.json ]; then
             python3 << 'PYEOF'
           import json, os, re, hashlib
-          import urllib.request
+          import urllib.request, html as _html
           from datetime import datetime
 
           curadoria_path = "curador-reforma/data/reforma_curadoria.json"
@@ -104,11 +104,11 @@ jobs:
 
           def fetch_html(url, timeout=10):
               try:
-                  req = urllib.request.Request(
-                      url,
-                      headers={'User-Agent': 'Auditec-Curador/1.0 (Fiscal Compliance)'}
-                  )
-                  with urllib.request.urlopen(req, timeout=timeout) as resp:
+                  import http.cookiejar
+                  cj = http.cookiejar.CookieJar()
+                  opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+                  opener.addheaders = [('User-Agent', 'Auditec-Curador/1.0 (Fiscal Compliance)')]
+                  with opener.open(url, timeout=timeout) as resp:
                       return resp.read().decode('utf-8', errors='ignore')
               except Exception as e:
                   print(f"  [retrolink] Falha HTTP {url[:60]}: {e}")
