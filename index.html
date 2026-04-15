@@ -2934,6 +2934,23 @@ function ReformaEmDia(){
 
   const formatDate=(d)=>{if(!d)return"";const p=d.split("-");return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d;};
   const limparFiltros=()=>{setFiltro("");setFiltroTag("");setFiltroCat("");setFiltroFonte("");setFiltroDataDe("");setFiltroDataAte("");};
+
+  const exportarXlsx=()=>{try{
+    const rows=filtered.map(i=>({
+      "Data":i.data||"",
+      "Título":i.titulo||"",
+      "Categoria":i.categoria||"",
+      "Fonte":i.fonte||"",
+      "Status":i.status||"vigente",
+      "Link":i.linkResolvido===false?(i.linkLista||""):(i.link||i.linkLista||""),
+      "Tags":(i.tags||[]).join(", ")
+    }));
+    const ws=XLSX.utils.json_to_sheet(rows);
+    ws["!cols"]=[{wch:12},{wch:60},{wch:20},{wch:15},{wch:10},{wch:80},{wch:30}];
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,"Reforma Tributária");
+    XLSX.writeFile(wb,"TERA_Reforma_"+new Date().toISOString().slice(0,10)+".xlsx");
+  }catch(e){alert("Erro ao exportar: "+e.message);}};
   const temFiltros=!!(filtro||filtroTag||filtroCat||filtroFonte||filtroDataDe||filtroDataAte);
 
   return <div className="fade">
@@ -2951,6 +2968,7 @@ function ReformaEmDia(){
         </button>
         <button onClick={buscar} className="btn-primary" disabled={loading} style={{fontSize:12,padding:"8px 16px"}}>{loading?"Carregando...":"Atualizar"}</button>
         <button onClick={()=>setSortOrder(s=>s==="desc"?"asc":"desc")} style={{fontSize:11,padding:"6px 12px",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg-hover)",cursor:"pointer",color:"var(--text-sec)"}}>{sortOrder==="desc"?"📅 Recente":"📅 Antiga"}</button>
+        {filtered.length>0&&<button onClick={exportarXlsx} className="btn-secondary" style={{fontSize:12,padding:"6px 12px",display:"flex",alignItems:"center",gap:4}}>⬇ Excel</button>}
       </div>
     </div>
 
@@ -3035,9 +3053,11 @@ function ReformaEmDia(){
             {item.resumo&&<div style={{fontSize:12.5,lineHeight:1.6,color:"var(--text-sec)",marginTop:10,marginBottom:8}}>{filtro.length>=3?highlightText(item.resumo,filtro):item.resumo}</div>}
             <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center",marginTop:6}}>
               <span style={{fontSize:10,color:"var(--text-mute)"}}>{formatDate(item.data)}</span>
-              {item.link&&<a href={item.link} target="_blank" onClick={e=>e.stopPropagation()} style={{fontSize:11,color:"var(--gold)",textDecoration:"none",display:"flex",alignItems:"center",gap:3}}>Acessar publicação →</a>}
-              {item.linkLista&&item.linkLista!==item.link&&<a href={item.linkLista} target="_blank" onClick={e=>e.stopPropagation()} style={{fontSize:10,color:"var(--text-mute)",textDecoration:"none"}}>ver lista →</a>}
-              {item.linkResolvido===false&&<span style={{fontSize:9,color:"var(--text-mute)",fontStyle:"italic"}}>(link da lista · verificar manualmente)</span>}
+              {item.linkResolvido===false
+                ?<><span style={{fontSize:10,color:"#e67e22",fontStyle:"italic",display:"flex",alignItems:"center",gap:3}}>⚠ Link direto indisponível</span>
+                  {item.linkLista&&<a href={item.linkLista} target="_blank" onClick={e=>e.stopPropagation()} style={{fontSize:11,color:"var(--gold)",textDecoration:"none"}}>Acessar portal fonte →</a>}</>
+                :<>{item.link&&<a href={item.link} target="_blank" onClick={e=>e.stopPropagation()} style={{fontSize:11,color:"var(--gold)",textDecoration:"none",display:"flex",alignItems:"center",gap:3}}>Acessar publicação →</a>}
+                  {item.linkLista&&item.linkLista!==item.link&&<a href={item.linkLista} target="_blank" onClick={e=>e.stopPropagation()} style={{fontSize:10,color:"var(--text-mute)",textDecoration:"none"}}>ver lista →</a>}</>}
             </div>
           </div>}
         </div>;
