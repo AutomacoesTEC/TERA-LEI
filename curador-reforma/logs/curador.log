@@ -95,3 +95,48 @@ Require stack:
 [2026-04-15T17:02:01.379Z] [INFO ] ══════════════════════════════════════════════════
 [2026-04-15T17:02:01.379Z] [INFO ]   Concluído: 2 item(ns) · 1/7 portais · 1 erro(s)
 [2026-04-15T17:02:01.379Z] [INFO ] ══════════════════════════════════════════════════
+[2026-04-15T17:04:32.208Z] [INFO ] ══════════════════════════════════════════════════
+[2026-04-15T17:04:32.210Z] [INFO ]   TERA Curador Reforma v2  —  Início de execução 
+[2026-04-15T17:04:32.210Z] [INFO ] ══════════════════════════════════════════════════
+[2026-04-15T17:04:32.231Z] [INFO ] Data verificação (BRT): 15/04/2026
+[2026-04-15T17:04:32.231Z] [INFO ] Data execução    (BRT): 15/04/2026 14:04:32
+[2026-04-15T17:04:32.232Z] [INFO ] [CT-e] Iniciando coleta
+[2026-04-15T17:04:33.283Z] [INFO ] [CT-e] 0 item(ns) do dia
+[2026-04-15T17:04:33.283Z] [INFO ] [1/7] CT-e Informes — 0 item(ns)
+[2026-04-15T17:04:33.283Z] [INFO ]    ⏳ 2500ms...
+[2026-04-15T17:04:35.787Z] [INFO ] [NF-e] Iniciando coleta (NTs + Informes Técnicos)
+[2026-04-15T17:04:37.138Z] [INFO ] [NF-e][nota técnica] 0 item(ns) do dia
+[2026-04-15T17:04:37.442Z] [INFO ] [NF-e][informe técnico] 0 item(ns) do dia
+[2026-04-15T17:04:37.442Z] [INFO ] [2/7] Portal NF-e — 0 item(ns)
+[2026-04-15T17:04:37.442Z] [INFO ]    ⏳ 2500ms...
+[2026-04-15T17:04:39.945Z] [INFO ] [CGIBS] Iniciando coleta via RSS
+[2026-04-15T17:04:40.315Z] [ERROR] [CGIBS] Erro: read ECONNRESET
+[2026-04-15T17:04:40.315Z] [WARN ] [3/7] CGIBS — ERRO: read ECONNRESET
+[2026-04-15T17:04:40.316Z] [INFO ]    ⏳ 2500ms...
+[2026-04-15T17:04:42.817Z] [INFO ] [MDF-e] Iniciando coleta
+[2026-04-15T17:04:47.342Z] [INFO ] [MDF-e] 0 item(ns) do dia
+[2026-04-15T17:04:47.342Z] [INFO ] [4/7] Portal MDF-e — 0 item(ns)
+[2026-04-15T17:04:47.342Z] [INFO ]    ⏳ 2500ms...
+[2026-04-15T17:04:49.846Z] [INFO ] [NF-ABI] Iniciando coleta
+[2026-04-15T17:04:50.007Z] [INFO ] [NF-ABI] 2 item(ns) do dia
+[2026-04-15T17:04:50.007Z] [INFO ] [5/7] Portal NF-ABI — 2 item(ns)
+[2026-04-15T17:04:50.008Z] [INFO ]    ⏳ 2500ms...
+[2026-04-15T17:04:52.509Z] [INFO ] [BP-e] Iniciando coleta
+[2026-04-15T17:04:53.024Z] [INFO ] [BP-e] 0 item(ns) do dia
+[2026-04-15T17:04:53.024Z] [INFO ] [6/7] Portal BP-e — 0 item(ns)
+[2026-04-15T17:04:53.025Z] [INFO ]    ⏳ 2500ms...
+[2026-04-15T17:04:55.526Z] [INFO ] [NFS-e RTC] Iniciando coleta
+[2026-04-15T17:05:02.386Z] [INFO ] [NFS-e RTC] 0 item(ns) do dia
+[2026-04-15T17:05:02.386Z] [INFO ] [7/7] NFS-e RTC — 0 item(ns)
+[2026-04-15T17:05:02.386Z] [INFO ] Resolvendo links diretos dos documentos...
+[2026-04-15T17:05:03.119Z] [WARN ] [linkResolver] Nenhum link direto encontrado em: https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos
+[2026-04-15T17:05:03.270Z] [WARN ] [linkResolver] Nenhum link direto encontrado em: https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos
+[2026-04-15T17:05:03.270Z] [INFO ] [linkResolver] 0 resolvido(s) · 2 fallback(s) para lista
+[2026-04-15T17:05:03.271Z] [INFO ] JSON salvo: /home/runner/work/TERA-LEI/TERA-LEI/curador-reforma/data/reforma_curadoria.json
+[2026-04-15T17:05:03.271Z] [INFO ] 2 item(ns) → pendente-publicacao/curadoria_15-04-2026.json
+[2026-04-15T17:05:03.271Z] [INFO ] Enviando notificação Telegram...
+[2026-04-15T17:05:03.271Z] [INFO ] [Telegram] Enviando 1 parte(s) para chat_id 1004062605…
+[2026-04-15T17:05:03.722Z] [INFO ] [Telegram] Mensagem enviada (id: 6)
+[2026-04-15T17:05:03.722Z] [INFO ] ══════════════════════════════════════════════════
+[2026-04-15T17:05:03.722Z] [INFO ]   Concluído: 2 item(ns) · 1/7 portais · 1 erro(s)
+[2026-04-15T17:05:03.722Z] [INFO ] ══════════════════════════════════════════════════
