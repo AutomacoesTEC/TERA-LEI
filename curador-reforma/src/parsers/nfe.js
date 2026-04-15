@@ -1,16 +1,13 @@
 'use strict';
 
 /**
- * Parser: NF-e Documentos Vigentes (Notas Técnicas)
- * URL: https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=
+ * Parser: NF-e — Notas Técnicas + Informes Técnicos
+ * URLs:
+ *   Notas Técnicas   : https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=
+ *   Informes Técnicos: https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=hXzemuyNHW4=
  *
- * Estrutura observada: seções "Documentos vigentes" e "Documentos não vigentes"
- * com Notas Técnicas no padrão:
- *   "RT - Nota Técnica 2024.002 v.1.10 - IBS/CBS"
- *   "Nota Técnica 2025.002.v.1.00 - Publicada em 28/03/2025 - descrição..."
- *
- * Lógica: localiza seção "vigentes", extrai NT, versão, data de publicação,
- * descrição e link. Filtra data == hoje.
+ * O portal exige cookie de sessão — primeira requisição captura o Set-Cookie
+ * da resposta 302 e a segunda envia o cookie para obter o HTML real.
  */
 
 const axios   = require('axios');
@@ -19,90 +16,116 @@ const { hoje, isHoje, extrairData, truncarPalavras, agora } = require('../utils/
 const logger  = require('../utils/logger');
 
 const NOME     = 'Portal NF-e';
-const URL      = 'https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=';
 const BASE_URL = 'https://www.nfe.fazenda.gov.br';
 const UA       = 'Auditec-Curador/1.0 (Fiscal Compliance)';
 const TIMEOUT  = 30_000;
 const RETRIES  = 2;
 
-// Padrão: "Publicada em DD/MM/YYYY" ou "Publicado em DD/MM/YYYY"
+const FONTES = [
+  {
+    url: `${BASE_URL}/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=`,
+    tipo: 'nota técnica',
+  },
+  {
+    url: `${BASE_URL}/portal/listaConteudo.aspx?tipoConteudo=hXzemuyNHW4=`,
+    tipo: 'informe técnico',
+  },
+];
+
 const RE_PUBLICADO = /[Pp]ublicad[ao]\s+em\s+(\d{2}\/\d{2}\/\d{4})/;
-// Padrão NT: "Nota Técnica 2025.002" ou "NT 2025.002"
-const RE_NT_NUM    = /Nota\s+T[ée]cnica\s+([\d\.]+)/i;
-// Versão: "v.1.35" ou "v1.35" ou "versão 1.35"
+const RE_NT_NUM    = /(?:Nota\s+T[ée]cnica|Informe\s+T[ée]cnico|NT|IT)\s+([\d\.]+)/i;
 const RE_VERSAO    = /v[e\.]?(?:rs[ãa]o\s*)?\.?(\d+[\.\d]*)/i;
 
-async function fetch(tentativa = 1) {
+// Portal NF-e responde 302 com Set-Cookie; precisa de dois passos
+async function fetchPage(url, tentativa = 1) {
+  let cookies = '';
+
+  // Passo 1: captura cookie do redirect inicial
   try {
-    const r = await axios.get(URL, {
-      headers: { 'User-Agent': UA, Accept: 'text/html,application/xhtml+xml' },
+    await axios.get(url, {
+      headers: { 'User-Agent': UA },
       timeout: TIMEOUT,
+      maxRedirects: 0,
+      validateStatus: () => true,
+    }).then(r => {
+      if (r.headers['set-cookie']) {
+        cookies = r.headers['set-cookie'].map(c => c.split(';')[0]).join('; ');
+      }
+    }).catch(err => {
+      if (err.response?.headers?.['set-cookie']) {
+        cookies = err.response.headers['set-cookie'].map(c => c.split(';')[0]).join('; ');
+      }
+    });
+  } catch (_) {}
+
+  // Passo 2: requisição real com cookie
+  try {
+    const r = await axios.get(url, {
+      headers: {
+        'User-Agent': UA,
+        Accept: 'text/html,application/xhtml+xml',
+        ...(cookies ? { Cookie: cookies } : {}),
+      },
+      timeout: TIMEOUT,
+      maxRedirects: 5,
     });
     return r.data;
   } catch (err) {
     if (tentativa < RETRIES) {
-      logger.warn(`[NF-e] Tentativa ${tentativa} falhou: ${err.message}. Retentando...`);
+      logger.warn(`[NF-e] Tentativa ${tentativa} falhou (${url}): ${err.message}. Retentando...`);
       await sleep(2000);
-      return fetch(tentativa + 1);
+      return fetchPage(url, tentativa + 1);
     }
     throw err;
   }
 }
 
-function resolverUrl(href) {
-  if (!href) return URL;
+function resolverUrl(href, baseUrl) {
+  if (!href) return baseUrl;
   if (href.startsWith('http')) return href;
-  try { return new URL(href, BASE_URL).href; } catch (_) { return URL; }
+  try { return new URL(href, BASE_URL).href; } catch (_) { return baseUrl; }
 }
 
-function gerarTags(texto) {
+function gerarTags(texto, tipo) {
   const t = (texto || '').toUpperCase();
   const tags = ['NF-e'];
-  if (/\bIBS\b/.test(t))            tags.push('IBS');
-  if (/\bCBS\b/.test(t))            tags.push('CBS');
+  if (tipo === 'informe técnico') tags.push('Informe Técnico');
+  if (/\bIBS\b/.test(t))             tags.push('IBS');
+  if (/\bCBS\b/.test(t))             tags.push('CBS');
   if (/\bNT\b|NOTA.T[EÉ]CNICA/.test(t)) tags.push('NT');
-  if (/SCHEMA|XSD|LEIAUTE/.test(t)) tags.push('Schema');
-  if (/RTC|REFORMA/.test(t))        tags.push('RTC');
-  if (/NFC-E|NFC_E/.test(t))        tags.push('NFC-e');
-  if (/VERS[ÃA]O|\bV\.\d/.test(t)) tags.push('Versão');
+  if (/SCHEMA|XSD|LEIAUTE/.test(t))  tags.push('Schema');
+  if (/RTC|REFORMA/.test(t))         tags.push('RTC');
+  if (/NFC-E|NFC_E/.test(t))         tags.push('NFC-e');
   return [...new Set(tags)];
 }
 
-async function parseNfe() {
-  const consultadoEm = agora();
-  logger.info(`[NF-e] Iniciando coleta`);
-  const hj = hoje();
+async function parseFonte({ url, tipo }) {
+  const hj    = hoje();
+  const itens = [];
 
   try {
-    const html = await fetch();
+    const html = await fetchPage(url);
     const $    = cheerio.load(html);
-    const itens = [];
 
-    // ── Estratégia 1: localizar seção "Documentos vigentes" e iterar seus links ──
     let vigentesEl = null;
     $('h2, h3, h4, strong, b, td, th, .titulo-secao').each((_, el) => {
       if (/documentos\s+vigentes/i.test($(el).text())) {
         vigentesEl = $(el);
-        return false; // break
+        return false;
       }
     });
 
-    // Coleta todos os links da seção vigentes (ou da página inteira como fallback)
-    const scope = vigentesEl
-      ? vigentesEl.nextAll().addBack()
-      : $('body');
+    const scope = vigentesEl ? vigentesEl.nextAll().addBack() : $('body');
 
     scope.find('a, tr').each((_, el) => {
-      const tag  = el.tagName || el.name;
+      const tag = el.tagName || el.name;
       let textoEl, href, titulo;
 
       if (tag === 'a') {
         titulo  = $(el).text().trim();
         href    = $(el).attr('href') || '';
-        const parent = $(el).closest('li, tr, p, div, td');
-        textoEl = parent.text().trim();
+        textoEl = $(el).closest('li, tr, p, div, td').text().trim();
       } else {
-        // tr — procura link interno
         const link = $(el).find('a').first();
         titulo  = link.text().trim();
         href    = link.attr('href') || '';
@@ -110,71 +133,79 @@ async function parseNfe() {
       }
 
       if (!textoEl || textoEl.length < 5) return;
+      if (/n[ãa]o\s+vigentes/i.test(textoEl)) return false;
 
-      // Detecta data via "Publicada em DD/MM/YYYY" ou qualquer DD/MM/YYYY no bloco
       const matchPub = RE_PUBLICADO.exec(textoEl);
       const dataStr  = matchPub ? matchPub[1] : extrairData(textoEl);
-
       if (!dataStr || !isHoje(dataStr)) return;
-
-      // Para textos sem "Publicada em" mas com data de hoje inline → incluir
       if (!titulo || titulo.length < 5) return;
-
-      // Parar se chegou na seção "não vigentes"
-      if (/n[ãa]o\s+vigentes/i.test(textoEl)) return false;
 
       const ntMatch  = RE_NT_NUM.exec(textoEl);
       const verMatch = RE_VERSAO.exec(textoEl);
-      const nt       = ntMatch  ? `NT ${ntMatch[1]}`  : '';
-      const versao   = verMatch ? `v.${verMatch[1]}`  : '';
-
+      const nt       = ntMatch  ? `${tipo === 'informe técnico' ? 'IT' : 'NT'} ${ntMatch[1]}` : '';
+      const versao   = verMatch ? `v.${verMatch[1]}` : '';
       const tituloFinal = titulo || `${nt} ${versao}`.trim() || textoEl.substring(0, 100);
 
       itens.push({
         titulo: tituloFinal,
         dataPublicacao: dataStr,
-        url: resolverUrl(href),
+        url: resolverUrl(href, url),
         resumoCurto: truncarPalavras(textoEl.replace(tituloFinal, '').trim(), 50),
-        tags: gerarTags(textoEl),
+        tags: gerarTags(textoEl, tipo),
         portalOrigem: NOME,
-        tipoConteudo: 'nota técnica',
+        tipoConteudo: tipo,
         confianca: matchPub ? 'alta' : 'media',
       });
     });
 
-    // ── Estratégia 2: texto bruto da página via regex ──
+    // Fallback: regex no texto bruto
     if (itens.length === 0) {
       const texto = $('body').text().replace(/\s+/g, ' ');
-      const RE_BLOCO = /Nota\s+T[ée]cnica\s+([\d\.]+)[^\n]{0,200}?Publicad[ao]\s+em\s+(\d{2}\/\d{2}\/\d{4})/gi;
+      const re = tipo === 'informe técnico'
+        ? /Informe\s+T[ée]cnico\s+([\d\.]+)[^\n]{0,200}?Publicad[ao]\s+em\s+(\d{2}\/\d{2}\/\d{4})/gi
+        : /Nota\s+T[ée]cnica\s+([\d\.]+)[^\n]{0,200}?Publicad[ao]\s+em\s+(\d{2}\/\d{2}\/\d{4})/gi;
       let m;
-      while ((m = RE_BLOCO.exec(texto)) !== null) {
-        const dataStr = m[2];
-        if (!isHoje(dataStr)) continue;
-        const trecho = m[0];
+      while ((m = re.exec(texto)) !== null) {
+        if (!isHoje(m[2])) continue;
         itens.push({
-          titulo: `Nota Técnica ${m[1]}`,
-          dataPublicacao: dataStr,
-          url: URL,
-          resumoCurto: truncarPalavras(trecho, 50),
-          tags: gerarTags(trecho),
+          titulo: `${tipo === 'informe técnico' ? 'Informe Técnico' : 'Nota Técnica'} ${m[1]}`,
+          dataPublicacao: m[2],
+          url,
+          resumoCurto: truncarPalavras(m[0], 50),
+          tags: gerarTags(m[0], tipo),
           portalOrigem: NOME,
-          tipoConteudo: 'nota técnica',
+          tipoConteudo: tipo,
           confianca: 'media',
         });
       }
     }
-
-    const encontrouItensHoje = itens.length > 0;
-    logger.info(`[NF-e] ${itens.length} item(ns) do dia`);
-    return {
-      nome: NOME, url: URL, consultadoEm,
-      encontrouItensHoje, itens,
-      observacoes: encontrouItensHoje ? '' : 'Nenhuma Nota Técnica publicada hoje na seção vigentes.',
-    };
   } catch (err) {
-    logger.error(`[NF-e] Erro: ${err.message}`);
-    return { nome: NOME, url: URL, consultadoEm, encontrouItensHoje: false, itens: [], erro: err.message };
+    logger.error(`[NF-e][${tipo}] Erro: ${err.message}`);
   }
+
+  return itens;
+}
+
+async function parseNfe() {
+  const consultadoEm = agora();
+  logger.info(`[NF-e] Iniciando coleta (NTs + Informes Técnicos)`);
+
+  const url = FONTES[0].url;
+  const todosItens = [];
+
+  for (const fonte of FONTES) {
+    const itens = await parseFonte(fonte);
+    logger.info(`[NF-e][${fonte.tipo}] ${itens.length} item(ns) do dia`);
+    todosItens.push(...itens);
+  }
+
+  const encontrouItensHoje = todosItens.length > 0;
+  return {
+    nome: NOME, url, consultadoEm,
+    encontrouItensHoje,
+    itens: todosItens,
+    observacoes: encontrouItensHoje ? '' : 'Nenhum documento publicado hoje (NTs e Informes Técnicos verificados).',
+  };
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
