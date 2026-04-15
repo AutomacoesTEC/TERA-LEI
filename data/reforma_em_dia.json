@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-04-15T10:45:11.740454",
+  "ultima_atualizacao": "2026-04-15T16:50:56.754356",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,40 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "9417798408d1fff1",
+      "data": "2026-04-15",
+      "titulo": "Tabela de Código de Classificação Tributária da RT v.",
+      "categoria": "Documentação Técnica",
+      "tags": [
+        "NF-ABI",
+        "RTC",
+        "CST",
+        "cClassTrib"
+      ],
+      "resumo": "Tabela atualizada de CST e cClassTrib da Reforma Tributária.Pode ser visualizada também de forma online na área da Conformidade Fácil: https://dfe-portal.svrs.rs.gov.br/CFF/ClassificacaoTributaria",
+      "fonte": "Portal NF-ABI",
+      "link": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
+    {
+      "id": "3ba860d6e2822d65",
+      "data": "2026-04-15",
+      "titulo": "IT 2025.002 RT Tabela de Classificação Tributária v1.50",
+      "categoria": "Documentação Técnica",
+      "tags": [
+        "NF-ABI",
+        "Leiaute"
+      ],
+      "resumo": "De forma geral, o Informe Técnico tem a finalidade de: • Divulgar orientações e aperfeiçoamentos para os Serviços de Autorização de Uso dos DF-e, que são usados pelas Empresas; • Divulgar e manter registro da atualização de tabelas de domínio usadas pelo Serviço de Autorização, não significando obrigatoriamente a necessidade…",
+      "fonte": "Portal NF-ABI",
+      "link": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "agencia-multas-esclarecimento",
       "data": "2026-04-06",
@@ -90,7 +124,9 @@
       "resumo": "Receita Federal publica Nota Técnica com orientações atualizadas para a escrituração da EFD-Reinf no contexto da Reforma Tributária. (verificar publicação específica no portal SPED)",
       "fonte": "Receita Federal",
       "link": "http://sped.rfb.gov.br/pasta/show/1837",
-      "status": "vigente"
+      "status": "vigente",
+      "linkLista": "http://sped.rfb.gov.br/pasta/show/1837",
+      "linkResolvido": false
     },
     {
       "id": "dere-material-2026",
