@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-14T10:19:51.108372-03:00",
-  "data_busca": "2026-04-14",
-  "total": 286,
-  "novos_nesta_execucao": 9,
+  "ultima_atualizacao": "2026-04-15T08:11:46.656214-03:00",
+  "data_busca": "2026-04-15",
+  "total": 292,
+  "novos_nesta_execucao": 6,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,54 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "c20c532c83fceb7e",
+      "data": "2026-04-15",
+      "titulo": "13/04/2026 18:50Na quarta (15)Quinta live da Receita sobre o Imposto de Renda explica a calculadora Revar",
+      "portal": "AgênciaGov — Receita Federal",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/quinta-live-da-receita-sobre-imposto-de-renda-calculadora-revar",
+      "resumo": ""
+    },
+    {
+      "id": "8fdf84b3f309a1c6",
+      "data": "2026-04-15",
+      "titulo": "14/04/2026 20:07InfraestruturaPresidente Lula e governador do Mato Grosso do Sul tratam de crédito para programa Rodar MS",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/presidente-lula-e-governador-do-mato-grosso-do-sul-tratam-de-credito-para-programa-rodar-ms",
+      "resumo": ""
+    },
+    {
+      "id": "6cb8a63c9c94f2a0",
+      "data": "2026-04-15",
+      "titulo": "14/04/2026 11:05EconomiaSetor de serviços cresce em fevereiro e está no patamar recorde da série histórica, diz IBGE",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/setor-de-servicos-cresce-em-fevereiro-e-atinge-patamar-recorde-da-serie-historica-diz-ibge",
+      "resumo": ""
+    },
+    {
+      "id": "d7e86c44ef35d120",
+      "data": "2026-04-15",
+      "titulo": "14/04/2026 18:28Sinal forteEBC inaugura estação experimental da TV 3.0 em Brasília",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/ebc-inaugura-estacao-experimental-da-tv-3-0-em-brasilia",
+      "resumo": ""
+    },
+    {
+      "id": "cdc30ca049d7826e",
+      "data": "2026-04-15",
+      "titulo": "MEDIDA PROVISÓRIA",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=MEDIDA%20PROVIS%C3%93RIA",
+      "resumo": ""
+    },
+    {
+      "id": "13999f481f12ba96",
+      "data": "2026-04-15",
+      "titulo": "EMISSÃO DE TÍTULO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=EMISS%C3%83O%20DE%20T%C3%8DTULO",
+      "resumo": ""
+    },
     {
       "id": "15f3e7b634fc558f",
       "data": "2026-04-14",
