@@ -1,175 +1,111 @@
 'use strict';
 
 /**
- * Parser: CGIBS — Notícias
- * URL: https://www.cgibs.gov.br/noticias
+ * Parser: CGIBS — RSS Feed
+ * URL: https://www.cgibs.gov.br/rss
  *
- * Estrutura observada: SPA (React/Next.js).
- * Pode exibir "Exibindo 0 a 0 de 0 itens" (página vazia) ou cards com
- * comunicados, eventos, documentos. Editorias: Comunicados, Eventos,
- * Institucional, Transparência.
- *
- * Lógica: Puppeteer headless; detecta página vazia; coleta cards com data;
- * faz fetch secundário em links internos para extrair título/data completa.
+ * O site do CGIBS é uma SPA (React) que não renderiza conteúdo sem JS.
+ * Solução: usar o feed RSS público disponível em /rss.
  */
 
-const { hoje, isHoje, extrairData, truncarPalavras, agora } = require('../utils/date');
-const logger = require('../utils/logger');
+const axios   = require('axios');
+const { hoje, isHoje, truncarPalavras, agora } = require('../utils/date');
+const logger  = require('../utils/logger');
 
-const NOME    = 'CGIBS';
-const URL     = 'https://www.cgibs.gov.br/noticias';
-const UA      = 'Auditec-Curador/1.0 (Fiscal Compliance)';
-const TIMEOUT = 30_000;
-const RETRIES = 2;
-
-// Regex página vazia
-const RE_VAZIO = /Exibindo\s+0\s+a\s+0\s+de\s+0\s+itens/i;
+const NOME     = 'CGIBS';
+const URL_RSS  = 'https://www.cgibs.gov.br/rss';
+const URL_SITE = 'https://www.cgibs.gov.br/noticias';
+const UA       = 'Auditec-Curador/1.0 (Fiscal Compliance)';
+const TIMEOUT  = 20_000;
 
 function gerarTags(texto) {
   const t = (texto || '').toUpperCase();
-  const tags = ['IBS', 'CGIBS'];
-  if (/\bCBS\b/.test(t))              tags.push('CBS');
-  if (/\bIS\b|SELETIVO/.test(t))     tags.push('IS');
+  const tags = ['IBS', 'CGIBS', 'Comitê Gestor'];
+  if (/\bCBS\b/.test(t))                  tags.push('CBS');
+  if (/\bIS\b|SELETIVO/.test(t))          tags.push('IS');
   if (/NOTA.T[EÉ]CNICA|NT\s*\d/.test(t)) tags.push('NT');
-  if (/RTC|REFORMA/.test(t))          tags.push('RTC');
-  if (/COMUNICADO/.test(t))           tags.push('Comunicado');
-  if (/COMIT[EÊ]\s*GESTOR/.test(t))  tags.push('Comitê Gestor');
-  if (/REGULAMENTO/.test(t))          tags.push('Regulamentação');
-  if (/CARTILHA|MANUAL|GUIA/.test(t)) tags.push('Material');
+  if (/RTC|REFORMA/.test(t))              tags.push('RTC');
+  if (/COMUNICADO/.test(t))               tags.push('Comunicado');
+  if (/REGULAMENTO|RESOLUÇÃO/.test(t))    tags.push('Regulamentação');
+  if (/CARTILHA|MANUAL|GUIA/.test(t))     tags.push('Material');
+  if (/SPLIT\s*PAYMENT/.test(t))          tags.push('Split Payment');
   return [...new Set(tags)];
 }
 
-function truncar(texto, max) {
-  if (!texto) return '';
-  const p = texto.trim().replace(/\s+/g, ' ').split(' ');
-  return p.length <= max ? p.join(' ') : p.slice(0, max).join(' ') + '…';
+// Parse date from RSS dc:date (ISO 8601) → DD/MM/YYYY
+function parseRssDate(dcDate) {
+  if (!dcDate) return null;
+  try {
+    const d = new Date(dcDate.trim());
+    const dd = String(d.getUTCDate()).padStart(2, '0');
+    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const yyyy = d.getUTCFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  } catch (_) { return null; }
+}
+
+// Extract text from CDATA or plain XML text
+function extractText(str) {
+  if (!str) return '';
+  return str.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, '').trim();
 }
 
 async function parseCgibs() {
   const consultadoEm = agora();
-  logger.info(`[CGIBS] Iniciando coleta via Puppeteer`);
-  const hj = hoje();
-
-  let puppeteer;
-  try {
-    puppeteer = require('puppeteer');
-  } catch (e) {
-    logger.error('[CGIBS] puppeteer não instalado: ' + e.message);
-    return { nome: NOME, url: URL, consultadoEm, encontrouItensHoje: false, itens: [], erro: 'puppeteer não instalado' };
-  }
-
-  const puppeteerArgs = (process.env.PUPPETEER_ARGS || '--no-sandbox').split(' ').filter(Boolean);
-
-  let browser;
-  for (let t = 1; t <= RETRIES; t++) {
-    try {
-      browser = await puppeteer.launch({ headless: 'new', args: puppeteerArgs, timeout: TIMEOUT });
-      break;
-    } catch (err) {
-      logger.warn(`[CGIBS] Browser launch tentativa ${t}: ${err.message}`);
-      if (t === RETRIES) return { nome: NOME, url: URL, consultadoEm, encontrouItensHoje: false, itens: [], erro: err.message };
-      await sleep(2000);
-    }
-  }
+  logger.info(`[CGIBS] Iniciando coleta via RSS`);
 
   try {
-    const page = await browser.newPage();
-    await page.setUserAgent(UA);
-    await page.setDefaultNavigationTimeout(TIMEOUT);
-    await page.goto(URL, { waitUntil: 'networkidle2' });
+    const r = await axios.get(URL_RSS, {
+      headers: { 'User-Agent': UA },
+      timeout: TIMEOUT,
+      responseType: 'text',
+    });
 
-    // Aguarda renderização SPA
-    await page.waitForSelector('article, .card, h2, h3, [class*="noticia"], [class*="card"]', { timeout: 12_000 })
-              .catch(() => {});
-    await sleep(2000);
+    const xml = r.data;
+    const items = [];
+    const RE_ITEM = /<item>([\s\S]*?)<\/item>/gi;
+    let m;
 
-    const pageText = await page.evaluate(() => document.body.innerText || document.body.textContent || '');
+    while ((m = RE_ITEM.exec(xml)) !== null) {
+      const block = m[1];
 
-    // Detecta página vazia
-    if (RE_VAZIO.test(pageText)) {
-      logger.info('[CGIBS] Página de notícias sem itens hoje (indicador "0 a 0 de 0")');
-      return {
-        nome: NOME, url: URL, consultadoEm,
-        encontrouItensHoje: false, itens: [],
-        observacoes: 'Página retornou "Exibindo 0 a 0 de 0 itens" — sem publicações hoje.',
-      };
-    }
+      const titleM   = block.match(/<title>([\s\S]*?)<\/title>/i);
+      const linkM    = block.match(/<link>([\s\S]*?)<\/link>/i);
+      const dateM    = block.match(/<dc:date>([\s\S]*?)<\/dc:date>/i);
+      const descM    = block.match(/<description>([\s\S]*?)<\/description>/i);
 
-    // Coleta cards/itens com data de hoje
-    const candidatos = await page.evaluate((hjStr) => {
-      const resultado = [];
-      const seletores = ['article', '.card', '[class*="noticia"]', '[class*="card"]', 'li', '.item'];
+      const titulo   = extractText(titleM?.[1] || '');
+      const link     = extractText(linkM?.[1]  || '');
+      const dataStr  = parseRssDate(dateM?.[1]);
+      const descRaw  = extractText(descM?.[1]  || '');
 
-      for (const sel of seletores) {
-        const els = document.querySelectorAll(sel);
-        if (!els.length) continue;
+      if (!titulo || !dataStr) continue;
+      if (!isHoje(dataStr)) continue;
 
-        for (const el of els) {
-          const texto = el.innerText || el.textContent || '';
-          // Verifica se contém dia, mês e ano de hoje
-          const [d, m, y] = hjStr.split('/');
-          if (!texto.includes(d) || !texto.includes(m) || !texto.includes(y)) continue;
-
-          const linkEl = el.querySelector('a');
-          const titulo = (
-            el.querySelector('h1,h2,h3,h4,h5')?.innerText?.trim() ||
-            linkEl?.innerText?.trim() ||
-            texto.substring(0, 120)
-          ).replace(/\s+/g, ' ').trim();
-
-          if (!titulo || titulo.length < 5) continue;
-
-          const href = linkEl?.getAttribute('href') || '';
-          const urlCard = href.startsWith('http') ? href
-                        : href ? 'https://www.cgibs.gov.br' + href
-                        : 'https://www.cgibs.gov.br/noticias';
-
-          // Tenta capturar editoria
-          const editoria = (
-            el.querySelector('[class*="editoria"], [class*="categoria"], [class*="tag"]')?.innerText?.trim() || ''
-          );
-
-          resultado.push({ titulo, href: urlCard, textoCard: texto, editoria });
-        }
-
-        if (resultado.length > 0) break;
-      }
-      return resultado;
-    }, hj);
-
-    const itens = [];
-    for (const c of candidatos) {
-      const dataStr = extrairData(c.textoCard) || hj;
-      const resumo  = truncar(c.textoCard.replace(c.titulo, '').trim(), 50);
-      const textoTags = c.titulo + ' ' + c.editoria + ' ' + resumo;
-
-      itens.push({
-        titulo: c.titulo,
+      items.push({
+        titulo,
         dataPublicacao: dataStr,
-        url: c.href,
-        resumoCurto: resumo,
-        tags: gerarTags(textoTags),
+        url: link || URL_SITE,
+        resumoCurto: truncarPalavras(descRaw, 50),
+        tags: gerarTags(titulo + ' ' + descRaw),
         portalOrigem: NOME,
-        tipoConteudo: c.editoria || 'notícia',
-        confianca: dataStr !== hj ? 'media' : 'alta',
+        tipoConteudo: 'comunicado',
+        confianca: 'alta',
       });
     }
 
-    const encontrouItensHoje = itens.length > 0;
-    logger.info(`[CGIBS] ${itens.length} item(ns) do dia`);
+    const encontrouItensHoje = items.length > 0;
+    logger.info(`[CGIBS] ${items.length} item(ns) do dia`);
     return {
-      nome: NOME, url: URL, consultadoEm,
-      encontrouItensHoje, itens,
-      observacoes: encontrouItensHoje ? '' : 'Portal acessado com sucesso. Nenhum card com a data de hoje encontrado.',
+      nome: NOME, url: URL_SITE, consultadoEm,
+      encontrouItensHoje, itens: items,
+      observacoes: encontrouItensHoje ? '' : 'Nenhuma publicação do CGIBS hoje.',
     };
+
   } catch (err) {
     logger.error(`[CGIBS] Erro: ${err.message}`);
-    return { nome: NOME, url: URL, consultadoEm, encontrouItensHoje: false, itens: [], erro: err.message };
-  } finally {
-    if (browser) await browser.close().catch(() => {});
+    return { nome: NOME, url: URL_SITE, consultadoEm, encontrouItensHoje: false, itens: [], erro: err.message };
   }
 }
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 module.exports = { parseCgibs };
