@@ -2937,7 +2937,7 @@ function ReformaEmDia(){
 
   const exportarXlsx=()=>{try{
     const rows=filtered.map(i=>({
-      "Data":i.data||"",
+      "Data":i.data?(i.data.slice(8,10)+"/"+i.data.slice(5,7)+"/"+i.data.slice(0,4)):"",
       "Título":i.titulo||"",
       "Categoria":i.categoria||"",
       "Fonte":i.fonte||"",
@@ -2966,7 +2966,7 @@ function ReformaEmDia(){
           <span style={{fontSize:11,fontWeight:600,color:showFontes?"var(--gold)":"var(--text-sec)"}}>📡 Fontes ({FONTES_MONITORADAS.length})</span>
           <span style={{fontSize:9,opacity:.7,marginLeft:3}}>{showFontes?"▲":"▼"}</span>
         </button>
-        <button onClick={buscar} className="btn-primary" disabled={loading} style={{fontSize:12,padding:"8px 16px"}}>{loading?"Carregando...":"Atualizar"}</button>
+        <button onClick={buscar} title="Recarrega o arquivo reforma_em_dia.json do servidor. Não envia Telegram nem executa o curador — a curadoria roda automaticamente às 19h (BRT) via GitHub Actions." className="btn-primary" disabled={loading} style={{fontSize:12,padding:"8px 16px"}}>{loading?"Carregando...":"🔄 Atualizar"}</button>
         <button onClick={()=>setSortOrder(s=>s==="desc"?"asc":"desc")} style={{fontSize:11,padding:"6px 12px",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg-hover)",cursor:"pointer",color:"var(--text-sec)"}}>{sortOrder==="desc"?"📅 Recente":"📅 Antiga"}</button>
         {filtered.length>0&&<button onClick={exportarXlsx} className="btn-secondary" style={{fontSize:12,padding:"6px 12px",display:"flex",alignItems:"center",gap:4}}>⬇ Excel</button>}
       </div>
@@ -2991,6 +2991,10 @@ function ReformaEmDia(){
     </div>}
 
     {erro&&<div style={{background:"rgba(231,76,60,0.1)",border:"1px solid #e74c3c",borderRadius:8,padding:10,marginBottom:10,fontSize:12,color:"#e74c3c"}}>{erro}</div>}
+    <div style={{background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:6,padding:"7px 12px",marginBottom:12,fontSize:11,color:"var(--text-sec)",display:"flex",alignItems:"center",gap:6}}>
+      <span>🤖</span>
+      <span>Curadoria automática executa <strong>diariamente às 19h (BRT)</strong> via GitHub Actions e envia notificação no Telegram a cada novo item encontrado. O botão <strong>Atualizar</strong> apenas recarrega esta lista do servidor.</span>
+    </div>
 
     {/* ── FILTROS ────────────────────────────────────────────────────── */}
     <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:14}}>
