@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-04-15T17:05:11.307133",
+  "ultima_atualizacao": "2026-04-15T22:54:35.138322",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -57,6 +57,22 @@
       "fonte": "Portal NF-ABI",
       "link": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=16&nomeArquivo=IT%202025.002%20v.1.50%20-%20Tabelas%20de%20Classifica%C3%A7%C3%A3o%20do%20IBS%20e%20da%20CBS.pdf",
       "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "f4701300cae35812",
+      "data": "2026-04-15",
+      "titulo": "Informe Técnico 2025.002 v.1.50 - Publicado em 15/04/2026",
+      "categoria": "Informe Técnico",
+      "tags": [
+        "NF-e",
+        "Informe Técnico"
+      ],
+      "resumo": "Divulga tabela classificação tributária e indicadores de CST.",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=JDJJBVuJyoA=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
       "linkResolvido": true,
       "status": "vigente"
     },

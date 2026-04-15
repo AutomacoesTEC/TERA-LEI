@@ -1,11 +1,11 @@
 {
   "dataVerificacao": "15/04/2026",
-  "dataExecucao": "15/04/2026 14:04:32",
+  "dataExecucao": "15/04/2026 19:51:04",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "15/04/2026 14:04:32",
+      "consultadoEm": "15/04/2026 19:51:04",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhuma publicação encontrada para a data de hoje."
@@ -13,64 +13,22 @@
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "15/04/2026 14:04:35",
-      "encontrouItensHoje": false,
-      "itens": [],
-      "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
-    },
-    {
-      "nome": "CGIBS",
-      "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "15/04/2026 14:04:39",
-      "encontrouItensHoje": false,
-      "itens": [],
-      "erro": "read ECONNRESET"
-    },
-    {
-      "nome": "Portal MDF-e",
-      "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "15/04/2026 14:04:42",
-      "encontrouItensHoje": false,
-      "itens": [],
-      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
-    },
-    {
-      "nome": "Portal NF-ABI",
-      "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "15/04/2026 14:04:49",
+      "consultadoEm": "15/04/2026 19:51:07",
       "encontrouItensHoje": true,
       "itens": [
         {
-          "titulo": "Tabela de Código de Classificação Tributária da RT v.",
+          "titulo": "Informe Técnico 2025.002 v.1.50 - Publicado em 15/04/2026",
           "dataPublicacao": "15/04/2026",
-          "url": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=12&nomeArquivo=cClassTrib%202026_04_15.xlsx",
-          "resumoCurto": "Tabela atualizada de CST e cClassTrib da Reforma Tributária.Pode ser visualizada também de forma online na área da Conformidade Fácil: https://dfe-portal.svrs.rs.gov.br/CFF/ClassificacaoTributaria",
+          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=JDJJBVuJyoA=",
+          "resumoCurto": "Divulga tabela classificação tributária e indicadores de CST.",
           "tags": [
-            "NF-ABI",
-            "RTC",
-            "CST",
-            "cClassTrib"
+            "NF-e",
+            "Informe Técnico"
           ],
-          "portalOrigem": "Portal NF-ABI",
-          "tipoConteudo": "documentação técnica",
+          "portalOrigem": "Portal NF-e",
+          "tipoConteudo": "informe técnico",
           "confianca": "alta",
-          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-          "linkResolvido": true,
-          "status": "vigente"
-        },
-        {
-          "titulo": "IT 2025.002 RT Tabela de Classificação Tributária v1.50",
-          "dataPublicacao": "15/04/2026",
-          "url": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=16&nomeArquivo=IT%202025.002%20v.1.50%20-%20Tabelas%20de%20Classifica%C3%A7%C3%A3o%20do%20IBS%20e%20da%20CBS.pdf",
-          "resumoCurto": "De forma geral, o Informe Técnico tem a finalidade de: • Divulgar orientações e aperfeiçoamentos para os Serviços de Autorização de Uso dos DF-e, que são usados pelas Empresas; • Divulgar e manter registro da atualização de tabelas de domínio usadas pelo Serviço de Autorização, não significando obrigatoriamente a necessidade…",
-          "tags": [
-            "NF-ABI",
-            "Leiaute"
-          ],
-          "portalOrigem": "Portal NF-ABI",
-          "tipoConteudo": "documentação técnica",
-          "confianca": "alta",
-          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
           "linkResolvido": true,
           "status": "vigente"
         }
@@ -78,27 +36,53 @@
       "observacoes": ""
     },
     {
-      "nome": "Portal BP-e",
-      "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "15/04/2026 14:04:52",
+      "nome": "CGIBS",
+      "url": "https://www.cgibs.gov.br/noticias",
+      "consultadoEm": "15/04/2026 19:51:12",
       "encontrouItensHoje": false,
       "itens": [],
-      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
+      "observacoes": "Servidor CGIBS inacessível do ambiente CI (ECONNRESET). Monitoramento manual recomendado."
+    },
+    {
+      "nome": "Portal MDF-e",
+      "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
+      "consultadoEm": "15/04/2026 19:51:15",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "erro": "timeout of 30000ms exceeded"
+    },
+    {
+      "nome": "Portal NF-ABI",
+      "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "consultadoEm": "15/04/2026 19:52:10",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "erro": "timeout of 30000ms exceeded"
+    },
+    {
+      "nome": "Portal BP-e",
+      "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
+      "consultadoEm": "15/04/2026 19:53:15",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "erro": "timeout of 30000ms exceeded"
     },
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "15/04/2026 14:04:55",
+      "consultadoEm": "15/04/2026 19:54:20",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
     }
   ],
-  "totalItens": 2,
+  "totalItens": 1,
   "totalPortaisVerificados": 7,
   "totalPortaisComItens": 1,
   "totalPortaisSemItens": 6,
   "erros": [
-    "CGIBS: read ECONNRESET"
+    "Portal MDF-e: timeout of 30000ms exceeded",
+    "Portal NF-ABI: timeout of 30000ms exceeded",
+    "Portal BP-e: timeout of 30000ms exceeded"
   ]
 }
