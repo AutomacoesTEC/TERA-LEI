@@ -39,9 +39,9 @@
       ],
       "resumo": "Tabela atualizada de CST e cClassTrib da Reforma Tributária.Pode ser visualizada também de forma online na área da Conformidade Fácil: https://dfe-portal.svrs.rs.gov.br/CFF/ClassificacaoTributaria",
       "fonte": "Portal NF-ABI",
-      "link": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "link": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=12&nomeArquivo=cClassTrib%202026_04_15.xlsx",
       "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "linkResolvido": false,
+      "linkResolvido": true,
       "status": "vigente"
     },
     {
@@ -55,9 +55,9 @@
       ],
       "resumo": "De forma geral, o Informe Técnico tem a finalidade de: • Divulgar orientações e aperfeiçoamentos para os Serviços de Autorização de Uso dos DF-e, que são usados pelas Empresas; • Divulgar e manter registro da atualização de tabelas de domínio usadas pelo Serviço de Autorização, não significando obrigatoriamente a necessidade…",
       "fonte": "Portal NF-ABI",
-      "link": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "link": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=16&nomeArquivo=IT%202025.002%20v.1.50%20-%20Tabelas%20de%20Classifica%C3%A7%C3%A3o%20do%20IBS%20e%20da%20CBS.pdf",
       "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "linkResolvido": false,
+      "linkResolvido": true,
       "status": "vigente"
     },
     {

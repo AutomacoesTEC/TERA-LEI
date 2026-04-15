@@ -68,7 +68,16 @@ const ESTRATEGIAS = [
     // DFe-Portal SVRS (MDF-e SVRS, BP-e, NF-ABI)
     test:    url => /dfe-portal\.svrs\.rs\.gov\.br/i.test(url),
     base:    ()  => 'https://dfe-portal.svrs.rs.gov.br',
-    seletor: 'a[href$=".pdf"], a[href*="download"], a[href*="/Noticia/"], a[href*="/Documento/"]',
+    seletor: 'a[href$=".pdf"], a[href*="download"], a[href*="/Noticia/"], a[href*="/Documento/"], a[onclick*="download_arquivo_estatico"]',
+    resolver: ($, a, base) => {
+      const onclick = $(a).attr('onclick') || '';
+      const m = onclick.match(/download_arquivo_estatico\s*\(\s*'([^']+)'\s*,\s*(\d+)\s*,\s*'([^']+)'\s*\)/);
+      if (m) {
+        const [_, sistema, tipo, nome] = m;
+        return `${base}/${sistema}/DownloadArquivoEstatico/?sistema=${sistema}&tipoArquivo=${tipo}&nomeArquivo=${nome}`;
+      }
+      return null;
+    }
   },
   {
     // NFS-e gov.br
@@ -167,11 +176,21 @@ async function resolverLinkDireto(listaUrl, termoBusca = '') {
 
     $(estrategia.seletor).each((_, a) => {
       const texto = $(a).text().trim();
-      const href  = $(a).attr('href') || '';
-      if (!href) return;
-      const url = href.startsWith('http') ? href
-                : href.startsWith('/')     ? `${base}${href}`
-                : `${base}/${href}`;
+      let url = null;
+
+      if (estrategia.resolver) {
+        url = estrategia.resolver($, a, base);
+      }
+
+      if (!url) {
+        const href = $(a).attr('href') || '';
+        if (href && !href.startsWith('#')) {
+          url = href.startsWith('http') ? href
+              : href.startsWith('/')     ? `${base}${href}`
+              : `${base}/${href}`;
+        }
+      }
+
       if (url) candidatos.push({ texto, url });
     });
 
