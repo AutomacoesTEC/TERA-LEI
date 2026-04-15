@@ -27,48 +27,63 @@ jobs:
         working-directory: ./curador-reforma
         run: npm ci || npm install
 
-      - name: Instalar dependências do Puppeteer (Chrome)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 \
-            libgbm1 libasound2 libpangocairo-1.0-0 libatk1.0-0 libcups2 \
-            libnspr4 libnss3 libxss1 fonts-liberation xdg-utils
-
       - name: Executar curadoria
         working-directory: ./curador-reforma
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TIMEZONE: America/Sao_Paulo
-          PUPPETEER_ARGS: --no-sandbox
         run: node curador-reforma.js
 
       - name: Integrar com reforma_em_dia.json
         run: |
-          # Se o curador encontrou itens, mesclar com data/reforma_em_dia.json
           if [ -f curador-reforma/data/reforma_curadoria.json ]; then
             python3 << 'PYEOF'
           import json, os, re, hashlib
+          import urllib.request
           from datetime import datetime
 
           curadoria_path = "curador-reforma/data/reforma_curadoria.json"
-          reforma_path = "data/reforma_em_dia.json"
+          reforma_path   = "data/reforma_em_dia.json"
 
-          # ── Detecta série + versão de uma nota técnica ──────────────────────
-          # Ex.: "Nota Técnica 2025.001 v.1.07" → ("2025.001", (1, 7))
+          # ── Regex: detecta série + versão de uma nota técnica ───────────────
+          # Suporta:
+          #   "Nota Técnica 2025.001 v.1.07"   → serie=2025.001, versao=(1,7)
+          #   "NT 2025.002 v1.35"              → serie=2025.002, versao=(1,35)
+          #   "Nota Técnica 2025.001 v.107"    → serie=2025.001, versao=(1,7)  [107→1.07]
+          #   "Informe Técnico 2025.002 v1.21" → serie=2025.002, versao=(1,21)
           RE_NT = re.compile(
-              r'(?:nota\s+t[eé]cnica|nt)[\s_]*(\d{4}\.\d{3,4})'
-              r'.*?v[\.\s]*(\d+)[\.\s]+(\d+)',
-              re.IGNORECASE
+              r'(?:nota|informe)\s+t[eé]cnica\s+(\d{4}[\.\-]\d{3,4})'
+              r'.*?(?:v(?:ers[aã]o)?[\.\s]*)(\d+)(?:[\.\s]+(\d+))?',
+              re.IGNORECASE | re.DOTALL
+          )
+          # Também captura "NT YYYY.NNN v..." abreviado
+          RE_NT_ABBR = re.compile(
+              r'\bnt[\s_]*(\d{4}[\.\-]\d{3,4})'
+              r'.*?(?:v(?:ers[aã]o)?[\.\s]*)(\d+)(?:[\.\s]+(\d+))?',
+              re.IGNORECASE | re.DOTALL
           )
 
           def extrair_nt(titulo):
-              m = RE_NT.search(titulo or "")
-              if not m:
-                  return None, None
-              serie = m.group(1)
-              versao = (int(m.group(2)), int(m.group(3)))
-              return serie, versao
+              for RE in (RE_NT, RE_NT_ABBR):
+                  m = RE.search(titulo or "")
+                  if not m:
+                      continue
+                  serie = re.sub(r'[-]', '.', m.group(1))  # normaliza 2025-001 → 2025.001
+                  major = int(m.group(2))
+                  # Versão de 3 dígitos sem separador (ex: "107") → (1, 7)
+                  if m.group(3) is None:
+                      raw = str(major)
+                      if len(raw) == 3:
+                          major, minor = int(raw[0]), int(raw[1:])
+                      elif len(raw) == 2:
+                          major, minor = 0, major
+                      else:
+                          minor = 0
+                  else:
+                      minor = int(m.group(3))
+                  return serie, (major, minor)
+              return None, None
 
           # ── Formata data DD/MM/YYYY → YYYY-MM-DD ────────────────────────────
           def fmt_data(d):
@@ -79,6 +94,45 @@ jobs:
                   if len(parts) == 3:
                       return f"{parts[2]}-{parts[1]}-{parts[0]}"
               return d[:10]
+
+          # ── Resolução retroativa de links de lista ───────────────────────────
+          # Para itens existentes que ainda têm URL de lista no campo link,
+          # tenta extrair o link direto (exibirArquivo.aspx ou PDF) via HTTP.
+          RE_LISTA_URL  = re.compile(r'listaConteudo\.aspx|informe\.aspx|pasta/show|pagina/show', re.I)
+          RE_EXIBIR_NFE = re.compile(r'href="(/portal/exibirArquivo\.aspx\?conteudo=[^"]+)"', re.I)
+          RE_SPED_ARQ   = re.compile(r'href="((?:http://sped\.rfb\.gov\.br)?/arquivo/show/\d+)"', re.I)
+
+          def fetch_html(url, timeout=10):
+              try:
+                  req = urllib.request.Request(
+                      url,
+                      headers={'User-Agent': 'Auditec-Curador/1.0 (Fiscal Compliance)'}
+                  )
+                  with urllib.request.urlopen(req, timeout=timeout) as resp:
+                      return resp.read().decode('utf-8', errors='ignore')
+              except Exception as e:
+                  print(f"  [retrolink] Falha HTTP {url[:60]}: {e}")
+                  return None
+
+          def resolver_link_retroativo(lista_url):
+              try:
+                  base = '/'.join(lista_url.split('/')[:3])
+                  html = fetch_html(lista_url)
+                  if not html:
+                      return None
+                  # NF-e / CT-e / BP-e (fazenda.gov.br)
+                  m = RE_EXIBIR_NFE.search(html)
+                  if m:
+                      href = m.group(1)
+                      return href if href.startswith('http') else f"{base}{href}"
+                  # SPED
+                  m = RE_SPED_ARQ.search(html)
+                  if m:
+                      href = m.group(1)
+                      return href if href.startswith('http') else f"http://sped.rfb.gov.br{href}"
+                  return None
+              except Exception:
+                  return None
 
           # ── Carrega curadoria do dia ─────────────────────────────────────────
           with open(curadoria_path, "r", encoding="utf-8") as f:
@@ -91,18 +145,39 @@ jobs:
           else:
               historico = {"itens": []}
 
-          # ── Migração: garantir status em itens existentes ────────────────────
-          migrados = 0
+          # ── Migração 1: garantir campo status em todos os itens ──────────────
+          migrados_status = 0
           for item in historico.get("itens", []):
               if "status" not in item:
                   item["status"] = "vigente"
-                  migrados += 1
-          if migrados:
-              print(f"Migração: {migrados} item(ns) receberam status='vigente'")
+                  migrados_status += 1
+          if migrados_status:
+              print(f"Migração status: {migrados_status} item(ns) → 'vigente'")
+
+          # ── Migração 2: resolver links de lista existentes ───────────────────
+          links_retroativos = 0
+          for item in historico.get("itens", []):
+              link = item.get("link", "")
+              if not RE_LISTA_URL.search(link):
+                  continue
+              if item.get("linkResolvido"):
+                  continue
+              # Preserva URL de lista antes de sobrescrever
+              if not item.get("linkLista"):
+                  item["linkLista"] = link
+              direto = resolver_link_retroativo(link)
+              if direto:
+                  item["link"]          = direto
+                  item["linkResolvido"] = True
+                  links_retroativos += 1
+              else:
+                  item["linkResolvido"] = False
+          if links_retroativos:
+              print(f"Migração links: {links_retroativos} link(s) existente(s) resolvido(s)")
 
           # ── Índice de ids existentes ─────────────────────────────────────────
           ids_existentes = {item.get("id", "") for item in historico.get("itens", [])}
-          novos = 0
+          novos     = 0
           superados = 0
 
           for portal in curadoria.get("portais", []):
@@ -114,20 +189,20 @@ jobs:
                       continue
 
                   novo = {
-                      "id":         item_id,
-                      "data":       fmt_data(item.get("dataPublicacao", "")),
-                      "titulo":     item.get("titulo", ""),
-                      "categoria":  item.get("tipoConteudo", "Orientação").title(),
-                      "tags":       item.get("tags", []),
-                      "resumo":     item.get("resumoCurto", ""),
-                      "fonte":      item.get("portalOrigem", ""),
-                      "link":       item.get("url", ""),
-                      "linkLista":  item.get("linkLista", ""),
+                      "id":            item_id,
+                      "data":          fmt_data(item.get("dataPublicacao", "")),
+                      "titulo":        item.get("titulo", ""),
+                      "categoria":     item.get("tipoConteudo", "Orientação").title(),
+                      "tags":          item.get("tags", []),
+                      "resumo":        item.get("resumoCurto", ""),
+                      "fonte":         item.get("portalOrigem", ""),
+                      "link":          item.get("url", ""),
+                      "linkLista":     item.get("linkLista", ""),
                       "linkResolvido": item.get("linkResolvido", False),
-                      "status":     item.get("status", "vigente"),
+                      "status":        item.get("status", "vigente"),
                   }
 
-                  # ── Detecção de versões superadas ────────────────────────────
+                  # ── Detecta versões superadas ──────────────────────────────
                   serie_nova, versao_nova = extrair_nt(novo["titulo"])
                   if serie_nova and versao_nova:
                       for existente in historico["itens"]:
@@ -142,14 +217,17 @@ jobs:
                   ids_existentes.add(item_id)
                   novos += 1
 
-          # ── Ordenar por data (mais recente primeiro) ─────────────────────────
+          # ── Ordena por data (mais recente primeiro) ──────────────────────────
           historico["itens"].sort(key=lambda x: x.get("data", ""), reverse=True)
           historico["ultima_atualizacao"] = datetime.now().isoformat()
 
           with open(reforma_path, "w", encoding="utf-8") as f:
               json.dump(historico, f, ensure_ascii=False, indent=2)
 
-          print(f"Integração: {novos} novo(s) · {superados} superado(s) · reforma_em_dia.json atualizado")
+          print(
+              f"Integração concluída: {novos} novo(s) · {superados} superado(s) · "
+              f"{migrados_status} migr.status · {links_retroativos} links retroativos"
+          )
           PYEOF
           fi
 
