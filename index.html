@@ -2870,6 +2870,15 @@ function EConsultorBusca({lib}){
 // ═══ REFORMA EM DIA ═══
 const REFORMA_DATA_URL="data/reforma_em_dia.json";
 const TAG_COLORS={"IBS":"#2e86ab","CBS":"#27ae60","IS":"#e67e22","NT":"#8e44ad","RTC":"#c0392b","NF-e":"#2980b9","CT-e":"#16a085","NFS-e":"#d35400","MDF-e":"#7f8c8d","BP-e":"#f39c12","DeRE":"#1abc9c","Schema":"#34495e","SPED":"#e74c3c","Split Payment":"#9b59b6","Cashback":"#27ae60","Simples":"#3498db","EC":"#d4a017","LC":"#d4a017","PLP":"#8e44ad","Marco":"#c0392b","Legislação":"#a17c2f","Regulamentação":"#2e86ab","Comitê Gestor":"#16a085","CGIBS":"#16a085","RFB":"#e67e22"};
+const FONTES_MONITORADAS=[
+  {nome:"Portal NF-e",descricao:"Notas Técnicas IBS/CBS e documentos vigentes",url:"https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",cor:"#2980b9"},
+  {nome:"Portal CT-e",descricao:"Informes técnicos e comunicados CT-e",url:"https://www.cte.fazenda.gov.br/portal/informe.aspx",cor:"#16a085"},
+  {nome:"CGIBS",descricao:"Atos normativos e resoluções do Comitê Gestor IBS/CBS",url:"https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/reforma-tributaria/comite-gestor",cor:"#16a085"},
+  {nome:"Portal MDF-e (SVRS)",descricao:"Comunicados, NTs e implantações MDF-e",url:"https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",cor:"#7f8c8d"},
+  {nome:"Portal BP-e (SVRS)",descricao:"Notas técnicas Bilhete de Passagem Eletrônico",url:"https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",cor:"#f39c12"},
+  {nome:"NFS-e RTC",descricao:"Notas Técnicas da Reforma Tributária do Consumo para NFS-e",url:"https://www.nfse.gov.br/EmissorNacional/notasTecnicas",cor:"#d35400"},
+  {nome:"NF-ABI (SVRS)",descricao:"Documentos técnicos NF-e para Ajuste de Bens Imóveis",url:"https://dfe-portal.svrs.rs.gov.br/NfAbi/Noticias",cor:"#2980b9"},
+];
 function ReformaEmDia(){
   const [itens,setItens]=useState([]);
   const [loading,setLoading]=useState(false);
@@ -2881,18 +2890,18 @@ function ReformaEmDia(){
   const [filtroDataAte,setFiltroDataAte]=useState("");
   const [sortOrder,setSortOrder]=useState("desc");
   const [expandedId,setExpandedId]=useState(null);
-  const [tagsExpandidas,setTagsExpandidas]=useState(false);
-  const TAGS_VISIVEIS=8;
   const [erro,setErro]=useState("");
   const [ultimaAtt,setUltimaAtt]=useState("");
+  const [showTagPanel,setShowTagPanel]=useState(false);
+  const [showFontes,setShowFontes]=useState(false);
 
   useEffect(()=>{buscar();},[]);
 
   const buscar=async()=>{
-    setLoading(true);setErro("");
+    setLoading(true);setErro("");setShowTagPanel(false);setShowFontes(false);
     try{
-      const r=await fetch(REFORMA_DATA_URL+"?t="+Date.now());
-      if(!r.ok)throw new Error("Arquivo reforma_em_dia.json não encontrado ("+r.status+")");
+      const r=await fetch(REFORMA_DATA_URL+"?t="+Date.now(),{cache:"no-store"});
+      if(!r.ok)throw new Error("reforma_em_dia.json não encontrado ("+r.status+")");
       const data=await r.json();
       if(data.itens){setItens(data.itens);setUltimaAtt(data.ultima_atualizacao||"");}
     }catch(e){setErro(e.message);}
@@ -2924,27 +2933,51 @@ function ReformaEmDia(){
   };
 
   const formatDate=(d)=>{if(!d)return"";const p=d.split("-");return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d;};
-
   const limparFiltros=()=>{setFiltro("");setFiltroTag("");setFiltroCat("");setFiltroFonte("");setFiltroDataDe("");setFiltroDataAte("");};
+  const temFiltros=!!(filtro||filtroTag||filtroCat||filtroFonte||filtroDataDe||filtroDataAte);
 
   return <div className="fade">
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}>
+    {/* ── CABEÇALHO ─────────────────────────────────────────────────── */}
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12,flexWrap:"wrap",gap:8}}>
       <div>
         <h2 style={{margin:0,fontSize:22,fontWeight:800}}>Reforma em Dia</h2>
         <div style={{fontSize:11,color:"var(--text-sec)",marginTop:2}}>Cronologia completa da Reforma Tributária do Consumo (EC 132/2023 · LC 214/2025)</div>
         {ultimaAtt&&<div style={{fontSize:10,color:"var(--text-mute)",marginTop:1}}>Última atualização: {new Date(ultimaAtt).toLocaleString("pt-BR")}</div>}
       </div>
-      <div style={{display:"flex",gap:6}}>
+      <div style={{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}>
+        <button onClick={()=>{setShowFontes(v=>!v);setShowTagPanel(false);}} className="nb" style={{background:showFontes?"var(--gold-subtle)":"var(--bg-hover)",border:"1px solid "+(showFontes?"var(--gold)":"var(--border)"),padding:"6px 12px",height:"auto",borderRadius:6}}>
+          <span style={{fontSize:11,fontWeight:600,color:showFontes?"var(--gold)":"var(--text-sec)"}}>📡 Fontes ({FONTES_MONITORADAS.length})</span>
+          <span style={{fontSize:9,opacity:.7,marginLeft:3}}>{showFontes?"▲":"▼"}</span>
+        </button>
         <button onClick={buscar} className="btn-primary" disabled={loading} style={{fontSize:12,padding:"8px 16px"}}>{loading?"Carregando...":"Atualizar"}</button>
-        <button onClick={()=>setSortOrder(s=>s==="desc"?"asc":"desc")} style={{fontSize:11,padding:"6px 12px",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg-hover)",cursor:"pointer",color:"var(--text-sec)"}}>{sortOrder==="desc"?"📅 Mais recente":"📅 Mais antiga"}</button>
+        <button onClick={()=>setSortOrder(s=>s==="desc"?"asc":"desc")} style={{fontSize:11,padding:"6px 12px",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg-hover)",cursor:"pointer",color:"var(--text-sec)"}}>{sortOrder==="desc"?"📅 Recente":"📅 Antiga"}</button>
       </div>
     </div>
+
+    {/* ── PAINEL FONTES MONITORADAS ──────────────────────────────────── */}
+    {showFontes&&<div className="fade" style={{border:"1px solid var(--border)",borderRadius:8,padding:"12px 16px",marginBottom:14,background:"var(--bg-card)",boxShadow:"var(--shadow)"}}>
+      <div style={{fontSize:12,fontWeight:700,color:"var(--text-sec)",marginBottom:10,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <span>Portais monitorados pelo curador automático · Execução diária às 19h (BRT)</span>
+        <button onClick={()=>setShowFontes(false)} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:"var(--text-mute)",lineHeight:1,padding:"0 4px"}}>×</button>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:6}}>
+        {FONTES_MONITORADAS.map((fm,i)=><div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"8px 10px",borderRadius:6,background:"var(--bg-hover)",border:"1px solid var(--border)"}}>
+          <div style={{width:3,borderRadius:2,background:fm.cor||"var(--gold)",alignSelf:"stretch",flexShrink:0,minHeight:20}}/>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:600,color:"var(--text)"}}>{fm.nome}</div>
+            <div style={{fontSize:11,color:"var(--text-sec)",marginTop:1}}>{fm.descricao}</div>
+          </div>
+          <a href={fm.url} target="_blank" onClick={e=>e.stopPropagation()} style={{fontSize:10,color:"var(--gold)",textDecoration:"none",whiteSpace:"nowrap",marginTop:2,flexShrink:0}}>ver portal →</a>
+        </div>)}
+      </div>
+    </div>}
+
     {erro&&<div style={{background:"rgba(231,76,60,0.1)",border:"1px solid #e74c3c",borderRadius:8,padding:10,marginBottom:10,fontSize:12,color:"#e74c3c"}}>{erro}</div>}
 
-    {/* FILTROS */}
-    <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
-      <input value={filtro} onChange={e=>setFiltro(e.target.value)} placeholder="Buscar publicação... Use + para AND: CBS + NF-e + schema" style={{width:"100%",padding:"12px 16px",borderRadius:8,border:"1px solid var(--border)",background:"var(--bg-card)",fontSize:14,boxShadow:"var(--shadow)"}}/>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
+    {/* ── FILTROS ────────────────────────────────────────────────────── */}
+    <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:14}}>
+      <input value={filtro} onChange={e=>setFiltro(e.target.value)} placeholder="Buscar publicação... Use + para AND: CBS + NF-e + schema" style={{width:"100%",padding:"12px 16px",borderRadius:8,border:"1px solid var(--border)",background:"var(--bg-card)",fontSize:14,boxShadow:"var(--shadow)",boxSizing:"border-box"}}/>
+      <div style={{display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
         <select value={filtroCat} onChange={e=>setFiltroCat(e.target.value)} style={{padding:"6px 10px",borderRadius:6,fontSize:11,border:"1px solid var(--border)",background:"var(--bg-card)"}}>
           <option value="">Todas as categorias</option>
           {allCats.map(c=><option key={c} value={c}>{c}</option>)}
@@ -2953,52 +2986,58 @@ function ReformaEmDia(){
           <option value="">Todas as fontes</option>
           {allFontes.map(f=><option key={f} value={f}>{f}</option>)}
         </select>
-        <div style={{display:"flex",alignItems:"center",gap:4}}>
-          <span style={{fontSize:10,color:"var(--text-mute)"}}>De:</span>
-          <input type="date" value={filtroDataDe} onChange={e=>setFiltroDataDe(e.target.value)} style={{padding:"4px 8px",borderRadius:5,fontSize:11,border:"1px solid var(--border)",background:"var(--bg-card)"}}/>
-          <span style={{fontSize:10,color:"var(--text-mute)"}}>Até:</span>
-          <input type="date" value={filtroDataAte} onChange={e=>setFiltroDataAte(e.target.value)} style={{padding:"4px 8px",borderRadius:5,fontSize:11,border:"1px solid var(--border)",background:"var(--bg-card)"}}/>
+        <span style={{fontSize:10,color:"var(--text-mute)"}}>De:</span>
+        <input type="date" value={filtroDataDe} onChange={e=>setFiltroDataDe(e.target.value)} style={{padding:"4px 8px",borderRadius:5,fontSize:11,border:"1px solid var(--border)",background:"var(--bg-card)"}}/>
+        <span style={{fontSize:10,color:"var(--text-mute)"}}>Até:</span>
+        <input type="date" value={filtroDataAte} onChange={e=>setFiltroDataAte(e.target.value)} style={{padding:"4px 8px",borderRadius:5,fontSize:11,border:"1px solid var(--border)",background:"var(--bg-card)"}}/>
+        <button onClick={()=>{setShowTagPanel(v=>!v);setShowFontes(false);}} className="nb" style={{background:showTagPanel?"var(--gold-subtle)":"var(--bg-hover)",border:"1px solid "+(showTagPanel?"var(--gold)":"var(--border)"),padding:"5px 10px",height:"auto",borderRadius:6}}>
+          <span style={{fontSize:11,fontWeight:600,color:showTagPanel?"var(--gold)":filtroTag?"var(--gold)":"var(--text-sec)"}}>{filtroTag?`🏷 ${filtroTag}`:"Tags"}</span>
+          <span style={{fontSize:9,opacity:.7,marginLeft:3}}>{showTagPanel?"▲":"▼"}</span>
+        </button>
+        {filtroTag&&<button onClick={()=>setFiltroTag("")} style={{border:"none",background:"none",color:"var(--err)",fontSize:10,cursor:"pointer",textDecoration:"underline"}}>✕</button>}
+        <span style={{marginLeft:"auto",fontSize:11,color:"var(--text-mute)"}}>{filtered.length} de {itens.length}</span>
+        {temFiltros&&<button onClick={limparFiltros} style={{fontSize:10,color:"var(--err)",background:"none",border:"none",cursor:"pointer",textDecoration:"underline"}}>limpar</button>}
+      </div>
+      {showTagPanel&&<div className="fade" style={{border:"1px solid var(--border)",borderRadius:8,padding:"10px 12px",background:"var(--bg-card)",boxShadow:"var(--shadow)",marginTop:-3}}>
+        <div style={{display:"flex",flexWrap:"wrap",gap:5,maxHeight:110,overflowY:"auto"}}>
+          {allTags.length===0&&<span style={{fontSize:11,color:"var(--text-mute)"}}>Nenhuma tag disponível</span>}
+          {allTags.map(tag=>{const isSel=filtroTag===tag;const cor=TAG_COLORS[tag]||"var(--gold)";return<button key={tag} onClick={()=>{setFiltroTag(isSel?"":tag);setShowTagPanel(false);}} style={{fontSize:10,fontWeight:isSel?700:500,padding:"4px 10px",borderRadius:12,border:"1px solid "+(isSel?cor:"var(--border)"),background:isSel?cor:"transparent",color:isSel?"#fff":"var(--text-sec)",cursor:"pointer",transition:"all .12s"}}>{tag}</button>;})}
         </div>
-        {(filtro||filtroTag||filtroCat||filtroFonte||filtroDataDe||filtroDataAte)&&<button onClick={limparFiltros} style={{fontSize:10,color:"var(--err)",background:"none",border:"none",cursor:"pointer",textDecoration:"underline"}}>Limpar filtros</button>}
-        <span style={{marginLeft:"auto",fontSize:11,color:"var(--text-mute)"}}>{filtered.length} de {itens.length} publicações</span>
-      </div>
-      {/* TAG CHIPS */}
-      <div style={{display:"flex",flexWrap:"wrap",gap:4,alignItems:"center"}}>
-        {(tagsExpandidas?allTags:allTags.slice(0,TAGS_VISIVEIS)).map(tag=>{const isSel=filtroTag===tag;return <button key={tag} onClick={()=>setFiltroTag(isSel?"":tag)} style={{fontSize:10,fontWeight:isSel?700:500,padding:"3px 10px",borderRadius:12,border:"1px solid "+(isSel?(TAG_COLORS[tag]||"var(--gold)"):"var(--border)"),background:isSel?(TAG_COLORS[tag]||"var(--gold)"):"transparent",color:isSel?"#fff":"var(--text-sec)",cursor:"pointer",transition:"all .12s"}}>{tag}</button>})}
-        {allTags.length>TAGS_VISIVEIS&&<button onClick={()=>setTagsExpandidas(v=>!v)} style={{fontSize:10,padding:"3px 10px",borderRadius:12,border:"1px dashed var(--border)",background:"none",color:"var(--text-mute)",cursor:"pointer",transition:"all .12s",flexShrink:0}}>{tagsExpandidas?"▲ Recolher":"▼ Ver todas ("+allTags.length+")"}</button>}
-      </div>
+      </div>}
     </div>
 
-    {/* CARDS */}
+    {/* ── CARDS ──────────────────────────────────────────────────────── */}
     {filtered.length===0?<div style={{textAlign:"center",padding:50,color:"var(--text-mute)"}}>{itens.length===0?"Nenhuma publicação carregada. Clique em Atualizar.":"Nenhuma publicação encontrada com os filtros aplicados."}</div>
     :<div style={{display:"flex",flexDirection:"column",gap:0,maxHeight:"62vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:10}}>
       {filtered.map((item,i)=>{
         const isExp=expandedId===item.id;
+        const isSuperada=item.status==="superada";
         const catColor=TAG_COLORS[item.categoria]||"var(--gold)";
-        return <div key={item.id} style={{borderBottom:"1px solid var(--border)",background:isExp?"var(--gold-subtle)":"var(--bg-card)",cursor:"pointer",transition:"background .1s"}} onClick={()=>setExpandedId(isExp?null:item.id)}>
+        return <div key={item.id} style={{borderBottom:"1px solid var(--border)",background:isExp?"var(--gold-subtle)":isSuperada?"var(--bg-hover)":"var(--bg-card)",cursor:"pointer",transition:"background .1s",opacity:isSuperada?0.72:1}} onClick={()=>setExpandedId(isExp?null:item.id)}>
           <div style={{display:"flex",alignItems:"flex-start",padding:"14px 18px",gap:14}}>
-            {/* DATA BADGE */}
             <div style={{minWidth:52,textAlign:"center",flexShrink:0}}>
-              <div style={{fontSize:22,fontWeight:800,color:"var(--gold)",lineHeight:1}}>{(item.data||"").slice(8,10)}</div>
+              <div style={{fontSize:22,fontWeight:800,color:isSuperada?"var(--text-mute)":"var(--gold)",lineHeight:1}}>{(item.data||"").slice(8,10)}</div>
               <div style={{fontSize:10,color:"var(--text-sec)",textTransform:"uppercase"}}>{(()=>{const m=parseInt((item.data||"").slice(5,7));const ms=["","Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];return(ms[m]||"")+" "+(item.data||"").slice(0,4);})()}</div>
             </div>
-            {/* CONTEUDO */}
             <div style={{flex:1,minWidth:0}}>
               <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:5}}>
                 <span style={{fontSize:9,fontWeight:700,padding:"2px 8px",borderRadius:10,background:catColor+"18",color:catColor,letterSpacing:.3}}>{item.categoria}</span>
                 <span style={{fontSize:9,fontWeight:600,padding:"2px 8px",borderRadius:10,background:"var(--bg-hover)",color:"var(--text-sec)"}}>{item.fonte}</span>
+                {isSuperada&&<span style={{fontSize:8,fontWeight:700,padding:"2px 7px",borderRadius:10,background:"rgba(231,76,60,0.12)",color:"#e74c3c",letterSpacing:.3}}>⚠ SUPERADA</span>}
                 {(item.tags||[]).slice(0,4).map(t=><span key={t} style={{fontSize:8,fontWeight:600,padding:"1px 6px",borderRadius:8,background:(TAG_COLORS[t]||"var(--gold)")+"15",color:TAG_COLORS[t]||"var(--gold)"}}>{t}</span>)}
               </div>
-              <div style={{fontSize:14,fontWeight:600,lineHeight:1.4,color:"var(--text)",marginBottom:isExp?0:0}}>{filtro.length>=3?highlightText(item.titulo,filtro):item.titulo}</div>
+              <div style={{fontSize:14,fontWeight:600,lineHeight:1.4,color:"var(--text)",textDecoration:isSuperada?"line-through":"none"}}>{filtro.length>=3?highlightText(item.titulo,filtro):item.titulo}</div>
             </div>
-            {/* SETA */}
             <div style={{fontSize:10,color:"var(--text-mute)",flexShrink:0,transform:isExp?"rotate(90deg)":"rotate(0deg)",transition:"transform .15s"}}>▶</div>
           </div>
           {isExp&&<div style={{padding:"0 18px 14px 84px",borderTop:"1px dashed var(--border)"}}>
+            {isSuperada&&<div style={{fontSize:11,color:"#e74c3c",background:"rgba(231,76,60,0.08)",border:"1px solid rgba(231,76,60,0.2)",borderRadius:5,padding:"6px 10px",marginTop:10,marginBottom:6}}>⚠ Esta versão foi <strong>superada</strong> por uma publicação mais recente da mesma série.</div>}
             {item.resumo&&<div style={{fontSize:12.5,lineHeight:1.6,color:"var(--text-sec)",marginTop:10,marginBottom:8}}>{filtro.length>=3?highlightText(item.resumo,filtro):item.resumo}</div>}
             <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center",marginTop:6}}>
               <span style={{fontSize:10,color:"var(--text-mute)"}}>{formatDate(item.data)}</span>
               {item.link&&<a href={item.link} target="_blank" onClick={e=>e.stopPropagation()} style={{fontSize:11,color:"var(--gold)",textDecoration:"none",display:"flex",alignItems:"center",gap:3}}>Acessar publicação →</a>}
+              {item.linkLista&&item.linkLista!==item.link&&<a href={item.linkLista} target="_blank" onClick={e=>e.stopPropagation()} style={{fontSize:10,color:"var(--text-mute)",textDecoration:"none"}}>ver lista →</a>}
+              {item.linkResolvido===false&&<span style={{fontSize:9,color:"var(--text-mute)",fontStyle:"italic"}}>(link da lista · verificar manualmente)</span>}
             </div>
           </div>}
         </div>;
