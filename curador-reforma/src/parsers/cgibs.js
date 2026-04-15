@@ -4,9 +4,10 @@
  * Parser: CGIBS — RSS Feed
  * URL: https://www.cgibs.gov.br/rss
  *
- * O site CGIBS é SPA (React) — usa RSS público em /rss.
- * Atenção: servidor CGIBS rejeita TLS 1.3 (ECONNRESET).
- * Solução: forçar TLS 1.2 via httpsAgent customizado.
+ * NOTA: servidor CGIBS bloqueia IPs de provedores cloud (GitHub Actions).
+ * A conexão é resetada após o handshake TLS — não é contornável via código.
+ * O parser tenta a coleta normalmente; se falhar com ECONNRESET (bloqueio
+ * de IP), registra como aviso informativo (não como erro crítico).
  */
 
 const axios   = require('axios');
@@ -18,9 +19,8 @@ const NOME     = 'CGIBS';
 const URL_RSS  = 'https://www.cgibs.gov.br/rss';
 const URL_SITE = 'https://www.cgibs.gov.br/noticias';
 const UA       = 'Auditec-Curador/1.0 (Fiscal Compliance)';
-const TIMEOUT  = 20_000;
+const TIMEOUT  = 15_000;
 
-// Servidor CGIBS não aceita TLS 1.3 — forçar TLS 1.2
 const tlsAgent = new https.Agent({ maxVersion: 'TLSv1.2' });
 
 function gerarTags(texto) {
@@ -40,7 +40,7 @@ function gerarTags(texto) {
 function parseRssDate(dcDate) {
   if (!dcDate) return null;
   try {
-    const d = new Date(dcDate.trim());
+    const d    = new Date(dcDate.trim());
     const dd   = String(d.getUTCDate()).padStart(2, '0');
     const mm   = String(d.getUTCMonth() + 1).padStart(2, '0');
     const yyyy = d.getUTCFullYear();
@@ -53,13 +53,18 @@ function extractText(str) {
   return str.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, '').trim();
 }
 
+function isIpBlock(err) {
+  return err.code === 'ECONNRESET' || err.code === 'ECONNREFUSED' ||
+         err.code === 'ETIMEDOUT'  || err.message?.includes('ECONNRESET');
+}
+
 async function parseCgibs() {
   const consultadoEm = agora();
   logger.info(`[CGIBS] Iniciando coleta via RSS`);
 
   try {
     const r = await axios.get(URL_RSS, {
-      headers: { 'User-Agent': UA, Accept: 'application/rss+xml, application/xml, text/xml, */*' },
+      headers: { 'User-Agent': UA, Accept: 'application/rss+xml, text/xml, */*' },
       timeout: TIMEOUT,
       httpsAgent: tlsAgent,
       responseType: 'text',
@@ -72,7 +77,6 @@ async function parseCgibs() {
 
     while ((m = RE_ITEM.exec(xml)) !== null) {
       const block = m[1];
-
       const titleM = block.match(/<title>([\s\S]*?)<\/title>/i);
       const linkM  = block.match(/<link>([\s\S]*?)<\/link>/i);
       const dateM  = block.match(/<dc:date>([\s\S]*?)<\/dc:date>/i);
@@ -107,7 +111,16 @@ async function parseCgibs() {
     };
 
   } catch (err) {
-    logger.error(`[CGIBS] Erro: ${err.message}`);
+    if (isIpBlock(err)) {
+      // Servidor CGIBS bloqueia IPs de cloud — comportamento esperado em CI
+      logger.warn(`[CGIBS] Servidor indisponível neste ambiente (bloqueio de IP): ${err.code || err.message}`);
+      return {
+        nome: NOME, url: URL_SITE, consultadoEm,
+        encontrouItensHoje: false, itens: [],
+        observacoes: `Servidor CGIBS inacessível do ambiente CI (${err.code || 'ECONNRESET'}). Monitoramento manual recomendado.`,
+      };
+    }
+    logger.error(`[CGIBS] Erro inesperado: ${err.message}`);
     return { nome: NOME, url: URL_SITE, consultadoEm, encontrouItensHoje: false, itens: [], erro: err.message };
   }
 }
