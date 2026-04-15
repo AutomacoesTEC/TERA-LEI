@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-15T08:11:46.656214-03:00",
+  "ultima_atualizacao": "2026-04-15T10:19:29.060330-03:00",
   "data_busca": "2026-04-15",
-  "total": 292,
-  "novos_nesta_execucao": 6,
+  "total": 295,
+  "novos_nesta_execucao": 3,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -80,6 +80,30 @@
       "portal": "Min. Fazenda",
       "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=EMISS%C3%83O%20DE%20T%C3%8DTULO",
       "resumo": ""
+    },
+    {
+      "id": "ebd0418da05bde0f",
+      "data": "2026-04-15",
+      "titulo": "15/04/2026 09:09▶️ Novo PACCampanha do Governo destaca avanços no DF com novos Institutos Federais, corredor de ônibus e duplicação de BR",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/distrito-federal-em-movimento-campanha-do-governo-do-brasil-destaca-novos-institutos-federais-corredor-exclusivo-de-onibus-e-duplicacao-da-br-080",
+      "resumo": ""
+    },
+    {
+      "id": "78fb63db591a2f18",
+      "data": "2026-04-15",
+      "titulo": "Ministério da Fazenda recebe contribuições técnicas do setor empresarial para a implementação do mercado de carbono",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/abril/ministerio-da-fazenda-recebe-contribuicoes-tecnicas-do-setor-empresarial-para-a-implementacao-do-mercado-de-carbono",
+      "resumo": "15/04/2026-Conselho empresarial entrega à Secretaria Extraordinária de Mercado de Carbono estudos com recomendações para subsidiar a construção do SBCE"
+    },
+    {
+      "id": "52325d8218fc45f9",
+      "data": "2026-04-15",
+      "titulo": "Operação Caixa Rápido: Receita Federal orienta contribuintes sobre uso indevido de créditos de PIS/Pasep e Cofins",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/operacao-caixa-rapido-receita-federal-orienta-contribuintes-sobre-uso-indevido-de-creditos-de-pis-pasep-e-cofins",
+      "resumo": "15/04/2026-Ação identifica inconsistências em créditos com estimativa de glosa da ordem de R$ 10 bilhões."
     },
     {
       "id": "15f3e7b634fc558f",
