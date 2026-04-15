@@ -14,7 +14,6 @@
  *   TELEGRAM_BOT_TOKEN  — token do bot Telegram
  *   TELEGRAM_CHAT_ID    — ID do chat/canal de destino
  *   TIMEZONE            — fuso (default: America/Sao_Paulo)
- *   PUPPETEER_ARGS      — flags Chromium para CI (--no-sandbox)
  */
 
 const path = require('path');
@@ -34,17 +33,17 @@ try {
     });
 } catch (_) {}
 
-const { parseCte }          = require('./src/parsers/cte');
-const { parseNfe }          = require('./src/parsers/nfe');
-const { parseCgibs }        = require('./src/parsers/cgibs');
-const { parseMdfe }         = require('./src/parsers/mdfe');
-const { parseNfabi }        = require('./src/parsers/nfabi');
-const { parseBpe }          = require('./src/parsers/bpe');
-const { parseNfseRtc }      = require('./src/parsers/nfseRtc');
-const { enviarTelegram }    = require('./src/utils/telegram');
-const { resolverLinkDireto, isListaUrl } = require('./src/utils/linkResolver');
-const logger                = require('./src/utils/logger');
-const { hoje, agora }       = require('./src/utils/date');
+const { parseCte }       = require('./src/parsers/cte');
+const { parseNfe }       = require('./src/parsers/nfe');
+const { parseCgibs }     = require('./src/parsers/cgibs');
+const { parseMdfe }      = require('./src/parsers/mdfe');
+const { parseNfabi }     = require('./src/parsers/nfabi');
+const { parseBpe }       = require('./src/parsers/bpe');
+const { parseNfseRtc }   = require('./src/parsers/nfseRtc');
+const { enviarTelegram } = require('./src/utils/telegram');
+const { resolverLinkDireto, isListaUrl, isLinkDireto } = require('./src/utils/linkResolver');
+const logger             = require('./src/utils/logger');
+const { hoje, agora }    = require('./src/utils/date');
 
 const DATA_DIR     = path.join(__dirname, 'data');
 const PENDENTE_DIR = path.join(__dirname, 'pendente-publicacao');
@@ -69,40 +68,53 @@ function garantirDirs() {
 }
 
 // ── Resolução de links diretos ─────────────────────────────────────────────
-// Roda APÓS a coleta de todos os portais.
-// Para cada item cujo url ainda aponta para a página de lista, tenta
-// extrair o link direto do documento (exibirArquivo, /arquivo/show, PDF, etc.)
+//
+// Regras (por item):
+//   1. Se item.url já é link direto (exibirArquivo.aspx, PDF, etc.)
+//      → mantém, marca linkResolvido=true
+//   2. Se item.url é uma lista ESPECÍFICA (diferente de portal.url)
+//      → busca exibirArquivo.aspx NESSA lista específica (não no portal geral)
+//   3. Se item.url é a própria portal.url ou está vazio
+//      → busca exibirArquivo.aspx na página de lista do portal
+//   4. Fallback: mantém URL de lista, linkResolvido=false
+//
+// linkLista é sempre preenchido com a URL de lista de origem.
 async function resolverLinks(portais) {
   let resolvidos = 0;
   let fallbacks  = 0;
 
   for (const portal of portais) {
     for (const item of portal.itens || []) {
-      // Salva referência à lista antes de qualquer substituição
-      item.linkLista = portal.url;
 
-      const precisaResolver = !item.url || isListaUrl(item.url) || item.url === portal.url;
-
-      if (precisaResolver) {
-        const { link, linkResolvido } = await resolverLinkDireto(portal.url, item.titulo);
-        item.url           = link;
-        item.linkResolvido = linkResolvido;
-        linkResolvido ? resolvidos++ : fallbacks++;
-      } else {
-        // Parser já encontrou link direto
+      // ── Caso 1: parser já encontrou link direto ──────────────────────────
+      if (isLinkDireto(item.url)) {
+        item.linkLista     = portal.url;
         item.linkResolvido = true;
         resolvidos++;
+        continue;
       }
+
+      // ── Determina URL da lista a buscar ───────────────────────────────────
+      // Se o parser encontrou uma lista mais específica que o portal geral,
+      // resolve a partir DELA (não do portal.url genérico).
+      const fetchUrl = (item.url && isListaUrl(item.url)) ? item.url : portal.url;
+      item.linkLista = fetchUrl;
+
+      // ── Casos 2 e 3: resolver link direto ────────────────────────────────
+      const { link, linkResolvido } = await resolverLinkDireto(fetchUrl, item.titulo);
+      item.url           = link;
+      item.linkResolvido = linkResolvido;
+      linkResolvido ? resolvidos++ : fallbacks++;
     }
   }
 
-  logger.info(`[linkResolver] ${resolvidos} resolvidos · ${fallbacks} fallback(s) para lista`);
+  logger.info(`[linkResolver] ${resolvidos} resolvido(s) · ${fallbacks} fallback(s) para lista`);
 }
 
 // ── Campo status ─────────────────────────────────────────────────────────────
-// Adiciona status:"vigente" em todos os itens novos.
-// (Detecção de versões superadas acontece no Python de integração,
-//  que tem acesso ao histórico completo do reforma_em_dia.json)
+// Novos itens recebem status:"vigente".
+// Detecção de versões superadas (status:"superada") é feita no Python de
+// integração (curadoria_reforma_v2.yml), que tem acesso ao histórico completo.
 function adicionarStatus(portais) {
   for (const portal of portais) {
     for (const item of portal.itens || []) {
