@@ -4,12 +4,14 @@
  * Parser: CGIBS — RSS Feed
  * URL: https://www.cgibs.gov.br/rss
  *
- * O site do CGIBS é uma SPA (React) que não renderiza conteúdo sem JS.
- * Solução: usar o feed RSS público disponível em /rss.
+ * O site CGIBS é SPA (React) — usa RSS público em /rss.
+ * Atenção: servidor CGIBS rejeita TLS 1.3 (ECONNRESET).
+ * Solução: forçar TLS 1.2 via httpsAgent customizado.
  */
 
 const axios   = require('axios');
-const { hoje, isHoje, truncarPalavras, agora } = require('../utils/date');
+const https   = require('https');
+const { isHoje, truncarPalavras, agora } = require('../utils/date');
 const logger  = require('../utils/logger');
 
 const NOME     = 'CGIBS';
@@ -17,6 +19,9 @@ const URL_RSS  = 'https://www.cgibs.gov.br/rss';
 const URL_SITE = 'https://www.cgibs.gov.br/noticias';
 const UA       = 'Auditec-Curador/1.0 (Fiscal Compliance)';
 const TIMEOUT  = 20_000;
+
+// Servidor CGIBS não aceita TLS 1.3 — forçar TLS 1.2
+const tlsAgent = new https.Agent({ maxVersion: 'TLSv1.2' });
 
 function gerarTags(texto) {
   const t = (texto || '').toUpperCase();
@@ -32,19 +37,17 @@ function gerarTags(texto) {
   return [...new Set(tags)];
 }
 
-// Parse date from RSS dc:date (ISO 8601) → DD/MM/YYYY
 function parseRssDate(dcDate) {
   if (!dcDate) return null;
   try {
     const d = new Date(dcDate.trim());
-    const dd = String(d.getUTCDate()).padStart(2, '0');
-    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const dd   = String(d.getUTCDate()).padStart(2, '0');
+    const mm   = String(d.getUTCMonth() + 1).padStart(2, '0');
     const yyyy = d.getUTCFullYear();
     return `${dd}/${mm}/${yyyy}`;
   } catch (_) { return null; }
 }
 
-// Extract text from CDATA or plain XML text
 function extractText(str) {
   if (!str) return '';
   return str.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, '').trim();
@@ -56,12 +59,13 @@ async function parseCgibs() {
 
   try {
     const r = await axios.get(URL_RSS, {
-      headers: { 'User-Agent': UA },
+      headers: { 'User-Agent': UA, Accept: 'application/rss+xml, application/xml, text/xml, */*' },
       timeout: TIMEOUT,
+      httpsAgent: tlsAgent,
       responseType: 'text',
     });
 
-    const xml = r.data;
+    const xml   = r.data;
     const items = [];
     const RE_ITEM = /<item>([\s\S]*?)<\/item>/gi;
     let m;
@@ -69,15 +73,15 @@ async function parseCgibs() {
     while ((m = RE_ITEM.exec(xml)) !== null) {
       const block = m[1];
 
-      const titleM   = block.match(/<title>([\s\S]*?)<\/title>/i);
-      const linkM    = block.match(/<link>([\s\S]*?)<\/link>/i);
-      const dateM    = block.match(/<dc:date>([\s\S]*?)<\/dc:date>/i);
-      const descM    = block.match(/<description>([\s\S]*?)<\/description>/i);
+      const titleM = block.match(/<title>([\s\S]*?)<\/title>/i);
+      const linkM  = block.match(/<link>([\s\S]*?)<\/link>/i);
+      const dateM  = block.match(/<dc:date>([\s\S]*?)<\/dc:date>/i);
+      const descM  = block.match(/<description>([\s\S]*?)<\/description>/i);
 
-      const titulo   = extractText(titleM?.[1] || '');
-      const link     = extractText(linkM?.[1]  || '');
-      const dataStr  = parseRssDate(dateM?.[1]);
-      const descRaw  = extractText(descM?.[1]  || '');
+      const titulo  = extractText(titleM?.[1] || '');
+      const link    = extractText(linkM?.[1]  || '');
+      const dataStr = parseRssDate(dateM?.[1]);
+      const descRaw = extractText(descM?.[1]  || '');
 
       if (!titulo || !dataStr) continue;
       if (!isHoje(dataStr)) continue;
