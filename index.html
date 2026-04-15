@@ -489,7 +489,7 @@ function App(){
   const importBackup=()=>{const inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const txt=await f.text();const data=JSON.parse(txt);if(data.lib){setLib(data.lib);LS("t3-lib",data.lib);}if(data.study){setStudy(data.study);LS("t3-st",data.study);}if(data.tagsConfig){setTagsConfig(data.tagsConfig);LS("t3-tags-config",data.tagsConfig);}if(data.notas)LS("t3-notas",data.notas);if(data.temas)LS("t3-temas",data.temas);alert("Backup restaurado com sucesso! "+((data.lib||[]).length)+" leis, "+(Object.keys(data.study||{}).length)+" anotações de estudo e "+((data.notas||[]).length)+" anotações do E-Consultor importadas.");}catch(e){alert("Erro ao importar: "+e.message);}};inp.click();};
   const nav=[{id:"library",ic:IC.bk,lb:"Biblioteca"},...(sel?[{id:"reader",ic:IC.ls,lb:sel.nome.slice(0,20)}]:[]),{id:"econsultor",ic:IC.br,lb:"E-Consultor"},{id:"buscageral",ic:IC.sr,lb:"Busca Geral"},{id:"reforma",ic:IC.sc,lb:"Reforma em Dia"},{id:"atualizacoes",ic:IC.bl,lb:"Atualizações"}];
 
-  return <div style={{minHeight:"100vh"}}>
+  return <div style={{height:"100vh",display:"flex",flexDirection:"column",overflow:"hidden"}}>
     <header style={{background:"var(--bg-card)",borderBottom:"1px solid var(--border)",padding:"8px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100,boxShadow:"var(--shadow)"}}>
       <div style={{display:"flex",alignItems:"center",gap:10}}>
         <Logo/>
@@ -505,7 +505,7 @@ function App(){
         <select value={area} onChange={e=>setArea(e.target.value)} style={{background:"var(--input-bg)",border:"1px solid var(--border)",borderRadius:5,color:"var(--text)",padding:"5px 8px",fontSize:11}}>{Object.entries(AREAS).map(([k,v])=><option key={k} value={k}>{v.nome}</option>)}</select>
       </div>
     </header>
-    <main style={{width:"100%",padding:"20px"}}>
+    <main style={{flex:"1 1 0",minHeight:0,overflow:"auto",padding:"20px",boxSizing:"border-box"}}>
       {vw==="library"&&<Lib lib={lib} sel={sel} onSel={l=>{setSel(l);setVw("reader");}} onDel={del} onUp={upF} uping={uping} fRef={fRef}/>}
       {vw==="reader"&&sel&&<Reader lei={sel} area={area} gSt={gSt} uSt={uSt} addAnexo={addAnexo} delAnexo={delAnexo} study={study} tagsConfig={tagsConfig} setTagsConfig={(t)=>{setTagsConfig(t);LS("t3-tags-config",t);}}/>}
       {vw==="econsultor"&&<EConsultor lib={lib}/>}
@@ -2937,7 +2937,7 @@ function ReformaEmDia(){
 
   const exportarXlsx=()=>{try{
     const rows=filtered.map(i=>({
-      "Data":i.data?(i.data.slice(8,10)+"/"+i.data.slice(5,7)+"/"+i.data.slice(0,4)):"",
+      "Data":i.data||"",
       "Título":i.titulo||"",
       "Categoria":i.categoria||"",
       "Fonte":i.fonte||"",
@@ -2953,7 +2953,7 @@ function ReformaEmDia(){
   }catch(e){alert("Erro ao exportar: "+e.message);}};
   const temFiltros=!!(filtro||filtroTag||filtroCat||filtroFonte||filtroDataDe||filtroDataAte);
 
-  return <div className="fade">
+  return <div className="fade" style={{display:"flex",flexDirection:"column",height:"100%",minHeight:0}}>
     {/* ── CABEÇALHO ─────────────────────────────────────────────────── */}
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12,flexWrap:"wrap",gap:8}}>
       <div>
@@ -2966,7 +2966,7 @@ function ReformaEmDia(){
           <span style={{fontSize:11,fontWeight:600,color:showFontes?"var(--gold)":"var(--text-sec)"}}>📡 Fontes ({FONTES_MONITORADAS.length})</span>
           <span style={{fontSize:9,opacity:.7,marginLeft:3}}>{showFontes?"▲":"▼"}</span>
         </button>
-        <button onClick={buscar} title="Recarrega o arquivo reforma_em_dia.json do servidor. Não envia Telegram nem executa o curador — a curadoria roda automaticamente às 19h (BRT) via GitHub Actions." className="btn-primary" disabled={loading} style={{fontSize:12,padding:"8px 16px"}}>{loading?"Carregando...":"🔄 Atualizar"}</button>
+        <button onClick={buscar} className="btn-primary" disabled={loading} style={{fontSize:12,padding:"8px 16px"}}>{loading?"Carregando...":"Atualizar"}</button>
         <button onClick={()=>setSortOrder(s=>s==="desc"?"asc":"desc")} style={{fontSize:11,padding:"6px 12px",border:"1px solid var(--border)",borderRadius:6,background:"var(--bg-hover)",cursor:"pointer",color:"var(--text-sec)"}}>{sortOrder==="desc"?"📅 Recente":"📅 Antiga"}</button>
         {filtered.length>0&&<button onClick={exportarXlsx} className="btn-secondary" style={{fontSize:12,padding:"6px 12px",display:"flex",alignItems:"center",gap:4}}>⬇ Excel</button>}
       </div>
@@ -2991,10 +2991,6 @@ function ReformaEmDia(){
     </div>}
 
     {erro&&<div style={{background:"rgba(231,76,60,0.1)",border:"1px solid #e74c3c",borderRadius:8,padding:10,marginBottom:10,fontSize:12,color:"#e74c3c"}}>{erro}</div>}
-    <div style={{background:"var(--bg-hover)",border:"1px solid var(--border)",borderRadius:6,padding:"7px 12px",marginBottom:12,fontSize:11,color:"var(--text-sec)",display:"flex",alignItems:"center",gap:6}}>
-      <span>🤖</span>
-      <span>Curadoria automática executa <strong>diariamente às 19h (BRT)</strong> via GitHub Actions e envia notificação no Telegram a cada novo item encontrado. O botão <strong>Atualizar</strong> apenas recarrega esta lista do servidor.</span>
-    </div>
 
     {/* ── FILTROS ────────────────────────────────────────────────────── */}
     <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:14}}>
@@ -3029,8 +3025,8 @@ function ReformaEmDia(){
     </div>
 
     {/* ── CARDS ──────────────────────────────────────────────────────── */}
-    {filtered.length===0?<div style={{textAlign:"center",padding:50,color:"var(--text-mute)"}}>{itens.length===0?"Nenhuma publicação carregada. Clique em Atualizar.":"Nenhuma publicação encontrada com os filtros aplicados."}</div>
-    :<div style={{display:"flex",flexDirection:"column",gap:0,maxHeight:"62vh",overflow:"auto",border:"1px solid var(--border)",borderRadius:10}}>
+    {filtered.length===0?<div style={{textAlign:"center",padding:50,color:"var(--text-mute)",flex:"1 1 0",display:"flex",alignItems:"center",justifyContent:"center"}}>{itens.length===0?"Nenhuma publicação carregada. Clique em Atualizar.":"Nenhuma publicação encontrada com os filtros aplicados."}</div>
+    :<div style={{display:"flex",flexDirection:"column",gap:0,flex:"1 1 0",minHeight:120,overflow:"auto",border:"1px solid var(--border)",borderRadius:10}}>
       {filtered.map((item,i)=>{
         const isExp=expandedId===item.id;
         const isSuperada=item.status==="superada";
