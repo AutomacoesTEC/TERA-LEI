@@ -6,7 +6,7 @@ Desenvolvido como uma Single Page Application (SPA) robusta, o sistema combina u
 
 ---
 
-## 🚀 Funcionalidades Principais
+##   Funcionalidades Principais
 
 ### 1. Biblioteca Jurídica Inteligente
 *   **Leitor de Leis:** Visualização estruturada de legislações com suporte a marcações, anotações e anexos.
@@ -31,7 +31,7 @@ Desenvolvido como uma Single Page Application (SPA) robusta, o sistema combina u
 
 ---
 
-## 🛠️ Arquitetura Técnica
+##  Arquitetura Técnica
 
 O projeto é organizado em uma estrutura modular que separa a interface do usuário das automações de backend:
 
@@ -44,7 +44,7 @@ O projeto é organizado em uma estrutura modular que separa a interface do usuá
 
 ---
 
-## 📂 Estrutura de Pastas
+##  Estrutura de Pastas
 
 ```text
 TERA-LEI/
@@ -60,7 +60,7 @@ TERA-LEI/
 
 ---
 
-## ⚙️ Configuração e Execução
+##  Configuração e Execução
 
 ### Interface (Frontend)
 A interface é autocontida no `index.html`. Para desenvolvimento local, basta abrir o arquivo em um navegador ou utilizar um servidor estático simples.
@@ -84,7 +84,7 @@ Para executar os scripts de coleta localmente:
 
 ---
 
-## 📄 Licença e Créditos
+##  Licença e Créditos
 
 Desenvolvido por **AutomacoesTEC**.
 *TERA — Raciocínio Jurídico*
