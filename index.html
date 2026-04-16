@@ -236,8 +236,11 @@ self.onmessage = function(e) {
 function idT(s){for(const p of PATS)if(p.r.test(s.trim()))return p.t;return null;}
 function exId(t,s){s=s.trim();if(DIV.has(t))return s;const R={ARTIGO:/^(Art\.?\s*\d+[ºo°]?[\-\.]?)/,PARÁGRAFO:/^(§\s*\d+[ºo°]?\.?|Par[áa]grafo\s+[úu]nico\.?)/i,INCISO:/^([IVXLCDM]+)\s*[\-–—]/,ALÍNEA:/^([a-z]\))/,ITEM:/^(\d+\.)/};const m=R[t]?.exec(s);return m?m[1].trim():s.slice(0,30);}
 function exTx(t,s){s=s.trim();if(DIV.has(t))return"";const R={ARTIGO:/^Art\.?\s*\d+[ºo°]?[\s\-\.]+(.+)/,PARÁGRAFO:/^(?:§\s*\d+[ºo°]?\.?\s+|Par[áa]grafo\s+[úu]nico\.?\s+)(.+)/i,INCISO:/^[IVXLCDM]+\s*[\-–—]\s+(.+)/,ALÍNEA:/^[a-z]\)\s+(.+)/,ITEM:/^\d+\.\s+(.+)/};const m=R[t]?.exec(s);return m?m[1].trim():s;}
+function limpaLinhaEmenta(s){return s.replace(/\[?\s*(Reda[çc][ãa]o dada pel[oa]\(a\)[^\]]*|Inclu[ií]d[oa]\(a\) pel[oa]\(a\)[^\]]*|Revogad[oa]\(a\) pel[oa]\(a\)[^\]]*)\]?/gi,"").replace(/\s+/g," ").trim();}
+function ehLinhaMetaEmenta(s){return /^(?:(?:Lei(?:\s+Complementar)?|Decreto(?:-Lei)?|Medida\s+Provis[óo]ria|Instru[çc][ãa]o\s+Normativa(?:\s+(?:RFB|SRF|[A-Z]{2,}))?|Portaria|Resolu[çc][ãa]o)\b.*\bn[ºo°]?|(?:Publicad[oa]|DOU|Di[aá]rio Oficial da Uni[aã]o)\b|Vig[eê]ncia\b|Vide\b|Mensagem de veto\b|Regulamento\b|Produ[çc][ãa]o de efeitos\b|Texto compilado\b|Texto para impress[aã]o\b|Consolida[çc][ãa]o\b|Promulga[çc][ãa]o partes vetadas\b|(?:O|A)\s+(?:PRESIDENTE|PRESIDENTA|VICE-PRESIDENTE|MESA|C[ÂA]MARA|CONGRESSO NACIONAL)\b|Fa[çc]o saber\b|Faz saber\b)/i.test(s)||/^(?:Bras[ií]lia|Rio de Janeiro),?\s+\d{1,2}\s+de\s+\w+\s+de\s+\d{4}/i.test(s);}
+function extrairEmenta(pre,temHierarquia){if(pre.length===0)return"";if(!temHierarquia)return pre.join(" ").trim();const linhas=pre.map(limpaLinhaEmenta).filter(Boolean);const ementa=[];let iniciou=false;for(const linha of linhas){if(ehLinhaMetaEmenta(linha)){if(iniciou)break;continue;} if(!iniciou)iniciou=true; ementa.push(linha);}return ementa.join(" ").replace(/\s+/g," ").trim();}
 function parse(txt){const ds=[];let a=null,ag=false;const pre=[];const reAltera=/\[?\s*(Reda[çc][ãa]o dada pel[oa]\(a\)[^\]]*|Inclu[ií]d[oa]\(a\) pel[oa]\(a\)[^\]]*|Revogad[oa]\(a\) pel[oa]\(a\)[^\]]*)\]?/gi;const reVetado=/\(\s*(?:VETADO|Vetado|vetado)\s*\)/;const reRevogado=/\(\s*(?:REVOGADO|Revogado|revogado)\s*\)/;
-  for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}else if(!a){pre.push(s);}}if(pre.length>0){const eTxt=pre.join(" ").trim();if(eTxt)ds.unshift({tipo:"EMENTA",id:"",rub:"",txt:eTxt,status:"vigente",alteracao:""});}return detectVetados(ds);}
+  for(const l of txt.split("\n")){const s=l.trim();if(!s){if(ag&&a)ag=false;continue;}const t=idT(s);if(t){let alteracao="";let status="vigente";const altM=s.match(reAltera);if(altM)alteracao=altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleanTxt=s.replace(reAltera,"").trim();if(reVetado.test(cleanTxt))status="vetado";else if(reRevogado.test(cleanTxt))status="revogado";if(/revogad/i.test(alteracao))status="revogado";a={tipo:t,id:exId(t,cleanTxt),rub:"",txt:exTx(t,cleanTxt),status,alteracao};ds.push(a);ag=DIV.has(t);}else if(a){if(ag&&!a.rub){a.rub=s;ag=false;}else{const altM=s.match(reAltera);if(altM){a.alteracao=a.alteracao?(a.alteracao+"; "+altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ")):altM.map(m=>m.replace(/^\[|\]$/g,"").trim()).join("; ");const cleaned=s.replace(reAltera,"").trim();if(cleaned)a.txt=a.txt?a.txt+" "+cleaned:cleaned;}else{a.txt=a.txt?a.txt+" "+s:s;}}if(reVetado.test(a.txt))a.status="vetado";if(reRevogado.test(a.txt))a.status="revogado";if(a.alteracao&&/revogad/i.test(a.alteracao))a.status="revogado";}else if(!a){pre.push(s);}}const temHierarquia=ds.some(d=>DIV.has(d.tipo));if(pre.length>0){const eTxt=extrairEmenta(pre,temHierarquia);if(eTxt)ds.unshift({tipo:"EMENTA",id:"",rub:"",txt:eTxt,status:"vigente",alteracao:""});}return detectVetados(ds);}
 
 function detectVetados(ds){
   const normId=id=>(id||"").replace(/[^a-zA-Z0-9ºo°§úÚ]/g,"").toLowerCase();
@@ -2079,6 +2082,7 @@ function TabMapa({ds}){
   // ESTRUTURA: construída ANTES do collapsed para inicialização correta
   const estrutura=useMemo(()=>{
     const mapa=[];
+    const temHierarquia=ds.some(d=>DIV.has(d.tipo));
     const stack={PARTE:null,LIVRO:null,"TÍTULO":null,"CAPÍTULO":null,"SEÇÃO":null,"SUBSEÇÃO":null};
     const levels=["PARTE","LIVRO","TÍTULO","CAPÍTULO","SEÇÃO","SUBSEÇÃO"];
     const clearBelow=(tipo)=>{
@@ -2103,7 +2107,7 @@ function TabMapa({ds}){
         for(let i=levels.length-1;i>=0;i--){if(stack[levels[i]]){target=stack[levels[i]];break;}}
         const artEntry={id:d.id,status:d.status||"vigente"};
         if(target){target.artigos.push(artEntry);}
-        else{
+        else if(!temHierarquia){
           // Lei sem divisões hierárquicas: criar nó raiz virtual se ainda não existir
           if(mapa.length===0||mapa[0].__virtual!==true){
             const virtualNode={tipo:"__RAIZ__",id:"Artigos",rub:"",children:[],artigos:[],__virtual:true};
