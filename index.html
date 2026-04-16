@@ -2217,6 +2217,7 @@ function TabMapa({ds}){
     const ctx=hierarquia(ds);
     return ctx[selArt]||"";
   },[ds,selArt]);
+  const ementa=useMemo(()=>ds.find(d=>d.tipo==="EMENTA")||null,[ds]);
 
   const renderArtigos=(artigos,pathKey)=>{
     if(!artigos||artigos.length===0)return null;
@@ -2235,9 +2236,7 @@ function TabMapa({ds}){
   const renderNode=(node,depth,pathKey)=>{
     // Nó virtual para leis sem divisões hierárquicas
     if(node.__virtual){
-      const ementa=ds.find(d=>d.tipo==="EMENTA");
       return <div key={pathKey+"-virtual"} style={{marginTop:4}}>
-        {ementa&&<div style={{fontSize:13,color:"var(--text)",marginBottom:12,padding:"12px 16px",background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:8,lineHeight:1.6,fontStyle:"italic"}}>{ementa.txt}</div>}
         <div style={{fontSize:11,color:"var(--text-sec)",marginBottom:6,fontStyle:"italic"}}>Lei sem divisões hierárquicas — artigos listados diretamente:</div>
         {renderArtigos(node.artigos,pathKey+"-virtual")}
       </div>;
@@ -2273,6 +2272,7 @@ function TabMapa({ds}){
 
   return <div style={{display:"flex",gap:16,height:"70vh"}}>
     <div style={{flex:"1 1 55%",overflow:"auto",paddingRight:8}}>
+      {ementa&&<div style={{fontSize:13,color:"var(--text)",marginBottom:12,padding:"12px 16px",background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:8,lineHeight:1.6,fontStyle:"italic"}}>{ementa.txt}</div>}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
         <div style={{fontSize:13,fontWeight:700,color:"var(--gold)"}}>ESTRUTURA HIERÁRQUICA</div>
         <div style={{display:"flex",gap:6}}>
