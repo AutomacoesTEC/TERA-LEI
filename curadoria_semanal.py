@@ -172,26 +172,37 @@ def data_no_periodo(data_texto: str, inicio: date, fim: date) -> bool:
 
 def fetch(url: str, params: dict = None) -> tuple[str | None, str | None]:
     """GET com retry. Retorna (html, None) ou (None, erro)."""
+    import certifi
+    import time
+    from http.client import RemoteDisconnected
+    from requests.exceptions import RequestException
+
+    last_err = None
+    headers = {
+        "Referer": url,
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+    }
     for attempt in range(1, MAX_RETRIES + 1):
         try:
-            r = SESSION.get(url, params=params, timeout=TIMEOUT)
+            r = SESSION.get(
+                url,
+                params=params,
+                timeout=TIMEOUT,
+                verify=certifi.where(),
+                headers=headers,
+            )
             r.raise_for_status()
             r.encoding = r.apparent_encoding or "utf-8"
             return r.text, None
-        except requests.exceptions.Timeout:
-            if attempt == MAX_RETRIES:
-                return None, f"Timeout após {MAX_RETRIES} tentativas"
-        except requests.exceptions.HTTPError as e:
-            code = e.response.status_code
-            if code in (403, 404, 429):
-                return None, f"HTTP {code}"
-            if attempt == MAX_RETRIES:
-                return None, f"HTTP {code}"
-        except Exception as e:
-            if attempt == MAX_RETRIES:
-                return None, str(e)
-    return None, "Falha desconhecida"
-
+        except (RemoteDisconnected, RequestException, Exception) as e:
+            last_err = e
+            if attempt < MAX_RETRIES:
+                time.sleep(2 * attempt)
+            else:
+                break
+    return None, str(last_err)
 
 def item(titulo: str, link: str, data_pub: str, fonte: str, extra: str = "") -> dict:
     return {
