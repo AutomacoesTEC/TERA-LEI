@@ -1,8 +1,8 @@
 {
-  "ultima_atualizacao": "2026-04-15T10:19:29.060330-03:00",
-  "data_busca": "2026-04-15",
-  "total": 295,
-  "novos_nesta_execucao": 3,
+  "ultima_atualizacao": "2026-04-16T10:24:20.070811-03:00",
+  "data_busca": "2026-04-16",
+  "total": 302,
+  "novos_nesta_execucao": 7,
   "fontes": [
     "https://agenciagov.ebc.com.br/noticias/receita-federal",
     "https://agenciagov.ebc.com.br/noticias/planalto",
@@ -33,6 +33,62 @@
     "fontes_erro": []
   },
   "itens": [
+    {
+      "id": "55e94c8824fef447",
+      "data": "2026-04-16",
+      "titulo": "15/04/2026 10:52Habitação PopularLula participa do anúncio de medidas econômicas para apoiar o crescimento no setor habitacional",
+      "portal": "AgênciaGov — Planalto",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/lula-participa-do-anuncio-de-medidas-economicas-para-apoiar-o-crescimento-no-setor-habitacional-acompanhe",
+      "resumo": ""
+    },
+    {
+      "id": "40373e99b4d34dd9",
+      "data": "2026-04-16",
+      "titulo": "16/04/2026 06:54Crimes FinanceirosPolícia Federal deflagra 4ª fase da Operação Compliance Zero",
+      "portal": "AgênciaGov — Justiça",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/policia-federal-deflagra-4a-fase-da-operacao-compliance-zero",
+      "resumo": ""
+    },
+    {
+      "id": "68cb52be5f5a874f",
+      "data": "2026-04-16",
+      "titulo": "16/04/2026 06:40ApoioPortaria define setores afetados pela guerra que podem acessar R$ 15 bi adicionais do Brasil Soberano",
+      "portal": "AgênciaGov — Economia",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/industria-estrategica-e-setores-afetados-pela-guerra-no-oriente-medio-poderao-acessar-mais-r-15-bi-do-plano-brasil-soberano",
+      "resumo": ""
+    },
+    {
+      "id": "96c87fc889d762ba",
+      "data": "2026-04-16",
+      "titulo": "15/04/2026 16:22tvBrasil Antenado alcança recorde de 33 mil antenas entregues em um mês",
+      "portal": "AgênciaGov — Comunicações",
+      "link": "https://agenciagov.ebc.com.br/noticias/202604/brasil-antenado-alcanca-recorde-de-33-mil-antenas-entregues-em-um-mes",
+      "resumo": ""
+    },
+    {
+      "id": "0b6a47909976ff85",
+      "data": "2026-04-16",
+      "titulo": "RELATÓRIO MENSAL DE GARANTIAS HONRADAS PELA UNIÃO",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=RELAT%C3%93RIO%20MENSAL%20DE%20GARANTIAS%20HONRADAS%20PELA%20UNI%C3%83O",
+      "resumo": ""
+    },
+    {
+      "id": "17794be215db3f30",
+      "data": "2026-04-16",
+      "titulo": "REGIME DE RECUPERAÇÃO FISCAL",
+      "portal": "Min. Fazenda",
+      "link": "https://www.gov.br/fazenda/pt-br/@@search?SearchableText=REGIME%20DE%20RECUPERA%C3%87%C3%83O%20FISCAL",
+      "resumo": ""
+    },
+    {
+      "id": "ecda2b1a62c9affb",
+      "data": "2026-04-16",
+      "titulo": "Receita Federal registra o maior conjunto de apreensões de haxixe da história vinda dos EUA",
+      "portal": "RFB Notícias",
+      "link": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/abril/receita-federal-registra-o-maior-conjunto-de-apreensoes-de-haxixe-da-historia-vinda-dos-eua",
+      "resumo": "16/04/2026-Valor estimado das apreensões é de aproximadamente R$ 34 milhões."
+    },
     {
       "id": "c20c532c83fceb7e",
       "data": "2026-04-15",
