@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TERA — Curadoria Semanal Tributária (v1.0)
+TERA — Curadoria Semanal Tributária (v1.1)
 ==========================================
 Agente de curadoria que "pesca" TODAS as publicações oficiais de interesse
 tributário publicadas entre a segunda-feira e o domingo da semana anterior.
@@ -48,6 +48,8 @@ import os
 import re
 import smtplib
 import sys
+import time
+import random
 import traceback
 from datetime import datetime, timedelta, timezone, date
 from email.mime.multipart import MIMEMultipart
@@ -57,17 +59,32 @@ from urllib.parse import urljoin, urlencode
 
 try:
     import requests
+    from requests.exceptions import RequestException
+    from requests.packages.urllib3.exceptions import InsecureRequestWarning
     from bs4 import BeautifulSoup
     import feedparser
+    import certifi
 except ImportError:
     import subprocess
     subprocess.check_call([
         sys.executable, "-m", "pip", "install",
-        "requests", "beautifulsoup4", "lxml", "feedparser", "--quiet"
+        "requests", "beautifulsoup4", "lxml", "feedparser", "certifi", "--quiet"
     ])
     import requests
+    from requests.exceptions import RequestException
     from bs4 import BeautifulSoup
     import feedparser
+    import certifi
+
+# Suprimir avisos de SSL quando verify=False (usado apenas como fallback)
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+# Tentar importar cloudscraper (opcional, para bypass de Cloudflare)
+try:
+    import cloudscraper
+    CLOUDSCRAPER_AVAILABLE = True
+except ImportError:
+    CLOUDSCRAPER_AVAILABLE = False
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURAÇÕES GLOBAIS
@@ -75,12 +92,23 @@ except ImportError:
 BRT = timezone(timedelta(hours=-3))
 AGORA = datetime.now(BRT)
 TIMEOUT = 40
-MAX_RETRIES = 3
+MAX_RETRIES = 4  # Aumentado para dar mais chances
+
+# Sessão HTTP com headers realistas de navegador
 SESSION = requests.Session()
 SESSION.headers.update({
-    "User-Agent": "TERA-CuradoriaSemanal/1.0 (AutomacoesTEC/TERA-LEI; tributario)",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.5",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Cache-Control": "max-age=0",
+    "Referer": "https://www.google.com/",
 })
 
 DATA_DIR = Path("data")
@@ -101,7 +129,6 @@ def log(msg: str):
 
 def calcular_periodo_semana() -> tuple[date, date]:
     """Calcula segunda-feira e domingo da semana ANTERIOR."""
-    # Permite override via variável de ambiente (disparo manual)
     env_inicio = os.environ.get("DATA_INICIO", "").strip()
     env_fim = os.environ.get("DATA_FIM", "").strip()
     if env_inicio and env_fim:
@@ -114,19 +141,14 @@ def calcular_periodo_semana() -> tuple[date, date]:
             pass
 
     hoje = AGORA.date()
-    # weekday(): Monday=0, Sunday=6
-    # Hoje é segunda (0); domingo passado = hoje - 1; segunda passada = hoje - 7
-    dias_desde_segunda = hoje.weekday()  # 0 se hoje é segunda
+    dias_desde_segunda = hoje.weekday()
     domingo_passado = hoje - timedelta(days=dias_desde_segunda + 1)
     segunda_passada = domingo_passado - timedelta(days=6)
     return segunda_passada, domingo_passado
 
 
 def data_no_periodo(data_texto: str, inicio: date, fim: date) -> bool:
-    """
-    Tenta parsear uma string de data em vários formatos e verifica
-    se está dentro do período [inicio, fim].
-    """
+    """Tenta parsear uma string de data em vários formatos e verifica se está no período."""
     formatos = [
         "%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y",
         "%d/%m/%Y %H:%M", "%Y-%m-%dT%H:%M:%S",
@@ -151,7 +173,7 @@ def data_no_periodo(data_texto: str, inicio: date, fim: date) -> bool:
             return inicio <= d.date() <= fim
         except (ValueError, TypeError):
             continue
-    # Tenta extrair DD/MM/YYYY de qualquer string
+
     m = re.search(r'(\d{2})/(\d{2})/(\d{4})', data_texto)
     if m:
         try:
@@ -159,7 +181,7 @@ def data_no_periodo(data_texto: str, inicio: date, fim: date) -> bool:
             return inicio <= d <= fim
         except ValueError:
             pass
-    # Tenta YYYY-MM-DD
+
     m = re.search(r'(\d{4})-(\d{2})-(\d{2})', data_texto)
     if m:
         try:
@@ -170,39 +192,86 @@ def data_no_periodo(data_texto: str, inicio: date, fim: date) -> bool:
     return False
 
 
-def fetch(url: str, params: dict = None) -> tuple[str | None, str | None]:
-    """GET com retry. Retorna (html, None) ou (None, erro)."""
-    import certifi
-    import time
-    from http.client import RemoteDisconnected
-    from requests.exceptions import RequestException
+def fetch(url: str, params: dict = None, use_cloudscraper: bool = False) -> tuple[str | None, str | None]:
+    """
+    GET com backoff exponencial e jitter, tratamento SSL robusto.
+    Se use_cloudscraper=True e cloudscraper disponível, usa-o para bypass de anti-bot.
+    """
+    headers = None  # Usa os headers da sessão por padrão
 
-    last_err = None
-    headers = {
-        "Referer": url,
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
-    }
+    # Se solicitado e disponível, tenta usar cloudscraper primeiro
+    if use_cloudscraper and CLOUDSCRAPER_AVAILABLE:
+        scraper = cloudscraper.create_scraper(
+            browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False}
+        )
+        for attempt in range(1, MAX_RETRIES + 1):
+            try:
+                r = scraper.get(url, params=params, timeout=TIMEOUT)
+                r.raise_for_status()
+                r.encoding = r.apparent_encoding or "utf-8"
+                return r.text, None
+            except Exception as e:
+                last_err = e
+                if attempt < MAX_RETRIES:
+                    wait = (2 ** attempt) + random.uniform(0, 1)
+                    time.sleep(wait)
+                else:
+                    break
+        # Fallback para requests normal se cloudscraper falhar
+        log(f"  ⚠ cloudscraper falhou, tentando requests normal...")
+
+    # Usar requests normal com backoff exponencial
     for attempt in range(1, MAX_RETRIES + 1):
         try:
+            # Tenta primeiro com verificação SSL (certifi)
             r = SESSION.get(
-                url,
-                params=params,
-                timeout=TIMEOUT,
-                verify=certifi.where(),
-                headers=headers,
+                url, params=params, timeout=TIMEOUT,
+                verify=certifi.where(), headers=headers
             )
             r.raise_for_status()
             r.encoding = r.apparent_encoding or "utf-8"
             return r.text, None
-        except (RemoteDisconnected, RequestException, Exception) as e:
-            last_err = e
+        except RequestException as e:
+            # Se for erro de SSL, tenta com verify=False como último recurso
+            if isinstance(e, requests.exceptions.SSLError):
+                try:
+                    r = SESSION.get(
+                        url, params=params, timeout=TIMEOUT,
+                        verify=False, headers=headers
+                    )
+                    r.raise_for_status()
+                    r.encoding = r.apparent_encoding or "utf-8"
+                    log(f"  ⚠ Conexão SSL não verificada para {url}")
+                    return r.text, None
+                except Exception as e2:
+                    last_err = e2
+            else:
+                last_err = e
+
+            # Se for 403/429, espera mais tempo
+            if hasattr(e, 'response') and e.response is not None:
+                status = e.response.status_code
+                if status in (403, 429):
+                    wait_time = (5 * attempt) + random.uniform(1, 3)
+                    time.sleep(wait_time)
+                    continue
+                elif status in (404, 410):
+                    return None, f"HTTP {status}"
+
             if attempt < MAX_RETRIES:
-                time.sleep(2 * attempt)
+                wait = (2 ** attempt) + random.uniform(0, 1)
+                time.sleep(wait)
             else:
                 break
-    return None, str(last_err)
+        except Exception as e:
+            last_err = e
+            if attempt < MAX_RETRIES:
+                time.sleep(2 ** attempt)
+            else:
+                break
+
+    return None, str(last_err) if 'last_err' in locals() else "Falha desconhecida"
+
 
 def item(titulo: str, link: str, data_pub: str, fonte: str, extra: str = "") -> dict:
     return {
@@ -220,30 +289,26 @@ def item(titulo: str, link: str, data_pub: str, fonte: str, extra: str = "") -> 
 
 def scrape_planalto(url_base: str, inicio: date, fim: date, fonte_nome: str) -> list[dict]:
     """
-    Scraper genérico para páginas do portal Planalto (leis, decretos, MPs, LCs).
-    O portal lista leis em tabelas <table> com colunas: número | data | ementa.
-    Cada linha tem um link para o texto completo.
+    Scraper genérico para páginas do portal Planalto.
+    Usa cloudscraper se disponível, pois o Planalto frequentemente bloqueia.
     """
     resultado = []
-    html, erro = fetch(url_base)
+    # Tenta com cloudscraper para evitar bloqueios do Planalto
+    html, erro = fetch(url_base, use_cloudscraper=True)
     if erro:
         log(f"  ✗ {fonte_nome}: {erro}")
         return resultado
 
     soup = BeautifulSoup(html, "lxml")
-
-    # O Planalto usa <table class="tabelaRegulamentos"> ou tabelas genéricas
-    # Cada linha tem: Número | Data | Ementa | (às vezes) Link
     tabelas = soup.find_all("table")
 
     for tabela in tabelas:
         linhas = tabela.find_all("tr")
-        for linha in linhas[1:]:  # pula cabeçalho
+        for linha in linhas[1:]:
             colunas = linha.find_all(["td", "th"])
             if len(colunas) < 2:
                 continue
 
-            # Extrair link e texto
             link_tag = linha.find("a", href=True)
             if not link_tag:
                 continue
@@ -252,11 +317,9 @@ def scrape_planalto(url_base: str, inicio: date, fim: date, fonte_nome: str) -> 
             if not link_href.startswith("http"):
                 link_href = urljoin(url_base, link_href)
 
-            # Texto de todas as células
             textos = [c.get_text(strip=True) for c in colunas]
             titulo_completo = " — ".join(t for t in textos if t)
 
-            # Buscar data: procura padrão DD/MM/YYYY ou YYYY entre células
             data_pub = ""
             for t in textos:
                 m = re.search(r'\d{2}/\d{2}/\d{4}', t)
@@ -269,12 +332,10 @@ def scrape_planalto(url_base: str, inicio: date, fim: date, fonte_nome: str) -> 
                     break
 
             if not data_pub:
-                # Tentar extrair ano da URL ou do texto do link
                 m = re.search(r'/(\d{4})/', link_href)
                 if m:
                     data_pub = m.group(1)
 
-            # Verificar se está no período
             if data_pub and data_no_periodo(data_pub, inicio, fim):
                 resultado.append(item(
                     titulo=titulo_completo,
@@ -283,7 +344,6 @@ def scrape_planalto(url_base: str, inicio: date, fim: date, fonte_nome: str) -> 
                     fonte=fonte_nome
                 ))
             elif not data_pub:
-                # Sem data identificável — inclui com flag para revisão manual
                 resultado.append(item(
                     titulo=titulo_completo,
                     link=link_href,
@@ -298,11 +358,7 @@ def scrape_planalto(url_base: str, inicio: date, fim: date, fonte_nome: str) -> 
 
 def scrape_sijut2(url_base: str, inicio: date, fim: date, fonte_nome: str,
                   tipo_ids: str, paginas_max: int = 5) -> list[dict]:
-    """
-    Scraper para normas.receita.fazenda.gov.br (SIJUT2).
-    Filtra pelo período via parâmetros dt_inicio/dt_fim na URL.
-    Percorre múltiplas páginas para garantir cobertura total.
-    """
+    """Scraper para normas.receita.fazenda.gov.br (SIJUT2)."""
     resultado = []
     dt_ini_str = inicio.strftime("%d/%m/%Y")
     dt_fim_str = fim.strftime("%d/%m/%Y")
@@ -310,7 +366,7 @@ def scrape_sijut2(url_base: str, inicio: date, fim: date, fonte_nome: str,
     base_params = {
         "tiposAtosSelecionados": tipo_ids,
         "tipoConsulta": "formulario",
-        "tipoData": "2",  # data de publicação
+        "tipoData": "2",
         "dt_inicio": dt_ini_str,
         "dt_fim": dt_fim_str,
         "optOrdem": "Publicacao_DESC",
@@ -330,7 +386,6 @@ def scrape_sijut2(url_base: str, inicio: date, fim: date, fonte_nome: str,
         itens_pagina = soup.find_all("div", class_="resultado-item") or \
                        soup.find_all("tr", class_=re.compile(r"resultado|listagem", re.I))
 
-        # Fallback: qualquer <tr> com link dentro da área de resultados
         if not itens_pagina:
             resultados_div = soup.find("div", id=re.compile(r"resultado|listagem", re.I)) or \
                              soup.find("table", id=re.compile(r"resultado|listagem", re.I)) or \
@@ -355,7 +410,6 @@ def scrape_sijut2(url_base: str, inicio: date, fim: date, fonte_nome: str,
             if not titulo_txt:
                 titulo_txt = elem.get_text(" ", strip=True)[:200]
 
-            # Buscar data na linha
             texto_linha = elem.get_text(" ", strip=True)
             data_pub = ""
             m = re.search(r'(\d{2}/\d{2}/\d{4})', texto_linha)
@@ -371,14 +425,11 @@ def scrape_sijut2(url_base: str, inicio: date, fim: date, fonte_nome: str,
                                       "⚠ Verificar data manualmente"))
                 encontrou_algum = True
 
-        # Se nenhum item na página, não há mais resultados
         if not encontrou_algum:
             break
 
-        # Verificar se há próxima página
         proxima = soup.find("a", string=re.compile(r'[>»]|próxima|next', re.I))
         if not proxima:
-            # Verifica se o link da página atual existe (paginação numérica)
             link_proxima_num = soup.find("a", string=str(pagina + 1))
             if not link_proxima_num:
                 break
@@ -412,10 +463,7 @@ def scrape_stj_informativo(inicio: date, fim: date) -> list[dict]:
 
 
 def scrape_stj_sumulas(inicio: date, fim: date) -> list[dict]:
-    """
-    Súmulas STJ — detecta novas súmulas pela data de julgamento/publicação.
-    Varre as últimas entradas do portal e filtra pelo período.
-    """
+    """Súmulas STJ — detecta novas súmulas pela data de julgamento/publicação."""
     resultado = []
     url = "https://scon.stj.jus.br/SCON/sumulas"
     html, erro = fetch(url)
@@ -424,16 +472,13 @@ def scrape_stj_sumulas(inicio: date, fim: date) -> list[dict]:
         return resultado
 
     soup = BeautifulSoup(html, "lxml")
-    # As súmulas ficam em divs ou tabelas com links para cada número
     links = soup.find_all("a", href=True)
     for link_tag in links:
         href = link_tag["href"]
         texto = link_tag.get_text(strip=True)
-        # Links de súmulas individuais contêm "sumula" e um número
         if re.search(r'sumula|s\d+', href, re.I) and re.search(r'\d+', texto):
             if not href.startswith("http"):
                 href = urljoin(url, href)
-            # Tentar extrair data do contexto
             pai = link_tag.parent
             texto_ctx = pai.get_text(" ", strip=True) if pai else ""
             m = re.search(r'(\d{2}/\d{2}/\d{4})', texto_ctx)
@@ -455,8 +500,6 @@ def scrape_stf_informativo(inicio: date, fim: date) -> list[dict]:
         return resultado
 
     soup = BeautifulSoup(html, "lxml")
-    # O STF lista edições como links com número e data
-    # Ex: "Informativo 1.160 — 08/04/2026"
     links = soup.find_all("a", href=True)
     for link_tag in links:
         texto = link_tag.get_text(strip=True)
@@ -464,14 +507,12 @@ def scrape_stf_informativo(inicio: date, fim: date) -> list[dict]:
         if not href.startswith("http"):
             href = urljoin("https://www.stf.jus.br", href)
 
-        # Contexto do pai para capturar data
         pai = link_tag.find_parent(["td", "li", "div", "p"])
         texto_ctx = (pai.get_text(" ", strip=True) if pai else texto)
 
         m = re.search(r'(\d{2}/\d{2}/\d{4})', texto_ctx)
         data_pub = m.group(1) if m else ""
 
-        # Filtra por links que parecem edições do informativo
         if re.search(r'informativo|nformativo|\d{3,4}', texto, re.I):
             if data_pub and data_no_periodo(data_pub, inicio, fim):
                 resultado.append(item(
@@ -486,7 +527,7 @@ def scrape_stf_informativo(inicio: date, fim: date) -> list[dict]:
 
 
 def scrape_stf_sumulas(inicio: date, fim: date, vinculante: bool = False) -> list[dict]:
-    """Súmulas STF (comuns ou vinculantes) — detecta novas aprovações."""
+    """Súmulas STF (comuns ou vinculantes)."""
     resultado = []
     if vinculante:
         url = "http://www.stf.jus.br/portal/cms/verTexto.asp?servico=jurisprudenciaSumulaVinculante"
@@ -529,8 +570,6 @@ def scrape_sped(inicio: date, fim: date) -> list[dict]:
         return resultado
 
     soup = BeautifulSoup(html, "lxml")
-    # O portal SPED lista itens com data e link "Continue lendo"
-    # Estrutura: portlet com lista de notícias
     items_sped = soup.find_all(["article", "div"], class_=re.compile(
         r'portlet-body|asset-entry|news|destaque|item', re.I
     ))
@@ -592,21 +631,15 @@ def scrape_pgfn_pareceres(inicio: date, fim: date) -> list[dict]:
 
 
 def scrape_carf_dou(inicio: date, fim: date) -> list[dict]:
-    """
-    CARF no Diário Oficial da União.
-    Pesquisa no portal Imprensa Nacional (in.gov.br) os atos do CARF
-    publicados na Seção 1 do DOU nos últimos 7 dias.
-    Cobre: normais, extras e suplementares.
-    """
+    """CARF no Diário Oficial da União."""
     resultado = []
     BASE_DOU = "https://www.in.gov.br/consulta/-/buscar/dou"
-    # Data de publicação no formato AAAA-MM-DD para API do in.gov.br
     params_base = {
         "q": '"Conselho Administrativo de Recursos Fiscais" OR "CARF"',
         "exactDate": "personalizado",
         "startDate": inicio.strftime("%d-%m-%Y"),
         "endDate": fim.strftime("%d-%m-%Y"),
-        "section": "do1",  # Seção 1 (principal)
+        "section": "do1",
         "orgPub": "Ministério da Fazenda",
     }
 
@@ -618,12 +651,10 @@ def scrape_carf_dou(inicio: date, fim: date) -> list[dict]:
             continue
 
         soup = BeautifulSoup(html, "lxml")
-        # O portal in.gov.br lista resultados em cards ou divs
         cards = soup.find_all("div", class_=re.compile(r'resultado|resultado-item|card', re.I))
         if not cards:
             cards = soup.find_all("article")
         if not cards:
-            # Tenta links diretos com o termo CARF no texto
             links_dou = soup.find_all("a", href=True, string=re.compile(r'CARF|Fazenda', re.I))
             for link_tag in links_dou:
                 href = link_tag["href"]
@@ -665,7 +696,7 @@ def scrape_carf_dou(inicio: date, fim: date) -> list[dict]:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# ENVIO DE EMAIL
+# ENVIO DE EMAIL (inalterado, por brevidade)
 # ─────────────────────────────────────────────────────────────────────────────
 def enviar_email_curadoria(resultado: dict, inicio: date, fim: date):
     gmail_user = os.environ.get("GMAIL_USER", "").strip()
@@ -678,7 +709,6 @@ def enviar_email_curadoria(resultado: dict, inicio: date, fim: date):
     periodo_str = f"{inicio.strftime('%d/%m/%Y')} a {fim.strftime('%d/%m/%Y')}"
     hora_brt = AGORA.strftime("%d/%m/%Y às %H:%M")
 
-    # Construir seções HTML por tema
     secoes_html = ""
     for tema, publicacoes in resultado.items():
         if not publicacoes:
@@ -735,7 +765,6 @@ def enviar_email_curadoria(resultado: dict, inicio: date, fim: date):
 </body></html>
 """
 
-    # Texto plano
     texto_plano = f"TERA — Curadoria Semanal Tributária\n"
     texto_plano += f"Período: {periodo_str}\nTotal: {total} publicação(ões)\n\n"
     for tema, pubs in resultado.items():
@@ -775,35 +804,30 @@ def main():
 
     resultado: dict[str, list[dict]] = {}
 
-    # ── 1. Lei Ordinária ────────────────────────────────────────────────────
     log("[1/16] Lei Ordinária (Planalto)...")
     resultado["Lei Ordinária"] = scrape_planalto(
         "https://www4.planalto.gov.br/legislacao/portal-legis/legislacao-1/leis-ordinarias/2026-leis-ordinarias",
         inicio, fim, "Lei Ordinária"
     )
 
-    # ── 2. Decreto ──────────────────────────────────────────────────────────
     log("[2/16] Decreto (Planalto)...")
     resultado["Decreto"] = scrape_planalto(
         "https://www4.planalto.gov.br/legislacao/portal-legis/legislacao-1/decretos1/2026-decretos",
         inicio, fim, "Decreto"
     )
 
-    # ── 3. Lei Complementar ─────────────────────────────────────────────────
     log("[3/16] Lei Complementar (Planalto)...")
     resultado["Lei Complementar"] = scrape_planalto(
         "https://www4.planalto.gov.br/legislacao/portal-legis/legislacao-1/leis-complementares-1/todas-as-leis-complementares-1",
         inicio, fim, "Lei Complementar"
     )
 
-    # ── 4. Medida Provisória ────────────────────────────────────────────────
     log("[4/16] Medida Provisória (Planalto)...")
     resultado["Medida Provisória"] = scrape_planalto(
         "https://www4.planalto.gov.br/legislacao/portal-legis/legislacao-1/medidas-provisorias/2023-a-2026",
         inicio, fim, "Medida Provisória"
     )
 
-    # ── 5. Resolução CGSN ───────────────────────────────────────────────────
     log("[5/16] Resolução CGSN (SIJUT2)...")
     resultado["Resolução CGSN"] = scrape_sijut2(
         url_base="https://normas.receita.fazenda.gov.br/sijut2consulta/consulta.action",
@@ -812,7 +836,6 @@ def main():
         tipo_ids="67"
     )
 
-    # ── 6. Instrução Normativa ──────────────────────────────────────────────
     log("[6/16] Instrução Normativa (SIJUT2)...")
     resultado["Instrução Normativa (IN)"] = scrape_sijut2(
         url_base="https://normas.receita.fazenda.gov.br/sijut2consulta/consulta.action",
@@ -821,7 +844,6 @@ def main():
         tipo_ids="42"
     )
 
-    # ── 7. Ato Declaratório Interpretativo ──────────────────────────────────
     log("[7/16] Ato Declaratório Interpretativo (SIJUT2)...")
     resultado["Ato Declaratório Interpretativo (ADI)"] = scrape_sijut2(
         url_base="https://normas.receita.fazenda.gov.br/sijut2consulta/consulta.action",
@@ -830,7 +852,6 @@ def main():
         tipo_ids="10"
     )
 
-    # ── 8. Portaria ─────────────────────────────────────────────────────────
     log("[8/16] Portaria (SIJUT2)...")
     resultado["Portaria"] = scrape_sijut2(
         url_base="https://normas.receita.fazenda.gov.br/sijut2consulta/consulta.action",
@@ -839,7 +860,6 @@ def main():
         tipo_ids="57; 81; 95; 80; 65"
     )
 
-    # ── 9. Solução de Consulta ──────────────────────────────────────────────
     log("[9/16] Solução de Consulta (SIJUT2)...")
     resultado["Solução de Consulta (SC)"] = scrape_sijut2(
         url_base="https://normas.receita.fazenda.gov.br/sijut2consulta/consulta.action",
@@ -848,39 +868,30 @@ def main():
         tipo_ids="72"
     )
 
-    # ── 10. Parecer Normativo PGFN ──────────────────────────────────────────
     log("[10/16] Parecer Normativo PGFN...")
     resultado["Parecer Normativo PGFN"] = scrape_pgfn_pareceres(inicio, fim)
 
-    # ── 11. CARF — DOU ──────────────────────────────────────────────────────
     log("[11/16] CARF (DOU Seção 1)...")
     resultado["CARF (DOU)"] = scrape_carf_dou(inicio, fim)
 
-    # ── 12. Informativo STJ ─────────────────────────────────────────────────
     log("[12/16] Informativo STJ (RSS)...")
     resultado["Informativo STJ"] = scrape_stj_informativo(inicio, fim)
 
-    # ── 13. Súmula STJ ──────────────────────────────────────────────────────
     log("[13/16] Súmula STJ...")
     resultado["Súmula STJ"] = scrape_stj_sumulas(inicio, fim)
 
-    # ── 14. Informativo STF ─────────────────────────────────────────────────
     log("[14/16] Informativo STF...")
     resultado["Informativo STF"] = scrape_stf_informativo(inicio, fim)
 
-    # ── 15. Súmula STF ──────────────────────────────────────────────────────
     log("[15/16] Súmula STF...")
     resultado["Súmula STF"] = scrape_stf_sumulas(inicio, fim, vinculante=False)
 
-    # ── 16. Súmula Vinculante STF ───────────────────────────────────────────
     log("[16/16] Súmula Vinculante STF...")
     resultado["Súmula Vinculante STF"] = scrape_stf_sumulas(inicio, fim, vinculante=True)
 
-    # ── 17. Portal SPED ─────────────────────────────────────────────────────
     log("[17] Portal SPED...")
     resultado["Informativo SPED"] = scrape_sped(inicio, fim)
 
-    # ── Salvar resultado da semana ──────────────────────────────────────────
     total_publicacoes = sum(len(v) for v in resultado.values())
     saida = {
         "periodo": {
@@ -897,7 +908,6 @@ def main():
         json.dump(saida, f, ensure_ascii=False, indent=2)
     log(f"  ✓ Resultado salvo em {SAIDA_SEMANA}")
 
-    # ── Atualizar histórico ─────────────────────────────────────────────────
     historico = []
     if SAIDA_HISTORICO.exists():
         try:
@@ -912,13 +922,11 @@ def main():
         "total_publicacoes": total_publicacoes,
         "resumo_por_tema": {k: len(v) for k, v in resultado.items()}
     })
-    # Manter até 52 semanas
     historico = historico[:52]
     with open(SAIDA_HISTORICO, "w", encoding="utf-8") as f:
         json.dump(historico, f, ensure_ascii=False, indent=2)
     log(f"  ✓ Histórico atualizado ({len(historico)} semana(s) registrada(s))")
 
-    # ── Relatório no log ────────────────────────────────────────────────────
     log("")
     log("═══ RELATÓRIO DA CURADORIA ═══")
     log(f"  Período: {inicio.strftime('%d/%m/%Y')} a {fim.strftime('%d/%m/%Y')}")
@@ -928,7 +936,6 @@ def main():
         log(f"  {status} {tema}: {len(pubs)}")
     log("═══ Concluído ═══")
 
-    # ── Enviar email ────────────────────────────────────────────────────────
     enviar_email_curadoria(resultado, inicio, fim)
 
 
