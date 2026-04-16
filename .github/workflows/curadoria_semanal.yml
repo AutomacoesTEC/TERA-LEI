@@ -35,7 +35,9 @@ jobs:
 
       - name: Instalar dependências
         run: |
-          pip install requests beautifulsoup4 lxml feedparser
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 lxml feedparser certifi
+          pip install cloudscraper
 
       - name: Executar Curadoria Semanal
         env:
