@@ -17,6 +17,17 @@ const PROXY_DOMAINS = [
   'dfe-portal.svrs.rs.gov.br',
 ];
 
+const OBS_BLOQUEIO =
+  'Portal SVRS inacessível do ambiente CI (bloqueio de IP). ' +
+  'Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado.';
+
+function isBloqueioConhecido(err) {
+  if (['ECONNRESET', 'ECONNREFUSED', 'ETIMEDOUT', 'ENOTFOUND'].includes(err.code)) return true;
+  if (err.name === 'AbortError') return true;
+  const m = (err.message || '').toLowerCase();
+  return m.includes('timeout') || m.includes('econnreset') || m.includes('aborted');
+}
+
 /**
  * Retorna true se a URL pertence a um domínio que exige proxy.
  * @param {string} url
@@ -42,19 +53,17 @@ function isProxyNeeded(url) {
  */
 async function proxyFetch(url, fallbackDirect = true) {
   // ── Tentativa via proxy ────────────────────────────────────────────────────
+  const controller = new AbortController();
+  const timer      = setTimeout(() => controller.abort(), PROXY_TIMEOUT);
   try {
-    const controller = new AbortController();
-    const timer      = setTimeout(() => controller.abort(), PROXY_TIMEOUT);
-
-    const res = await fetch(PROXY_URL, {
+    const res  = await fetch(PROXY_URL, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ url }),
       signal:  controller.signal,
     });
-    clearTimeout(timer);
-
     const json = await res.json();
+    clearTimeout(timer);
 
     if (json.ok && typeof json.html === 'string') {
       logger.info(`[proxyFetch] ✓ via proxy (status ${json.status}): ${url.slice(0, 70)}`);
@@ -63,6 +72,7 @@ async function proxyFetch(url, fallbackDirect = true) {
 
     throw new Error(`Proxy retornou ok:false — ${json.error || 'sem detalhe'}`);
   } catch (proxyErr) {
+    clearTimeout(timer);
     logger.warn(`[proxyFetch] Proxy falhou: ${proxyErr.message}`);
 
     if (!fallbackDirect) {
@@ -89,4 +99,4 @@ async function proxyFetch(url, fallbackDirect = true) {
   }
 }
 
-module.exports = { proxyFetch, isProxyNeeded };
+module.exports = { proxyFetch, isProxyNeeded, isBloqueioConhecido, OBS_BLOQUEIO };
