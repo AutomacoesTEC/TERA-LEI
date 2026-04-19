@@ -17,24 +17,32 @@ const axios   = require('axios');
 const cheerio = require('cheerio');
 const { hoje, isHoje, extrairData, truncarPalavras, agora } = require('../utils/date');
 const logger  = require('../utils/logger');
+const { proxyFetch } = require('../utils/proxyFetch');
 
 const NOME     = 'Portal NF-ABI';
 const URL      = 'https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos';
 const BASE_URL = 'https://dfe-portal.svrs.rs.gov.br';
 const UA       = 'Auditec-Curador/1.0 (Fiscal Compliance)';
-const TIMEOUT  = 30_000;
-const RETRIES  = 2;
+const TIMEOUT  = 15_000;
+const RETRIES  = 1;
 
 // Padrão de versão em títulos técnicos
 const RE_VERSAO = /[Vv]ers[aã]o\s*([\d\.]+)|v([\d\.]+)/;
 
+const OBS_BLOQUEIO =
+  'Portal SVRS inacessível do ambiente CI (bloqueio de IP). ' +
+  'Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado.';
+
+function isBloqueioConhecido(err) {
+  if (['ECONNRESET', 'ECONNREFUSED', 'ETIMEDOUT', 'ENOTFOUND'].includes(err.code)) return true;
+  if (err.name === 'AbortError') return true;
+  const m = (err.message || '').toLowerCase();
+  return m.includes('timeout') || m.includes('econnreset') || m.includes('aborted');
+}
+
 async function fetchHtml(url, tentativa = 1) {
   try {
-    const r = await axios.get(url, {
-      headers: { 'User-Agent': UA, Accept: 'text/html' },
-      timeout: TIMEOUT,
-    });
-    return r.data;
+    return await proxyFetch(url, /* fallbackDirect= */ true);
   } catch (err) {
     if (tentativa < RETRIES) {
       logger.warn(`[NF-ABI] Tentativa ${tentativa}: ${err.message}. Retentando...`);
@@ -162,6 +170,14 @@ async function parseNfabi() {
     };
   } catch (err) {
     logger.error(`[NF-ABI] Erro: ${err.message}`);
+    if (isBloqueioConhecido(err)) {
+      return {
+        nome: NOME, url: URL, consultadoEm,
+        encontrouItensHoje: false, itens: [],
+        portaisIndisponiveis: true,
+        observacoes: OBS_BLOQUEIO,
+      };
+    }
     return { nome: NOME, url: URL, consultadoEm, encontrouItensHoje: false, itens: [], erro: err.message };
   }
 }
