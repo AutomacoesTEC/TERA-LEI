@@ -11,15 +11,15 @@
   "kv_namespaces": [
     {
       "binding": "TERA_USERS",
-      "id": "SUBSTITUA_PELO_ID_REAL_DO_TERA_USERS"
+      "id": "902997fe451d49b49f5f51811a86485b"
     },
     {
       "binding": "TERA_DATA",
-      "id": "SUBSTITUA_PELO_ID_REAL_DO_TERA_DATA"
+      "id": "21ca8818749a499dab23f4ad2261d201"
     },
     {
       "binding": "TERA_INVITES",
-      "id": "SUBSTITUA_PELO_ID_REAL_DO_TERA_INVITES"
+      "id": "5352cd64d97f43ad93c1afb65ab7d5cc"
     }
   ]
   // Variáveis de ambiente — configure via dashboard ou wrangler secret put:
