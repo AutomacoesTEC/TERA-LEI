@@ -42,17 +42,22 @@ function dividir(texto, maxLen = MAX_MSG) {
 // ── Montagem da mensagem ────────────────────────────────────────────────────
 
 function montarMensagem(resultado) {
-  const total = resultado.totalItens || 0;
-  const data  = resultado.dataVerificacao || '';
-  const hora  = (resultado.dataExecucao  || '').slice(11, 16); // HH:mm
-  const erros = resultado.erros || [];
+  const total         = resultado.totalItens || 0;
+  const data          = resultado.dataVerificacao || '';
+  const hora          = (resultado.dataExecucao  || '').slice(11, 16);
+  const erros         = resultado.erros || [];
+  const indisponiveis = resultado.portaisIndisponiveis || [];
+
+  const linhaIndisponiveis = indisponiveis.length
+    ? `\nℹ️ ${indisponiveis.length} portal(is) com acesso restrito em ambiente CI (SVRS)`
+    : '';
 
   // ── Sem publicações ──────────────────────────────────────────────────────
   if (total === 0) {
     const linhaErros = erros.length
       ? `\n⚠️ ${erros.length} portal(is) com erro: ${erros.map(e => escHtml(e)).join(' | ')}`
       : '';
-    return `✅ <b>TERA · Reforma em Dia</b> — Nenhuma publicação nova encontrada.${linhaErros}\n📅 <i>${escHtml(data)} às ${hora}</i>`;
+    return `✅ <b>TERA · Reforma em Dia</b> — Nenhuma publicação nova encontrada.${linhaErros}${linhaIndisponiveis}\n📅 <i>${escHtml(data)} às ${hora}</i>`;
   }
 
   // ── Com publicações ──────────────────────────────────────────────────────
@@ -92,7 +97,7 @@ function montarMensagem(resultado) {
     ? `\n\n⚠️ <b>${erros.length} portal(is) com erro:</b>\n${erros.map(e => `• ${escHtml(e)}`).join('\n')}`
     : '';
 
-  return [cabecalho, '', blocos.join('\n\n'), rodape, linhaErros].join('\n').trim();
+  return [cabecalho, '', blocos.join('\n\n'), rodape, linhaErros, linhaIndisponiveis].join('\n').trim();
 }
 
 // ── Envio ───────────────────────────────────────────────────────────────────

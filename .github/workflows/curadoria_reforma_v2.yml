@@ -25,7 +25,7 @@ jobs:
 
       - name: Instalar dependências
         working-directory: ./curador-reforma
-        run: npm ci || npm install
+        run: npm install
 
       - name: Executar curadoria
         working-directory: ./curador-reforma

@@ -1,4 +1,5 @@
 'use strict';
+require('events').EventEmitter.defaultMaxListeners = 20;
 
 /**
  * Parser: BP-e Notícias — SVRS
@@ -17,29 +18,15 @@ const axios   = require('axios');
 const cheerio = require('cheerio');
 const { hoje, isHoje, extrairData, truncarPalavras, agora } = require('../utils/date');
 const logger  = require('../utils/logger');
+const { proxyFetch, isBloqueioConhecido, OBS_BLOQUEIO } = require('../utils/proxyFetch');
 
 const NOME     = 'Portal BP-e';
 const URL      = 'https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias';
 const BASE_URL = 'https://dfe-portal.svrs.rs.gov.br';
 const UA       = 'Auditec-Curador/1.0 (Fiscal Compliance)';
-const TIMEOUT  = 30_000;
-const RETRIES  = 2;
 
-async function fetchHtml(url, tentativa = 1) {
-  try {
-    const r = await axios.get(url, {
-      headers: { 'User-Agent': UA, Accept: 'text/html' },
-      timeout: TIMEOUT,
-    });
-    return r.data;
-  } catch (err) {
-    if (tentativa < RETRIES) {
-      logger.warn(`[BP-e] Tentativa ${tentativa}: ${err.message}. Retentando...`);
-      await sleep(2000);
-      return fetchHtml(url, tentativa + 1);
-    }
-    throw err;
-  }
+function fetchHtml(url) {
+  return proxyFetch(url, /* fallbackDirect= */ true);
 }
 
 function resolverUrl(href) {
@@ -184,6 +171,14 @@ async function parseBpe() {
     };
   } catch (err) {
     logger.error(`[BP-e] Erro: ${err.message}`);
+    if (isBloqueioConhecido(err)) {
+      return {
+        nome: NOME, url: URL, consultadoEm,
+        encontrouItensHoje: false, itens: [],
+        portaisIndisponiveis: true,
+        observacoes: OBS_BLOQUEIO,
+      };
+    }
     return { nome: NOME, url: URL, consultadoEm, encontrouItensHoje: false, itens: [], erro: err.message };
   }
 }

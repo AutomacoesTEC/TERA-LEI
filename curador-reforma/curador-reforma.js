@@ -47,7 +47,7 @@ const { hoje, agora }    = require('./src/utils/date');
 
 const DATA_DIR     = path.join(__dirname, 'data');
 const PENDENTE_DIR = path.join(__dirname, 'pendente-publicacao');
-const DELAY_MS     = 2_500;
+const DELAY_MS     = 1_500;
 
 const PARSERS = [
   { fn: parseCte     },
@@ -125,6 +125,7 @@ function adicionarStatus(portais) {
 
 // ── Execução principal ────────────────────────────────────────────────────
 async function executar() {
+  const tempoInicio = Date.now();
   logger.info('══════════════════════════════════════════════════');
   logger.info('  TERA Curador Reforma v2  —  Início de execução ');
   logger.info('══════════════════════════════════════════════════');
@@ -136,30 +137,42 @@ async function executar() {
 
   garantirDirs();
 
-  const portais  = [];
-  const erros    = [];
+  const portais              = [];
+  const erros                = [];
+  const portaisIndisponiveis = [];
+  const breakdownPortais     = [];
   let totalItens = 0;
 
   // ── 1. Coleta ──────────────────────────────────────────────────────────
   for (let i = 0; i < PARSERS.length; i++) {
     const { fn } = PARSERS[i];
+    const tPortalInicio = Date.now();
 
     try {
       const resultado = await fn();
       portais.push(resultado);
       const qtd = (resultado.itens || []).length;
       totalItens += qtd;
+      const tempoPortal = Date.now() - tPortalInicio;
 
-      if (resultado.erro) {
+      if (resultado.portaisIndisponiveis) {
+        portaisIndisponiveis.push(resultado.nome);
+        breakdownPortais.push({ nome: resultado.nome, itens: 0, tempoMs: tempoPortal, status: 'bloqueado' });
+        logger.warn(`[${i+1}/${PARSERS.length}] ${resultado.nome} — BLOQUEADO (IP): ${resultado.observacoes}`);
+      } else if (resultado.erro) {
         erros.push(`${resultado.nome}: ${resultado.erro}`);
+        breakdownPortais.push({ nome: resultado.nome, itens: qtd, tempoMs: tempoPortal, status: 'erro' });
         logger.warn(`[${i+1}/${PARSERS.length}] ${resultado.nome} — ERRO: ${resultado.erro}`);
       } else {
-        logger.info(`[${i+1}/${PARSERS.length}] ${resultado.nome} — ${qtd} item(ns)`);
+        breakdownPortais.push({ nome: resultado.nome, itens: qtd, tempoMs: tempoPortal, status: 'ok' });
+        logger.info(`[${i+1}/${PARSERS.length}] ${resultado.nome} — ${qtd} item(ns) (${tempoPortal}ms)`);
       }
     } catch (err) {
       const nome = fn.name.replace(/^parse/, '');
+      const tempoPortal = Date.now() - tPortalInicio;
       logger.error(`[${i+1}/${PARSERS.length}] ${nome} — erro inesperado: ${err.message}`);
       erros.push(`${nome}: ${err.message}`);
+      breakdownPortais.push({ nome, itens: 0, tempoMs: tempoPortal, status: 'erro' });
       portais.push({ nome, url: '', consultadoEm: agora(), encontrouItensHoje: false, itens: [], erro: err.message });
     }
 
@@ -189,6 +202,7 @@ async function executar() {
     totalPortaisVerificados,
     totalPortaisComItens,
     totalPortaisSemItens,
+    portaisIndisponiveis,
     erros,
   };
 
@@ -208,8 +222,13 @@ async function executar() {
   logger.info('Enviando notificação Telegram...');
   await enviarTelegram(resultado);
 
+  const tempoTotal = ((Date.now() - tempoInicio) / 1000).toFixed(1);
   logger.info('══════════════════════════════════════════════════');
-  logger.info(`  Concluído: ${totalItens} item(ns) · ${totalPortaisComItens}/${totalPortaisVerificados} portais · ${erros.length} erro(s)`);
+  logger.info(`  Concluído em ${tempoTotal}s: ${totalItens} item(ns) · ${totalPortaisComItens}/${totalPortaisVerificados} portais · ${erros.length} erro(s) · ${portaisIndisponiveis.length} bloqueado(s)`);
+  logger.info('  Breakdown por portal:');
+  for (const b of breakdownPortais) {
+    logger.info(`    ${b.nome.padEnd(20)} ${b.status.padEnd(10)} ${b.itens} item(ns)  ${b.tempoMs}ms`);
+  }
   logger.info('══════════════════════════════════════════════════');
 }
 

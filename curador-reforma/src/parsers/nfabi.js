@@ -17,32 +17,18 @@ const axios   = require('axios');
 const cheerio = require('cheerio');
 const { hoje, isHoje, extrairData, truncarPalavras, agora } = require('../utils/date');
 const logger  = require('../utils/logger');
+const { proxyFetch, isBloqueioConhecido, OBS_BLOQUEIO } = require('../utils/proxyFetch');
 
 const NOME     = 'Portal NF-ABI';
 const URL      = 'https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos';
 const BASE_URL = 'https://dfe-portal.svrs.rs.gov.br';
 const UA       = 'Auditec-Curador/1.0 (Fiscal Compliance)';
-const TIMEOUT  = 30_000;
-const RETRIES  = 2;
 
 // Padrão de versão em títulos técnicos
 const RE_VERSAO = /[Vv]ers[aã]o\s*([\d\.]+)|v([\d\.]+)/;
 
-async function fetchHtml(url, tentativa = 1) {
-  try {
-    const r = await axios.get(url, {
-      headers: { 'User-Agent': UA, Accept: 'text/html' },
-      timeout: TIMEOUT,
-    });
-    return r.data;
-  } catch (err) {
-    if (tentativa < RETRIES) {
-      logger.warn(`[NF-ABI] Tentativa ${tentativa}: ${err.message}. Retentando...`);
-      await sleep(2000);
-      return fetchHtml(url, tentativa + 1);
-    }
-    throw err;
-  }
+function fetchHtml(url) {
+  return proxyFetch(url, /* fallbackDirect= */ true);
 }
 
 function resolverUrl(href) {
@@ -162,6 +148,14 @@ async function parseNfabi() {
     };
   } catch (err) {
     logger.error(`[NF-ABI] Erro: ${err.message}`);
+    if (isBloqueioConhecido(err)) {
+      return {
+        nome: NOME, url: URL, consultadoEm,
+        encontrouItensHoje: false, itens: [],
+        portaisIndisponiveis: true,
+        observacoes: OBS_BLOQUEIO,
+      };
+    }
     return { nome: NOME, url: URL, consultadoEm, encontrouItensHoje: false, itens: [], erro: err.message };
   }
 }
