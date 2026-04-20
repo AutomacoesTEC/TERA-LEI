@@ -2,20 +2,27 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tera-proxy",
   "main": "src/index.ts",
-  "compatibility_date": "2024-01-01",
-  "compatibility_flags": [],
+  "compatibility_date": "2025-03-07",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
   "kv_namespaces": [
     {
       "binding": "TERA_USERS",
-      "id": "902997fe451d49b49f5f51811a86485b"
+      "id": "SUBSTITUA_PELO_ID_REAL_DO_TERA_USERS"
     },
     {
       "binding": "TERA_DATA",
-      "id": "21ca8818749a499dab23f4ad2261d201"
+      "id": "SUBSTITUA_PELO_ID_REAL_DO_TERA_DATA"
     },
     {
       "binding": "TERA_INVITES",
-      "id": "5352cd64d97f43ad93c1afb65ab7d5cc"
+      "id": "SUBSTITUA_PELO_ID_REAL_DO_TERA_INVITES"
     }
   ]
+  // Variáveis de ambiente — configure via dashboard ou wrangler secret put:
+  //   JWT_SECRET         (obrigatório — string longa aleatória)
+  //   ANTHROPIC_API_KEY  (opcional — fallback global se usuário não tiver chave própria)
 }
