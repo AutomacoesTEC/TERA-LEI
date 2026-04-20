@@ -3,5 +3,19 @@
   "name": "tera-proxy",
   "main": "src/index.ts",
   "compatibility_date": "2024-01-01",
-  "compatibility_flags": []
+  "compatibility_flags": [],
+  "kv_namespaces": [
+    {
+      "binding": "TERA_USERS",
+      "id": "902997fe451d49b49f5f51811a86485b"
+    },
+    {
+      "binding": "TERA_DATA",
+      "id": "21ca8818749a499dab23f4ad2261d201"
+    },
+    {
+      "binding": "TERA_INVITES",
+      "id": "5352cd64d97f43ad93c1afb65ab7d5cc"
+    }
+  ]
 }
