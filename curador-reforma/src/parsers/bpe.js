@@ -1,4 +1,5 @@
 'use strict';
+require('events').EventEmitter.defaultMaxListeners = 20;
 
 /**
  * Parser: BP-e Notícias — SVRS
