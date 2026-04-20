@@ -6,11 +6,7 @@
  *   (outros endpoints JWT existentes mantidos)
  */
 
-export interface Env {
-  TERA_USERS: KVNamespace;
-  TERA_DATA: KVNamespace;
-  TERA_INVITES: KVNamespace;
-}
+export interface Env {}
 
 // ── Whitelist anti-SSRF (usa new URL() para comparar hostname exato) ────────
 // Previne bypass via subdomain (dfe-portal.svrs.rs.gov.br.evil.com)
