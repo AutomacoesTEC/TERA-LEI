@@ -1,290 +1,365 @@
 /**
- * tera-proxy — Cloudflare Worker
+ * tera-proxy — Cloudflare Worker (versão completa)
  *
- * Endpoints de autenticação:
- *   POST /auth/login        — login com username + password
- *   POST /auth/register     — registo com username + password + inviteCode
- *   GET  /auth/me           — retorna dados do utilizador autenticado
- *   POST /auth/logout       — invalida o token de sessão
+ * Rotas:
+ *   POST   /auth/register        — cadastro com inviteCode
+ *   POST   /auth/login           — login, retorna JWT
+ *   POST   /auth/logout          — invalida sessão
+ *   GET    /auth/me              — valida token, retorna userId + username
  *
- * Endpoints de dados (KV por utilizador):
- *   GET  /kv-list           — lista todas as chaves do utilizador
- *   GET  /kv/:key           — lê o valor de uma chave
- *   PUT  /kv/:key           — escreve o valor de uma chave
- *   DELETE /kv/:key         — apaga uma chave
+ *   GET    /kv-list              — lista todas as chaves do usuário (TERA_DATA)
+ *   GET    /kv/:key              — lê valor
+ *   PUT    /kv/:key              — grava valor  { value: string }
+ *   DELETE /kv/:key              — remove valor
  *
- * Endpoints de API Key:
- *   GET    /user/apikey     — verifica se tem API key configurada
- *   PUT    /user/apikey     — guarda a API key
- *   DELETE /user/apikey     — remove a API key
+ *   GET    /user/apikey          — status da API Key Anthropic do usuário
+ *   PUT    /user/apikey          — salva API Key  { apiKey: string }
+ *   DELETE /user/apikey          — remove API Key
  *
- * Endpoints de proxy:
- *   POST /fetch-proxy       — relay HTTP para portais DFe (sem JWT)
- *   POST /api/anthropic     — proxy para a API Anthropic
+ *   POST   /api/anthropic        — proxy para api.anthropic.com/v1/messages
+ *
+ *   POST   /fetch-proxy          — relay HTTP para portais DFe (sem JWT)
  */
 
 export interface Env {
-  TERA_USERS: KVNamespace;
-  TERA_DATA: KVNamespace;
-  TERA_INVITES: KVNamespace;
+  TERA_USERS:   KVNamespace;   // userId → { username, passwordHash, salt }
+  TERA_DATA:    KVNamespace;   // userId:key → value (dados de estudo)
+  TERA_INVITES: KVNamespace;   // inviteCode → { used: bool, createdAt }
+  JWT_SECRET:   string;        // secret para assinar tokens (env var)
 }
 
-// ── CORS ────────────────────────────────────────────────────────────────────
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
+// ── Constantes ──────────────────────────────────────────────────────────────
+const TOKEN_TTL_MS   = 7 * 24 * 60 * 60 * 1000; // 7 dias
+const PBKDF2_ITERS   = 100_000;
+const SALT_BYTES     = 16;
+const TOKEN_BYTES    = 32;
+
+// ── CORS ─────────────────────────────────────────────────────────────────────
+const CORS: Record<string, string> = {
+  'Access-Control-Allow-Origin':  '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
-function corsResponse(body: string, status: number): Response {
-  return new Response(body, {
+function json(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    headers: { 'Content-Type': 'application/json', ...CORS },
   });
 }
 
-function jsonOk(data: unknown): Response {
-  return corsResponse(JSON.stringify(data), 200);
+function err(msg: string, status = 400): Response {
+  return json({ ok: false, error: msg }, status);
 }
 
-function jsonErr(msg: string, status = 400): Response {
-  return corsResponse(JSON.stringify({ error: msg }), status);
+// ── Crypto helpers ───────────────────────────────────────────────────────────
+async function hashPassword(password: string, salt?: Uint8Array): Promise<{ hash: string; salt: string }> {
+  const saltBytes = salt ?? crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+  const keyMat    = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits'],
+  );
+  const derived = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt: saltBytes, iterations: PBKDF2_ITERS, hash: 'SHA-256' },
+    keyMat,
+    256,
+  );
+  return {
+    hash: bufToHex(new Uint8Array(derived)),
+    salt: bufToHex(saltBytes),
+  };
 }
 
-// ── Helpers de token ─────────────────────────────────────────────────────────
-function generateToken(): string {
-  const arr = new Uint8Array(32);
-  crypto.getRandomValues(arr);
-  return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+function bufToHex(buf: Uint8Array): string {
+  return Array.from(buf).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-function generateUserId(): string {
-  const arr = new Uint8Array(8);
-  crypto.getRandomValues(arr);
-  return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+function hexToBuf(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  }
+  return bytes;
 }
 
-// ── Hash de password com SHA-256 ─────────────────────────────────────────────
-async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password + 'tera-salt-2024');
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+function randomToken(): string {
+  return bufToHex(crypto.getRandomValues(new Uint8Array(TOKEN_BYTES)));
 }
 
-// ── Extrair token do header Authorization ────────────────────────────────────
-function extractToken(request: Request): string | null {
-  const auth = request.headers.get('Authorization');
-  if (!auth || !auth.startsWith('Bearer ')) return null;
-  return auth.slice(7).trim();
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  const ab = new TextEncoder().encode(a);
+  const bb = new TextEncoder().encode(b);
+  let diff = 0;
+  for (let i = 0; i < ab.length; i++) diff |= ab[i] ^ bb[i];
+  return diff === 0;
 }
 
-// ── Verificar autenticação ───────────────────────────────────────────────────
-async function authenticate(token: string | null, env: Env): Promise<{ userId: string; username: string } | null> {
+// ── Session store (TERA_USERS: token → session JSON) ─────────────────────────
+interface Session {
+  userId:    string;
+  username:  string;
+  expiresAt: number;
+}
+
+async function createSession(env: Env, userId: string, username: string): Promise<string> {
+  const token = randomToken();
+  const session: Session = { userId, username, expiresAt: Date.now() + TOKEN_TTL_MS };
+  // Guardamos token → session separadamente com TTL de 7 dias
+  await env.TERA_USERS.put(`session:${token}`, JSON.stringify(session), {
+    expirationTtl: Math.floor(TOKEN_TTL_MS / 1000),
+  });
+  return token;
+}
+
+async function getSession(env: Env, token: string): Promise<Session | null> {
   if (!token) return null;
-  const sessionJson = await env.TERA_USERS.get(`session:${token}`);
-  if (!sessionJson) return null;
-  try {
-    return JSON.parse(sessionJson);
-  } catch {
+  const raw = await env.TERA_USERS.get(`session:${token}`);
+  if (!raw) return null;
+  const s: Session = JSON.parse(raw);
+  if (Date.now() > s.expiresAt) {
+    await env.TERA_USERS.delete(`session:${token}`);
     return null;
   }
+  return s;
 }
 
-// ── POST /auth/login ─────────────────────────────────────────────────────────
-async function handleLogin(request: Request, env: Env): Promise<Response> {
-  let body: { username?: string; password?: string };
-  try { body = await request.json() as typeof body; } catch { return jsonErr('JSON inválido'); }
-
-  const username = (body.username || '').trim().toLowerCase();
-  const password = body.password || '';
-
-  if (!username || !password) return jsonErr('Utilizador e senha são obrigatórios');
-
-  const userJson = await env.TERA_USERS.get(`user:${username}`);
-  if (!userJson) return jsonErr('Utilizador ou senha incorretos', 401);
-
-  let user: { userId: string; username: string; passwordHash: string };
-  try { user = JSON.parse(userJson); } catch { return jsonErr('Erro interno', 500); }
-
-  const hash = await hashPassword(password);
-  if (hash !== user.passwordHash) return jsonErr('Utilizador ou senha incorretos', 401);
-
-  const token = generateToken();
-  await env.TERA_USERS.put(`session:${token}`, JSON.stringify({ userId: user.userId, username: user.username }), { expirationTtl: 60 * 60 * 24 * 30 }); // 30 dias
-
-  return jsonOk({ token, username: user.username, userId: user.userId });
+async function deleteSession(env: Env, token: string): Promise<void> {
+  await env.TERA_USERS.delete(`session:${token}`);
 }
 
-// ── POST /auth/register ──────────────────────────────────────────────────────
+// ── Auth middleware ───────────────────────────────────────────────────────────
+function extractToken(request: Request): string {
+  const auth = request.headers.get('Authorization') || '';
+  return auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+}
+
+async function requireAuth(request: Request, env: Env): Promise<Session | null> {
+  const token = extractToken(request);
+  return token ? getSession(env, token) : null;
+}
+
+// ── User store helpers ────────────────────────────────────────────────────────
+interface UserRecord {
+  userId:       string;
+  username:     string;
+  passwordHash: string;
+  salt:         string;
+  createdAt:    number;
+}
+
+async function findUserByUsername(env: Env, username: string): Promise<UserRecord | null> {
+  const raw = await env.TERA_USERS.get(`user:${username.toLowerCase()}`);
+  return raw ? (JSON.parse(raw) as UserRecord) : null;
+}
+
+async function saveUser(env: Env, user: UserRecord): Promise<void> {
+  await env.TERA_USERS.put(`user:${user.username.toLowerCase()}`, JSON.stringify(user));
+}
+
+// ── Mascara a API key (sk-ant-api03-XXXXX…YYYYY) ─────────────────────────────
+function maskApiKey(key: string): string {
+  if (key.length < 20) return '***';
+  return key.slice(0, 14) + '…' + key.slice(-4);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// HANDLERS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// POST /auth/register
 async function handleRegister(request: Request, env: Env): Promise<Response> {
   let body: { username?: string; password?: string; inviteCode?: string };
-  try { body = await request.json() as typeof body; } catch { return jsonErr('JSON inválido'); }
+  try { body = await request.json(); } catch { return err('JSON inválido'); }
 
-  const username = (body.username || '').trim().toLowerCase();
-  const password = body.password || '';
-  const inviteCode = (body.inviteCode || '').trim().toUpperCase();
+  const { username, password, inviteCode } = body;
+  if (!username?.trim() || !password?.trim() || !inviteCode?.trim()) {
+    return err('username, password e inviteCode são obrigatórios');
+  }
+  if (username.length < 3 || username.length > 32) return err('Username deve ter 3-32 caracteres');
+  if (password.length < 6) return err('Senha deve ter ao menos 6 caracteres');
+  if (!/^[a-zA-Z0-9_-]+$/.test(username)) return err('Username: apenas letras, números, _ e -');
 
-  if (!username || !password) return jsonErr('Utilizador e senha são obrigatórios');
-  if (username.length < 3) return jsonErr('Utilizador deve ter pelo menos 3 caracteres');
-  if (password.length < 6) return jsonErr('Senha deve ter pelo menos 6 caracteres');
-  if (!inviteCode) return jsonErr('Código de convite é obrigatório');
+  // Verifica convite
+  const invRaw = await env.TERA_INVITES.get(inviteCode.trim().toUpperCase());
+  if (!invRaw) return err('Código de convite inválido', 403);
+  const invite = JSON.parse(invRaw);
+  if (invite.used) return err('Código de convite já utilizado', 403);
 
-  // Verificar código de convite
-  const inviteJson = await env.TERA_INVITES.get(`invite:${inviteCode}`);
-  if (!inviteJson) return jsonErr('Código de convite inválido ou expirado', 403);
+  // Verifica se username já existe
+  if (await findUserByUsername(env, username)) return err('Username já cadastrado');
 
-  let invite: { used?: boolean; maxUses?: number; uses?: number };
-  try { invite = JSON.parse(inviteJson); } catch { return jsonErr('Erro interno', 500); }
+  // Cria usuário
+  const { hash, salt } = await hashPassword(password);
+  const userId = randomToken().slice(0, 16);
+  const user: UserRecord = {
+    userId,
+    username: username.trim(),
+    passwordHash: hash,
+    salt,
+    createdAt: Date.now(),
+  };
+  await saveUser(env, user);
 
-  if (invite.used) return jsonErr('Código de convite já utilizado', 403);
-  if (invite.maxUses && (invite.uses || 0) >= invite.maxUses) return jsonErr('Código de convite esgotado', 403);
+  // Marca convite como usado
+  await env.TERA_INVITES.put(
+    inviteCode.trim().toUpperCase(),
+    JSON.stringify({ ...invite, used: true, usedBy: username, usedAt: Date.now() }),
+  );
 
-  // Verificar se utilizador já existe
-  const existing = await env.TERA_USERS.get(`user:${username}`);
-  if (existing) return jsonErr('Utilizador já existe', 409);
-
-  const userId = generateUserId();
-  const passwordHash = await hashPassword(password);
-
-  await env.TERA_USERS.put(`user:${username}`, JSON.stringify({ userId, username, passwordHash }));
-
-  // Marcar convite como usado
-  const uses = (invite.uses || 0) + 1;
-  const maxUses = invite.maxUses || 1;
-  await env.TERA_INVITES.put(`invite:${inviteCode}`, JSON.stringify({ ...invite, uses, used: uses >= maxUses }));
-
-  const token = generateToken();
-  await env.TERA_USERS.put(`session:${token}`, JSON.stringify({ userId, username }), { expirationTtl: 60 * 60 * 24 * 30 });
-
-  return jsonOk({ token, username, userId });
+  // Cria sessão
+  const token = await createSession(env, userId, user.username);
+  return json({ ok: true, token, userId, username: user.username }, 201);
 }
 
-// ── GET /auth/me ─────────────────────────────────────────────────────────────
-async function handleMe(request: Request, env: Env): Promise<Response> {
-  const token = extractToken(request);
-  const session = await authenticate(token, env);
-  if (!session) return jsonErr('Não autenticado', 401);
-  return jsonOk({ userId: session.userId, username: session.username });
+// POST /auth/login
+async function handleLogin(request: Request, env: Env): Promise<Response> {
+  let body: { username?: string; password?: string };
+  try { body = await request.json(); } catch { return err('JSON inválido'); }
+
+  const { username, password } = body;
+  if (!username?.trim() || !password?.trim()) return err('username e password são obrigatórios');
+
+  const user = await findUserByUsername(env, username.trim());
+  if (!user) return err('Usuário ou senha incorretos', 401);
+
+  const { hash } = await hashPassword(password, hexToBuf(user.salt));
+  if (!timingSafeEqual(hash, user.passwordHash)) return err('Usuário ou senha incorretos', 401);
+
+  const token = await createSession(env, user.userId, user.username);
+  return json({ ok: true, token, userId: user.userId, username: user.username });
 }
 
-// ── POST /auth/logout ────────────────────────────────────────────────────────
+// POST /auth/logout
 async function handleLogout(request: Request, env: Env): Promise<Response> {
   const token = extractToken(request);
-  if (token) await env.TERA_USERS.delete(`session:${token}`);
-  return jsonOk({ ok: true });
+  if (token) await deleteSession(env, token);
+  return json({ ok: true });
 }
 
-// ── GET /kv-list ─────────────────────────────────────────────────────────────
+// GET /auth/me
+async function handleMe(request: Request, env: Env): Promise<Response> {
+  const session = await requireAuth(request, env);
+  if (!session) return err('Não autenticado', 401);
+  return json({ ok: true, userId: session.userId, username: session.username });
+}
+
+// ── KV endpoints (dados de estudo por usuário) ────────────────────────────────
+// Chave no KV: userId:key
+// GET /kv-list
 async function handleKvList(request: Request, env: Env): Promise<Response> {
-  const token = extractToken(request);
-  const session = await authenticate(token, env);
-  if (!session) return jsonErr('Não autenticado', 401);
+  const session = await requireAuth(request, env);
+  if (!session) return err('Não autenticado', 401);
 
-  const prefix = `data:${session.userId}:`;
-  const list = await env.TERA_DATA.list({ prefix });
-  const keys = list.keys.map(k => k.name.slice(prefix.length));
-  return jsonOk({ keys });
+  const prefix = `${session.userId}:`;
+  const list   = await env.TERA_DATA.list({ prefix });
+  const keys   = list.keys.map(k => k.name.slice(prefix.length));
+  return json({ ok: true, keys });
 }
 
-// ── GET /kv/:key ─────────────────────────────────────────────────────────────
+// GET /kv/:key
 async function handleKvGet(request: Request, env: Env, key: string): Promise<Response> {
-  const token = extractToken(request);
-  const session = await authenticate(token, env);
-  if (!session) return jsonErr('Não autenticado', 401);
+  const session = await requireAuth(request, env);
+  if (!session) return err('Não autenticado', 401);
 
-  const value = await env.TERA_DATA.get(`data:${session.userId}:${key}`);
-  return jsonOk({ value });
+  const value = await env.TERA_DATA.get(`${session.userId}:${key}`);
+  return json({ ok: true, key, value: value ?? null });
 }
 
-// ── PUT /kv/:key ─────────────────────────────────────────────────────────────
+// PUT /kv/:key
 async function handleKvPut(request: Request, env: Env, key: string): Promise<Response> {
-  const token = extractToken(request);
-  const session = await authenticate(token, env);
-  if (!session) return jsonErr('Não autenticado', 401);
+  const session = await requireAuth(request, env);
+  if (!session) return err('Não autenticado', 401);
 
   let body: { value?: string };
-  try { body = await request.json() as typeof body; } catch { return jsonErr('JSON inválido'); }
+  try { body = await request.json(); } catch { return err('JSON inválido'); }
+  if (body.value === undefined) return err('Campo "value" obrigatório');
 
-  await env.TERA_DATA.put(`data:${session.userId}:${key}`, body.value ?? '');
-  return jsonOk({ ok: true });
+  await env.TERA_DATA.put(`${session.userId}:${key}`, body.value);
+  return json({ ok: true, key, value: body.value });
 }
 
-// ── DELETE /kv/:key ──────────────────────────────────────────────────────────
+// DELETE /kv/:key
 async function handleKvDelete(request: Request, env: Env, key: string): Promise<Response> {
-  const token = extractToken(request);
-  const session = await authenticate(token, env);
-  if (!session) return jsonErr('Não autenticado', 401);
+  const session = await requireAuth(request, env);
+  if (!session) return err('Não autenticado', 401);
 
-  await env.TERA_DATA.delete(`data:${session.userId}:${key}`);
-  return jsonOk({ ok: true });
+  await env.TERA_DATA.delete(`${session.userId}:${key}`);
+  return json({ ok: true, key, deleted: true });
 }
 
-// ── GET /user/apikey ─────────────────────────────────────────────────────────
+// ── API Key Anthropic ─────────────────────────────────────────────────────────
+// Guardada em TERA_DATA: userId:__apikey__
+
+// GET /user/apikey
 async function handleApiKeyGet(request: Request, env: Env): Promise<Response> {
-  const token = extractToken(request);
-  const session = await authenticate(token, env);
-  if (!session) return jsonErr('Não autenticado', 401);
+  const session = await requireAuth(request, env);
+  if (!session) return err('Não autenticado', 401);
 
-  const apiKey = await env.TERA_DATA.get(`apikey:${session.userId}`);
-  return jsonOk({ configured: !!apiKey });
+  const key = await env.TERA_DATA.get(`${session.userId}:__apikey__`);
+  if (!key) return json({ ok: true, configured: false });
+  return json({ ok: true, configured: true, masked: maskApiKey(key) });
 }
 
-// ── PUT /user/apikey ─────────────────────────────────────────────────────────
+// PUT /user/apikey
 async function handleApiKeyPut(request: Request, env: Env): Promise<Response> {
-  const token = extractToken(request);
-  const session = await authenticate(token, env);
-  if (!session) return jsonErr('Não autenticado', 401);
+  const session = await requireAuth(request, env);
+  if (!session) return err('Não autenticado', 401);
 
   let body: { apiKey?: string };
-  try { body = await request.json() as typeof body; } catch { return jsonErr('JSON inválido'); }
+  try { body = await request.json(); } catch { return err('JSON inválido'); }
 
-  if (!body.apiKey) return jsonErr('apiKey é obrigatório');
-  await env.TERA_DATA.put(`apikey:${session.userId}`, body.apiKey);
-  return jsonOk({ ok: true });
+  const apiKey = body.apiKey?.trim() || '';
+  if (!apiKey.startsWith('sk-ant-')) return err('Chave inválida — deve começar com sk-ant-');
+
+  await env.TERA_DATA.put(`${session.userId}:__apikey__`, apiKey);
+  return json({ ok: true, masked: maskApiKey(apiKey) });
 }
 
-// ── DELETE /user/apikey ──────────────────────────────────────────────────────
+// DELETE /user/apikey
 async function handleApiKeyDelete(request: Request, env: Env): Promise<Response> {
-  const token = extractToken(request);
-  const session = await authenticate(token, env);
-  if (!session) return jsonErr('Não autenticado', 401);
+  const session = await requireAuth(request, env);
+  if (!session) return err('Não autenticado', 401);
 
-  await env.TERA_DATA.delete(`apikey:${session.userId}`);
-  return jsonOk({ ok: true });
+  await env.TERA_DATA.delete(`${session.userId}:__apikey__`);
+  return json({ ok: true, deleted: true });
 }
 
-// ── POST /api/anthropic ──────────────────────────────────────────────────────
-async function handleAnthropic(request: Request, env: Env): Promise<Response> {
-  const token = extractToken(request);
-  const session = await authenticate(token, env);
-  if (!session) return jsonErr('Não autenticado', 401);
+// ── Proxy Anthropic ───────────────────────────────────────────────────────────
+// POST /api/anthropic
+async function handleAnthropicProxy(request: Request, env: Env): Promise<Response> {
+  const session = await requireAuth(request, env);
+  if (!session) return err('Não autenticado', 401);
 
-  const apiKey = await env.TERA_DATA.get(`apikey:${session.userId}`);
-  if (!apiKey) return jsonErr('API key não configurada', 403);
+  // Busca API key do usuário; fallback para env var global (se configurada)
+  let apiKey = await env.TERA_DATA.get(`${session.userId}:__apikey__`);
+  if (!apiKey) {
+    // @ts-ignore — JWT_SECRET está no env, mas API_KEY pode estar também
+    apiKey = (env as Record<string, string>).ANTHROPIC_API_KEY || '';
+  }
+  if (!apiKey) return err('API Key Anthropic não configurada para este usuário', 402);
 
   let body: unknown;
-  try { body = await request.json(); } catch { return jsonErr('JSON inválido'); }
+  try { body = await request.json(); } catch { return err('JSON inválido'); }
 
   const upstream = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
+    method:  'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
+      'Content-Type':      'application/json',
+      'x-api-key':         apiKey,
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify(body),
   });
 
-  const data = await upstream.text();
-  return new Response(data, {
-    status: upstream.status,
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
-  });
+  const data = await upstream.json();
+  return json(data, upstream.status);
 }
 
-// ── Whitelist anti-SSRF ──────────────────────────────────────────────────────
+// ── Fetch-proxy (sem autenticação — relay para portais DFe) ──────────────────
 const ALLOWED_HOSTS = new Set([
   'dfe-portal.svrs.rs.gov.br',
   'www.nfe.fazenda.gov.br',
@@ -299,18 +374,15 @@ function isUrlAllowed(rawUrl: string): boolean {
     if (ALLOWED_HOSTS.has(parsed.hostname)) return true;
     if (parsed.hostname === 'www.gov.br' && parsed.pathname.startsWith('/nfse')) return true;
     return false;
-  } catch {
-    return false;
-  }
+  } catch { return false; }
 }
 
-// ── Rate limit ───────────────────────────────────────────────────────────────
 const rateLimitMap = new Map<string, { count: number; windowStart: number }>();
-const RATE_LIMIT = 20;
-const WINDOW_MS = 60_000;
+const RATE_LIMIT   = 20;
+const WINDOW_MS    = 60_000;
 
 function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
+  const now  = Date.now();
   const slot = rateLimitMap.get(ip);
   if (!slot || now - slot.windowStart > WINDOW_MS) {
     rateLimitMap.set(ip, { count: 1, windowStart: now });
@@ -321,70 +393,88 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-// ── POST /fetch-proxy ────────────────────────────────────────────────────────
 async function handleFetchProxy(request: Request): Promise<Response> {
-  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS });
-  if (request.method !== 'POST') return jsonErr('Method not allowed', 405);
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS });
+  }
+  if (request.method !== 'POST') {
+    return json({ ok: false, error: 'Method not allowed' }, 405);
+  }
 
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-  if (!checkRateLimit(ip)) return jsonErr('Rate limit exceeded', 429);
+  if (!checkRateLimit(ip)) return json({ ok: false, error: 'Rate limit exceeded' }, 429);
 
   let body: { url?: string };
-  try { body = await request.json() as typeof body; } catch { return jsonErr('Invalid JSON body'); }
+  try { body = await request.json(); } catch { return json({ ok: false, error: 'Invalid JSON body' }, 400); }
 
-  if (!isUrlAllowed(body.url || '')) return jsonErr('URL not in allowed list', 403);
+  const targetUrl = body.url || '';
+  if (!isUrlAllowed(targetUrl)) return json({ ok: false, error: 'URL not in allowed list' }, 403);
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 25_000);
+  const timer      = setTimeout(() => controller.abort(), 25_000);
 
   try {
-    const upstream = await fetch(body.url!, {
-      signal: controller.signal,
-      headers: { 'User-Agent': 'Auditec-Curador/1.0 (Fiscal Compliance)', 'Accept': 'text/html,application/xhtml+xml' },
+    const upstream = await fetch(targetUrl, {
+      signal:  controller.signal,
+      headers: {
+        'User-Agent': 'Auditec-Curador/1.0 (Fiscal Compliance)',
+        'Accept':     'text/html,application/xhtml+xml',
+      },
     });
     const html = await upstream.text();
     clearTimeout(timer);
-    return corsResponse(JSON.stringify({ ok: true, html, status: upstream.status }), 200);
-  } catch (err: unknown) {
+    return json({ ok: true, html, status: upstream.status });
+  } catch (e: unknown) {
     clearTimeout(timer);
-    return corsResponse(JSON.stringify({ ok: false, error: err instanceof Error ? err.message : String(err) }), 502);
+    const msg = e instanceof Error ? e.message : String(e);
+    return json({ ok: false, error: msg }, 502);
   }
 }
 
-// ── Router principal ─────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+// ROUTER
+// ═══════════════════════════════════════════════════════════════════════════════
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url);
-    const method = request.method;
+    // Preflight global
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: CORS });
+    }
 
-    // Preflight CORS
-    if (method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS });
+    const url      = new URL(request.url);
+    const path     = url.pathname;
+    const method   = request.method;
 
-    const path = url.pathname;
+    // ── Auth ─────────────────────────────────────────────────────────────────
+    if (path === '/auth/register' && method === 'POST') return handleRegister(request, env);
+    if (path === '/auth/login'    && method === 'POST') return handleLogin(request, env);
+    if (path === '/auth/logout'   && method === 'POST') return handleLogout(request, env);
+    if (path === '/auth/me'       && method === 'GET')  return handleMe(request, env);
 
-    if (path === '/auth/login'    && method === 'POST')   return handleLogin(request, env);
-    if (path === '/auth/register' && method === 'POST')   return handleRegister(request, env);
-    if (path === '/auth/me'       && method === 'GET')    return handleMe(request, env);
-    if (path === '/auth/logout'   && method === 'POST')   return handleLogout(request, env);
+    // ── KV ───────────────────────────────────────────────────────────────────
+    if (path === '/kv-list' && method === 'GET') return handleKvList(request, env);
 
-    if (path === '/kv-list'       && method === 'GET')    return handleKvList(request, env);
-
-    if (path.startsWith('/kv/')) {
-      const key = decodeURIComponent(path.slice(4));
+    const kvMatch = path.match(/^\/kv\/(.+)$/);
+    if (kvMatch) {
+      const key = decodeURIComponent(kvMatch[1]);
       if (method === 'GET')    return handleKvGet(request, env, key);
       if (method === 'PUT')    return handleKvPut(request, env, key);
       if (method === 'DELETE') return handleKvDelete(request, env, key);
     }
 
+    // ── User API Key ──────────────────────────────────────────────────────────
     if (path === '/user/apikey') {
       if (method === 'GET')    return handleApiKeyGet(request, env);
       if (method === 'PUT')    return handleApiKeyPut(request, env);
       if (method === 'DELETE') return handleApiKeyDelete(request, env);
     }
 
-    if (path === '/api/anthropic' && method === 'POST')   return handleAnthropic(request, env);
-    if (path === '/fetch-proxy')                          return handleFetchProxy(request);
+    // ── Anthropic proxy ───────────────────────────────────────────────────────
+    if (path === '/api/anthropic' && method === 'POST') return handleAnthropicProxy(request, env);
 
-    return corsResponse(JSON.stringify({ error: 'Not found' }), 404);
+    // ── Fetch proxy (DFe) ─────────────────────────────────────────────────────
+    if (path === '/fetch-proxy') return handleFetchProxy(request);
+
+    return json({ error: 'Not found' }, 404);
   },
 };
