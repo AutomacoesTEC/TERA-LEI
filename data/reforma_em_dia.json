@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-04-21T22:50:07.471101",
+  "ultima_atualizacao": "2026-04-22T22:56:34.151188",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,22 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "2491df469702510d",
+      "data": "2026-04-22",
+      "titulo": "Nota Técnica 2026.001 v.1.00 - Publicada em 22/04/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT"
+      ],
+      "resumo": "Especifica o Provedor de Assinatura e Autorização (PAA) no âmbito da NF-e.",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=52e8psumXNc=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "9417798408d1fff1",
       "data": "2026-04-15",
