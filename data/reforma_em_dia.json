@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-04-23T22:57:37.728242",
+  "ultima_atualizacao": "2026-04-24T22:51:47.042176",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,22 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "2120552380d14c79",
+      "data": "2026-04-24",
+      "titulo": "Informe Técnico 2025.004 v.1.10 - Publicado em 24/04/2026",
+      "categoria": "Informe Técnico",
+      "tags": [
+        "NF-e",
+        "Informe Técnico"
+      ],
+      "resumo": "Divulga índice de mistura do biodiesel nos combustíveis",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=q3/Dcwlx2PI=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "a40491ecb8f5145e",
       "data": "2026-04-23",
