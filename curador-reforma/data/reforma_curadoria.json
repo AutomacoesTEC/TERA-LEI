@@ -1,11 +1,11 @@
 {
-  "dataVerificacao": "24/04/2026",
-  "dataExecucao": "24/04/2026 19:50:49",
+  "dataVerificacao": "25/04/2026",
+  "dataExecucao": "25/04/2026 19:49:15",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "24/04/2026 19:50:49",
+      "consultadoEm": "25/04/2026 19:49:15",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhuma publicação encontrada para a data de hoje."
@@ -13,32 +13,15 @@
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "24/04/2026 19:50:52",
-      "encontrouItensHoje": true,
-      "itens": [
-        {
-          "titulo": "Informe Técnico 2025.004 v.1.10 - Publicado em 24/04/2026",
-          "dataPublicacao": "24/04/2026",
-          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=q3/Dcwlx2PI=",
-          "resumoCurto": "Divulga índice de mistura do biodiesel nos combustíveis",
-          "tags": [
-            "NF-e",
-            "Informe Técnico"
-          ],
-          "portalOrigem": "Portal NF-e",
-          "tipoConteudo": "informe técnico",
-          "confianca": "alta",
-          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-          "linkResolvido": true,
-          "status": "vigente"
-        }
-      ],
-      "observacoes": ""
+      "consultadoEm": "25/04/2026 19:49:18",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
     },
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "24/04/2026 19:50:55",
+      "consultadoEm": "25/04/2026 19:49:21",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Servidor CGIBS inacessível do ambiente CI (ECONNRESET). Monitoramento manual recomendado."
@@ -46,15 +29,16 @@
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "24/04/2026 19:50:57",
+      "consultadoEm": "25/04/2026 19:49:23",
       "encontrouItensHoje": false,
       "itens": [],
-      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
+      "portaisIndisponiveis": true,
+      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
     },
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "24/04/2026 19:51:23",
+      "consultadoEm": "25/04/2026 19:50:00",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
@@ -62,7 +46,7 @@
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "24/04/2026 19:51:26",
+      "consultadoEm": "25/04/2026 19:50:49",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -70,16 +54,18 @@
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "24/04/2026 19:51:30",
+      "consultadoEm": "25/04/2026 19:51:23",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
     }
   ],
-  "totalItens": 1,
+  "totalItens": 0,
   "totalPortaisVerificados": 7,
-  "totalPortaisComItens": 1,
-  "totalPortaisSemItens": 6,
-  "portaisIndisponiveis": [],
+  "totalPortaisComItens": 0,
+  "totalPortaisSemItens": 7,
+  "portaisIndisponiveis": [
+    "Portal MDF-e"
+  ],
   "erros": []
 }
