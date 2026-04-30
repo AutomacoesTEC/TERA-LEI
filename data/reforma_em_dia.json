@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-04-29T23:05:43.558382",
+  "ultima_atualizacao": "2026-04-30T23:02:43.954842",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,61 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "d58d273d10959e60",
+      "data": "2026-04-30",
+      "titulo": "Publicada v. 1.14b da Nota Técnica 2025.001 (Adequação dos leiautes do CT-e, do CT-eOS e da GTV-e)Foi publicada a v.1.14b da Nota Técnica 2025.001 criando regra de validação para o CT-e Aquaviário de cabotagem.07/04/2026 -",
+      "categoria": "Informe",
+      "tags": [
+        "CT-e",
+        "NT",
+        "Schema",
+        "Versão"
+      ],
+      "resumo": "Publicada v. 1.14b da Nota Técnica 2025.001 (Adequação dos leiautes do CT-e, do CT-eOS e da GTV-e)Foi publicada a v.1.14b da Nota Técnica 2025.001 criando regra de validação para o CT-e Aquaviário de cabotagem.07/04/2026 -",
+      "fonte": "CT-e Informes",
+      "link": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
+    {
+      "id": "a233546f135c0d86",
+      "data": "2026-04-30",
+      "titulo": "Nota Técnica 2026.004 v.1.00 - Publicada em 30/04/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT",
+        "Schema",
+        "NFC-e"
+      ],
+      "resumo": "Atualização do schema da NF-e/NFC-e para adequação ao CNPJ alfanumérico.",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=2/TP/AP%20Pb4=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "8df49597013651d1",
+      "data": "2026-04-30",
+      "titulo": "Nota Técnica 2025.002 v.1.36 - Publicada em 30/04/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT",
+        "Schema",
+        "RTC",
+        "NFC-e"
+      ],
+      "resumo": "Nota técnica de adequação dos leiautes da NF-e e da NFC-e para inclusão dos campos e das regras de validação referentes à Reforma Tributária do Consumo - RTC.",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=bBbBVKSai3U=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "2120552380d14c79",
       "data": "2026-04-24",
@@ -156,7 +211,7 @@
       "link": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=SA3Qh5Htywo=",
       "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
       "linkResolvido": true,
-      "status": "vigente"
+      "status": "superada"
     },
     {
       "id": "nt-efd-contrib-12-2026",
@@ -753,7 +808,7 @@
       "resumo": "Define as regras de validação do Bilhete de Passagem Eletrônico",
       "fonte": "Portal BP-e",
       "link": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "status": "vigente"
+      "status": "superada"
     },
     {
       "id": "nota-t-cnica-2025-002-v-1302025-10-03",

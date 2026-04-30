@@ -1143,3 +1143,59 @@ Require stack:
 [2026-04-29T23:05:34.858Z] [INFO ]     Portal BP-e          ok         0 item(ns)  30568ms
 [2026-04-29T23:05:34.858Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  7466ms
 [2026-04-29T23:05:34.858Z] [INFO ] ══════════════════════════════════════════════════
+[2026-04-30T23:00:05.506Z] [INFO ] ══════════════════════════════════════════════════
+[2026-04-30T23:00:05.507Z] [INFO ]   TERA Curador Reforma v2  —  Início de execução 
+[2026-04-30T23:00:05.507Z] [INFO ] ══════════════════════════════════════════════════
+[2026-04-30T23:00:05.527Z] [INFO ] Data verificação (BRT): 30/04/2026
+[2026-04-30T23:00:05.527Z] [INFO ] Data execução    (BRT): 30/04/2026 20:00:05
+[2026-04-30T23:00:05.528Z] [INFO ] [CT-e] Iniciando coleta
+[2026-04-30T23:00:19.243Z] [INFO ] [CT-e] 1 item(ns) do dia
+[2026-04-30T23:00:19.243Z] [INFO ] [1/7] CT-e Informes — 1 item(ns) (13715ms)
+[2026-04-30T23:00:19.243Z] [INFO ]    ⏳ 1500ms...
+[2026-04-30T23:00:20.746Z] [INFO ] [NF-e] Iniciando coleta (NTs + Informes Técnicos)
+[2026-04-30T23:00:22.800Z] [INFO ] [NF-e][nota técnica] 2 item(ns) do dia
+[2026-04-30T23:00:23.152Z] [INFO ] [NF-e][informe técnico] 0 item(ns) do dia
+[2026-04-30T23:00:23.152Z] [INFO ] [2/7] Portal NF-e — 2 item(ns) (2407ms)
+[2026-04-30T23:00:23.152Z] [INFO ]    ⏳ 1500ms...
+[2026-04-30T23:00:24.653Z] [INFO ] [CGIBS] Iniciando coleta via RSS
+[2026-04-30T23:00:25.141Z] [WARN ] [CGIBS] Servidor indisponível neste ambiente (bloqueio de IP): ECONNRESET
+[2026-04-30T23:00:25.141Z] [INFO ] [3/7] CGIBS — 0 item(ns) (488ms)
+[2026-04-30T23:00:25.141Z] [INFO ]    ⏳ 1500ms...
+[2026-04-30T23:00:26.643Z] [INFO ] [MDF-e] Iniciando coleta
+[2026-04-30T23:00:46.646Z] [WARN ] [proxyFetch] Proxy falhou: This operation was aborted
+[2026-04-30T23:00:46.646Z] [INFO ] [proxyFetch] Tentando fetch direto: https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias
+[2026-04-30T23:01:01.659Z] [ERROR] [MDF-e] Erro: Proxy e fetch direto falharam. Proxy: ver log acima. Direto: timeout of 15000ms exceeded
+[2026-04-30T23:01:01.659Z] [WARN ] [4/7] Portal MDF-e — BLOQUEADO (IP): Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado.
+[2026-04-30T23:01:01.659Z] [INFO ]    ⏳ 1500ms...
+[2026-04-30T23:01:03.162Z] [INFO ] [NF-ABI] Iniciando coleta
+[2026-04-30T23:01:04.051Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos
+[2026-04-30T23:01:49.118Z] [INFO ] [NF-ABI] 0 item(ns) do dia
+[2026-04-30T23:01:49.118Z] [INFO ] [5/7] Portal NF-ABI — 0 item(ns) (45957ms)
+[2026-04-30T23:01:49.118Z] [INFO ]    ⏳ 1500ms...
+[2026-04-30T23:01:50.619Z] [INFO ] [BP-e] Iniciando coleta
+[2026-04-30T23:01:51.344Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias
+[2026-04-30T23:02:21.438Z] [INFO ] [BP-e] 0 item(ns) do dia
+[2026-04-30T23:02:21.438Z] [INFO ] [6/7] Portal BP-e — 0 item(ns) (30819ms)
+[2026-04-30T23:02:21.438Z] [INFO ]    ⏳ 1500ms...
+[2026-04-30T23:02:22.941Z] [INFO ] [NFS-e RTC] Iniciando coleta
+[2026-04-30T23:02:31.428Z] [INFO ] [NFS-e RTC] 0 item(ns) do dia
+[2026-04-30T23:02:31.428Z] [INFO ] [7/7] NFS-e RTC — 0 item(ns) (8488ms)
+[2026-04-30T23:02:31.428Z] [INFO ] Resolvendo links diretos dos documentos...
+[2026-04-30T23:02:32.416Z] [WARN ] [linkResolver] Nenhum link direto encontrado em: https://www.cte.fazenda.gov.br/portal/informe.aspx
+[2026-04-30T23:02:32.417Z] [INFO ] [linkResolver] 2 resolvido(s) · 1 fallback(s) para lista
+[2026-04-30T23:02:32.417Z] [INFO ] JSON salvo: /home/runner/work/TERA-LEI/TERA-LEI/curador-reforma/data/reforma_curadoria.json
+[2026-04-30T23:02:32.417Z] [INFO ] 3 item(ns) → pendente-publicacao/curadoria_30-04-2026.json
+[2026-04-30T23:02:32.417Z] [INFO ] Enviando notificação Telegram...
+[2026-04-30T23:02:32.418Z] [INFO ] [Telegram] Enviando 1 parte(s) para chat_id 1004062605…
+[2026-04-30T23:02:33.027Z] [INFO ] [Telegram] Mensagem enviada (id: 27)
+[2026-04-30T23:02:33.027Z] [INFO ] ══════════════════════════════════════════════════
+[2026-04-30T23:02:33.027Z] [INFO ]   Concluído em 147.5s: 3 item(ns) · 2/7 portais · 0 erro(s) · 1 bloqueado(s)
+[2026-04-30T23:02:33.027Z] [INFO ]   Breakdown por portal:
+[2026-04-30T23:02:33.027Z] [INFO ]     CT-e Informes        ok         1 item(ns)  13715ms
+[2026-04-30T23:02:33.028Z] [INFO ]     Portal NF-e          ok         2 item(ns)  2407ms
+[2026-04-30T23:02:33.028Z] [INFO ]     CGIBS                ok         0 item(ns)  488ms
+[2026-04-30T23:02:33.028Z] [INFO ]     Portal MDF-e         bloqueado  0 item(ns)  35016ms
+[2026-04-30T23:02:33.028Z] [INFO ]     Portal NF-ABI        ok         0 item(ns)  45957ms
+[2026-04-30T23:02:33.028Z] [INFO ]     Portal BP-e          ok         0 item(ns)  30819ms
+[2026-04-30T23:02:33.028Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  8488ms
+[2026-04-30T23:02:33.028Z] [INFO ] ══════════════════════════════════════════════════
