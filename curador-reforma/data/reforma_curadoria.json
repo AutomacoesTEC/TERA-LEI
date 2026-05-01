@@ -1,84 +1,27 @@
 {
-  "dataVerificacao": "30/04/2026",
-  "dataExecucao": "30/04/2026 20:00:05",
+  "dataVerificacao": "01/05/2026",
+  "dataExecucao": "01/05/2026 19:57:05",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "30/04/2026 20:00:05",
-      "encontrouItensHoje": true,
-      "itens": [
-        {
-          "titulo": "Publicada v. 1.14b da Nota Técnica 2025.001 (Adequação dos leiautes do CT-e, do CT-eOS e da GTV-e)Foi publicada a v.1.14b da Nota Técnica 2025.001 criando regra de validação para o CT-e Aquaviário de cabotagem.07/04/2026 -",
-          "dataPublicacao": "30/04/2026",
-          "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-          "resumoCurto": "Publicada v. 1.14b da Nota Técnica 2025.001 (Adequação dos leiautes do CT-e, do CT-eOS e da GTV-e)Foi publicada a v.1.14b da Nota Técnica 2025.001 criando regra de validação para o CT-e Aquaviário de cabotagem.07/04/2026 -",
-          "tags": [
-            "CT-e",
-            "NT",
-            "Schema",
-            "Versão"
-          ],
-          "portalOrigem": "CT-e Informes",
-          "tipoConteudo": "informe",
-          "confianca": "alta",
-          "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-          "linkResolvido": false,
-          "status": "vigente"
-        }
-      ],
-      "observacoes": ""
+      "consultadoEm": "01/05/2026 19:57:05",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Nenhuma publicação encontrada para a data de hoje."
     },
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "30/04/2026 20:00:20",
-      "encontrouItensHoje": true,
-      "itens": [
-        {
-          "titulo": "Nota Técnica 2026.004 v.1.00 - Publicada em 30/04/2026",
-          "dataPublicacao": "30/04/2026",
-          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=2/TP/AP%20Pb4=",
-          "resumoCurto": "Atualização do schema da NF-e/NFC-e para adequação ao CNPJ alfanumérico.",
-          "tags": [
-            "NF-e",
-            "NT",
-            "Schema",
-            "NFC-e"
-          ],
-          "portalOrigem": "Portal NF-e",
-          "tipoConteudo": "nota técnica",
-          "confianca": "alta",
-          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-          "linkResolvido": true,
-          "status": "vigente"
-        },
-        {
-          "titulo": "Nota Técnica 2025.002 v.1.36 - Publicada em 30/04/2026",
-          "dataPublicacao": "30/04/2026",
-          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=bBbBVKSai3U=",
-          "resumoCurto": "Nota técnica de adequação dos leiautes da NF-e e da NFC-e para inclusão dos campos e das regras de validação referentes à Reforma Tributária do Consumo - RTC.",
-          "tags": [
-            "NF-e",
-            "NT",
-            "Schema",
-            "RTC",
-            "NFC-e"
-          ],
-          "portalOrigem": "Portal NF-e",
-          "tipoConteudo": "nota técnica",
-          "confianca": "alta",
-          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-          "linkResolvido": true,
-          "status": "vigente"
-        }
-      ],
-      "observacoes": ""
+      "consultadoEm": "01/05/2026 19:57:08",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
     },
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "30/04/2026 20:00:24",
+      "consultadoEm": "01/05/2026 19:57:11",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Servidor CGIBS inacessível do ambiente CI (ECONNRESET). Monitoramento manual recomendado."
@@ -86,16 +29,15 @@
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "30/04/2026 20:00:26",
+      "consultadoEm": "01/05/2026 19:57:13",
       "encontrouItensHoje": false,
       "itens": [],
-      "portaisIndisponiveis": true,
-      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
+      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
     },
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "30/04/2026 20:01:03",
+      "consultadoEm": "01/05/2026 19:57:41",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
@@ -103,7 +45,7 @@
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "30/04/2026 20:01:50",
+      "consultadoEm": "01/05/2026 19:57:46",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -111,18 +53,16 @@
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "30/04/2026 20:02:22",
+      "consultadoEm": "01/05/2026 19:57:49",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
     }
   ],
-  "totalItens": 3,
+  "totalItens": 0,
   "totalPortaisVerificados": 7,
-  "totalPortaisComItens": 2,
-  "totalPortaisSemItens": 5,
-  "portaisIndisponiveis": [
-    "Portal MDF-e"
-  ],
+  "totalPortaisComItens": 0,
+  "totalPortaisSemItens": 7,
+  "portaisIndisponiveis": [],
   "erros": []
 }
