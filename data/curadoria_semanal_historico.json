@@ -1,6 +1,33 @@
 [
   {
     "periodo": {
+      "inicio": "2026-04-27",
+      "fim": "2026-05-03"
+    },
+    "gerado_em": "2026-05-04T11:52:11.983369+00:00",
+    "total_publicacoes": 0,
+    "resumo_por_tema": {
+      "Lei Ordinária": 0,
+      "Decreto": 0,
+      "Lei Complementar": 0,
+      "Medida Provisória": 0,
+      "Resolução CGSN": 0,
+      "Instrução Normativa (IN)": 0,
+      "Ato Declaratório Interpretativo (ADI)": 0,
+      "Portaria": 0,
+      "Solução de Consulta (SC)": 0,
+      "Parecer Normativo PGFN": 0,
+      "CARF (DOU)": 0,
+      "Informativo STJ": 0,
+      "Súmula STJ": 0,
+      "Informativo STF": 0,
+      "Súmula STF": 0,
+      "Súmula Vinculante STF": 0,
+      "Informativo SPED": 0
+    }
+  },
+  {
+    "periodo": {
       "inicio": "2026-04-20",
       "fim": "2026-04-26"
     },
