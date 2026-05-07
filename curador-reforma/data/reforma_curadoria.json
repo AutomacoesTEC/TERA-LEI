@@ -1,11 +1,11 @@
 {
-  "dataVerificacao": "06/05/2026",
-  "dataExecucao": "06/05/2026 19:57:56",
+  "dataVerificacao": "07/05/2026",
+  "dataExecucao": "07/05/2026 20:04:46",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "06/05/2026 19:57:56",
+      "consultadoEm": "07/05/2026 20:04:46",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhuma publicação encontrada para a data de hoje."
@@ -13,7 +13,7 @@
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "06/05/2026 19:57:58",
+      "consultadoEm": "07/05/2026 20:04:48",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
@@ -21,7 +21,7 @@
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "06/05/2026 19:58:02",
+      "consultadoEm": "07/05/2026 20:04:52",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Servidor CGIBS inacessível do ambiente CI (ECONNRESET). Monitoramento manual recomendado."
@@ -29,16 +29,15 @@
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "06/05/2026 19:58:04",
+      "consultadoEm": "07/05/2026 20:04:54",
       "encontrouItensHoje": false,
       "itens": [],
-      "portaisIndisponiveis": true,
-      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
+      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
     },
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "06/05/2026 19:58:41",
+      "consultadoEm": "07/05/2026 20:05:20",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
@@ -46,7 +45,7 @@
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "06/05/2026 19:59:29",
+      "consultadoEm": "07/05/2026 20:05:23",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -54,7 +53,7 @@
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "06/05/2026 20:00:01",
+      "consultadoEm": "07/05/2026 20:05:27",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
@@ -64,8 +63,6 @@
   "totalPortaisVerificados": 7,
   "totalPortaisComItens": 0,
   "totalPortaisSemItens": 7,
-  "portaisIndisponiveis": [
-    "Portal MDF-e"
-  ],
+  "portaisIndisponiveis": [],
   "erros": []
 }
