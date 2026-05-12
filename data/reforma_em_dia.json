@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-05-11T23:04:12.244761",
+  "ultima_atualizacao": "2026-05-12T23:12:34.365704",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,39 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "c1e0426bf994a6cb",
+      "data": "2026-05-12",
+      "titulo": "Informe Técnico 2026.002 v.1.00 - Publicado em 12/05/2026",
+      "categoria": "Informe Técnico",
+      "tags": [
+        "NF-e",
+        "Informe Técnico",
+        "CBS"
+      ],
+      "resumo": "Divulga alíquotas de CBS",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=p3diw3stE7w=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "ffcbfb84f3a9e952",
+      "data": "2026-05-12",
+      "titulo": "Informe Técnico 2026.001 v.1.00 - Publicado em 12/05/2026",
+      "categoria": "Informe Técnico",
+      "tags": [
+        "NF-e",
+        "Informe Técnico"
+      ],
+      "resumo": "Divulga tabela de códigos de meios de pagamento para CT-e, CT-e OS, BP-e, BP-e TM, BP-e TA, NF3e, NFCom, NFAg e NFGas",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=%2097zJVvurKU=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "0fea9242e60fd639",
       "data": "2026-05-11",
