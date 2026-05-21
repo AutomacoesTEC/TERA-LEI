@@ -1,11 +1,11 @@
 {
-  "dataVerificacao": "20/05/2026",
-  "dataExecucao": "20/05/2026 20:20:33",
+  "dataVerificacao": "21/05/2026",
+  "dataExecucao": "21/05/2026 20:11:03",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "20/05/2026 20:20:33",
+      "consultadoEm": "21/05/2026 20:11:03",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhuma publicação encontrada para a data de hoje."
@@ -13,35 +13,15 @@
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "20/05/2026 20:20:35",
-      "encontrouItensHoje": true,
-      "itens": [
-        {
-          "titulo": "Nota Técnica 2025.002 v.1.40 - Publicada em 20/05/2026",
-          "dataPublicacao": "20/05/2026",
-          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=lWEyoabukyw=",
-          "resumoCurto": "Nota técnica de adequação dos leiautes da NF-e e da NFC-e para inclusão dos campos e das regras de validação referentes à Reforma Tributária do Consumo - RTC.",
-          "tags": [
-            "NF-e",
-            "NT",
-            "Schema",
-            "RTC",
-            "NFC-e"
-          ],
-          "portalOrigem": "Portal NF-e",
-          "tipoConteudo": "nota técnica",
-          "confianca": "alta",
-          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-          "linkResolvido": true,
-          "status": "vigente"
-        }
-      ],
-      "observacoes": ""
+      "consultadoEm": "21/05/2026 20:11:05",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
     },
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "20/05/2026 20:20:39",
+      "consultadoEm": "21/05/2026 20:11:09",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Servidor CGIBS inacessível do ambiente CI (ECONNRESET). Monitoramento manual recomendado."
@@ -49,7 +29,7 @@
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "20/05/2026 20:20:41",
+      "consultadoEm": "21/05/2026 20:11:11",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -57,7 +37,7 @@
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "20/05/2026 20:20:44",
+      "consultadoEm": "21/05/2026 20:11:13",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
@@ -65,7 +45,7 @@
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "20/05/2026 20:20:45",
+      "consultadoEm": "21/05/2026 20:11:15",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -73,16 +53,16 @@
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "20/05/2026 20:20:50",
+      "consultadoEm": "21/05/2026 20:11:19",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
     }
   ],
-  "totalItens": 1,
+  "totalItens": 0,
   "totalPortaisVerificados": 7,
-  "totalPortaisComItens": 1,
-  "totalPortaisSemItens": 6,
+  "totalPortaisComItens": 0,
+  "totalPortaisSemItens": 7,
   "portaisIndisponiveis": [],
   "erros": []
 }
