@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-05-24T23:04:28.258102",
+  "ultima_atualizacao": "2026-05-25T23:15:37.339743",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,38 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "fa10af061e74b244",
+      "data": "2026-05-25",
+      "titulo": "Nota Técnica 2026.003 v.1.00 - Publicada em 25/05/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT"
+      ],
+      "resumo": "DANFE Simplificado Tipo 2",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=2YdaBTIql%20k=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "60f5e96d60d52cd9",
+      "data": "2026-05-25",
+      "titulo": "Nota Técnica 2026.002 v.1.00 - Publicada em 25/05/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT"
+      ],
+      "resumo": "Operações de vendas presenciais e não presenciais com impressão do DANFE Simplificado Tipo 2",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=3v7VFvaogiA=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "abf3cae3bd658588",
       "data": "2026-05-20",
