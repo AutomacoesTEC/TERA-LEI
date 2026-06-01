@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-05-31T23:10:24.588313",
+  "ultima_atualizacao": "2026-06-01T23:40:45.854286",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,23 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "6ceb74cf0cb21bfa",
+      "data": "2026-06-01",
+      "titulo": "Publicada v. 1.00 da Nota Técnica 2026.001 (Nota técnica de alteração de regra de validação do MDF-e)Foi publicada a v.1.00 da Nota Técnica 2026.001 que altera a regra de validação de exigência do CIOT.30/04/2026 -",
+      "categoria": "Informe",
+      "tags": [
+        "CT-e",
+        "NT",
+        "Versão"
+      ],
+      "resumo": "Publicada v. 1.00 da Nota Técnica 2026.001 (Nota técnica de alteração de regra de validação do MDF-e)Foi publicada a v.1.00 da Nota Técnica 2026.001 que altera a regra de validação de exigência do CIOT.30/04/2026 -",
+      "fonte": "CT-e Informes",
+      "link": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "fa10af061e74b244",
       "data": "2026-05-25",
