@@ -1,37 +1,19 @@
 {
-  "dataVerificacao": "01/06/2026",
-  "dataExecucao": "01/06/2026 20:39:55",
+  "dataVerificacao": "02/06/2026",
+  "dataExecucao": "02/06/2026 20:55:06",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "01/06/2026 20:39:55",
-      "encontrouItensHoje": true,
-      "itens": [
-        {
-          "titulo": "Publicada v. 1.00 da Nota Técnica 2026.001 (Nota técnica de alteração de regra de validação do MDF-e)Foi publicada a v.1.00 da Nota Técnica 2026.001 que altera a regra de validação de exigência do CIOT.30/04/2026 -",
-          "dataPublicacao": "01/06/2026",
-          "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-          "resumoCurto": "Publicada v. 1.00 da Nota Técnica 2026.001 (Nota técnica de alteração de regra de validação do MDF-e)Foi publicada a v.1.00 da Nota Técnica 2026.001 que altera a regra de validação de exigência do CIOT.30/04/2026 -",
-          "tags": [
-            "CT-e",
-            "NT",
-            "Versão"
-          ],
-          "portalOrigem": "CT-e Informes",
-          "tipoConteudo": "informe",
-          "confianca": "alta",
-          "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-          "linkResolvido": false,
-          "status": "vigente"
-        }
-      ],
-      "observacoes": ""
+      "consultadoEm": "02/06/2026 20:55:06",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Nenhuma publicação encontrada para a data de hoje."
     },
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "01/06/2026 20:39:58",
+      "consultadoEm": "02/06/2026 20:55:09",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
@@ -39,7 +21,7 @@
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "01/06/2026 20:40:02",
+      "consultadoEm": "02/06/2026 20:55:13",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Servidor CGIBS inacessível do ambiente CI (ECONNRESET). Monitoramento manual recomendado."
@@ -47,7 +29,7 @@
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "01/06/2026 20:40:04",
+      "consultadoEm": "02/06/2026 20:55:15",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -55,7 +37,7 @@
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "01/06/2026 20:40:10",
+      "consultadoEm": "02/06/2026 20:55:18",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
@@ -63,7 +45,7 @@
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "01/06/2026 20:40:16",
+      "consultadoEm": "02/06/2026 20:55:20",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -71,16 +53,16 @@
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "01/06/2026 20:40:21",
+      "consultadoEm": "02/06/2026 20:55:26",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
     }
   ],
-  "totalItens": 1,
+  "totalItens": 0,
   "totalPortaisVerificados": 7,
-  "totalPortaisComItens": 1,
-  "totalPortaisSemItens": 6,
+  "totalPortaisComItens": 0,
+  "totalPortaisSemItens": 7,
   "portaisIndisponiveis": [],
   "erros": []
 }
