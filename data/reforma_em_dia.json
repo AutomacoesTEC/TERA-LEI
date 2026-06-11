@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-06-10T23:41:52.524839",
+  "ultima_atualizacao": "2026-06-11T23:45:26.169473",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,27 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "69c78b03431a6cbc",
+      "data": "2026-06-11",
+      "titulo": "Publicada v. 1.00 da Nota Técnica 2026.002 (Nota técnica de adequação dos leiautes do BP-e, BPeTA e BP-e TM e das regras de validação referentes à Reforma Tributária do Consumo - RTC).Foi publicada a v.1.00 da Nota Técnica 2026.002 que contempla Antecipação de Pagamento, obrigatoriedade do preenchimento das informações de IBS e CBS, cashback, alíquota zero da CBS em Área de Livre Comércio.11/06/2026 -",
+      "categoria": "Informe",
+      "tags": [
+        "CT-e",
+        "IBS",
+        "CBS",
+        "NT",
+        "Schema",
+        "RTC",
+        "Versão"
+      ],
+      "resumo": "Publicada v. 1.00 da Nota Técnica 2026.002 (Nota técnica de adequação dos leiautes do BP-e, BPeTA e BP-e TM e das regras de validação referentes à Reforma Tributária do Consumo - RTC).Foi publicada a v.1.00 da Nota Técnica 2026.002 que contempla Antecipação de Pagamento, obrigatoriedade do preenchimento das informações de…",
+      "fonte": "CT-e Informes",
+      "link": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "6ceb74cf0cb21bfa",
       "data": "2026-06-01",
