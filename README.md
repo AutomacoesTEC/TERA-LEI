@@ -21,7 +21,7 @@ Desenvolvido como uma Single Page Application (SPA) robusta, o sistema combina u
 
 ### 3. Curadoria da Reforma Tributária (Node.js)
 *   **Monitoramento de 7 Portais:** Coleta automatizada de Notas Técnicas, Informes e Notícias de portais como CT-e, NF-e, CGIBS, MDF-e, NF-ABI, BP-e e NFS-e.
-*   **Resiliência:** Parsers independentes por portal com tratamento de erros e retentativas automáticas.
+*   **Resiliência:** Parsers independentes por portal com tratamento de erros e retentativas automáticas. Portais no domínio SVRS (MDF-e, NF-ABI, BP-e) e o CGIBS bloqueiam IPs de provedores cloud — requerem o Worker proxy para funcionar em CI.
 *   **Notificações via Telegram:** Envio de resumos estruturados diretamente para canais de comunicação.
 *   **Deduplicação Inteligente:** Algoritmo de hash SHA-256 para evitar itens duplicados e identificar notas técnicas superadas.
 
@@ -36,7 +36,7 @@ Desenvolvido como uma Single Page Application (SPA) robusta, o sistema combina u
 O projeto é organizado em uma estrutura modular que separa a interface do usuário das automações de backend:
 
 *   **Frontend:** SPA monolítica em `index.html` utilizando **React 18**, **Babel** (runtime transpilation) e **D3.js** para visualizações.
-*   **Backend/Proxy:** Implementado com **Cloudflare Workers** (`wrangler.jsonc`) para gestão de usuários e persistência em KV (Key-Value).
+*   **Backend/Proxy:** **Cloudflare Workers** (`wrangler.jsonc`) configurado para gestão de usuários (KV) e proxy reverso dos portais SVRS/CGIBS. **Atenção:** `src/index.ts` ainda não criado — Worker não publicado.
 *   **Automações (GitHub Actions):**
     *   `atualizacoes.yml`: Atualiza notícias tributárias diariamente.
     *   `monitorar_leis.yml`: Verifica mudanças em leis específicas.
