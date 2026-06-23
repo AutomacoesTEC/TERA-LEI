@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-06-22T23:27:48.653686",
+  "ultima_atualizacao": "2026-06-23T23:15:01.440766",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,40 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "283579736f454515",
+      "data": "2026-06-23",
+      "titulo": "Nota Técnica 2026.001 v.1.02a - Publicada em 23/06/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT"
+      ],
+      "resumo": "Especifica o Provedor de Assinatura e Autorização (PAA) no âmbito da NF-e.",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=17/3gkpGzPY=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "ca7663c4d063666f",
+      "data": "2026-06-23",
+      "titulo": "Informe Técnico 2025.002 v.1.60 - Publicado em 23/06/2026",
+      "categoria": "Informe Técnico",
+      "tags": [
+        "NF-e",
+        "Informe Técnico",
+        "IBS",
+        "CBS"
+      ],
+      "resumo": "Divulga tabela classificação tributária, indicadores de CST e crédito presumido do IBS e da CBS.",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=jxTMMQeEVM8=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "69c78b03431a6cbc",
       "data": "2026-06-11",
@@ -62,7 +96,7 @@
       "link": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
       "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
       "linkResolvido": false,
-      "status": "vigente"
+      "status": "superada"
     },
     {
       "id": "fa10af061e74b244",
@@ -265,7 +299,7 @@
       "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=52e8psumXNc=",
       "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
       "linkResolvido": true,
-      "status": "vigente"
+      "status": "superada"
     },
     {
       "id": "9417798408d1fff1",
