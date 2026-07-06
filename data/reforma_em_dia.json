@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-07-05T23:10:54.072872",
+  "ultima_atualizacao": "2026-07-06T23:16:06.782419",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,84 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "8fd66a796b02a71e",
+      "data": "2026-07-06",
+      "titulo": "Comissão de Trabalho do Regulamento do IBS recebe e analisa 847 sugestões de aprimoramentos ao texto-base",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "Regulamentação"
+      ],
+      "resumo": "Alta demanda tem gerado um esforço concentrado do Comitê Gestor para classificar e otimizar a avaliação das propostas apresentadas, e técnicos estão estudando todo o material enviado",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
+    {
+      "id": "1a3dd821fe490238",
+      "data": "2026-07-06",
+      "titulo": "Documentos",
+      "categoria": "Notícia",
+      "tags": [
+        "MDF-e"
+      ],
+      "resumo": "Documentos",
+      "fonte": "Portal MDF-e",
+      "link": "https://dfe-portal.svrs.rs.gov.br/Mdfe/DownloadArquivoEstatico/?sistema=Mdfe&tipoArquivo=0&nomeArquivo=Cartilha_mdfe_nacional_agosto_2016.pdf",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "953c9a306b21d5c9",
+      "data": "2026-07-06",
+      "titulo": "Legislação",
+      "categoria": "Notícia",
+      "tags": [
+        "MDF-e"
+      ],
+      "resumo": "Legislação",
+      "fonte": "Portal MDF-e",
+      "link": "https://dfe-portal.svrs.rs.gov.br/Mdfe/DownloadArquivoEstatico/?sistema=Mdfe&tipoArquivo=0&nomeArquivo=Cartilha_mdfe_nacional_agosto_2016.pdf",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "8d91765e59233f80",
+      "data": "2026-07-06",
+      "titulo": "Documentos",
+      "categoria": "Notícia",
+      "tags": [
+        "BP-e"
+      ],
+      "resumo": "Documentos",
+      "fonte": "Portal BP-e",
+      "link": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
+    {
+      "id": "a2bf76e919676a27",
+      "data": "2026-07-06",
+      "titulo": "Legislação",
+      "categoria": "Notícia",
+      "tags": [
+        "BP-e"
+      ],
+      "resumo": "Legislação",
+      "fonte": "Portal BP-e",
+      "link": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "283579736f454515",
       "data": "2026-06-23",
