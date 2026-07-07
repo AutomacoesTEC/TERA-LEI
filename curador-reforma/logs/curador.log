@@ -4769,3 +4769,62 @@ Require stack:
 [2026-07-06T23:15:59.970Z] [INFO ]     Portal BP-e          ok         2 item(ns)  1790ms
 [2026-07-06T23:15:59.970Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  9735ms
 [2026-07-06T23:15:59.970Z] [INFO ] ══════════════════════════════════════════════════
+[2026-07-07T23:08:16.630Z] [INFO ] ══════════════════════════════════════════════════
+[2026-07-07T23:08:16.632Z] [INFO ]   TERA Curador Reforma v2  —  Início de execução 
+[2026-07-07T23:08:16.632Z] [INFO ] ══════════════════════════════════════════════════
+[2026-07-07T23:08:16.697Z] [INFO ] Data verificação (BRT): 07/07/2026
+[2026-07-07T23:08:16.697Z] [INFO ] Data execução    (BRT): 07/07/2026 20:08:16
+[2026-07-07T23:08:16.698Z] [INFO ] [CT-e] Iniciando coleta
+[2026-07-07T23:08:17.211Z] [WARN ] [CT-e] Tentativa 1 falhou: unable to get local issuer certificate. Retentando...
+[2026-07-07T23:08:19.574Z] [ERROR] [CT-e] Erro: unable to get local issuer certificate
+[2026-07-07T23:08:19.574Z] [WARN ] [1/7] CT-e Informes — ERRO: unable to get local issuer certificate
+[2026-07-07T23:08:19.574Z] [INFO ]    ⏳ 1500ms...
+[2026-07-07T23:08:21.077Z] [INFO ] [NF-e] Iniciando coleta (NTs + Informes Técnicos)
+[2026-07-07T23:08:22.130Z] [WARN ] [NF-e] Tentativa 1 falhou (https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=): unable to get local issuer certificate. Retentando...
+[2026-07-07T23:08:24.986Z] [ERROR] [NF-e][nota técnica] Erro: unable to get local issuer certificate
+[2026-07-07T23:08:24.987Z] [INFO ] [NF-e][nota técnica] 0 item(ns) do dia
+[2026-07-07T23:08:25.945Z] [WARN ] [NF-e] Tentativa 1 falhou (https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=hXzemuyNHW4=): unable to get local issuer certificate. Retentando...
+[2026-07-07T23:08:28.790Z] [ERROR] [NF-e][informe técnico] Erro: unable to get local issuer certificate
+[2026-07-07T23:08:28.791Z] [INFO ] [NF-e][informe técnico] 0 item(ns) do dia
+[2026-07-07T23:08:28.791Z] [INFO ] [2/7] Portal NF-e — 0 item(ns) (7715ms)
+[2026-07-07T23:08:28.791Z] [INFO ]    ⏳ 1500ms...
+[2026-07-07T23:08:30.293Z] [INFO ] [CGIBS] Iniciando coleta via RSS
+[2026-07-07T23:08:31.423Z] [INFO ] [CGIBS] 0 item(ns) do dia
+[2026-07-07T23:08:31.423Z] [INFO ] [3/7] CGIBS — 0 item(ns) (1131ms)
+[2026-07-07T23:08:31.424Z] [INFO ]    ⏳ 1500ms...
+[2026-07-07T23:08:32.927Z] [INFO ] [MDF-e] Iniciando coleta
+[2026-07-07T23:08:52.929Z] [WARN ] [proxyFetch] Proxy falhou: This operation was aborted
+[2026-07-07T23:08:52.929Z] [INFO ] [proxyFetch] Tentando fetch direto: https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias
+[2026-07-07T23:09:07.942Z] [ERROR] [MDF-e] Erro: Proxy e fetch direto falharam. Proxy: ver log acima. Direto: timeout of 15000ms exceeded
+[2026-07-07T23:09:07.942Z] [WARN ] [4/7] Portal MDF-e — BLOQUEADO (IP): Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado.
+[2026-07-07T23:09:07.942Z] [INFO ]    ⏳ 1500ms...
+[2026-07-07T23:09:09.444Z] [INFO ] [NF-ABI] Iniciando coleta
+[2026-07-07T23:09:29.446Z] [WARN ] [proxyFetch] Proxy falhou: This operation was aborted
+[2026-07-07T23:09:29.446Z] [INFO ] [proxyFetch] Tentando fetch direto: https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos
+[2026-07-07T23:09:44.457Z] [ERROR] [NF-ABI] Erro: Proxy e fetch direto falharam. Proxy: ver log acima. Direto: timeout of 15000ms exceeded
+[2026-07-07T23:09:44.457Z] [WARN ] [5/7] Portal NF-ABI — BLOQUEADO (IP): Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado.
+[2026-07-07T23:09:44.457Z] [INFO ]    ⏳ 1500ms...
+[2026-07-07T23:09:45.960Z] [INFO ] [BP-e] Iniciando coleta
+[2026-07-07T23:10:05.960Z] [WARN ] [proxyFetch] Proxy falhou: This operation was aborted
+[2026-07-07T23:10:05.960Z] [INFO ] [proxyFetch] Tentando fetch direto: https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias
+[2026-07-07T23:10:20.971Z] [ERROR] [BP-e] Erro: Proxy e fetch direto falharam. Proxy: ver log acima. Direto: timeout of 15000ms exceeded
+[2026-07-07T23:10:20.971Z] [WARN ] [6/7] Portal BP-e — BLOQUEADO (IP): Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado.
+[2026-07-07T23:10:20.971Z] [INFO ]    ⏳ 1500ms...
+[2026-07-07T23:10:22.474Z] [INFO ] [NFS-e RTC] Iniciando coleta
+[2026-07-07T23:10:30.278Z] [INFO ] [NFS-e RTC] 0 item(ns) do dia
+[2026-07-07T23:10:30.278Z] [INFO ] [7/7] NFS-e RTC — 0 item(ns) (7805ms)
+[2026-07-07T23:10:30.279Z] [INFO ] JSON salvo: /home/runner/work/TERA-LEI/TERA-LEI/curador-reforma/data/reforma_curadoria.json
+[2026-07-07T23:10:30.279Z] [INFO ] Enviando notificação Telegram...
+[2026-07-07T23:10:30.279Z] [INFO ] [Telegram] Enviando 1 parte(s) para chat_id 1004062605…
+[2026-07-07T23:10:30.708Z] [INFO ] [Telegram] Mensagem enviada (id: 109)
+[2026-07-07T23:10:30.708Z] [INFO ] ══════════════════════════════════════════════════
+[2026-07-07T23:10:30.708Z] [INFO ]   Concluído em 134.1s: 0 item(ns) · 0/7 portais · 1 erro(s) · 3 bloqueado(s)
+[2026-07-07T23:10:30.708Z] [INFO ]   Breakdown por portal:
+[2026-07-07T23:10:30.708Z] [INFO ]     CT-e Informes        erro       0 item(ns)  2877ms
+[2026-07-07T23:10:30.708Z] [INFO ]     Portal NF-e          ok         0 item(ns)  7715ms
+[2026-07-07T23:10:30.708Z] [INFO ]     CGIBS                ok         0 item(ns)  1131ms
+[2026-07-07T23:10:30.708Z] [INFO ]     Portal MDF-e         bloqueado  0 item(ns)  35016ms
+[2026-07-07T23:10:30.708Z] [INFO ]     Portal NF-ABI        bloqueado  0 item(ns)  35013ms
+[2026-07-07T23:10:30.708Z] [INFO ]     Portal BP-e          bloqueado  0 item(ns)  35012ms
+[2026-07-07T23:10:30.708Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  7805ms
+[2026-07-07T23:10:30.708Z] [INFO ] ══════════════════════════════════════════════════

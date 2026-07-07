@@ -1,11 +1,11 @@
 {
-  "dataVerificacao": "06/07/2026",
-  "dataExecucao": "06/07/2026 20:15:08",
+  "dataVerificacao": "07/07/2026",
+  "dataExecucao": "07/07/2026 20:08:16",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "06/07/2026 20:15:08",
+      "consultadoEm": "07/07/2026 20:08:16",
       "encontrouItensHoje": false,
       "itens": [],
       "erro": "unable to get local issuer certificate"
@@ -13,7 +13,7 @@
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "06/07/2026 20:15:14",
+      "consultadoEm": "07/07/2026 20:08:21",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
@@ -21,130 +21,56 @@
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "06/07/2026 20:15:25",
-      "encontrouItensHoje": true,
-      "itens": [
-        {
-          "titulo": "Comissão de Trabalho do Regulamento do IBS recebe e analisa 847 sugestões de aprimoramentos ao texto-base",
-          "dataPublicacao": "06/07/2026",
-          "url": "https://www.cgibs.gov.br/noticias",
-          "resumoCurto": "Alta demanda tem gerado um esforço concentrado do Comitê Gestor para classificar e otimizar a avaliação das propostas apresentadas, e técnicos estão estudando todo o material enviado",
-          "tags": [
-            "IBS",
-            "CGIBS",
-            "Comitê Gestor",
-            "Regulamentação"
-          ],
-          "portalOrigem": "CGIBS",
-          "tipoConteudo": "comunicado",
-          "confianca": "alta",
-          "linkLista": "https://www.cgibs.gov.br/noticias",
-          "linkResolvido": false,
-          "status": "vigente"
-        }
-      ],
-      "observacoes": ""
+      "consultadoEm": "07/07/2026 20:08:30",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Nenhuma publicação do CGIBS hoje."
     },
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "06/07/2026 20:15:27",
-      "encontrouItensHoje": true,
-      "itens": [
-        {
-          "titulo": "Documentos",
-          "dataPublicacao": "06/07/2026",
-          "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/DownloadArquivoEstatico/?sistema=Mdfe&tipoArquivo=0&nomeArquivo=Cartilha_mdfe_nacional_agosto_2016.pdf",
-          "resumoCurto": "Documentos",
-          "tags": [
-            "MDF-e"
-          ],
-          "portalOrigem": "Portal MDF-e",
-          "tipoConteudo": "notícia",
-          "confianca": "media",
-          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-          "linkResolvido": true,
-          "status": "vigente"
-        },
-        {
-          "titulo": "Legislação",
-          "dataPublicacao": "06/07/2026",
-          "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/DownloadArquivoEstatico/?sistema=Mdfe&tipoArquivo=0&nomeArquivo=Cartilha_mdfe_nacional_agosto_2016.pdf",
-          "resumoCurto": "Legislação",
-          "tags": [
-            "MDF-e"
-          ],
-          "portalOrigem": "Portal MDF-e",
-          "tipoConteudo": "notícia",
-          "confianca": "media",
-          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-          "linkResolvido": true,
-          "status": "vigente"
-        }
-      ],
-      "observacoes": ""
+      "consultadoEm": "07/07/2026 20:08:32",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "portaisIndisponiveis": true,
+      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
     },
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "06/07/2026 20:15:37",
+      "consultadoEm": "07/07/2026 20:09:09",
       "encontrouItensHoje": false,
       "itens": [],
-      "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
+      "portaisIndisponiveis": true,
+      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
     },
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "06/07/2026 20:15:41",
-      "encontrouItensHoje": true,
-      "itens": [
-        {
-          "titulo": "Documentos",
-          "dataPublicacao": "06/07/2026",
-          "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-          "resumoCurto": "Documentos",
-          "tags": [
-            "BP-e"
-          ],
-          "portalOrigem": "Portal BP-e",
-          "tipoConteudo": "notícia",
-          "confianca": "media",
-          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-          "linkResolvido": false,
-          "status": "vigente"
-        },
-        {
-          "titulo": "Legislação",
-          "dataPublicacao": "06/07/2026",
-          "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-          "resumoCurto": "Legislação",
-          "tags": [
-            "BP-e"
-          ],
-          "portalOrigem": "Portal BP-e",
-          "tipoConteudo": "notícia",
-          "confianca": "media",
-          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-          "linkResolvido": false,
-          "status": "vigente"
-        }
-      ],
-      "observacoes": ""
+      "consultadoEm": "07/07/2026 20:09:45",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "portaisIndisponiveis": true,
+      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
     },
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "06/07/2026 20:15:44",
+      "consultadoEm": "07/07/2026 20:10:22",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
     }
   ],
-  "totalItens": 5,
+  "totalItens": 0,
   "totalPortaisVerificados": 7,
-  "totalPortaisComItens": 3,
-  "totalPortaisSemItens": 4,
-  "portaisIndisponiveis": [],
+  "totalPortaisComItens": 0,
+  "totalPortaisSemItens": 7,
+  "portaisIndisponiveis": [
+    "Portal MDF-e",
+    "Portal NF-ABI",
+    "Portal BP-e"
+  ],
   "erros": [
     "CT-e Informes: unable to get local issuer certificate"
   ]
