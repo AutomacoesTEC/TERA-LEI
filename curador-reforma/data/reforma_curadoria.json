@@ -1,11 +1,11 @@
 {
-  "dataVerificacao": "07/07/2026",
-  "dataExecucao": "07/07/2026 20:08:16",
+  "dataVerificacao": "08/07/2026",
+  "dataExecucao": "08/07/2026 20:17:05",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "07/07/2026 20:08:16",
+      "consultadoEm": "08/07/2026 20:17:05",
       "encontrouItensHoje": false,
       "itens": [],
       "erro": "unable to get local issuer certificate"
@@ -13,7 +13,7 @@
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "07/07/2026 20:08:21",
+      "consultadoEm": "08/07/2026 20:17:10",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
@@ -21,15 +21,15 @@
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "07/07/2026 20:08:30",
+      "consultadoEm": "08/07/2026 20:17:21",
       "encontrouItensHoje": false,
       "itens": [],
-      "observacoes": "Nenhuma publicação do CGIBS hoje."
+      "erro": "timeout of 15000ms exceeded"
     },
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "07/07/2026 20:08:32",
+      "consultadoEm": "08/07/2026 20:17:37",
       "encontrouItensHoje": false,
       "itens": [],
       "portaisIndisponiveis": true,
@@ -38,25 +38,23 @@
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "07/07/2026 20:09:09",
+      "consultadoEm": "08/07/2026 20:18:14",
       "encontrouItensHoje": false,
       "itens": [],
-      "portaisIndisponiveis": true,
-      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
+      "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
     },
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "07/07/2026 20:09:45",
+      "consultadoEm": "08/07/2026 20:19:02",
       "encontrouItensHoje": false,
       "itens": [],
-      "portaisIndisponiveis": true,
-      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
+      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
     },
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "07/07/2026 20:10:22",
+      "consultadoEm": "08/07/2026 20:19:49",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
@@ -67,11 +65,10 @@
   "totalPortaisComItens": 0,
   "totalPortaisSemItens": 7,
   "portaisIndisponiveis": [
-    "Portal MDF-e",
-    "Portal NF-ABI",
-    "Portal BP-e"
+    "Portal MDF-e"
   ],
   "erros": [
-    "CT-e Informes: unable to get local issuer certificate"
+    "CT-e Informes: unable to get local issuer certificate",
+    "CGIBS: timeout of 15000ms exceeded"
   ]
 }

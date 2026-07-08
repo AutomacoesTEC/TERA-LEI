@@ -4828,3 +4828,60 @@ Require stack:
 [2026-07-07T23:10:30.708Z] [INFO ]     Portal BP-e          bloqueado  0 item(ns)  35012ms
 [2026-07-07T23:10:30.708Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  7805ms
 [2026-07-07T23:10:30.708Z] [INFO ] ══════════════════════════════════════════════════
+[2026-07-08T23:17:05.329Z] [INFO ] ══════════════════════════════════════════════════
+[2026-07-08T23:17:05.331Z] [INFO ]   TERA Curador Reforma v2  —  Início de execução 
+[2026-07-08T23:17:05.331Z] [INFO ] ══════════════════════════════════════════════════
+[2026-07-08T23:17:05.357Z] [INFO ] Data verificação (BRT): 08/07/2026
+[2026-07-08T23:17:05.358Z] [INFO ] Data execução    (BRT): 08/07/2026 20:17:05
+[2026-07-08T23:17:05.358Z] [INFO ] [CT-e] Iniciando coleta
+[2026-07-08T23:17:06.095Z] [WARN ] [CT-e] Tentativa 1 falhou: unable to get local issuer certificate. Retentando...
+[2026-07-08T23:17:08.815Z] [ERROR] [CT-e] Erro: unable to get local issuer certificate
+[2026-07-08T23:17:08.815Z] [WARN ] [1/7] CT-e Informes — ERRO: unable to get local issuer certificate
+[2026-07-08T23:17:08.815Z] [INFO ]    ⏳ 1500ms...
+[2026-07-08T23:17:10.318Z] [INFO ] [NF-e] Iniciando coleta (NTs + Informes Técnicos)
+[2026-07-08T23:17:11.766Z] [WARN ] [NF-e] Tentativa 1 falhou (https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=): unable to get local issuer certificate. Retentando...
+[2026-07-08T23:17:15.020Z] [ERROR] [NF-e][nota técnica] Erro: unable to get local issuer certificate
+[2026-07-08T23:17:15.020Z] [INFO ] [NF-e][nota técnica] 0 item(ns) do dia
+[2026-07-08T23:17:16.619Z] [WARN ] [NF-e] Tentativa 1 falhou (https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=hXzemuyNHW4=): unable to get local issuer certificate. Retentando...
+[2026-07-08T23:17:19.886Z] [ERROR] [NF-e][informe técnico] Erro: unable to get local issuer certificate
+[2026-07-08T23:17:19.886Z] [INFO ] [NF-e][informe técnico] 0 item(ns) do dia
+[2026-07-08T23:17:19.887Z] [INFO ] [2/7] Portal NF-e — 0 item(ns) (9570ms)
+[2026-07-08T23:17:19.887Z] [INFO ]    ⏳ 1500ms...
+[2026-07-08T23:17:21.389Z] [INFO ] [CGIBS] Iniciando coleta via RSS
+[2026-07-08T23:17:36.397Z] [ERROR] [CGIBS] Erro inesperado: timeout of 15000ms exceeded
+[2026-07-08T23:17:36.397Z] [WARN ] [3/7] CGIBS — ERRO: timeout of 15000ms exceeded
+[2026-07-08T23:17:36.397Z] [INFO ]    ⏳ 1500ms...
+[2026-07-08T23:17:37.899Z] [INFO ] [MDF-e] Iniciando coleta
+[2026-07-08T23:17:57.902Z] [WARN ] [proxyFetch] Proxy falhou: This operation was aborted
+[2026-07-08T23:17:57.902Z] [INFO ] [proxyFetch] Tentando fetch direto: https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias
+[2026-07-08T23:18:12.907Z] [ERROR] [MDF-e] Erro: Proxy e fetch direto falharam. Proxy: ver log acima. Direto: timeout of 15000ms exceeded
+[2026-07-08T23:18:12.908Z] [WARN ] [4/7] Portal MDF-e — BLOQUEADO (IP): Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado.
+[2026-07-08T23:18:12.908Z] [INFO ]    ⏳ 1500ms...
+[2026-07-08T23:18:14.410Z] [INFO ] [NF-ABI] Iniciando coleta
+[2026-07-08T23:18:15.422Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos
+[2026-07-08T23:19:00.498Z] [INFO ] [NF-ABI] 0 item(ns) do dia
+[2026-07-08T23:19:00.499Z] [INFO ] [5/7] Portal NF-ABI — 0 item(ns) (46089ms)
+[2026-07-08T23:19:00.499Z] [INFO ]    ⏳ 1500ms...
+[2026-07-08T23:19:02.001Z] [INFO ] [BP-e] Iniciando coleta
+[2026-07-08T23:19:17.635Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias
+[2026-07-08T23:19:47.730Z] [INFO ] [BP-e] 0 item(ns) do dia
+[2026-07-08T23:19:47.730Z] [INFO ] [6/7] Portal BP-e — 0 item(ns) (45729ms)
+[2026-07-08T23:19:47.731Z] [INFO ]    ⏳ 1500ms...
+[2026-07-08T23:19:49.232Z] [INFO ] [NFS-e RTC] Iniciando coleta
+[2026-07-08T23:19:59.574Z] [INFO ] [NFS-e RTC] 0 item(ns) do dia
+[2026-07-08T23:19:59.574Z] [INFO ] [7/7] NFS-e RTC — 0 item(ns) (10343ms)
+[2026-07-08T23:19:59.574Z] [INFO ] JSON salvo: /home/runner/work/TERA-LEI/TERA-LEI/curador-reforma/data/reforma_curadoria.json
+[2026-07-08T23:19:59.575Z] [INFO ] Enviando notificação Telegram...
+[2026-07-08T23:19:59.575Z] [INFO ] [Telegram] Enviando 1 parte(s) para chat_id 1004062605…
+[2026-07-08T23:20:00.193Z] [INFO ] [Telegram] Mensagem enviada (id: 110)
+[2026-07-08T23:20:00.194Z] [INFO ] ══════════════════════════════════════════════════
+[2026-07-08T23:20:00.194Z] [INFO ]   Concluído em 174.9s: 0 item(ns) · 0/7 portais · 2 erro(s) · 1 bloqueado(s)
+[2026-07-08T23:20:00.194Z] [INFO ]   Breakdown por portal:
+[2026-07-08T23:20:00.194Z] [INFO ]     CT-e Informes        erro       0 item(ns)  3457ms
+[2026-07-08T23:20:00.194Z] [INFO ]     Portal NF-e          ok         0 item(ns)  9570ms
+[2026-07-08T23:20:00.194Z] [INFO ]     CGIBS                erro       0 item(ns)  15009ms
+[2026-07-08T23:20:00.194Z] [INFO ]     Portal MDF-e         bloqueado  0 item(ns)  35010ms
+[2026-07-08T23:20:00.194Z] [INFO ]     Portal NF-ABI        ok         0 item(ns)  46089ms
+[2026-07-08T23:20:00.194Z] [INFO ]     Portal BP-e          ok         0 item(ns)  45729ms
+[2026-07-08T23:20:00.194Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  10343ms
+[2026-07-08T23:20:00.194Z] [INFO ] ══════════════════════════════════════════════════
