@@ -1,11 +1,11 @@
 {
-  "dataVerificacao": "11/07/2026",
-  "dataExecucao": "11/07/2026 19:57:49",
+  "dataVerificacao": "12/07/2026",
+  "dataExecucao": "12/07/2026 19:57:02",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "11/07/2026 19:57:49",
+      "consultadoEm": "12/07/2026 19:57:02",
       "encontrouItensHoje": false,
       "itens": [],
       "erro": "timeout of 30000ms exceeded"
@@ -13,7 +13,7 @@
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "11/07/2026 19:58:53",
+      "consultadoEm": "12/07/2026 19:58:05",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
@@ -21,7 +21,7 @@
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "11/07/2026 20:01:19",
+      "consultadoEm": "12/07/2026 20:00:33",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhuma publicação do CGIBS hoje."
@@ -29,7 +29,7 @@
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "11/07/2026 20:01:22",
+      "consultadoEm": "12/07/2026 20:00:36",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -37,7 +37,7 @@
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "11/07/2026 20:01:30",
+      "consultadoEm": "12/07/2026 20:00:45",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
@@ -45,7 +45,7 @@
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "11/07/2026 20:01:33",
+      "consultadoEm": "12/07/2026 20:00:49",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -53,7 +53,7 @@
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "11/07/2026 20:01:35",
+      "consultadoEm": "12/07/2026 20:00:52",
       "encontrouItensHoje": false,
       "itens": [],
       "erro": ""
