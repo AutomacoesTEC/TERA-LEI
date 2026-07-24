@@ -1,11 +1,11 @@
 {
-  "dataVerificacao": "23/07/2026",
-  "dataExecucao": "23/07/2026 20:04:34",
+  "dataVerificacao": "24/07/2026",
+  "dataExecucao": "24/07/2026 20:09:17",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "23/07/2026 20:04:34",
+      "consultadoEm": "24/07/2026 20:09:17",
       "encontrouItensHoje": false,
       "itens": [],
       "erro": "unable to get local issuer certificate"
@@ -13,7 +13,7 @@
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "23/07/2026 20:04:39",
+      "consultadoEm": "24/07/2026 20:09:22",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
@@ -21,7 +21,7 @@
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "23/07/2026 20:04:50",
+      "consultadoEm": "24/07/2026 20:09:32",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhuma publicação do CGIBS hoje."
@@ -29,24 +29,24 @@
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "23/07/2026 20:04:53",
-      "encontrouItensHoje": false,
-      "itens": [],
-      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
-    },
-    {
-      "nome": "Portal NF-ABI",
-      "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "23/07/2026 20:05:29",
+      "consultadoEm": "24/07/2026 20:09:34",
       "encontrouItensHoje": false,
       "itens": [],
       "portaisIndisponiveis": true,
       "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
     },
     {
+      "nome": "Portal NF-ABI",
+      "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "consultadoEm": "24/07/2026 20:10:11",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
+    },
+    {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "23/07/2026 20:06:05",
+      "consultadoEm": "24/07/2026 20:10:24",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -54,7 +54,7 @@
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "23/07/2026 20:06:37",
+      "consultadoEm": "24/07/2026 20:10:27",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
@@ -65,7 +65,7 @@
   "totalPortaisComItens": 0,
   "totalPortaisSemItens": 7,
   "portaisIndisponiveis": [
-    "Portal NF-ABI"
+    "Portal MDF-e"
   ],
   "erros": [
     "CT-e Informes: unable to get local issuer certificate"
