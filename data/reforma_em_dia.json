@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-07-31T23:11:08.469108",
+  "ultima_atualizacao": "2026-08-01T23:02:37.274824",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,24 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "662414264bb6fb0a",
+      "data": "2026-08-01",
+      "titulo": "RFB e Comitê Gestor do IBS publicam Cronograma de Implementação dos Documentos Fiscais Eletrônicos",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "RTC"
+      ],
+      "resumo": "As datas previstas para publicação dos leiautes representam a expectativa de entrega e serão referência para o planejamento dos contribuintes e desenvolvedores na Reforma Trobutária. Excepcionalmente, poderá haver ajuste pontual no calendário",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "f3f03e5a63d5258f",
       "data": "2026-07-31",
