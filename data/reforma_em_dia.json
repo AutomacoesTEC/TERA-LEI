@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-08-02T23:02:09.318560",
+  "ultima_atualizacao": "2026-08-03T23:16:39.811318",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,24 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "35dc4993f6fc191b",
+      "data": "2026-08-03",
+      "titulo": "Em reunião com Dario Durigan, Comitê Gestor apresenta estrutura, entregas e avanços da implementação do IBS",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "RTC"
+      ],
+      "resumo": "A agenda integrou a programação cumprida pelo ministro em Campo Grande/MS e reforçou a relação de cooperação entre o Ministério da Fazenda, a Receita Federal e o CGIBS no âmbito da Reforma Tributária",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "662414264bb6fb0a",
       "data": "2026-08-01",
