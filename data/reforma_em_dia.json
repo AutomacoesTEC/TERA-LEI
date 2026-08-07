@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-08-05T23:12:15.951718",
+  "ultima_atualizacao": "2026-08-07T01:32:08.960729",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,24 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "785d92d81a9e665c",
+      "data": "2026-08-06",
+      "titulo": "Receita Federal e CGIBS esclarecem adiamento das regras de validação dos documentos fiscais eletrônicos",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "CBS"
+      ],
+      "resumo": "Emissão será autorizada mesmo quando os DFes não contiverem todos os campos relativos à CBS e ao IBS, mas não afasta a obrigação de adequação ao novo modelo, nem altera as regras já estabelecidas",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "4339679d8d8701fc",
       "data": "2026-08-04",
