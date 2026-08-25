@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-08-24T22:35:14.926765",
+  "ultima_atualizacao": "2026-08-25T22:35:23.287510",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,70 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "46846dcfb1102313",
+      "data": "2026-08-25",
+      "titulo": "MOC NFABI 1.00 - Visão Geral v1.00a",
+      "categoria": "Documentação Técnica",
+      "tags": [
+        "NF-ABI",
+        "Manual"
+      ],
+      "resumo": "Manual de Orientações ao Contribuinte do NFABI versão 1.00 - Visão Geral[1.00a Ato Técnico Conjunto 2/2026]",
+      "fonte": "Portal NF-ABI",
+      "link": "https://dfe-portal.svrs.rs.gov.br/NFABI/DownloadArquivoEstatico/?sistema=NFABI&tipoArquivo=1&nomeArquivo=MOC NFe ABI Visão Geral - v1.00a.pdf",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "da9100b26cf81aab",
+      "data": "2026-08-25",
+      "titulo": "MOC NFABI 1.00 Anexo I - Leiaute e Regras de Validação v1.00a",
+      "categoria": "Documentação Técnica",
+      "tags": [
+        "NF-ABI",
+        "Leiaute",
+        "Manual",
+        "Validação"
+      ],
+      "resumo": "Manual de Orientações ao Contribuinte do NFABI - Anexo I - Leiaute e Regras de Validação[1.00a Ato Técnico Conjunto 2/2026]",
+      "fonte": "Portal NF-ABI",
+      "link": "https://dfe-portal.svrs.rs.gov.br/NFABI/DownloadArquivoEstatico/?sistema=NFABI&tipoArquivo=1&nomeArquivo=MOC NFe ABI Anexo I Leiaute e RV - v1.00a.pdf",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "03ab9569a460582e",
+      "data": "2026-08-25",
+      "titulo": "Tabela de Códigos da NFeABI v1.00a",
+      "categoria": "Documentação Técnica",
+      "tags": [
+        "NF-ABI"
+      ],
+      "resumo": "Tabela contendo a codificação da NFe ABI[1.00a Ato Técnico Conjunto 2/2026]",
+      "fonte": "Portal NF-ABI",
+      "link": "https://dfe-portal.svrs.rs.gov.br/NFABI/DownloadArquivoEstatico/?sistema=NFABI&tipoArquivo=12&nomeArquivo=Tabela de Códigos NFe ABI - v1.00a.xlsx",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "19d349cb4cf44569",
+      "data": "2026-08-25",
+      "titulo": "Informe Técnico 2026.001 v1.01 - Tabela de Meios de Pagamento para Vinculação com o Split",
+      "categoria": "Documentação Técnica",
+      "tags": [
+        "NF-ABI"
+      ],
+      "resumo": "As Notas Técnicas 2026.001 dos documentos fiscais eletrônicos (CTe, CTe OS, BPe, BPeTM, BPeTA, NF3e, NFCom, NFAg e NFGas) introduziram o grupo de informações da vinculação da transação do pagamento nos DFe. A estrutura de campos, voltada para as informações que serão utilizadas no sistema do Split Payment, possui uma…",
+      "fonte": "Portal NF-ABI",
+      "link": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=16&nomeArquivo=IT 2026.001 v.1.01 - Tabelas de Meios de Pagamento para Vinculação com o Split.pdf",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "785d92d81a9e665c",
       "data": "2026-08-06",

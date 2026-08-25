@@ -7431,3 +7431,61 @@ Require stack:
 [2026-08-24T22:35:04.339Z] [INFO ]     Portal BP-e          ok         0 item(ns)  255ms
 [2026-08-24T22:35:04.339Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  7581ms
 [2026-08-24T22:35:04.339Z] [INFO ] ══════════════════════════════════════════════════
+[2026-08-25T22:34:47.791Z] [INFO ] ══════════════════════════════════════════════════
+[2026-08-25T22:34:47.792Z] [INFO ]   TERA Curador Reforma v2  —  Início de execução 
+[2026-08-25T22:34:47.792Z] [INFO ] ══════════════════════════════════════════════════
+[2026-08-25T22:34:47.843Z] [INFO ] Data verificação (BRT): 25/08/2026
+[2026-08-25T22:34:47.843Z] [INFO ] Data execução    (BRT): 25/08/2026 19:34:47
+[2026-08-25T22:34:47.844Z] [INFO ] [CT-e] Iniciando coleta
+[2026-08-25T22:34:48.646Z] [INFO ] [CT-e] 0 item(ns) do dia
+[2026-08-25T22:34:48.646Z] [INFO ] [1/7] CT-e Informes — 0 item(ns) (802ms)
+[2026-08-25T22:34:48.647Z] [INFO ]    ⏳ 1500ms...
+[2026-08-25T22:34:50.149Z] [INFO ] [NF-e] Iniciando coleta (NTs + Informes Técnicos)
+[2026-08-25T22:34:51.554Z] [INFO ] [NF-e][nota técnica] 0 item(ns) do dia
+[2026-08-25T22:34:51.861Z] [INFO ] [NF-e][informe técnico] 0 item(ns) do dia
+[2026-08-25T22:34:51.861Z] [INFO ] [2/7] Portal NF-e — 0 item(ns) (1712ms)
+[2026-08-25T22:34:51.862Z] [INFO ]    ⏳ 1500ms...
+[2026-08-25T22:34:53.362Z] [INFO ] [CGIBS] Iniciando coleta via RSS
+[2026-08-25T22:34:53.730Z] [WARN ] [CGIBS] Servidor indisponível neste ambiente (bloqueio de IP): ECONNRESET
+[2026-08-25T22:34:53.730Z] [INFO ] [3/7] CGIBS — 0 item(ns) (369ms)
+[2026-08-25T22:34:53.730Z] [INFO ]    ⏳ 1500ms...
+[2026-08-25T22:34:55.233Z] [INFO ] [MDF-e] Iniciando coleta
+[2026-08-25T22:34:57.884Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias
+[2026-08-25T22:34:58.269Z] [INFO ] [MDF-e] 0 item(ns) do dia
+[2026-08-25T22:34:58.269Z] [INFO ] [4/7] Portal MDF-e — 0 item(ns) (3037ms)
+[2026-08-25T22:34:58.269Z] [INFO ]    ⏳ 1500ms...
+[2026-08-25T22:34:59.770Z] [INFO ] [NF-ABI] Iniciando coleta
+[2026-08-25T22:35:00.471Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos
+[2026-08-25T22:35:00.491Z] [INFO ] [NF-ABI] 4 item(ns) do dia
+[2026-08-25T22:35:00.491Z] [INFO ] [5/7] Portal NF-ABI — 4 item(ns) (721ms)
+[2026-08-25T22:35:00.491Z] [INFO ]    ⏳ 1500ms...
+[2026-08-25T22:35:01.992Z] [INFO ] [BP-e] Iniciando coleta
+[2026-08-25T22:35:02.289Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias
+[2026-08-25T22:35:02.325Z] [INFO ] [BP-e] 0 item(ns) do dia
+[2026-08-25T22:35:02.326Z] [INFO ] [6/7] Portal BP-e — 0 item(ns) (334ms)
+[2026-08-25T22:35:02.326Z] [INFO ]    ⏳ 1500ms...
+[2026-08-25T22:35:03.826Z] [INFO ] [NFS-e RTC] Iniciando coleta
+[2026-08-25T22:35:11.231Z] [INFO ] [NFS-e RTC] 0 item(ns) do dia
+[2026-08-25T22:35:11.231Z] [INFO ] [7/7] NFS-e RTC — 0 item(ns) (7405ms)
+[2026-08-25T22:35:11.231Z] [INFO ] Resolvendo links diretos dos documentos...
+[2026-08-25T22:35:12.020Z] [INFO ] [linkResolver] ✓ https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos… → https://dfe-portal.svrs.rs.gov.br/NFABI/DownloadArquivoEstatico/?sistema=NFABI&t
+[2026-08-25T22:35:12.156Z] [INFO ] [linkResolver] ✓ https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos… → https://dfe-portal.svrs.rs.gov.br/NFABI/DownloadArquivoEstatico/?sistema=NFABI&t
+[2026-08-25T22:35:12.298Z] [INFO ] [linkResolver] ✓ https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos… → https://dfe-portal.svrs.rs.gov.br/NFABI/DownloadArquivoEstatico/?sistema=NFABI&t
+[2026-08-25T22:35:12.432Z] [INFO ] [linkResolver] ✓ https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos… → https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoA
+[2026-08-25T22:35:12.433Z] [INFO ] [linkResolver] 4 resolvido(s) · 0 fallback(s) para lista
+[2026-08-25T22:35:12.433Z] [INFO ] JSON salvo: /home/runner/work/TERA-LEI/TERA-LEI/curador-reforma/data/reforma_curadoria.json
+[2026-08-25T22:35:12.433Z] [INFO ] 4 item(ns) → pendente-publicacao/curadoria_25-08-2026.json
+[2026-08-25T22:35:12.433Z] [INFO ] Enviando notificação Telegram...
+[2026-08-25T22:35:12.434Z] [INFO ] [Telegram] Enviando 1 parte(s) para chat_id 1004062605…
+[2026-08-25T22:35:12.920Z] [INFO ] [Telegram] Mensagem enviada (id: 193)
+[2026-08-25T22:35:12.921Z] [INFO ] ══════════════════════════════════════════════════
+[2026-08-25T22:35:12.921Z] [INFO ]   Concluído em 25.1s: 4 item(ns) · 1/7 portais · 0 erro(s) · 0 bloqueado(s)
+[2026-08-25T22:35:12.921Z] [INFO ]   Breakdown por portal:
+[2026-08-25T22:35:12.921Z] [INFO ]     CT-e Informes        ok         0 item(ns)  802ms
+[2026-08-25T22:35:12.921Z] [INFO ]     Portal NF-e          ok         0 item(ns)  1712ms
+[2026-08-25T22:35:12.921Z] [INFO ]     CGIBS                ok         0 item(ns)  369ms
+[2026-08-25T22:35:12.921Z] [INFO ]     Portal MDF-e         ok         0 item(ns)  3037ms
+[2026-08-25T22:35:12.921Z] [INFO ]     Portal NF-ABI        ok         4 item(ns)  721ms
+[2026-08-25T22:35:12.921Z] [INFO ]     Portal BP-e          ok         0 item(ns)  334ms
+[2026-08-25T22:35:12.921Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  7405ms
+[2026-08-25T22:35:12.921Z] [INFO ] ══════════════════════════════════════════════════
