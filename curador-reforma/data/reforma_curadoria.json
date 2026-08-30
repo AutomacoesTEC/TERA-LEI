@@ -1,11 +1,11 @@
 {
   "dataVerificacao": "29/08/2026",
-  "dataExecucao": "29/08/2026 00:37:40",
+  "dataExecucao": "29/08/2026 21:04:55",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "29/08/2026 00:37:40",
+      "consultadoEm": "29/08/2026 21:04:55",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhuma publicação encontrada para a data de hoje."
@@ -13,7 +13,7 @@
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "29/08/2026 00:37:43",
+      "consultadoEm": "29/08/2026 21:04:58",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
@@ -21,15 +21,15 @@
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "29/08/2026 00:37:47",
+      "consultadoEm": "29/08/2026 21:05:01",
       "encontrouItensHoje": false,
       "itens": [],
-      "observacoes": "Nenhuma publicação do CGIBS hoje."
+      "erro": "timeout of 15000ms exceeded"
     },
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "29/08/2026 00:37:49",
+      "consultadoEm": "29/08/2026 21:05:17",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -37,7 +37,7 @@
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "29/08/2026 00:37:55",
+      "consultadoEm": "29/08/2026 21:05:21",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
@@ -45,7 +45,7 @@
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "29/08/2026 00:37:58",
+      "consultadoEm": "29/08/2026 21:05:38",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -53,7 +53,7 @@
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "29/08/2026 00:38:00",
+      "consultadoEm": "29/08/2026 21:05:42",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
@@ -64,5 +64,7 @@
   "totalPortaisComItens": 0,
   "totalPortaisSemItens": 7,
   "portaisIndisponiveis": [],
-  "erros": []
+  "erros": [
+    "CGIBS: timeout of 15000ms exceeded"
+  ]
 }
