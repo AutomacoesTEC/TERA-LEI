@@ -1,19 +1,19 @@
 {
-  "dataVerificacao": "01/09/2026",
-  "dataExecucao": "01/09/2026 20:57:47",
+  "dataVerificacao": "02/09/2026",
+  "dataExecucao": "02/09/2026 21:00:44",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "01/09/2026 20:57:47",
+      "consultadoEm": "02/09/2026 21:00:44",
       "encontrouItensHoje": false,
       "itens": [],
-      "observacoes": "Nenhuma publicação encontrada para a data de hoje."
+      "erro": "timeout of 30000ms exceeded"
     },
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "01/09/2026 20:57:50",
+      "consultadoEm": "02/09/2026 21:01:48",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
@@ -21,7 +21,7 @@
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "01/09/2026 20:57:54",
+      "consultadoEm": "02/09/2026 21:04:15",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhuma publicação do CGIBS hoje."
@@ -29,47 +29,43 @@
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "01/09/2026 20:57:56",
+      "consultadoEm": "02/09/2026 21:04:18",
       "encontrouItensHoje": false,
       "itens": [],
-      "portaisIndisponiveis": true,
-      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
+      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
     },
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "01/09/2026 20:58:33",
+      "consultadoEm": "02/09/2026 21:04:23",
       "encontrouItensHoje": false,
       "itens": [],
-      "portaisIndisponiveis": true,
-      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
+      "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
     },
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "01/09/2026 20:59:09",
+      "consultadoEm": "02/09/2026 21:04:28",
       "encontrouItensHoje": false,
       "itens": [],
-      "portaisIndisponiveis": true,
-      "observacoes": "Portal SVRS inacessível do ambiente CI (bloqueio de IP). Tentativa via proxy Cloudflare falhou. Monitoramento manual recomendado."
+      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
     },
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "01/09/2026 20:59:46",
+      "consultadoEm": "02/09/2026 21:04:29",
       "encontrouItensHoje": false,
       "itens": [],
-      "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
+      "erro": "connect ETIMEDOUT 161.148.164.31:443; connect ENETUNREACH 2804:151:3:2:161:148:164:31:443 - Local (:::0)"
     }
   ],
   "totalItens": 0,
   "totalPortaisVerificados": 7,
   "totalPortaisComItens": 0,
   "totalPortaisSemItens": 7,
-  "portaisIndisponiveis": [
-    "Portal MDF-e",
-    "Portal NF-ABI",
-    "Portal BP-e"
-  ],
-  "erros": []
+  "portaisIndisponiveis": [],
+  "erros": [
+    "CT-e Informes: timeout of 30000ms exceeded",
+    "NFS-e RTC: connect ETIMEDOUT 161.148.164.31:443; connect ENETUNREACH 2804:151:3:2:161:148:164:31:443 - Local (:::0)"
+  ]
 }
