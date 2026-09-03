@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-09-03T00:06:06.850258",
+  "ultima_atualizacao": "2026-09-03T23:59:47.766352",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,22 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "73a841d224f33646",
+      "data": "2026-09-03",
+      "titulo": "Informe Técnico 2024.001 - v.2.40 - Publicado em 03/09/2026",
+      "categoria": "Informe Técnico",
+      "tags": [
+        "NF-e",
+        "Informe Técnico"
+      ],
+      "resumo": "Divulga atualização da tabela de NCM",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=nCdXYyjCKQg=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "46846dcfb1102313",
       "data": "2026-08-25",
