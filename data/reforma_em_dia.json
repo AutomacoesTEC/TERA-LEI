@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-09-04T23:55:33.096141",
+  "ultima_atualizacao": "2026-09-05T23:45:38.604552",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,24 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "0932207ae3fa9c58",
+      "data": "2026-09-05",
+      "titulo": "CGIBS e Receita Federal publicam versão 1.2.0 da documentação técnica da Declaração de Regimes Específicos",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "Material"
+      ],
+      "resumo": "Pacote técnico disponibiliza leiautes dos eventos transacionais, controle de deduções e reabertura de competência; atualização do Manual do Usuário será disponibilizada em breve",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "d2fb1af3ff9dda8d",
       "data": "2026-09-04",
