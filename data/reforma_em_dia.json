@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-09-09T00:01:09.117395",
+  "ultima_atualizacao": "2026-09-10T00:03:12.698621",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,22 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "36e0d49e8b7e6546",
+      "data": "2026-09-09",
+      "titulo": "Nota Técnica 2026.009 v.1.00 - Publicada em 09/09/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT"
+      ],
+      "resumo": "Divulga correção em regra de validação",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=ADlgg2xjMZI=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "0932207ae3fa9c58",
       "data": "2026-09-05",
