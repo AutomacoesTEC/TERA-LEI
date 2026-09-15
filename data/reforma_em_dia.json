@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-09-14T00:04:04.736251",
+  "ultima_atualizacao": "2026-09-15T00:32:21.872164",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,24 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "de595d8fa00dbe46",
+      "data": "2026-09-14",
+      "titulo": "Prazo para opção pelo Simples Nacional e escolha do modelo de recolhimento do IBS e da CBS para 2027 termina no dia 30/09",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "CBS"
+      ],
+      "resumo": "Empresas que já integram o Simples Nacional não precisam realizar nova opção para permanecer no regime, salvo se existente no cadastro um registro de exclusão futura. Quem deseja aderir ao regime em 2027, deve formalizar a solicitação até o fim deste mês",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "36e0d49e8b7e6546",
       "data": "2026-09-09",

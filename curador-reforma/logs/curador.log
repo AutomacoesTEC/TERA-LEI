@@ -8480,3 +8480,64 @@ Require stack:
 [2026-09-14T00:03:54.469Z] [INFO ]     Portal BP-e          ok         0 item(ns)  275ms
 [2026-09-14T00:03:54.469Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  8006ms
 [2026-09-14T00:03:54.469Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-15T00:27:01.939Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-15T00:27:01.939Z] [INFO ]   TERA Curador Reforma v2  —  Início de execução 
+[2026-09-15T00:27:01.939Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-15T00:27:01.972Z] [INFO ] Data verificação (BRT): 14/09/2026
+[2026-09-15T00:27:01.973Z] [INFO ] Data execução    (BRT): 14/09/2026 21:27:01
+[2026-09-15T00:27:01.973Z] [INFO ] [CT-e] Iniciando coleta
+[2026-09-15T00:27:32.011Z] [WARN ] [CT-e] Tentativa 1 falhou: timeout of 30000ms exceeded. Retentando...
+[2026-09-15T00:28:04.042Z] [ERROR] [CT-e] Erro: timeout of 30000ms exceeded
+[2026-09-15T00:28:04.042Z] [WARN ] [1/7] CT-e Informes — ERRO: timeout of 30000ms exceeded
+[2026-09-15T00:28:04.042Z] [INFO ]    ⏳ 1500ms...
+[2026-09-15T00:28:05.545Z] [INFO ] [NF-e] Iniciando coleta (NTs + Informes Técnicos)
+[2026-09-15T00:28:41.184Z] [WARN ] [NF-e] Tentativa 1 falhou (https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=): timeout of 30000ms exceeded. Retentando...
+[2026-09-15T00:29:18.556Z] [ERROR] [NF-e][nota técnica] Erro: timeout of 30000ms exceeded
+[2026-09-15T00:29:18.556Z] [INFO ] [NF-e][nota técnica] 0 item(ns) do dia
+[2026-09-15T00:29:54.099Z] [WARN ] [NF-e] Tentativa 1 falhou (https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=hXzemuyNHW4=): timeout of 30000ms exceeded. Retentando...
+[2026-09-15T00:30:31.136Z] [ERROR] [NF-e][informe técnico] Erro: timeout of 30000ms exceeded
+[2026-09-15T00:30:31.136Z] [INFO ] [NF-e][informe técnico] 0 item(ns) do dia
+[2026-09-15T00:30:31.136Z] [INFO ] [2/7] Portal NF-e — 0 item(ns) (145591ms)
+[2026-09-15T00:30:31.136Z] [INFO ]    ⏳ 1500ms...
+[2026-09-15T00:30:32.639Z] [INFO ] [CGIBS] Iniciando coleta via RSS
+[2026-09-15T00:30:33.905Z] [INFO ] [CGIBS] 1 item(ns) do dia
+[2026-09-15T00:30:33.905Z] [INFO ] [3/7] CGIBS — 1 item(ns) (1267ms)
+[2026-09-15T00:30:33.905Z] [INFO ]    ⏳ 1500ms...
+[2026-09-15T00:30:35.408Z] [INFO ] [MDF-e] Iniciando coleta
+[2026-09-15T00:30:40.020Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias
+[2026-09-15T00:30:40.415Z] [INFO ] [MDF-e] 0 item(ns) do dia
+[2026-09-15T00:30:40.415Z] [INFO ] [4/7] Portal MDF-e — 0 item(ns) (5008ms)
+[2026-09-15T00:30:40.415Z] [INFO ]    ⏳ 1500ms...
+[2026-09-15T00:30:41.916Z] [INFO ] [NF-ABI] Iniciando coleta
+[2026-09-15T00:30:42.167Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos
+[2026-09-15T00:30:43.211Z] [INFO ] [NF-ABI] 0 item(ns) do dia
+[2026-09-15T00:30:43.211Z] [INFO ] [5/7] Portal NF-ABI — 0 item(ns) (1295ms)
+[2026-09-15T00:30:43.211Z] [INFO ]    ⏳ 1500ms...
+[2026-09-15T00:30:44.712Z] [INFO ] [BP-e] Iniciando coleta
+[2026-09-15T00:30:44.968Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias
+[2026-09-15T00:30:45.012Z] [INFO ] [BP-e] 0 item(ns) do dia
+[2026-09-15T00:30:45.012Z] [INFO ] [6/7] Portal BP-e — 0 item(ns) (300ms)
+[2026-09-15T00:30:45.012Z] [INFO ]    ⏳ 1500ms...
+[2026-09-15T00:30:46.514Z] [INFO ] [NFS-e RTC] Iniciando coleta
+[2026-09-15T00:30:47.104Z] [WARN ] [NFS-e RTC] Tentativa 1: connect ETIMEDOUT 161.148.164.31:443; connect ENETUNREACH 2804:151:3:2:161:148:164:31:443 - Local (:::0). Retentando...
+[2026-09-15T00:30:49.358Z] [ERROR] [NFS-e RTC] Erro: connect ETIMEDOUT 161.148.164.31:443; connect ENETUNREACH 2804:151:3:2:161:148:164:31:443 - Local (:::0)
+[2026-09-15T00:30:49.358Z] [WARN ] [7/7] NFS-e RTC — ERRO: connect ETIMEDOUT 161.148.164.31:443; connect ENETUNREACH 2804:151:3:2:161:148:164:31:443 - Local (:::0)
+[2026-09-15T00:30:49.358Z] [INFO ] Resolvendo links diretos dos documentos...
+[2026-09-15T00:30:49.360Z] [WARN ] [linkResolver] Nenhuma estratégia para: https://www.cgibs.gov.br/noticias
+[2026-09-15T00:30:49.360Z] [INFO ] [linkResolver] 0 resolvido(s) · 1 fallback(s) para lista
+[2026-09-15T00:30:49.360Z] [INFO ] JSON salvo: /home/runner/work/TERA-LEI/TERA-LEI/curador-reforma/data/reforma_curadoria.json
+[2026-09-15T00:30:49.360Z] [INFO ] 1 item(ns) → pendente-publicacao/curadoria_14-09-2026.json
+[2026-09-15T00:30:49.360Z] [INFO ] Enviando notificação Telegram...
+[2026-09-15T00:30:49.361Z] [INFO ] [Telegram] Enviando 1 parte(s) para chat_id 1004062605…
+[2026-09-15T00:30:49.904Z] [INFO ] [Telegram] Mensagem enviada (id: 220)
+[2026-09-15T00:30:49.904Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-15T00:30:49.904Z] [INFO ]   Concluído em 228.0s: 1 item(ns) · 1/7 portais · 2 erro(s) · 0 bloqueado(s)
+[2026-09-15T00:30:49.904Z] [INFO ]   Breakdown por portal:
+[2026-09-15T00:30:49.904Z] [INFO ]     CT-e Informes        erro       0 item(ns)  62069ms
+[2026-09-15T00:30:49.904Z] [INFO ]     Portal NF-e          ok         0 item(ns)  145591ms
+[2026-09-15T00:30:49.904Z] [INFO ]     CGIBS                ok         1 item(ns)  1267ms
+[2026-09-15T00:30:49.904Z] [INFO ]     Portal MDF-e         ok         0 item(ns)  5008ms
+[2026-09-15T00:30:49.904Z] [INFO ]     Portal NF-ABI        ok         0 item(ns)  1295ms
+[2026-09-15T00:30:49.904Z] [INFO ]     Portal BP-e          ok         0 item(ns)  300ms
+[2026-09-15T00:30:49.904Z] [INFO ]     NFS-e RTC            erro       0 item(ns)  2845ms
+[2026-09-15T00:30:49.904Z] [INFO ] ══════════════════════════════════════════════════
