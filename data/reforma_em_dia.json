@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-09-16T00:07:02.554033",
+  "ultima_atualizacao": "2026-09-17T00:17:57.586443",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,24 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "8336351264cd8b24",
+      "data": "2026-09-16",
+      "titulo": "CGIBS debate Reforma Tributária e administração pública em evento do Tribunal de Justiça de São Paulo",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "RTC"
+      ],
+      "resumo": "Objetivo foi ampliar o conhecimento dos participantes acerca do processo de implementação do Imposto sobre Bens e Serviços, da atuação do Comitê Gestor e da transição para o novo modelo de tributação",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "de595d8fa00dbe46",
       "data": "2026-09-14",
