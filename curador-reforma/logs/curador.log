@@ -8647,3 +8647,54 @@ Require stack:
 [2026-09-17T00:17:46.775Z] [INFO ]     Portal BP-e          ok         0 item(ns)  466ms
 [2026-09-17T00:17:46.775Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  7662ms
 [2026-09-17T00:17:46.775Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-18T00:03:00.093Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-18T00:03:00.094Z] [INFO ]   TERA Curador Reforma v2  —  Início de execução 
+[2026-09-18T00:03:00.094Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-18T00:03:00.529Z] [INFO ] Data verificação (BRT): 17/09/2026
+[2026-09-18T00:03:00.529Z] [INFO ] Data execução    (BRT): 17/09/2026 21:03:00
+[2026-09-18T00:03:00.529Z] [INFO ] [CT-e] Iniciando coleta
+[2026-09-18T00:03:01.840Z] [INFO ] [CT-e] 0 item(ns) do dia
+[2026-09-18T00:03:01.840Z] [INFO ] [1/7] CT-e Informes — 0 item(ns) (1311ms)
+[2026-09-18T00:03:01.840Z] [INFO ]    ⏳ 1500ms...
+[2026-09-18T00:03:03.343Z] [INFO ] [NF-e] Iniciando coleta (NTs + Informes Técnicos)
+[2026-09-18T00:03:05.298Z] [INFO ] [NF-e][nota técnica] 0 item(ns) do dia
+[2026-09-18T00:03:05.776Z] [INFO ] [NF-e][informe técnico] 0 item(ns) do dia
+[2026-09-18T00:03:05.777Z] [INFO ] [2/7] Portal NF-e — 0 item(ns) (2435ms)
+[2026-09-18T00:03:05.777Z] [INFO ]    ⏳ 1500ms...
+[2026-09-18T00:03:07.277Z] [INFO ] [CGIBS] Iniciando coleta via RSS
+[2026-09-18T00:03:08.275Z] [INFO ] [CGIBS] 0 item(ns) do dia
+[2026-09-18T00:03:08.275Z] [INFO ] [3/7] CGIBS — 0 item(ns) (998ms)
+[2026-09-18T00:03:08.275Z] [INFO ]    ⏳ 1500ms...
+[2026-09-18T00:03:09.775Z] [INFO ] [MDF-e] Iniciando coleta
+[2026-09-18T00:03:14.196Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias
+[2026-09-18T00:03:14.480Z] [INFO ] [MDF-e] 0 item(ns) do dia
+[2026-09-18T00:03:14.480Z] [INFO ] [4/7] Portal MDF-e — 0 item(ns) (4706ms)
+[2026-09-18T00:03:14.480Z] [INFO ]    ⏳ 1500ms...
+[2026-09-18T00:03:15.982Z] [INFO ] [NF-ABI] Iniciando coleta
+[2026-09-18T00:03:16.223Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos
+[2026-09-18T00:03:17.849Z] [INFO ] [NF-ABI] 0 item(ns) do dia
+[2026-09-18T00:03:17.849Z] [INFO ] [5/7] Portal NF-ABI — 0 item(ns) (1868ms)
+[2026-09-18T00:03:17.849Z] [INFO ]    ⏳ 1500ms...
+[2026-09-18T00:03:19.351Z] [INFO ] [BP-e] Iniciando coleta
+[2026-09-18T00:03:19.611Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias
+[2026-09-18T00:03:19.628Z] [INFO ] [BP-e] 0 item(ns) do dia
+[2026-09-18T00:03:19.628Z] [INFO ] [6/7] Portal BP-e — 0 item(ns) (278ms)
+[2026-09-18T00:03:19.628Z] [INFO ]    ⏳ 1500ms...
+[2026-09-18T00:03:21.129Z] [INFO ] [NFS-e RTC] Iniciando coleta
+[2026-09-18T00:03:30.411Z] [INFO ] [NFS-e RTC] 0 item(ns) do dia
+[2026-09-18T00:03:30.411Z] [INFO ] [7/7] NFS-e RTC — 0 item(ns) (9283ms)
+[2026-09-18T00:03:30.412Z] [INFO ] JSON salvo: /home/runner/work/TERA-LEI/TERA-LEI/curador-reforma/data/reforma_curadoria.json
+[2026-09-18T00:03:30.412Z] [INFO ] Enviando notificação Telegram...
+[2026-09-18T00:03:30.412Z] [INFO ] [Telegram] Enviando 1 parte(s) para chat_id 1004062605…
+[2026-09-18T00:03:31.032Z] [INFO ] [Telegram] Mensagem enviada (id: 223)
+[2026-09-18T00:03:31.032Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-18T00:03:31.032Z] [INFO ]   Concluído em 30.9s: 0 item(ns) · 0/7 portais · 0 erro(s) · 0 bloqueado(s)
+[2026-09-18T00:03:31.032Z] [INFO ]   Breakdown por portal:
+[2026-09-18T00:03:31.032Z] [INFO ]     CT-e Informes        ok         0 item(ns)  1311ms
+[2026-09-18T00:03:31.032Z] [INFO ]     Portal NF-e          ok         0 item(ns)  2435ms
+[2026-09-18T00:03:31.032Z] [INFO ]     CGIBS                ok         0 item(ns)  998ms
+[2026-09-18T00:03:31.032Z] [INFO ]     Portal MDF-e         ok         0 item(ns)  4706ms
+[2026-09-18T00:03:31.032Z] [INFO ]     Portal NF-ABI        ok         0 item(ns)  1868ms
+[2026-09-18T00:03:31.032Z] [INFO ]     Portal BP-e          ok         0 item(ns)  278ms
+[2026-09-18T00:03:31.032Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  9283ms
+[2026-09-18T00:03:31.032Z] [INFO ] ══════════════════════════════════════════════════
