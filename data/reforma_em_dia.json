@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-09-18T00:03:45.578746",
+  "ultima_atualizacao": "2026-09-19T00:07:42.671404",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,23 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "50a45ab9647d64d9",
+      "data": "2026-09-18",
+      "titulo": "Presidente e segunda vice do CGIBS participam de missão à OCDE em Paris sobre IVA e modernização tributária",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor"
+      ],
+      "resumo": "Comitê Gestor cumpre agenda com especialistas internacionais e discute experiências que possam contribuir para a implementação do IBS no Brasil. Intercâmbio oferece subsídios para que a simplificação prevista se traduza em procedimentos mais claros",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "8336351264cd8b24",
       "data": "2026-09-16",
