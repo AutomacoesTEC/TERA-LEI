@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-09-21T00:06:16.512659",
+  "ultima_atualizacao": "2026-09-22T00:42:34.492742",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,42 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "03ddea060e075e0d",
+      "data": "2026-09-21",
+      "titulo": "Receita Federal e Comitê Gestor divulgam Orientação Conjunta destinada às cooperativas",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "CBS",
+        "Material"
+      ],
+      "resumo": "Manual explica procedimento para realização da opção pelo regime específico do IBS e da CBS. Podem optar as sociedades cooperativas enquadradas nas regras previstas no art. 271 da Lei Complementar nº 214, de 2025, com prazo até 31 de outubro de 2026",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
+    {
+      "id": "291926da5439e9fe",
+      "data": "2026-09-21",
+      "titulo": "Regimes Específicos: veja atualização dos esquemas XSD dos eventos D-1011 e D-1101 na Produção Restrita",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor"
+      ],
+      "resumo": "Ajustes contemplam o PGCC (v.1.0.3) e o Balancete Mensal (v.1.0.1) com expansão do limite de contas, permanecendo inalteradas as regras de negócio, tipos de dados e os demais campos dos leiautes",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "50a45ab9647d64d9",
       "data": "2026-09-18",
