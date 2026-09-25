@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-09-24T00:23:27.234664",
+  "ultima_atualizacao": "2026-09-25T00:26:26.167762",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,23 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "7317f90d2c8bca1f",
+      "data": "2026-09-24",
+      "titulo": "Informe: conta do Comitê Gestor do IBS no Instagram (cgibs.oficial) passa por instabilidade temporária",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor"
+      ],
+      "resumo": "Equipe já está em contato com a empresa responsável por esta rede social a fim de solucionar o problema com celeridade; acompanhe as principais notícias sobre o CGBIS aqui no site oficial da entidade",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "03ddea060e075e0d",
       "data": "2026-09-21",
