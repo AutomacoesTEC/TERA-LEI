@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-09-28T00:30:13.352345",
+  "ultima_atualizacao": "2026-09-29T01:45:20.473744",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,24 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "1e60561cd1759db3",
+      "data": "2026-09-28",
+      "titulo": "Declaração de Regimes Específicos: CGIBS e Receita Federal divulgam endpoints do ambiente de produção",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "Comunicado"
+      ],
+      "resumo": "O início da transmissão dos lotes com eventos de tabela para o ambiente de produção deverá ocorrer a partir das 09h00 de 1º de outubro de 2026. Confira mais detalhes deste comunicado",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "dc1b161898a1bf4d",
       "data": "2026-09-25",

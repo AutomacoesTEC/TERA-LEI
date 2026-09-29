@@ -9224,3 +9224,58 @@ Require stack:
 [2026-09-28T00:29:59.517Z] [INFO ]     Portal BP-e          ok         0 item(ns)  224ms
 [2026-09-28T00:29:59.517Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  8934ms
 [2026-09-28T00:29:59.517Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-29T01:44:37.346Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-29T01:44:37.347Z] [INFO ]   TERA Curador Reforma v2  —  Início de execução 
+[2026-09-29T01:44:37.347Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-29T01:44:37.847Z] [INFO ] Data verificação (BRT): 28/09/2026
+[2026-09-29T01:44:37.847Z] [INFO ] Data execução    (BRT): 28/09/2026 22:44:37
+[2026-09-29T01:44:37.848Z] [INFO ] [CT-e] Iniciando coleta
+[2026-09-29T01:44:39.030Z] [INFO ] [CT-e] 0 item(ns) do dia
+[2026-09-29T01:44:39.030Z] [INFO ] [1/7] CT-e Informes — 0 item(ns) (1182ms)
+[2026-09-29T01:44:39.031Z] [INFO ]    ⏳ 1500ms...
+[2026-09-29T01:44:40.533Z] [INFO ] [NF-e] Iniciando coleta (NTs + Informes Técnicos)
+[2026-09-29T01:44:42.308Z] [INFO ] [NF-e][nota técnica] 0 item(ns) do dia
+[2026-09-29T01:44:42.665Z] [INFO ] [NF-e][informe técnico] 0 item(ns) do dia
+[2026-09-29T01:44:42.665Z] [INFO ] [2/7] Portal NF-e — 0 item(ns) (2133ms)
+[2026-09-29T01:44:42.665Z] [INFO ]    ⏳ 1500ms...
+[2026-09-29T01:44:44.166Z] [INFO ] [CGIBS] Iniciando coleta via RSS
+[2026-09-29T01:44:45.252Z] [INFO ] [CGIBS] 1 item(ns) do dia
+[2026-09-29T01:44:45.252Z] [INFO ] [3/7] CGIBS — 1 item(ns) (1087ms)
+[2026-09-29T01:44:45.252Z] [INFO ]    ⏳ 1500ms...
+[2026-09-29T01:44:46.753Z] [INFO ] [MDF-e] Iniciando coleta
+[2026-09-29T01:44:49.103Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias
+[2026-09-29T01:44:49.455Z] [INFO ] [MDF-e] 0 item(ns) do dia
+[2026-09-29T01:44:49.455Z] [INFO ] [4/7] Portal MDF-e — 0 item(ns) (2703ms)
+[2026-09-29T01:44:49.455Z] [INFO ]    ⏳ 1500ms...
+[2026-09-29T01:44:50.956Z] [INFO ] [NF-ABI] Iniciando coleta
+[2026-09-29T01:44:51.732Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos
+[2026-09-29T01:44:52.569Z] [INFO ] [NF-ABI] 0 item(ns) do dia
+[2026-09-29T01:44:52.569Z] [INFO ] [5/7] Portal NF-ABI — 0 item(ns) (1613ms)
+[2026-09-29T01:44:52.569Z] [INFO ]    ⏳ 1500ms...
+[2026-09-29T01:44:54.069Z] [INFO ] [BP-e] Iniciando coleta
+[2026-09-29T01:44:54.397Z] [INFO ] [proxyFetch] ✓ via proxy (status 200): https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias
+[2026-09-29T01:44:54.427Z] [INFO ] [BP-e] 0 item(ns) do dia
+[2026-09-29T01:44:54.427Z] [INFO ] [6/7] Portal BP-e — 0 item(ns) (359ms)
+[2026-09-29T01:44:54.427Z] [INFO ]    ⏳ 1500ms...
+[2026-09-29T01:44:55.928Z] [INFO ] [NFS-e RTC] Iniciando coleta
+[2026-09-29T01:45:06.886Z] [INFO ] [NFS-e RTC] 0 item(ns) do dia
+[2026-09-29T01:45:06.887Z] [INFO ] [7/7] NFS-e RTC — 0 item(ns) (10959ms)
+[2026-09-29T01:45:06.887Z] [INFO ] Resolvendo links diretos dos documentos...
+[2026-09-29T01:45:06.888Z] [WARN ] [linkResolver] Nenhuma estratégia para: https://www.cgibs.gov.br/noticias
+[2026-09-29T01:45:06.888Z] [INFO ] [linkResolver] 0 resolvido(s) · 1 fallback(s) para lista
+[2026-09-29T01:45:06.888Z] [INFO ] JSON salvo: /home/runner/work/TERA-LEI/TERA-LEI/curador-reforma/data/reforma_curadoria.json
+[2026-09-29T01:45:06.888Z] [INFO ] 1 item(ns) → pendente-publicacao/curadoria_28-09-2026.json
+[2026-09-29T01:45:06.889Z] [INFO ] Enviando notificação Telegram...
+[2026-09-29T01:45:06.889Z] [INFO ] [Telegram] Enviando 1 parte(s) para chat_id 1004062605…
+[2026-09-29T01:45:07.374Z] [INFO ] [Telegram] Mensagem enviada (id: 234)
+[2026-09-29T01:45:07.374Z] [INFO ] ══════════════════════════════════════════════════
+[2026-09-29T01:45:07.375Z] [INFO ]   Concluído em 30.0s: 1 item(ns) · 1/7 portais · 0 erro(s) · 0 bloqueado(s)
+[2026-09-29T01:45:07.375Z] [INFO ]   Breakdown por portal:
+[2026-09-29T01:45:07.375Z] [INFO ]     CT-e Informes        ok         0 item(ns)  1182ms
+[2026-09-29T01:45:07.375Z] [INFO ]     Portal NF-e          ok         0 item(ns)  2133ms
+[2026-09-29T01:45:07.375Z] [INFO ]     CGIBS                ok         1 item(ns)  1087ms
+[2026-09-29T01:45:07.375Z] [INFO ]     Portal MDF-e         ok         0 item(ns)  2703ms
+[2026-09-29T01:45:07.375Z] [INFO ]     Portal NF-ABI        ok         0 item(ns)  1613ms
+[2026-09-29T01:45:07.375Z] [INFO ]     Portal BP-e          ok         0 item(ns)  359ms
+[2026-09-29T01:45:07.375Z] [INFO ]     NFS-e RTC            ok         0 item(ns)  10959ms
+[2026-09-29T01:45:07.375Z] [INFO ] ══════════════════════════════════════════════════
