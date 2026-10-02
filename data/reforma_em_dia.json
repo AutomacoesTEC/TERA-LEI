@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-10-01T01:13:06.514902",
+  "ultima_atualizacao": "2026-10-02T01:32:20.481182",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,178 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "72aab3bfb6cd637d",
+      "data": "2026-10-01",
+      "titulo": "Nota Técnica 2026.007 v.1.10 - Publicada em 01/10/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT",
+        "NFC-e"
+      ],
+      "resumo": "Regras de validação e atualiza regras existentes da NF-e/NFC-e para verificação dos cadastros na Lista Centralizada de Contribuintes da RFB (LCC-RFB) e no Cadastro Centralizado de Contribuintes (CCC).",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=fpJlwzhffcQ=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "57377c110b1d6175",
+      "data": "2026-10-01",
+      "titulo": "Nota Técnica 2026.008 v.1.00 - Publicada em 01/10/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT",
+        "Schema"
+      ],
+      "resumo": "Divulga alteração de leiaute e regras de validação",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=qAoMot6VyiY=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "d7b2575d8571a704",
+      "data": "2026-10-01",
+      "titulo": "Nota Técnica 2026.002 v.1.11 - Publicada em 01/10/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT"
+      ],
+      "resumo": "Operações de vendas presenciais e não presenciais com impressão do DANFE Simplificado Tipo 2",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=m8aACnFLK/Y=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "11acfbb7a8c2096a",
+      "data": "2026-10-01",
+      "titulo": "Nota Técnica 2025.002 v.1.52 - Publicada em 01/10/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT",
+        "Schema",
+        "RTC",
+        "NFC-e"
+      ],
+      "resumo": "Nota técnica de adequação dos leiautes da NF-e e da NFC-e para inclusão dos campos e das regras de validação referentes à Reforma Tributária do Consumo - RTC",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=HXPO8VLbh4o=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "f20df1a439c221e9",
+      "data": "2026-10-01",
+      "titulo": "Nota Técnica 2026.010 v.1.00 - Publicada em 01/10/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT",
+        "RTC"
+      ],
+      "resumo": "Divulga modelo do Danfe pra RTC",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=ugn4MYF5PLg=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "bacab67d89d69aa2",
+      "data": "2026-10-01",
+      "titulo": "Informe Técnico 2025.002 - v.1.70 - Publicado em 01/10/2026",
+      "categoria": "Informe Técnico",
+      "tags": [
+        "NF-e",
+        "Informe Técnico",
+        "IBS",
+        "CBS"
+      ],
+      "resumo": "Divulga tabela classificação tributária, indicadores de CST e crédito presumido do IBS e da CBS.",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=h9o7idH%20OcI=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "e778a14643f8d25c",
+      "data": "2026-10-01",
+      "titulo": "Tabela de Códigos de Crédito Presumido v.",
+      "categoria": "Documentação Técnica",
+      "tags": [
+        "NF-ABI",
+        "Crédito Presumido"
+      ],
+      "resumo": "Tabela atualizada que divulga a codificação do crédito presumido e seus indicadores.Também pode ser visualizada online na área da Conformidade Fácil em: https://dfe-portal.svrs.rs.gov.br/CFF/TabelaCreditoPresumido",
+      "fonte": "Portal NF-ABI",
+      "link": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=12&nomeArquivo=IT 2025.002 v.1.70 - cCredPres.xlsx",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "f28c5fe19df343f4",
+      "data": "2026-10-01",
+      "titulo": "Tabela de Código de Classificação Tributária da RT v.",
+      "categoria": "Documentação Técnica",
+      "tags": [
+        "NF-ABI",
+        "RTC",
+        "CST",
+        "cClassTrib"
+      ],
+      "resumo": "Tabela atualizada de CST e cClassTrib da Reforma Tributária.Pode ser visualizada também de forma online na área da Conformidade Fácil: https://dfe-portal.svrs.rs.gov.br/CFF/ClassificacaoTributaria",
+      "fonte": "Portal NF-ABI",
+      "link": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=12&nomeArquivo=IT 2025.002 v.1.70 - cClassTrib.xlsx",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "c9850ab337948fe9",
+      "data": "2026-10-01",
+      "titulo": "IT 2025.002 RT Tabela de Classificação Tributária v1.70",
+      "categoria": "Documentação Técnica",
+      "tags": [
+        "NF-ABI",
+        "Leiaute"
+      ],
+      "resumo": "De forma geral, o Informe Técnico tem a finalidade de: • Divulgar orientações e aperfeiçoamentos para os Serviços de Autorização de Uso dos DF-e, que são usados pelas Empresas; • Divulgar e manter registro da atualização de tabelas de domínio usadas pelo Serviço de Autorização, não significando obrigatoriamente a necessidade…",
+      "fonte": "Portal NF-ABI",
+      "link": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=16&nomeArquivo=IT 2025.002 v.1.70 - Tabelas de Classificação do IBS e da CBS.pdf",
+      "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
+    {
+      "id": "1dbacbd33a68cbdc",
+      "data": "2026-10-01",
+      "titulo": "Nota Técnica SE/CGNFS-e nº 009 versão 1.01 (01/10/2026)",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NFS-e",
+        "RTC",
+        "NT",
+        "Versão"
+      ],
+      "resumo": "Nota Técnica SE/CGNFS-e nº 009 versão 1.01 (01/10/2026)",
+      "fonte": "NFS-e RTC",
+      "link": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nota-tecnica-009-se-cgnfs-e-v-1-01.pdf",
+      "linkLista": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "1e60561cd1759db3",
       "data": "2026-09-28",
@@ -361,7 +533,7 @@
       "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=jVEAeMhv83w=",
       "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
       "linkResolvido": true,
-      "status": "vigente"
+      "status": "superada"
     },
     {
       "id": "7615f1db33272974",
@@ -377,7 +549,7 @@
       "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=3K1wvjKu/gs=",
       "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
       "linkResolvido": true,
-      "status": "vigente"
+      "status": "superada"
     },
     {
       "id": "42015dfc3303b049",
@@ -396,7 +568,7 @@
       "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=AKD/muSmiIY=",
       "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
       "linkResolvido": true,
-      "status": "vigente"
+      "status": "superada"
     },
     {
       "id": "35dc4993f6fc191b",
