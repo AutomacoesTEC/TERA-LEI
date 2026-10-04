@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-10-03T01:02:43.430943",
+  "ultima_atualizacao": "2026-10-04T00:28:27.718698",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,24 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "8db5361cc682fca4",
+      "data": "2026-10-03",
+      "titulo": "DeRE: CGIBS e Receita Federal publicam versão 1.3.0 da documentação técnica e disponibilizam Manual do Usuário",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "Material"
+      ],
+      "resumo": "Pacote aprovado pelo Ato Técnico Conjunto nº 6/2026 traz o Manual de Orientação do Usuário (MOD) e atualiza as especificações operacionais da obrigação acessória. Veja principais destaques e inovações técnicas",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "72aab3bfb6cd637d",
       "data": "2026-10-01",
