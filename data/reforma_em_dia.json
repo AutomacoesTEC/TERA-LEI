@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-10-06T02:11:20.602071",
+  "ultima_atualizacao": "2026-10-07T01:23:27.852478",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,24 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "dce77c526bf45e75",
+      "data": "2026-10-06",
+      "titulo": "Portaria Conjunta define como serão calculadas as alíquotas do IBS e da CBS incidentes sobre os combustíveis",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "CBS"
+      ],
+      "resumo": "Alíquotas serão uniformes em todo o país e fixadas por unidade de medida; valor para CBS inicia a partir de 2027 e para o IBS, a partir de 2029. Confira a publicação da Receita Federal e do Comitê Gestor",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "8db5361cc682fca4",
       "data": "2026-10-03",
