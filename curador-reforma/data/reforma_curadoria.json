@@ -1,11 +1,11 @@
 {
-  "dataVerificacao": "06/10/2026",
-  "dataExecucao": "06/10/2026 22:22:50",
+  "dataVerificacao": "07/10/2026",
+  "dataExecucao": "07/10/2026 22:45:22",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "06/10/2026 22:22:50",
+      "consultadoEm": "07/10/2026 22:45:22",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhuma publicação encontrada para a data de hoje."
@@ -13,7 +13,7 @@
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "06/10/2026 22:22:52",
+      "consultadoEm": "07/10/2026 22:45:25",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
@@ -21,34 +21,15 @@
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "06/10/2026 22:22:56",
-      "encontrouItensHoje": true,
-      "itens": [
-        {
-          "titulo": "Portaria Conjunta define como serão calculadas as alíquotas do IBS e da CBS incidentes sobre os combustíveis",
-          "dataPublicacao": "06/10/2026",
-          "url": "https://www.cgibs.gov.br/noticias",
-          "resumoCurto": "Alíquotas serão uniformes em todo o país e fixadas por unidade de medida; valor para CBS inicia a partir de 2027 e para o IBS, a partir de 2029. Confira a publicação da Receita Federal e do Comitê Gestor",
-          "tags": [
-            "IBS",
-            "CGIBS",
-            "Comitê Gestor",
-            "CBS"
-          ],
-          "portalOrigem": "CGIBS",
-          "tipoConteudo": "comunicado",
-          "confianca": "alta",
-          "linkLista": "https://www.cgibs.gov.br/noticias",
-          "linkResolvido": false,
-          "status": "vigente"
-        }
-      ],
-      "observacoes": ""
+      "consultadoEm": "07/10/2026 22:45:29",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Nenhuma publicação do CGIBS hoje."
     },
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "06/10/2026 22:22:59",
+      "consultadoEm": "07/10/2026 22:45:31",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -56,7 +37,7 @@
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "06/10/2026 22:23:03",
+      "consultadoEm": "07/10/2026 22:45:37",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
@@ -64,7 +45,7 @@
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "06/10/2026 22:23:06",
+      "consultadoEm": "07/10/2026 22:45:40",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -72,16 +53,16 @@
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "06/10/2026 22:23:08",
+      "consultadoEm": "07/10/2026 22:45:42",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
     }
   ],
-  "totalItens": 1,
+  "totalItens": 0,
   "totalPortaisVerificados": 7,
-  "totalPortaisComItens": 1,
-  "totalPortaisSemItens": 6,
+  "totalPortaisComItens": 0,
+  "totalPortaisSemItens": 7,
   "portaisIndisponiveis": [],
   "erros": []
 }
