@@ -1,19 +1,37 @@
 {
-  "dataVerificacao": "15/10/2026",
-  "dataExecucao": "15/10/2026 21:13:39",
+  "dataVerificacao": "16/10/2026",
+  "dataExecucao": "16/10/2026 21:16:24",
   "portais": [
     {
       "nome": "CT-e Informes",
       "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
-      "consultadoEm": "15/10/2026 21:13:39",
-      "encontrouItensHoje": false,
-      "itens": [],
-      "observacoes": "Nenhuma publicação encontrada para a data de hoje."
+      "consultadoEm": "16/10/2026 21:16:24",
+      "encontrouItensHoje": true,
+      "itens": [
+        {
+          "titulo": "Republicado o schema PL_CTe_400_NT 2026.004 1.00 para viabilizar conciliação EPECRepublicado o schema PL_CTe_400_NT 2026.004 1.00 para viabilizar conciliação EPEC de eventos gerados anteriormente.16/10/2026 -",
+          "dataPublicacao": "16/10/2026",
+          "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+          "resumoCurto": "Republicado o schema PL_CTe_400_NT 2026.004 1.00 para viabilizar conciliação EPECRepublicado o schema PL_CTe_400_NT 2026.004 1.00 para viabilizar conciliação EPEC de eventos gerados anteriormente.16/10/2026 -",
+          "tags": [
+            "CT-e",
+            "NT",
+            "Schema"
+          ],
+          "portalOrigem": "CT-e Informes",
+          "tipoConteudo": "informe",
+          "confianca": "alta",
+          "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+          "linkResolvido": false,
+          "status": "vigente"
+        }
+      ],
+      "observacoes": ""
     },
     {
       "nome": "Portal NF-e",
       "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
-      "consultadoEm": "15/10/2026 21:13:41",
+      "consultadoEm": "16/10/2026 21:16:26",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhum documento publicado hoje (NTs e Informes Técnicos verificados)."
@@ -21,7 +39,7 @@
     {
       "nome": "CGIBS",
       "url": "https://www.cgibs.gov.br/noticias",
-      "consultadoEm": "15/10/2026 21:13:45",
+      "consultadoEm": "16/10/2026 21:16:30",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Nenhuma publicação do CGIBS hoje."
@@ -29,7 +47,7 @@
     {
       "nome": "Portal MDF-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
-      "consultadoEm": "15/10/2026 21:13:47",
+      "consultadoEm": "16/10/2026 21:16:32",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -37,7 +55,7 @@
     {
       "nome": "Portal NF-ABI",
       "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
-      "consultadoEm": "15/10/2026 21:13:52",
+      "consultadoEm": "16/10/2026 21:16:37",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento atualizado hoje."
@@ -45,7 +63,7 @@
     {
       "nome": "Portal BP-e",
       "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
-      "consultadoEm": "15/10/2026 21:13:54",
+      "consultadoEm": "16/10/2026 21:16:40",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
@@ -53,16 +71,16 @@
     {
       "nome": "NFS-e RTC",
       "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
-      "consultadoEm": "15/10/2026 21:13:56",
+      "consultadoEm": "16/10/2026 21:16:42",
       "encontrouItensHoje": false,
       "itens": [],
       "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
     }
   ],
-  "totalItens": 0,
+  "totalItens": 1,
   "totalPortaisVerificados": 7,
-  "totalPortaisComItens": 0,
-  "totalPortaisSemItens": 7,
+  "totalPortaisComItens": 1,
+  "totalPortaisSemItens": 6,
   "portaisIndisponiveis": [],
   "erros": []
 }

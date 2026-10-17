@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-10-16T00:14:16.280899",
+  "ultima_atualizacao": "2026-10-17T00:17:02.839855",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,23 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "211a9a24e00ec0f2",
+      "data": "2026-10-16",
+      "titulo": "Republicado o schema PL_CTe_400_NT 2026.004 1.00 para viabilizar conciliação EPECRepublicado o schema PL_CTe_400_NT 2026.004 1.00 para viabilizar conciliação EPEC de eventos gerados anteriormente.16/10/2026 -",
+      "categoria": "Informe",
+      "tags": [
+        "CT-e",
+        "NT",
+        "Schema"
+      ],
+      "resumo": "Republicado o schema PL_CTe_400_NT 2026.004 1.00 para viabilizar conciliação EPECRepublicado o schema PL_CTe_400_NT 2026.004 1.00 para viabilizar conciliação EPEC de eventos gerados anteriormente.16/10/2026 -",
+      "fonte": "CT-e Informes",
+      "link": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "dce77c526bf45e75",
       "data": "2026-10-06",
