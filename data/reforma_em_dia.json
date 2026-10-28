@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-10-27T01:23:18.709622",
+  "ultima_atualizacao": "2026-10-28T01:08:25.900444",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,39 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "5935d5d342f9c705",
+      "data": "2026-10-27",
+      "titulo": "Comunica alteração de data de implantação em produção de Nota Técnica publicada.Informamos que a data de implantação em produção da seguinte Nota Técnica fica postergada para:",
+      "categoria": "Informe",
+      "tags": [
+        "CT-e",
+        "NT",
+        "Implantação"
+      ],
+      "resumo": "Comunica alteração de data de implantação em produção de Nota Técnica publicada.Informamos que a data de implantação em produção da seguinte Nota Técnica fica postergada para:",
+      "fonte": "CT-e Informes",
+      "link": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
+    {
+      "id": "c0f4af1f2087d7bd",
+      "data": "2026-10-27",
+      "titulo": "Nota Técnica NT2023.002_v1.02 - Publicada em 27/10/2026",
+      "categoria": "Nota Técnica",
+      "tags": [
+        "NF-e",
+        "NT"
+      ],
+      "resumo": "Eliminação da autorização assíncrona e dos serviços de inutilização.",
+      "fonte": "Portal NF-e",
+      "link": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=DCFRgnlk4g8=",
+      "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "linkResolvido": true,
+      "status": "vigente"
+    },
     {
       "id": "211a9a24e00ec0f2",
       "data": "2026-10-16",
