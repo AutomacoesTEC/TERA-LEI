@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-10-28T01:08:25.900444",
+  "ultima_atualizacao": "2026-10-29T01:42:19.490068",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,23 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "8fba38ec3310dd4c",
+      "data": "2026-10-28",
+      "titulo": "Comitê Gestor do IBS e União assinam contrato de operação de crédito para financiar a implantação do órgão",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor"
+      ],
+      "resumo": "Instrumento previsto na Constituição e na Lei Complementar nº 214/2025 assegura os recursos para a estruturação do Comitê, que serão ressarcidos à União com receitas do próprio IBS",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "5935d5d342f9c705",
       "data": "2026-10-27",
