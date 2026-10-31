@@ -1,0 +1,287 @@
+{
+  "dataVerificacao": "30/10/2026",
+  "dataExecucao": "30/10/2026 22:29:01",
+  "portais": [
+    {
+      "nome": "CT-e Informes",
+      "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+      "consultadoEm": "30/10/2026 22:29:01",
+      "encontrouItensHoje": true,
+      "itens": [
+        {
+          "titulo": "Publicado Ato Técnico Conjunto RFB/CGIBS nº 10, de 2026Foi publicado o Ato Conjunto RFB/CGIBS nº 10, de 2026, aprovando diversas documentações técnicas.27/10/2026 -",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+          "resumoCurto": "Publicado Ato Técnico Conjunto RFB/CGIBS nº 10, de 2026Foi publicado o Ato Conjunto RFB/CGIBS nº 10, de 2026, aprovando diversas documentações técnicas.27/10/2026 -",
+          "tags": [
+            "CT-e"
+          ],
+          "portalOrigem": "CT-e Informes",
+          "tipoConteudo": "informe",
+          "confianca": "alta",
+          "linkLista": "https://www.cte.fazenda.gov.br/portal/informe.aspx",
+          "linkResolvido": false,
+          "status": "vigente"
+        }
+      ],
+      "observacoes": ""
+    },
+    {
+      "nome": "Portal NF-e",
+      "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+      "consultadoEm": "30/10/2026 22:29:04",
+      "encontrouItensHoje": true,
+      "itens": [
+        {
+          "titulo": "Nota Técnica 2026.008 v1.01 - Publicada em 30/10/2026",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=PVjdIcA/H2s=",
+          "resumoCurto": "Divulga a criação de campos para o valor líquido do produto.",
+          "tags": [
+            "NF-e",
+            "NT"
+          ],
+          "portalOrigem": "Portal NF-e",
+          "tipoConteudo": "nota técnica",
+          "confianca": "alta",
+          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+          "linkResolvido": true,
+          "status": "vigente"
+        },
+        {
+          "titulo": "Nota Técnica 2026.007 v1.11 - Publicada em 30/10/2026",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=HXzgTeht%205Q=",
+          "resumoCurto": "Regras de validação e atualiza regras existentes da NF-e/NFC-e para verificação dos cadastros na Lista Centralizada de Contribuintes da RFB (LCC-RFB) e no Cadastro Centralizado de Contribuintes (CCC).",
+          "tags": [
+            "NF-e",
+            "NT",
+            "NFC-e"
+          ],
+          "portalOrigem": "Portal NF-e",
+          "tipoConteudo": "nota técnica",
+          "confianca": "alta",
+          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+          "linkResolvido": true,
+          "status": "vigente"
+        },
+        {
+          "titulo": "Nota Técnica 2026.006 v1.01 - Publicada em 30/10/2026",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=7xf05PpO4Z0=",
+          "resumoCurto": "Divulga especificação técnica para vinculação entre NF-e e transação financeira sujeita ao split payment",
+          "tags": [
+            "NF-e",
+            "NT"
+          ],
+          "portalOrigem": "Portal NF-e",
+          "tipoConteudo": "nota técnica",
+          "confianca": "alta",
+          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+          "linkResolvido": true,
+          "status": "vigente"
+        },
+        {
+          "titulo": "Nota Técnica 2026.005 v1.00 - Publicada em 30/10/2026",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=HInG7WD5Sj8=",
+          "resumoCurto": "Atualizações para o Simples Nacional na NF-e e NFC-e.",
+          "tags": [
+            "NF-e",
+            "NT",
+            "NFC-e"
+          ],
+          "portalOrigem": "Portal NF-e",
+          "tipoConteudo": "nota técnica",
+          "confianca": "alta",
+          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+          "linkResolvido": true,
+          "status": "vigente"
+        },
+        {
+          "titulo": "Nota Técnica 2025.002 v1.53 - Publicada em 30/10/2026",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=BMcHSMEoepU=",
+          "resumoCurto": "Nota técnica de adequação dos leiautes da NF-e e da NFC-e para inclusão dos campos e das regras de validação referentes à Reforma Tributária do Consumo - RTC",
+          "tags": [
+            "NF-e",
+            "NT",
+            "Schema",
+            "RTC",
+            "NFC-e"
+          ],
+          "portalOrigem": "Portal NF-e",
+          "tipoConteudo": "nota técnica",
+          "confianca": "alta",
+          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+          "linkResolvido": true,
+          "status": "vigente"
+        },
+        {
+          "titulo": "Informe Técnico 2026.003 v1.00 - Publicado em 30/10/2026",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=ubZJ18I0T78=",
+          "resumoCurto": "Publicação da nova Tabela de Códigos da NF-e ABI v.1.01 e revogação da versão anterior.",
+          "tags": [
+            "NF-e",
+            "Informe Técnico"
+          ],
+          "portalOrigem": "Portal NF-e",
+          "tipoConteudo": "informe técnico",
+          "confianca": "alta",
+          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+          "linkResolvido": true,
+          "status": "vigente"
+        },
+        {
+          "titulo": "Informe Técnico 2025.002 v1.71 - Publicado em 30/10/2026",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://www.nfe.fazenda.gov.br/exibirArquivo.aspx?conteudo=WYEtloOC2CQ=",
+          "resumoCurto": "Divulga tabela classificação tributária, indicadores de CST e crédito presumido do IBS e da CBS.",
+          "tags": [
+            "NF-e",
+            "Informe Técnico",
+            "IBS",
+            "CBS"
+          ],
+          "portalOrigem": "Portal NF-e",
+          "tipoConteudo": "informe técnico",
+          "confianca": "alta",
+          "linkLista": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+          "linkResolvido": true,
+          "status": "vigente"
+        }
+      ],
+      "observacoes": ""
+    },
+    {
+      "nome": "CGIBS",
+      "url": "https://www.cgibs.gov.br/noticias",
+      "consultadoEm": "30/10/2026 22:29:08",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Nenhuma publicação do CGIBS hoje."
+    },
+    {
+      "nome": "Portal MDF-e",
+      "url": "https://dfe-portal.svrs.rs.gov.br/Mdfe/Noticias",
+      "consultadoEm": "30/10/2026 22:29:10",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
+    },
+    {
+      "nome": "Portal NF-ABI",
+      "url": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+      "consultadoEm": "30/10/2026 22:29:16",
+      "encontrouItensHoje": true,
+      "itens": [
+        {
+          "titulo": "Nota Técnica 2026.001 Ajustes no Leiaute e RVs",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://dfe-portal.svrs.rs.gov.br/NFABI/DownloadArquivoEstatico/?sistema=NFABI&tipoArquivo=3&nomeArquivo=NFeABI_NT 2026.001_Ajustes no Leiaute e nas Regras de Validação_v1.00.pdf",
+          "resumoCurto": "Esta Nota Técnica divulga ajustes no Leiaute e nas Regras de Validação da NF-e ABI a definição do leiaute da NF-e de Alienação de Bens Imóveis.",
+          "tags": [
+            "NF-ABI",
+            "Leiaute",
+            "Validação",
+            "NT"
+          ],
+          "portalOrigem": "Portal NF-ABI",
+          "tipoConteudo": "documentação técnica",
+          "confianca": "alta",
+          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+          "linkResolvido": true,
+          "status": "vigente"
+        },
+        {
+          "titulo": "Tabela de Código de Classificação Tributária da RT v.",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=12&nomeArquivo=Tabela IT 2025.002 v.1.71 - cClassTrib.xlsx",
+          "resumoCurto": "Tabela atualizada de CST e cClassTrib da Reforma Tributária.Pode ser visualizada também de forma online na área da Conformidade Fácil: https://dfe-portal.svrs.rs.gov.br/CFF/ClassificacaoTributaria",
+          "tags": [
+            "NF-ABI",
+            "RTC",
+            "CST",
+            "cClassTrib"
+          ],
+          "portalOrigem": "Portal NF-ABI",
+          "tipoConteudo": "documentação técnica",
+          "confianca": "alta",
+          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+          "linkResolvido": true,
+          "status": "vigente"
+        },
+        {
+          "titulo": "Tabela de Códigos NFe ABI",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://dfe-portal.svrs.rs.gov.br/NFABI/DownloadArquivoEstatico/?sistema=NFABI&tipoArquivo=12&nomeArquivo=NFeABI_Tabela de Códigos NFe ABI - v1.01.xlsx",
+          "resumoCurto": "Publica tabela com códigos utilizados na NFe ABI",
+          "tags": [
+            "NF-ABI"
+          ],
+          "portalOrigem": "Portal NF-ABI",
+          "tipoConteudo": "documentação técnica",
+          "confianca": "alta",
+          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+          "linkResolvido": true,
+          "status": "vigente"
+        },
+        {
+          "titulo": "IT 2025.002 RT Tabela de Classificação Tributária v1.71",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://dfe-portal.svrs.rs.gov.br/DFE/DownloadArquivoEstatico/?sistema=DFE&tipoArquivo=16&nomeArquivo=IT 2025.002 v.1.71 - Tabelas de Classificação do IBS e da CBS.pdf",
+          "resumoCurto": "De forma geral, o Informe Técnico tem a finalidade de: • Divulgar orientações e aperfeiçoamentos para os Serviços de Autorização de Uso dos DF-e, que são usados pelas Empresas; • Divulgar e manter registro da atualização de tabelas de domínio usadas pelo Serviço de Autorização, não significando obrigatoriamente a necessidade…",
+          "tags": [
+            "NF-ABI",
+            "Leiaute"
+          ],
+          "portalOrigem": "Portal NF-ABI",
+          "tipoConteudo": "documentação técnica",
+          "confianca": "alta",
+          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+          "linkResolvido": true,
+          "status": "vigente"
+        },
+        {
+          "titulo": "Informe Técnico NFe ABI 2026.003 v.1.01",
+          "dataPublicacao": "30/10/2026",
+          "url": "https://dfe-portal.svrs.rs.gov.br/NFABI/DownloadArquivoEstatico/?sistema=NFABI&tipoArquivo=16&nomeArquivo=NFeABI_Informe Técnico NFe ABI 2026.003 - v1.pdf",
+          "resumoCurto": "O presente Informe Técnico tem como objetivo divulgar a publicação da nova Tabela de Códigos da NF-e ABI v.1.01, bem como informar que a Tabela de Códigos da NF-e ABI v.1.00a - Publicada em , disponível no Portal Nacional da NF-e, na aba “NF-e ABI”, opção “Diversos” está revogado.",
+          "tags": [
+            "NF-ABI"
+          ],
+          "portalOrigem": "Portal NF-ABI",
+          "tipoConteudo": "documentação técnica",
+          "confianca": "alta",
+          "linkLista": "https://dfe-portal.svrs.rs.gov.br/Nfabi/Documentos",
+          "linkResolvido": true,
+          "status": "vigente"
+        }
+      ],
+      "observacoes": ""
+    },
+    {
+      "nome": "Portal BP-e",
+      "url": "https://dfe-portal.svrs.rs.gov.br/Bpe/Noticias",
+      "consultadoEm": "30/10/2026 22:29:19",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Portal verificado. Nenhuma notícia com a data de hoje encontrada."
+    },
+    {
+      "nome": "NFS-e RTC",
+      "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
+      "consultadoEm": "30/10/2026 22:29:21",
+      "encontrouItensHoje": false,
+      "itens": [],
+      "observacoes": "Portal verificado. Nenhum documento RTC publicado hoje."
+    }
+  ],
+  "totalItens": 13,
+  "totalPortaisVerificados": 7,
+  "totalPortaisComItens": 3,
+  "totalPortaisSemItens": 4,
+  "portaisIndisponiveis": [],
+  "erros": []
+}
