@@ -1,8 +1,14 @@
 {
-  "ultima_verificacao": "2026-11-02T17:39:06.514736-03:00",
+  "ultima_verificacao": "2026-11-03T15:16:03.602581-03:00",
   "total_leis": 3,
   "alteracoes_pendentes": 0,
   "verificacoes": [
+    {
+      "data": "2026-11-03T15:16:03.602581-03:00",
+      "leis_verificadas": 3,
+      "alteracoes": 0,
+      "detalhes": []
+    },
     {
       "data": "2026-11-02T17:39:06.514736-03:00",
       "leis_verificadas": 3,
