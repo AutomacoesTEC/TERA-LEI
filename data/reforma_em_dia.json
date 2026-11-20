@@ -1,5 +1,5 @@
 {
-  "ultima_atualizacao": "2026-11-19T03:08:16.071616",
+  "ultima_atualizacao": "2026-11-20T02:58:16.876365",
   "descricao": "Publicações e marcos da Reforma Tributária do Consumo (EC 132/2023, LC 214/2025). Atualizado diariamente pelo curador automático.",
   "categorias": [
     "Legislação",
@@ -26,6 +26,25 @@
     "DOU"
   ],
   "itens": [
+    {
+      "id": "c5c884ced47504b9",
+      "data": "2026-11-19",
+      "titulo": "RFB, CGIBS e CFC vão orientar mais de 25 mil profissionais da contabilidade sobre destaques da CBS/IBS nos DF-e",
+      "categoria": "Comunicado",
+      "tags": [
+        "IBS",
+        "CGIBS",
+        "Comitê Gestor",
+        "CBS",
+        "RTC"
+      ],
+      "resumo": "Essa iniciativa, em continuidade à reconhecida parceria mantida entre os órgãos em ações voltadas à reforma, contribuirá significativamente para o fortalecimento da conformidade fiscal",
+      "fonte": "CGIBS",
+      "link": "https://www.cgibs.gov.br/noticias",
+      "linkLista": "https://www.cgibs.gov.br/noticias",
+      "linkResolvido": false,
+      "status": "vigente"
+    },
     {
       "id": "c50a5e25d164d9a2",
       "data": "2026-11-12",
